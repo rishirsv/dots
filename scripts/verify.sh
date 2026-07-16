@@ -6,7 +6,6 @@ METASKILL="plugins/meta-skill/scripts/metaskill"
 META_SKILLS=(
   plugins/meta-skill/skills/skill-author
   plugins/meta-skill/skills/skill-reviewer
-  plugins/meta-skill/skills/skill-reviewer2
   plugins/meta-skill/skills/skill-evaluator
 )
 

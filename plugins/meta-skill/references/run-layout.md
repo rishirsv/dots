@@ -1,49 +1,46 @@
 # Evaluation Storage Layout
 
-Authored evaluation inputs version with the skill but live outside its portable
-runtime directory. The owning component holds one hidden `.skill/` companion
-workspace per skill. Generated state shares that companion and remains ignored.
+Authored evaluation inputs version with the skill inside a hidden companion
+that packaging excludes. Each skill holds one `.<skill-name>/` workspace.
+Generated state shares that companion and remains ignored.
 The filesystem is authoritative; the workbench does not maintain a database or
 metadata index.
 
 ```text
-<owner>/skills/<relative-skill-path>/
+<skill-name>/
   SKILL.md
 
-<owner>/.skill/<relative-skill-path>/
-  evals/
-    evals.json
-    cases/<eval-id>/            # only for file-backed cases
-      task.md
-      expected.md               # when declared
-      <fixtures and graders>    # when declared
+  .<skill-name>/
+    evals/
+      evals.json
+      cases/<eval-id>/          # only for file-backed cases
+        task.md
+        expected.md             # when declared
+        <fixtures and graders>  # when declared
 
-  runs/<run-id>/
-    run.json
-    report.md
-    pairwise-reviews.jsonl      # after pairwise human review
-    inputs/
-      suite.json
-      cases/<eval-id>/
-      candidates/<candidate-id>/
-        snapshot.json
-        payload/
-    trials/<trial-id>/
-      state.json
-      response.md
-      events.jsonl
-      artifacts/
-      grades.jsonl
-      review.json               # after an annotation
-  worktrees/<run-id>/
-    candidates/<candidate-id>/  # temporary git worktrees
-  tmp/<run-id>/
-    trials/<trial-id>/          # temporary execution workspaces
-  packages/
+    runs/<run-id>/
+      run.json
+      <skill-name>-evaluation.md
+      pairwise-reviews.jsonl    # after pairwise human review
+      inputs/
+        suite.json
+        cases/<eval-id>/
+        candidates/<candidate-id>/
+          snapshot.json
+          payload/
+      trials/<trial-id>/
+        state.json
+        response.md
+        events.jsonl
+        artifacts/
+        grades.jsonl
+        review.json             # after an annotation
+    worktrees/<run-id>/
+      candidates/<candidate-id>/ # temporary git worktrees
+    tmp/<run-id>/
+      trials/<trial-id>/        # temporary execution workspaces
+    packages/
 ```
-
-A standalone project uses `<owner>/skill/SKILL.md` for its portable runtime and
-`<owner>/.skill/` directly for the same companion contents.
 
 `run-id` is the immutable unique identifier for one recorded execution. Move or
 copy the companion with the runtime when evaluation history must follow a skill;
@@ -109,7 +106,7 @@ trial identity match. A selective rerun creates a new run with
 `source_run_id`, selected case IDs, and a fresh current-skill snapshot; source
 annotations remain immutable and linked by provenance rather than copied.
 
-`report.md` is derived from the canonical read model and regenerated after
+`<skill-name>-evaluation.md` is derived from the canonical read model and regenerated after
 grading or review changes. It records experiment configuration, candidate
 deltas, trial outcomes, failed checks with evidence, pairwise and absolute
 review, annotations, token and latency data, provenance, and coverage limits.

@@ -26,6 +26,7 @@ def make_run(root, graders):
     write(run / "run.json", {
         "schema_version": 2,
         "run_id": "run-1",
+        "skill_name": "demo",
         "model": "run-model",
         "runner": {"grading": True},
         "task_executor": {"kind": "native_subagent", "provenance": "inherited"},
@@ -90,7 +91,7 @@ class GradingTests(unittest.TestCase):
                 second["grade"]["evidence_refs"],
                 ["trials/a.current.t1/response.md", "trials/a.current.t1/events.jsonl"],
             )
-            self.assertIn("1 passed", (run / "report.md").read_text())
+            self.assertIn("1 passed", (run / "demo-evaluation.md").read_text())
 
     def test_regrade_appends_frozen_grader_generation(self):
         with tempfile.TemporaryDirectory() as tmp:

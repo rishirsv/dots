@@ -67,7 +67,7 @@ class RunnerTests(unittest.TestCase):
             project = Path(tmp)
             target = project / "skill"
             skill(target)
-            manifest = project / ".skill" / "evals" / "evals.json"
+            manifest = target / ".demo" / "evals" / "evals.json"
             suite(manifest, [{"id": "a", "type": "capability", "prompt": "Do A"}])
             with patch("meta_skill.runner.resolve_candidate", side_effect=RuntimeError("cannot snapshot")):
                 with self.assertRaisesRegex(RuntimeError, "cannot snapshot"):
@@ -76,7 +76,7 @@ class RunnerTests(unittest.TestCase):
                         run_id_value="run-plan-error",
                     )
             run = json.loads(
-                (project / ".skill" / "runs" / "run-plan-error" / "run.json").read_text()
+                (target / ".demo" / "runs" / "run-plan-error" / "run.json").read_text()
             )
             self.assertEqual(run["planning_error"], "cannot snapshot")
             self.assertEqual(run["task_executor"]["kind"], "native_subagent")
@@ -88,7 +88,7 @@ class RunnerTests(unittest.TestCase):
             project = Path(tmp)
             target = project / "skill"
             skill(target)
-            manifest = project / ".skill" / "evals" / "evals.json"
+            manifest = target / ".demo" / "evals" / "evals.json"
             suite(manifest, [{
                 "id": "a", "type": "capability", "prompt": "Do A",
                 "expected_output": "Hidden answer", "expectations": ["Hidden rubric"],
@@ -118,9 +118,9 @@ class RunnerTests(unittest.TestCase):
                 self.assertEqual(repeated["result_digest"], state["result_digest"])
             result = finalize_eval(prepared["run_dir"], grade=False)
             run = Path(result["run_dir"])
-            self.assertTrue((run / "report.md").is_file())
+            self.assertTrue((run / "demo-evaluation.md").is_file())
             self.assertTrue((run / "trials" / current["trial_id"] / "artifacts" / "made.txt").is_file())
-            self.assertFalse((project / ".skill" / "tmp" / result["run_id"]).exists())
+            self.assertFalse((target / ".demo" / "tmp" / result["run_id"]).exists())
             self.assertFalse((worktrees_path(target) / result["run_id"]).exists())
             model = json.loads((run / "run.json").read_text())
             self.assertEqual(model["model"], "gpt-5.6-terra")
@@ -133,7 +133,7 @@ class RunnerTests(unittest.TestCase):
             project = Path(tmp)
             target = project / "skill"
             skill(target)
-            manifest = project / ".skill" / "evals" / "evals.json"
+            manifest = target / ".demo" / "evals" / "evals.json"
             suite(manifest, [{"id": "a", "type": "capability", "prompt": "Do A"}])
             prepared = prepare_eval(args(manifest, no_baseline=True))
             packet = prepared["packets"][0]
@@ -164,7 +164,7 @@ class RunnerTests(unittest.TestCase):
             project = Path(tmp)
             target = project / "skill"
             skill(target)
-            manifest = project / ".skill" / "evals" / "evals.json"
+            manifest = target / ".demo" / "evals" / "evals.json"
             suite(manifest, [{"id": "a", "type": "capability", "prompt": "Do A"}])
             prepared = prepare_eval(args(manifest, no_baseline=True))
             with self.assertRaisesRegex(CliError, "unresolved trials"):
@@ -189,7 +189,7 @@ class RunnerTests(unittest.TestCase):
             project = Path(tmp)
             target = project / "skill"
             skill(target)
-            manifest = project / ".skill" / "evals" / "evals.json"
+            manifest = target / ".demo" / "evals" / "evals.json"
             suite(manifest, [{"id": "a", "type": "capability", "prompt": "Wait"}])
 
             def fake_task(packet, **_kwargs):
@@ -219,7 +219,7 @@ class RunnerTests(unittest.TestCase):
             project = Path(tmp)
             target = project / "skill"
             skill(target)
-            manifest = project / ".skill" / "evals" / "evals.json"
+            manifest = target / ".demo" / "evals" / "evals.json"
             suite(manifest, [
                 {"id": "a", "type": "capability", "prompt": "Do A"},
                 {"id": "b", "type": "capability", "prompt": "Do B"},

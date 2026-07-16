@@ -128,8 +128,8 @@ Keep one authoritative home for each rule:
 - `references/` holds conditional detail behind a direct read-when link.
 - `scripts/` holds deterministic work that is safer or cheaper than prose.
 - `assets/` holds reusable files used in outputs.
-- the owner-level `.skill/` companion holds authored evaluations and generated
-  evaluation state outside the portable skill directory.
+- the skill-local `.<skill-name>/` companion holds authored evaluations and
+  generated evaluation state; packaging excludes this hidden directory.
 - repository planning folders hold design history, private examples, source
   evidence, and rejected alternatives.
 

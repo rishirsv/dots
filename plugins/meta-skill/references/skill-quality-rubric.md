@@ -1,8 +1,8 @@
-# Judge Rubric
+# Skill Quality Rubric
 
-Use this shared rubric for static skill-quality reviews. A Judge review scores
-the portable skill payload plus structural validation. It is static evidence,
-not a behavioral eval suite.
+Use this optional rubric when the user asks for a scored static skill-quality
+review. It scores the portable skill payload plus structural validation. It is
+static evidence, not a behavioral eval suite.
 
 For payload contamination and maintainer-placement checks, read
 [payload-hygiene.md](payload-hygiene.md) before assigning final scores.
@@ -16,8 +16,19 @@ For payload contamination and maintainer-placement checks, read
 | **Validation** | CLI checks from `<meta-skill-root>/scripts/metaskill validate`: structural integrity and authoring lint. | Validation command output |
 
 Discovery % = total / 12. Implementation % = total / 15. Validation % =
-checks passed / total. Overall Judge Review Score is the rounded average of the
+checks passed / total. Overall Skill Quality Score is the rounded average of the
 three percentages.
+
+## Adapt To The User's Decision
+
+Use the three phases as the stable baseline. If the user names additional
+criteria, priorities, or a different decision, incorporate them explicitly and
+show the complete rubric before scoring. Do not silently change an anchor to
+make the result fit.
+
+Freeze the exact rubric with the score. Scores produced by materially different
+rubrics are not directly comparable; report the rubric change instead of
+presenting the difference as skill improvement.
 
 ## Score Calibration
 
@@ -132,7 +143,7 @@ record a validation follow-up; do not claim the validator already proves it.
 
 Return the review in chat:
 
-- Overall Judge Review Score and phase percentages
+- Overall Skill Quality Score and phase percentages
 - Discovery assessment and scored table, ending in `Total X / 12`
 - Implementation assessment and scored table, ending in `Total X / 15`
 - Payload hygiene and placement audit result from
@@ -140,5 +151,5 @@ Return the review in chat:
 - Validation result and Validation %
 - Combined findings, prioritized by behavior risk
 
-A Judge review is static evidence. Keep the review read-only and hand requested
-implementation to `skill-author`.
+A scored skill-quality review is static evidence. Keep the review read-only and
+hand requested implementation to `skill-author`.

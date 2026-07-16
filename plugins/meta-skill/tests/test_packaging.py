@@ -21,7 +21,7 @@ class PackagingTests(unittest.TestCase):
                 '---\nname: demo\ndescription: "Use for packaging tests."\n---\n\n# Demo\n'
             )
             (skill / "reference.md").write_text("runtime\n")
-            companion = Path(tmp) / ".skill"
+            companion = skill / ".demo"
             (companion / "evals" / "cases").mkdir(parents=True)
             (companion / "evals" / "evals.json").write_text('{"schema_version":2,"evals":[]}\n')
             (companion / "evals" / "cases" / "secret.md").write_text("hidden grader\n")

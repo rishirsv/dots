@@ -30,7 +30,7 @@ from .manifest import (
 from .run_inputs import freeze_run_inputs, validate_grading_inputs
 from .runtime import DEFAULT_EVAL_MODEL, DEFAULT_EVAL_REASONING_EFFORT
 from .staging import capture_artifacts, relocate_workspace_links, stage_workspace
-from .workbench_paths import evals_path, runs_path, skill_dir_for_target, skill_id_for_target, state_root, worktrees_path
+from .workbench_paths import evals_path, runs_path, skill_dir_for_target, skill_id_for_target, skill_name_for_target, state_root, worktrees_path
 
 
 TERMINAL_STATUSES = {"completed", "failed", "timed_out", "skipped"}
@@ -455,6 +455,7 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
             "adhoc": adhoc,
             "objective": getattr(args, "objective", None) or manifest.get("objective"),
             "skill_id": skill_id,
+            "skill_name": skill_name_for_target(project),
             "suite": str(suite),
             "project": str(project),
             "runner": {

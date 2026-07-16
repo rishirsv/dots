@@ -4,7 +4,7 @@
 A validation task used by `<meta-skill-root>/scripts/metaskill validate` covering the *mechanical*
 anti-patterns from the authoring standard - the ones that belong in validation
 code rather than human judgment. Judgment anti-patterns (wisdom-vs-directive,
-jargon section names, contradictions) stay in the Judge Review's scored
+jargon section names, contradictions) stay in the scored skill-quality
 dimensions, not here.
 
 Emits the same {checks, passed, total} contract as validate_skill.py so the

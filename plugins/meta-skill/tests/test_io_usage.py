@@ -42,7 +42,10 @@ class ResolveRunDirTests(unittest.TestCase):
     def test_resolves_nested_companion_run_by_id(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            run = root / ".skill" / "engineering" / "demo" / "runs" / "run-1"
+            skill = root / "demo"
+            skill.mkdir()
+            (skill / "SKILL.md").write_text('---\nname: demo\ndescription: "Demo."\n---\n')
+            run = skill / ".demo" / "runs" / "run-1"
             run.mkdir(parents=True)
             (run / "run.json").write_text("{}\n")
             previous = Path.cwd()
@@ -56,7 +59,10 @@ class ResolveRunDirTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             for name in ("a", "b"):
-                run = root / ".skill" / name / "runs" / "same-run"
+                skill = root / name
+                skill.mkdir()
+                (skill / "SKILL.md").write_text(f'---\nname: {name}\ndescription: "Demo."\n---\n')
+                run = skill / f".{name}" / "runs" / "same-run"
                 run.mkdir(parents=True)
                 (run / "run.json").write_text("{}\n")
             previous = Path.cwd()

@@ -1,6 +1,6 @@
 # Domain Diagnostics
 
-Load only the module matching the skill under diagnosis. These are prompts for
+Read only the module matching the skill under diagnosis. These are prompts for
 evidence collection, not required `SKILL.md` headings or a universal output
 template. A missing item is a defect only when it affects the skill's stated
 job.

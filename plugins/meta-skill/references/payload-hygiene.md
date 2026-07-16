@@ -20,7 +20,7 @@ Read this before:
 - packaging a skill payload
 
 For a scored static review, use this file with
-[judge-rubric.md](judge-rubric.md).
+[skill-quality-rubric.md](skill-quality-rubric.md).
 
 ## Placement Rule
 
@@ -31,7 +31,7 @@ For a scored static review, use this file with
 | Source-specific research, article, company, person, URL, email, or transcript | Only when the runtime task requires that source | Yes |
 | User prompt text, system/developer text, thread id, rollout id, local path, command transcript | Only when the skill's real job is to inspect that exact class of material | Yes |
 | Rejected names, design alternatives, migration notes, roadmap, maintainer plans | No | Yes |
-| Eval seeds, judge guidance, expected outputs, validation fixtures | No, unless explicitly approved as runtime examples | Yes, under the skill's owner-level `.skill/` companion |
+| Eval seeds, judge guidance, expected outputs, validation fixtures | No, unless explicitly approved as runtime examples | Yes, under the skill-local `.<skill-name>/` companion |
 
 ## Payload Hygiene Sweep
 

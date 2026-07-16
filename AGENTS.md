@@ -20,11 +20,9 @@ Source repo for Rishi's personal plugins, agent workflows, and machine config.
 - Keep each portable skill runtime limited to `SKILL.md` and files the agent may
   need while performing the skill. Do not put authored evals, run history,
   research, or maintainer plans inside that directory.
-- Keep skill-owned development material in the owning component's hidden
-  `.skill/` companion. For `skills/<relative-skill-path>/`, use
-  `.skill/<relative-skill-path>/`; for a standalone `skill/SKILL.md`, use
-  `.skill/` directly. Track authored `evals/` there and ignore generated
-  `runs/`, `worktrees/`, `tmp/`, and `packages/`.
+- Keep skill-owned development material in the skill's hidden
+  `.<skill-name>/` companion. Track authored `evals/` there and ignore
+  generated `runs/`, `worktrees/`, `tmp/`, and `packages/`.
 - `.agents/plugins/marketplace.json` is durable Codex marketplace source, not
   local scratch state.
 - Promote only stable public contracts into `README.md`, `INSTALL.md`, owning

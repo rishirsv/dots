@@ -19,7 +19,10 @@ def resolve_run_dir(raw_run):
             for path in Path.cwd().rglob("run.json")
             if path.parent.name == str(raw_run)
             and path.parent.parent.name == "runs"
-            and any(parent.name == ".skill" for parent in path.parents)
+            and any(
+                parent.name.startswith(".") and (parent.parent / "SKILL.md").is_file()
+                for parent in path.parents
+            )
         ]
         if len(matches) == 1:
             return matches[0].resolve()

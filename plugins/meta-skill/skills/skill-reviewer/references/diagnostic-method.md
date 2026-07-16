@@ -1,6 +1,6 @@
 # Diagnostic Method
 
-Read this for a deep, cross-surface, or plugin-wide diagnosis, or when a
+Read this for a deep, cross-surface, or broad diagnosis, or when a
 focused defect sweep is needed. Select only the dimensions and sweeps that can
 change the answer.
 

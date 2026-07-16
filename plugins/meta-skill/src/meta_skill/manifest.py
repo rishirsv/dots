@@ -38,20 +38,10 @@ def workbench_from_suite(path):
 def project_from_suite(path):
     path = Path(path)
     workspace = path.parent.parent if path.parent.name == "evals" else path.parent
-    marker = next((parent for parent in (workspace, *workspace.parents) if parent.name == ".skill"), None)
-    if marker is None:
-        return workspace
-    owner = marker.parent
-    relative = workspace.relative_to(marker)
-    candidates = []
-    if relative.parts:
-        candidates.extend((owner / "skills" / relative, owner / relative))
-    else:
-        candidates.append(owner / "skill")
-    for candidate in candidates:
-        if (candidate / "SKILL.md").is_file():
-            return candidate
-    return candidates[0] if candidates else workspace
+    skill_dir = workspace.parent
+    if workspace.name.startswith(".") and (skill_dir / "SKILL.md").is_file():
+        return skill_dir
+    return workspace
 
 
 def repository_from_suite(path):

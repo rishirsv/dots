@@ -13,10 +13,8 @@ metaskill package <skill-dir> [--out-dir DIR] [--json]
 metaskill workbench open [--root DIR] [--port PORT] [--open|--no-open]
 ```
 
-`init` creates the target skill's owner-level `.skill/` companion. For
-`skills/<relative-skill-path>/`, the workspace is
-`.skill/<relative-skill-path>/`; a standalone `skill/SKILL.md` project uses
-`.skill/` directly. Add `--evals` to create its tracked `evals/evals.json`.
+`init` creates the target skill's hidden `.<skill-name>/` companion inside the
+skill directory. Add `--evals` to create its tracked `evals/evals.json`.
 `doctor` checks Python, the
 bundled validators, the Codex binary, login status, and Codex Exec readiness.
 `package` writes a zip to the companion's `packages/` unless `--out-dir` is

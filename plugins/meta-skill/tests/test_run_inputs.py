@@ -18,7 +18,7 @@ class RunInputTests(unittest.TestCase):
     def test_inline_and_file_inputs_freeze_hidden_material_but_stage_only_visible_files(self):
         with tempfile.TemporaryDirectory() as tmp:
             skill = Path(tmp) / "skill"
-            companion = Path(tmp) / ".skill"
+            companion = skill / ".demo"
             authored = companion / "evals" / "cases" / "a"
             authored.mkdir(parents=True)
             (authored / "task.md").write_text("Visible task")
@@ -47,7 +47,7 @@ class RunInputTests(unittest.TestCase):
     def test_symlink_support_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             skill = Path(tmp) / "skill"
-            companion = Path(tmp) / ".skill"
+            companion = skill / ".demo"
             authored = companion / "evals" / "cases" / "a"
             authored.mkdir(parents=True)
             (authored / "secret").write_text("hidden")
@@ -60,7 +60,7 @@ class RunInputTests(unittest.TestCase):
     def test_missing_file_prompt_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
             skill = Path(tmp) / "skill"
-            companion = Path(tmp) / ".skill"
+            companion = skill / ".demo"
             (companion / "evals" / "cases" / "a").mkdir(parents=True)
             with self.assertRaises(CliError) as caught:
                 freeze_run_inputs({}, companion / "evals" / "evals.json", companion / "runs" / "r", [{"id": "a", "prompt": {"path": "task.md"}, "expectations": ["Pass"]}], [])

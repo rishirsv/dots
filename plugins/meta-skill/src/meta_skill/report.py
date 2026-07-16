@@ -207,10 +207,10 @@ def _comparisons(candidates, trials, baseline_candidate=None):
                 delta = "improved"
             elif baseline_state == "pass" and candidate_state == "fail":
                 delta = "regressed"
-            elif baseline_state == candidate_state and baseline_state in {"pass", "fail"}:
-                delta = "unchanged"
+            elif baseline_state == candidate_state == "pass":
+                delta = "no_uplift_demonstrated"
             else:
-                delta = "unknown"
+                delta = "inconclusive"
             rows.append(
                 {
                     "eval_id": eval_id,
@@ -289,6 +289,54 @@ def _token_usage(trials):
     return {**totals, "trials_with_usage": trials_with_usage}
 
 
+def _candidate_summaries(candidates, trials, baseline_candidate):
+    by_candidate = defaultdict(list)
+    for trial in trials:
+        by_candidate[trial.get("candidate")].append(trial)
+    rows = []
+    for candidate in candidates:
+        candidate_id = candidate.get("candidate")
+        candidate_trials = by_candidate[candidate_id]
+        verdicts = Counter(trial.get("verdict") for trial in candidate_trials)
+        scored = verdicts.get("passed", 0) + verdicts.get("failed", 0)
+        pass_rate = verdicts.get("passed", 0) / scored if scored else None
+        durations = [int(trial.get("duration_ms")) for trial in candidate_trials if trial.get("duration_ms") is not None]
+        tokens = [
+            int((trial.get("usage") or {}).get("total_tokens"))
+            for trial in candidate_trials
+            if (trial.get("usage") or {}).get("total_tokens") is not None
+        ]
+        rows.append(
+            {
+                "candidate": candidate_id,
+                "display": candidate.get("display") or candidate_id,
+                "baseline": candidate_id == baseline_candidate,
+                "trials": len(candidate_trials),
+                "passed": verdicts.get("passed", 0),
+                "failed": verdicts.get("failed", 0),
+                "inconclusive": verdicts.get("inconclusive", 0),
+                "ungraded": verdicts.get("ungraded", 0),
+                "scored": scored,
+                "pass_rate": pass_rate,
+                "mean_duration_ms": sum(durations) / len(durations) if durations else None,
+                "mean_total_tokens": sum(tokens) / len(tokens) if tokens else None,
+            }
+        )
+    baseline = next((row for row in rows if row["baseline"]), None)
+    baseline_rate = baseline.get("pass_rate") if baseline else None
+    for row in rows:
+        rate = row.get("pass_rate")
+        row["pass_rate_delta"] = (
+            rate - baseline_rate if rate is not None and baseline_rate is not None else None
+        )
+        row["improvement_multiplier"] = (
+            rate / baseline_rate
+            if rate is not None and baseline_rate is not None and baseline_rate > 0
+            else None
+        )
+    return rows
+
+
 def _pairwise_reviews(run_dir):
     latest = {}
     for row in read_jsonl(Path(run_dir) / "pairwise-reviews.jsonl"):
@@ -355,6 +403,9 @@ def build_report(raw_run, *, blind_pending_human=False):
         coverage_limits.append("No baseline candidate was run; candidate delta cannot be calculated.")
     if not grading_enabled:
         coverage_limits.append("Grading was disabled; completed trials remain ungraded.")
+    candidate_summaries = _candidate_summaries(
+        run.get("candidates") or [], trials, run.get("baseline_candidate")
+    )
     report = {
         "schema_version": 2,
         "run_id": run.get("run_id") or run_dir.name,
@@ -363,6 +414,7 @@ def build_report(raw_run, *, blind_pending_human=False):
         "adhoc": bool(run.get("adhoc")),
         "objective": run.get("objective"),
         "skill_id": run.get("skill_id"),
+        "skill_name": run.get("skill_name") or Path(str(run.get("skill_id") or "skill")).name,
         "suite": run.get("suite"),
         "project": run.get("project"),
         "model": run.get("model"),
@@ -380,6 +432,7 @@ def build_report(raw_run, *, blind_pending_human=False):
         "cases": _case_versions(cases, run.get("candidates") or [], trials),
         "trials": trials,
         "comparisons": comparisons,
+        "candidate_summaries": candidate_summaries,
         "delta_totals": delta_totals,
         "runtime_status_totals": runtime_totals,
         "verdict_totals": verdict_totals,
@@ -549,31 +602,90 @@ def _executor_label(executor):
     ) or "unknown"
 
 
+def _percent(value):
+    return "-" if value is None else f"{value * 100:.1f}%"
+
+
+def _average(value, suffix=""):
+    return "-" if value is None else f"{value:.0f}{suffix}"
+
+
+def _effect(row):
+    if row.get("baseline"):
+        return "baseline"
+    delta = row.get("pass_rate_delta")
+    if delta is None:
+        return "-"
+    multiplier = row.get("improvement_multiplier")
+    multiplier_text = "not calculable from 0% baseline" if multiplier is None else f"{multiplier:.2f}x"
+    return f"{delta * 100:+.1f} pp · {multiplier_text}"
+
+
+def _criterion_rows(report):
+    rows = []
+    for trial in report.get("trials") or []:
+        for grade in trial.get("grades") or []:
+            checks = grade.get("checks") or []
+            if checks:
+                rows.extend(
+                    [
+                        trial.get("eval_id"),
+                        trial.get("candidate"),
+                        check.get("name") or grade.get("metric"),
+                        check.get("label") or grade.get("grade_status"),
+                        check.get("evidence") or check.get("note") or grade.get("rationale") or "",
+                    ]
+                    for check in checks
+                )
+            else:
+                rows.append(
+                    [
+                        trial.get("eval_id"),
+                        trial.get("candidate"),
+                        grade.get("metric"),
+                        grade.get("grade_status"),
+                        grade.get("rationale") or "",
+                    ]
+                )
+    return rows
+
+
 def render_markdown(report):
     delta = report.get("delta_totals") or {}
     totals = report.get("totals") or {}
-    lines = [
-        f"# Evaluation run: {report['run_id']}",
-        "",
-    ]
+    lines = [f"# Skill evaluation: {report.get('skill_id') or report['run_id']}", "", "## Summary", ""]
     if report.get("objective"):
-        lines += [f"**Objective:** {report['objective']}", ""]
+        lines += [f"**Question:** {report['objective']}", ""]
     lines += [
         f"**Version delta:** {delta.get('improved', 0)} improved, {delta.get('regressed', 0)} regressed, "
-        f"{delta.get('unchanged', 0)} unchanged, {delta.get('unknown', 0)} unknown.",
+        f"{delta.get('no_uplift_demonstrated', 0)} no uplift demonstrated, "
+        f"{delta.get('inconclusive', 0)} inconclusive.",
         "",
         f"{totals.get('passed', 0)} passed · {totals.get('failed', 0)} failed · "
         f"{totals.get('inconclusive', 0)} inconclusive · {totals.get('ungraded', 0)} ungraded",
         "",
-        "## Run configuration",
+    ]
+    summaries = report.get("candidate_summaries") or []
+    if summaries:
+        lines += _table(
+            ["Version", "Passed / scored", "Pass rate", "Effect vs baseline", "Mean time", "Mean tokens"],
+            [
+                [
+                    row.get("display"),
+                    f"{row.get('passed', 0)} / {row.get('scored', 0)}",
+                    _percent(row.get("pass_rate")),
+                    _effect(row),
+                    _average(row.get("mean_duration_ms"), " ms"),
+                    _average(row.get("mean_total_tokens")),
+                ]
+                for row in summaries
+            ],
+        )
+    lines += [
         "",
-        f"- Baseline version: {report.get('baseline_candidate') or 'none'}",
-        f"- Versions: {', '.join(row.get('candidate') or '' for row in report.get('candidates') or []) or 'none'}",
-        f"- Task executor: {_executor_label(report.get('task_executor'))}",
-        f"- Judge executor: {_executor_label(report.get('judge_executor'))}",
-        f"- Duration: {report.get('duration_ms') or 0} ms",
+        "Pass rate excludes inconclusive and ungraded trials. The per-case comparison below is the primary evidence of skill effect.",
         "",
-        "## Version comparison",
+        "## Scenario results",
         "",
     ]
     comparisons = report.get("comparisons") or []
@@ -587,7 +699,7 @@ def render_markdown(report):
         )
     else:
         lines.append("No candidate comparison is available.")
-    lines += ["", "## Trials", ""]
+    lines += ["", "## Trial results", ""]
     lines += _table(
         ["Trial", "Runtime", "Verdict", "Duration"],
         [
@@ -595,33 +707,54 @@ def render_markdown(report):
             for trial in report.get("trials") or []
         ],
     )
-    failures = [trial for trial in report.get("trials") or [] if trial["verdict"] in {"failed", "inconclusive"}]
-    if failures:
-        lines += ["", "## Why trials failed", ""]
-        for trial in failures:
-            lines.append(f"### {trial['trial_id']}")
-            lines.append("")
-            if trial.get("error"):
-                lines.append(f"Runtime: {trial['error']}")
-            checks = trial.get("failed_checks") or []
-            if checks:
-                lines += _table(
-                    ["Check", "Status", "Evidence"],
-                    [[check.get("name"), check.get("label"), check.get("evidence")] for check in checks],
-                )
-            elif not trial.get("error"):
-                lines.append("No failed check evidence was recorded; review the trial response and grades.")
-            lines.append("")
+    criterion_rows = _criterion_rows(report)
+    if criterion_rows:
+        lines += ["", "## Criteria evidence", ""]
+        lines += _table(["Case", "Version", "Criterion", "Result", "Evidence"], criterion_rows)
+    unresolved = [
+        trial
+        for trial in report.get("trials") or []
+        if trial.get("error")
+        or (
+            trial.get("verdict") in {"failed", "inconclusive"}
+            and not trial.get("failed_checks")
+        )
+    ]
+    if unresolved:
+        lines += ["", "## Execution issues", ""]
+        lines += _table(
+            ["Trial", "Issue"],
+            [
+                [
+                    trial.get("trial_id"),
+                    trial.get("error") or "No criterion evidence explains this outcome.",
+                ]
+                for trial in unresolved
+            ],
+        )
+    lines += [
+        "",
+        "## Run details",
+        "",
+        f"- Run: `{report['run_id']}`",
+        f"- Baseline version: {report.get('baseline_candidate') or 'none'}",
+        f"- Versions: {', '.join(row.get('candidate') or '' for row in report.get('candidates') or []) or 'none'}",
+        f"- Task executor: {_executor_label(report.get('task_executor'))}",
+        f"- Judge executor: {_executor_label(report.get('judge_executor'))}",
+        f"- Total duration: {report.get('duration_ms') or 0} ms",
+        "",
+    ]
     review = report.get("review") or {}
     pairwise = report.get("pairwise_review") or {}
-    lines += [
-        "## Review",
-        "",
-        f"{review.get('reviewed', 0)}/{review.get('total', 0)} trials reviewed; "
-        f"{review.get('disagreements', 0)} model/human disagreements.",
-        "",
-        f"{pairwise.get('reviewed', 0)} pairwise comparisons reviewed.",
-    ]
+    if review.get("reviewed") or review.get("disagreements") or pairwise.get("reviewed") or report.get("annotation_totals"):
+        lines += [
+            "## Feedback",
+            "",
+            f"{review.get('reviewed', 0)}/{review.get('total', 0)} trials reviewed; "
+            f"{review.get('disagreements', 0)} model/human disagreements.",
+            "",
+            f"{pairwise.get('reviewed', 0)} pairwise comparisons reviewed.",
+        ]
     if report.get("annotation_totals"):
         lines += ["", "Annotations: " + ", ".join(
             f"{key}={value}" for key, value in sorted(report["annotation_totals"].items())
@@ -636,7 +769,11 @@ def render_markdown(report):
 
 
 def write_report(report, path=None):
-    output = Path(path) if path else Path(report["run_dir"]) / "report.md"
+    output = (
+        Path(path)
+        if path
+        else Path(report["run_dir"]) / f"{report['skill_name']}-evaluation.md"
+    )
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(render_markdown(report))
     return output

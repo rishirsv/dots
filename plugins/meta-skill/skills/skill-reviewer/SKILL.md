@@ -1,106 +1,130 @@
 ---
 name: skill-reviewer
-description: "Use when reviewing, auditing, critiquing, or diagnosing an agent skill, plugin, or reported skill failure without changing source or running new trials. Produces evidence-backed findings and proposals; not for requested edits or running evaluations."
+description: "Use when diagnosing an agent skill or plugin without changing source or running new trials. Produces evidence-backed defects, smallest corrections, and precise handoffs; not for requested edits or behavioral evaluation."
 ---
 
 # Skill Reviewer
 
-Review agent skills and skill systems without changing them. Explain what the
-instructions, resources, evidence, and surrounding contracts are likely to
-cause, then return supported findings and concrete corrections. Keep the work
-read-only: do not edit source, create workbench state, save review artifacts,
-or apply a recommended change.
+Diagnose an agent skill or plugin from the evidence that already exists. Keep
+the work read-only: do not edit source, create workbench state, save diagnostic
+artifacts, or run fresh trials. Identify supported defects, explain their
+likely effects, and propose the smallest correction that addresses each cause.
 
-Use `skill-author` when the user asks to implement a source change. Use
-`skill-evaluator` when the decision needs fresh task runs, candidate
-comparisons, grading, or run history.
+Use `skill-author` when the user asks to change source. Use `skill-evaluator`
+when the answer requires new task runs, candidate comparisons, grading, or run
+history. Do not claim that static inspection proves how a skill behaves in use.
 
-## Gather Evidence
+## Set The Scope
 
-Inventory the shipped payload, not only `SKILL.md`. For a broad review, read
-the complete instructions, linked references, scripts, assets, metadata,
-documented contracts, and relevant tests. For a narrow failure, read the
-affected contract and every surface that defines or depends on it. Read
-repository instructions before judging local conventions.
+Start with the exact question the available evidence can answer. Keep the
+scope narrow for a named trigger, wording, link, resource, or reported defect.
+Use a full diagnostic for a new skill, broad redesign, shared-reference change,
+packaging claim, or defect spanning several runtime surfaces.
 
-Use available evidence in this order:
+Read repository instructions before judging local conventions, commands,
+paths, or ownership.
 
-1. The exact runtime text and resources a future agent receives.
-2. Reported failures or prior usage traces supplied by the user.
-3. Existing evaluation runs and reports.
-4. Read-only validation and usage-history checks when they materially change
-   the diagnosis.
+A full diagnostic must cover discovery and purpose, the effective payload and
+cross-surface contradictions, common and important failure paths, tool and file
+handling, validation and test evidence, output and completion behavior, and
+payload or package hygiene. Within those areas, select only checks that apply
+to the skill. Load the relevant domain module when the skill creates or
+analyzes one of its named artifacts.
 
-Separate observation from inference and name unavailable evidence. Static text
-review can identify routing risk but cannot prove natural discovery or outcome
-improvement. Hand those claims to `skill-evaluator`.
+For a full diagnostic, run the repository's documented read-only structural
+validator when one is available. Report the result as mechanical evidence,
+not proof of task success.
 
-For a broad skill review or plugin audit, cover every Discovery and
-Implementation dimension and run the read-only structural Validation phase in
-[judge-rubric.md](../../references/judge-rubric.md), then run the payload-hygiene
-and maintainer-placement sweeps in
-[payload-hygiene.md](../../references/payload-hygiene.md). Numeric scoring is
-optional unless the user asks for a scored review. Report structural validation
-as mechanical evidence, not proof of behavior. For a narrow reported failure,
-use only the checks that can explain that failure.
+Record the intended behavior, files and artifacts inspected, evidence
+available, and evidence gaps. Do not turn a narrow question into a general
+quality audit unless the surrounding system is necessary to explain it.
 
-For a clarity or routing complaint, give a fresh reader only the shipped
-payload and representative request. Do not give it the complaint, suspected
-defect, intended fix, or prior conclusion. Treat its answer as static
-comprehension evidence, not proof that a platform would naturally activate the
-skill or that outcomes improve.
+## Diagnose
 
-Read [review-method.md](references/review-method.md) for the defect taxonomy,
-plugin-wide checks, and deeper evidence collection. Check discoverable frontmatter against
-[description-standard.md](../../references/description-standard.md).
+1. **State the claim.** Phrase the question so evidence could support or
+   disprove it. Do not broaden the conclusion beyond the inspected evidence.
+2. **Map the effective payload.** Inspect the applicable frontmatter, body,
+   linked references, scripts, schemas, templates, assets, agent metadata,
+   manifests, package contents, installed copy, tests, and existing evaluation
+   reports. Distinguish source from generated or installed copies.
+3. **Reconstruct the needed behavior.** Capture required inputs, the common
+   path, condition-changing branches, expected output, completion state, and
+   failure or stop behavior. An omitted item is a defect only when this skill
+   needs it.
+4. **Trace representative paths.** Walk the common case, then only the edge
+   cases likely to change the diagnosis. At each step identify the activating
+   condition, action, observable result, failure response, and completion
+   evidence.
+5. **Run focused defect sweeps.** Read
+   [diagnostic-method.md](references/diagnostic-method.md) for a deep,
+   cross-surface, or plugin-wide diagnosis, or when no-op, contradiction,
+   ambiguity, overengineering, test, tool, or package defects may explain the
+   problem.
+6. **Load domain guidance only when applicable.** Read
+   [domain-diagnostics.md](references/domain-diagnostics.md) when the skill
+   creates or analyzes templates, financial models, spreadsheets, reports,
+   presentations, or research.
+7. **Rank supported findings.** Prefer deletion, consolidation, or precise
+   replacement over another layer of process.
 
-## Diagnose The Smallest Cause
+When the user asks for a numeric skill score, quality baseline, or benchmark,
+read [skill-quality-rubric.md](../../references/skill-quality-rubric.md). Use
+its stable dimensions plus any criteria the user explicitly supplies, and show
+the exact rubric used. Do not score an ordinary diagnostic by default.
 
-First reconstruct the contract: the skill's job, trigger boundary, inputs,
-default path, output, finish condition, and approval boundaries. Then check:
+For a reported failure, distinguish whether the cause is the skill, evaluator,
+harness, task, environment, or an unsupported assumption before recommending a
+source correction.
 
-- whether the description and opening claim the same bounded job
-- whether instructions are actionable, consistent, and proportionate to risk
-- whether conditional detail is behind a precise read-when link
-- whether runtime resources are reachable and actually needed
-- whether docs, tests, metadata, and neighboring skills agree with the payload
-- whether a reported failure comes from the skill, evaluator, harness, task,
-  environment, or unsupported assumption
+For discovery or frontmatter questions, apply
+[description-standard.md](../../references/description-standard.md). For a
+broad or packaging diagnosis, apply
+[payload-hygiene.md](../../references/payload-hygiene.md). Do not load either
+reference when it cannot affect the answer.
 
-After the linear read, always run a separate contradiction scan across every
-surface defining the same behavior. Include the body, linked references,
-metadata, and relevant tests or sibling skills that claim the same job. Search
-for rules with the same subject but different strength, condition, owner, or
-terminology; do not rely on per-file consistency to reveal cross-surface
-conflicts.
+## Use Evidence Carefully
 
-When reported behavior appears older than source, compare the source payload
-with the effective installed payload read-only before attributing the failure.
-Never patch an installed cache; report drift as the cause and hand source-owned
-release or sync work to the appropriate workflow.
+Separate direct observations from inferred consequences. Cite exact files,
+sections, commands, or existing results. Structural validation can prove
+mechanical properties; it cannot prove task success. Existing evaluation runs
+may support behavioral claims when their cases, outputs, and grading evidence
+are available.
 
-Name the precise cause. “Too long,” “unclear,” and “needs cleanup” are not
-diagnoses until tied to the sentence, missing contract, collision, or behavior
-they affect. Prefer deletion, consolidation, or a direct rewrite over another
-layer of process.
+Treat a validation step as useful only when it can reject a plausible bad
+result, its result is consumed, and failure changes the workflow or final
+status. File existence, generic self-checks, ignored tool output, and
+text-presence assertions are not evidence of substantive correctness.
 
-For a plugin or skill collection, also check routing collisions, duplicated
-policy, dangling references, dead specialists, and complexity that has no
-observed user benefit.
+When reported behavior may come from an older payload, compare authoritative
+source with the effective installed or packaged payload read-only. Never patch
+an installed cache.
 
-## Report
+## Write Findings That Can Be Acted On
 
-Lead with the overall judgment. Then list findings in descending user impact.
-For each finding include:
+Follow any severity scale, verdict vocabulary, and output contract supplied by
+the user or repository. Otherwise, each finding should include:
 
-- a concise defect name
-- specific file and behavior evidence
-- likely user impact and confidence
-- the exact proposed source change
-- the verification that would distinguish a real fix from a plausible rewrite
+- severity and concise defect name;
+- exact location and observed evidence;
+- likely consequence, labeled as inference when it is not directly observed;
+- smallest source correction;
+- a test or inspection that could verify the correction; and
+- a falsifier when the consequence remains uncertain.
 
-Include a positive-null result when no material issue is supported. Finish with
-the smallest recommended change set, evidence not available, and any decision
-that belongs to the user. Do not ask for edit approval during a read-only
-review; hand an implementation-ready proposal to `skill-author` when mutation
-is wanted.
+Do not report vague defects such as “too long,” “unclear,” or “needs cleanup”
+without tying them to a specific rule, collision, missing branch, unused
+result, or behavior. Do not silently rewrite the skill, invent domain rules,
+or turn optional structure into a mandatory template.
+
+## Return The Diagnostic
+
+When no result contract is supplied, lead with one judgment: **Accept**,
+**Accept with conditions**, **Revise**, or **Insufficient evidence**. Then give
+the scope and evidence limits, followed by findings in descending consequence.
+Include applicable areas where no defect was supported so the result is not
+failure-only.
+
+Finish with the smallest coherent change set. Add an evaluator handoff only
+for claims that require fresh behavior evidence, or an authoring handoff when
+the user wants the corrections implemented. Omit empty sections and do not
+force a numeric score unless the user supplied a scoring system.

@@ -245,7 +245,7 @@ The table is intentionally small. Detailed schemas and test formats remain in th
 | Critical | Remove false confidence from structural validation | `validate_skill.py`, `lint_authoring.py`, `validation.py`, focused tests | Known-bad metadata and names fail; absent optional fields do not add passes |
 | High | Validate the effective packaged payload | `packaging.py`, path helpers, package tests | An unpacked skill resolves every runtime resource; a missing dependency fails |
 | High | Make suite setup errors blocking and unify grader normalization | `linting.py`, `grading.py`, `cli.py`, focused tests | Lint, execution, and report agree on the same malformed and mixed-grader fixtures |
-| High | Add behavioral cases for `skill-author` | `plugins/meta-skill/.skill/skill-author/evals/` | Current and proposed versions are compared on creation, update, boundary, resource, and failure cases |
+| High | Add behavioral cases for `skill-author` | `plugins/meta-skill/skills/skill-author/.skill-author/evals/` | Current and proposed versions are compared on creation, update, boundary, resource, and failure cases |
 | Medium | Add advisory duplication and unreachable-reference checks | authoring linter and static diagnostic guidance | Seeded duplicates warn without turning justified repetition into failure |
 | Optional | Extend evaluator fields only when a real suite needs them | evaluator runtime and companion design | New fields survive load, freeze, run, grade, and report; unused schema ideas are not added |
 

@@ -4,15 +4,16 @@
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 service_tier = "default"
-model = "gpt-5.6-sol"
-model_reasoning_effort = "medium"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "xhigh"
 
 
 
 approvals_reviewer = "user"
 
 
-notify = ["/Users/rishi/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+
+notify = ["/Users/rishi/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000387/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [tools]
 view_image = true
@@ -163,6 +164,15 @@ trust_level = "trusted"
 [projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects"]
 trust_level = "trusted"
 
+[projects."/Users/rishi/Documents/Codex/2026-07-14/there-is"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-15/diagnose-my-ssh-and-connections-in"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-15/the-browser-blocks-direct-file-navigation"]
+trust_level = "trusted"
+
 [marketplaces.openai-bundled]
 last_updated = "2026-07-14T23:13:23Z"
 source_type = "local"
@@ -174,7 +184,7 @@ source_type = "local"
 source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.dots]
-last_updated = "2026-07-14T04:38:44Z"
+last_updated = "2026-07-15T22:28:00Z"
 source_type = "local"
 source = "/Users/rishi/Code/dots"
 

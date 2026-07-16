@@ -5,161 +5,154 @@ description: "Use when asked to run, grade, browse, or report agent-skill evalua
 
 # Skill Evaluator
 
-Run realistic tasks to measure how an agent skill behaves. Create and use eval
-cases, compare skill versions, grade results, preserve run history, and present
-the evidence in reports and the review workbench. Do not review or edit the
-target skill's source or generate candidate changes.
+Create evaluations conversationally. Handle the cases, runs, grading, and
+report for the user; use the workbench to inspect results and collect feedback.
 
-Use `skill-reviewer` for static diagnosis and `skill-author` for source
-mutation. Evaluation failures may produce a precise handoff to either skill,
-but they do not authorize source edits.
+Do not review or edit the target skill. Use `skill-reviewer` for static
+diagnosis and `skill-author` for source changes.
 
-## Start With Cases And Versions
+### 1. Create Realistic Test Prompts
 
-State what the evidence should establish, then choose the smallest set of real
-tasks and skill versions that can answer it. One case can provide an early
-signal; saved cases and repeated runs provide stronger evidence.
+When the user explicitly wants one immediate, disposable test, use the ad hoc
+path in [running-evaluations.md](references/running-evaluations.md). Do not
+create a durable suite case unless the user confirms that the behavior should
+be preserved.
 
-Read [suite-design.md](references/suite-design.md) when authoring or changing
-tasks or graders; it owns case quality, baseline choice, grader selection, and
-failure classification. Read [human-review.md](references/human-review.md) when a
-run needs human judgment. Use
-[eval-vocabulary.md](../../references/eval-vocabulary.md) for canonical terms,
-[run-layout.md](../../references/run-layout.md) for artifact authority, and
-[cli.md](../../references/cli.md) for exact commands.
+Otherwise, read the target skill and the user's evaluation goal. Create two or
+three test prompts that sound like things a real user would actually say. Use
+natural requests, not descriptions of the skill's internal workflow or
+language copied from its instructions.
 
-Ask only for a missing choice that would change the task, versions, criteria,
-grader, or human-review standard.
+Choose prompts that exercise distinct common uses of the skill. Include a
+difficult prompt only when it represents a realistic use, ambiguity, or known
+failure. Do not inflate the set with superficial variations of the same task.
 
-Read
-[description-improvement.md](../../references/description-improvement.md) when
-the claim concerns natural discovery or improving frontmatter routing. The
-attached-skill workflow does not test natural discovery; use a platform-native
-discovery surface or report that the required adapter is unavailable.
+Share the exact prompts with the user before running them. Briefly state what
+each prompt is intended to test and ask whether they look right or should be
+changed or supplemented. Incorporate the user's response before continuing.
 
-## Author Fair Evidence
+Read [evaluation-methodologies.md](references/evaluation-methodologies.md) while
+selecting prompts and the comparison. It explains which cases produce useful
+signal and how to choose the baseline.
 
-Keep the visible task stable while candidates vary. Use the no-skill baseline
-by default so the report can show what the skill changed; omit it only when the
-comparison cannot answer the decision, and record why.
+### 2. Save The Cases And Define Success
 
-The target skill's companion `.skill/` workspace owns the schema-version-2
-authored suite at `evals/evals.json` and its candidates. Keep simple tasks
-inline as top-level `evals[]` rows using `id`,
-`prompt`, `expected_output`, and `expectations`. Use `cases/<id>/` only when a
-task needs external fixtures, expected output, hidden judge guidance, or a
-deterministic validator. Follow the schema and placement rules in the shared
-references rather than inventing parallel metadata.
+Initialize the skill's eval workspace when needed, then save the confirmed
+prompts as separate `evals[]` rows in:
 
-The agent may see the task, declared fixtures, and selected candidate payload.
-It must not see expectations, expected outputs, validators, model-judge
-guidance, or human labels. Keep the task's user-visible requirements honest:
-hidden graders may evaluate them, not secretly introduce them.
+```text
+<skill-name>/.<skill-name>/evals/evals.json
+```
 
-For a skill candidate, the trial worker receives a staged copy of the frozen
-candidate payload and an explicit instruction to use it. The no-skill worker
-does not receive a skill path. This comparison measures behavior with and
-without an attached skill; it does not prove that a platform would naturally
-discover the skill. State this coverage limit whenever the requested claim
-concerns discovery or routing.
+Read [evals-schema.md](references/evals-schema.md) before writing or changing
+this file. It contains the MetaSkill CLI schema, a minimal example, file-backed
+case layout, and validation command.
 
-## Grade And Review
+For each prompt:
 
-Use the most exact fair grader:
+- assign a stable case `id`;
+- preserve the exact user-visible prompt;
+- describe the expected result in `expected_output` when a reference result is
+  useful;
+- write observable `expectations` that distinguish acceptable from defective
+  output; and
+- declare a deterministic, model, or human grader only when the case needs it.
 
-- deterministic checks for files, schemas, exact state, tests, and observable
-  process constraints
-- model judgment for semantic quality with multiple valid outcomes
-- human judgment for taste, domain expertise, ambiguous evidence, and important
-  accept/reject decisions
+Read [rubrics.md](references/rubrics.md) while defining expectations and
+graders. Every load-bearing criterion must identify observable Pass and Fail
+evidence and affect a possible verdict.
 
-Prefer binary checks. Use `unknown` when evidence cannot support a fair label.
-Inspect failed, surprising, and disagreed trials before changing a task or
-grader. Keep grader failures separate from target-skill failures.
+Success criteria may clarify how to judge a visible requirement, but must not
+add requirements that the prompt never gave the worker. Keep expected outputs,
+expectations, validators, judgment guidance, and human labels hidden from trial
+workers.
 
-The workbench is the human review interface. Use `Cases` to inspect realistic
-tasks and observable criteria, and `Runs` to compare immutable skill versions.
-Open a case to review outputs, artifacts, criterion evidence, and plain human
-feedback side by side. The workbench reads saved runs and records review; it
-does not launch, rerun, or regrade work. Ask for those actions in this Codex
-task. Start with one trial per case, then rerun selected cases or add
-repetitions when variance, disagreement, or a consequential claim needs more
-evidence.
+Use inline fields for simple cases. Create `evals/cases/<case-id>/` only when a
+case needs fixtures, `task.md`, `expected.md`, `judge.md`, or a deterministic
+validator. Validate and lint the completed suite before running it.
 
-Use the structured finding category to identify the first supported cause and
-link it to the exact response or artifact. After the user approves the expected
-behavior, promote a reviewed failure into a regression case from the same case
-view. Do not turn an observation into a durable requirement without that
-approval.
+### 3. Freeze A Fair Comparison
 
-Treat feedback as evidence for the next agent turn. Diagnose whether it points
-to the case, grader, harness, environment, or target skill; do not ask the user
-to classify the note. Hand source changes to `skill-author`, then rerun the
-affected cases. This skill never proposes or edits candidate source itself.
+Read [running-evaluations.md](references/running-evaluations.md) before creating
+a run. It contains the exact MetaSkill commands, native-subagent packet
+contract, grader execution, recovery, and report workflow.
 
-Human annotations are excluded from model judgment unless the reviewer
-explicitly marks them for `rubric` or `evidence` use. Read
-[human-review.md](references/human-review.md) for this distinction. Pairwise
-preferences never become absolute judge context automatically.
+Run `eval prepare` to create a new immutable run under
+`.<skill-name>/runs/<run-id>/`. Use the no-skill baseline by default; use another
+named version only when it better answers what changed.
 
-Keep outcomes and produced artifacts primary during review. Open transcripts
-for failure diagnosis or grader audits. Show the selected baseline, task model,
-judge model, execution path, local storage path, and known external model
-boundary before launch. Localhost storage does not mean model inputs remain
-local. Use the CLI as the scripted interface for deterministic lifecycle
-operations and unattended execution.
+Keep the visible prompt, fixtures, environment, and execution settings the same
+while the candidate changes. Freeze the selected cases, candidate payloads,
+baseline, graders, and execution settings. The runner expands them into one
+trial for every selected case × version × repetition.
 
-## Run And Report
+Use one repetition initially. Add repetitions only when observed variance or
+the evaluation question makes consistency relevant.
 
-For an interactive request, keep orchestration in the current Codex task:
+See [run-layout.md](../../references/run-layout.md) for the frozen run contents.
 
-1. Validate the suite and run `eval prepare` to freeze the selected cases,
-   candidates, graders, and one worker packet per trial.
-2. Dispatch one native subagent per packet in bounded waves. Pair the with-skill
-   and no-skill workers for a case as closely as capacity allows. With four
-   collaboration slots, run at most three workers beside the orchestrator.
-3. Prompt each worker as though the user had asked it to perform the task. Give
-   it only the visible task, declared fixtures, dedicated workspace, result
-   location, and staged skill path when applicable. Do not mention the
-   evaluation, comparison, hidden criteria, annotations, or durable run
-   directory. Follow [cli.md](../../references/cli.md) for the canonical worker
-   result object and lifecycle commands.
-4. Run `eval submit` as each worker finishes. Preserve completed evidence when
-   another worker fails or the task is interrupted; use `eval unresolved` and
-   `eval retry` for recovery.
-5. After every trial is terminal, run `eval finalize`. It invokes the configured
-   judge, writes the report, and removes temporary trial workspaces.
-6. Inspect the report and produced artifacts, then open the review workbench in
-   the Codex In-App Browser when human inspection or feedback is useful.
+### 4. Run The Tasks And Capture Results
 
-Native subagents isolate context, not the filesystem. Their dedicated staged
-workspaces are the normal boundary for trusted local evaluation; they are not a
-security sandbox. Use the unattended Codex Exec lane when the task needs a
-pinned worker model, repeatable non-interactive execution, or a stronger
-workspace-write boundary. Real detached Git worktrees are reserved for
-materializing branch or Git-ref candidates and repo-mutating trials; ordinary
-trial directories are temporary workspaces.
+For an interactive evaluation, dispatch the worker packets returned by
+`eval prepare`. Give each worker only its visible task, declared fixtures,
+temporary workspace, and result location. Give the frozen skill payload only
+to the skill candidate; the baseline receives no skill path.
 
-For unattended or scripted evaluation, use `eval run`. It dispatches task
-workers with ephemeral `codex exec`, then uses the same submission, frozen
-evidence, grading, and reporting contracts as the interactive path. It must not
-create persistent user-visible Codex tasks. See [cli.md](../../references/cli.md)
-for exact commands and model overrides.
+Do not reveal the evaluation, comparison, hidden criteria, expected output,
+validators, judgment guidance, human labels, or durable run directory to a
+trial worker.
 
-Treat a run as frozen evidence. Changing the suite, candidate, grader, or skill
-payload requires a new run. Use [run-layout.md](../../references/run-layout.md)
-for the canonical storage, recovery, reuse, and regrading rules.
+Submit every completed worker result with `eval submit`. This imports its
+response, produced files, event stream, and terminal state into the durable
+trial directory. Preserve completed evidence when another worker fails or the
+run is interrupted. Use `eval unresolved` and `eval retry` for recovery.
 
-Lead the report with the run objective and cases-by-versions comparison. For
-each failure, show the failed expectation or check and its evidence.
-Also report human/model disagreements, ungraded or unknown outcomes, run or
-grader errors, provenance, and coverage limits. Classify the first upstream
-cause before handing off a defect.
+Use `eval run` when unattended execution is more appropriate. Follow the
+commands and recovery behavior in
+[running-evaluations.md](references/running-evaluations.md).
 
-Keep pairwise review coverage separate from declared absolute human graders; a
-sampled A/B annotation does not silently become a trial grade.
+### 5. Grade And Compare The Outputs
 
-Close with suite or run location, what ran and what was skipped, headline
-candidate changes, failed checks, disagreements, failure classification, and
-what the evidence cannot establish. A green run proves only the measured
-scope.
+After every trial is terminal, run `eval finalize`. Always use
+[Choose The Grader](references/evaluation-methodologies.md#choose-the-grader)
+to select a deterministic validator, case-local LLM `judge.md`, or human
+judgment. Read [human-review.md](references/human-review.md) when human judgment
+applies.
+
+For failed, surprising, or disagreed trials, read
+[error-analysis.md](references/error-analysis.md), review the traces with the
+user, and confirm the observations and labels before changing anything.
+Use
+[eval-vocabulary.md](../../references/eval-vocabulary.md) for the canonical
+outcome terms.
+
+Interpret each case-level comparison precisely:
+
+| Baseline | Skill | Conclusion |
+|---|---|---|
+| fail | pass | improved |
+| pass | fail | regressed |
+| pass | pass | no uplift demonstrated |
+| fail | fail | inconclusive shared failure |
+| unavailable or uncertain | any | inconclusive |
+
+### 6. Present And Preserve The Evidence
+
+Generate `<skill-name>-evaluation.md` from the saved run. Lead with the
+evaluation question and skill effect, then show scenario outcomes, criteria
+evidence, time and token usage, execution issues, and run details. For every
+failure, identify the failed criterion and its evidence.
+
+Open the workbench when side-by-side inspection or feedback is useful. The
+workbench reads the same filesystem evidence; it is not a separate source of
+truth and does not launch evaluations.
+
+After the user approves the expected behavior, preserve a useful failure as a
+regression case when it should survive future changes. Do not convert an
+observation into a durable requirement without that approval.
+
+Close by giving the user the suite or run path, the comparison result, failed
+criteria, and what the evaluation cannot establish. Treat each run as frozen
+evidence: changing a prompt, candidate, grader, or skill payload requires a new
+run. An attached-skill comparison proves behavior when the skill is explicitly
+supplied; it does not prove natural discovery.

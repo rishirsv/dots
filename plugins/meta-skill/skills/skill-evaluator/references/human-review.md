@@ -3,16 +3,19 @@
 Read this when a run needs taste, domain expertise, adjudication of ambiguous
 evidence, or a human check on an important model judgment.
 
-Use the evaluation workbench. Review high-priority, regressed, unknown,
-disagreed, and surprising cases before routine passes. Add a deterministic
-sample of apparent passes and report both reviewed and unreviewed coverage.
+Use the evaluation workbench to inspect responses, artifacts, grades, and to
+record annotations. Use `metaskill eval record` to submit a declared absolute
+human grade. Review high-priority, regressed, unknown, disagreed, and surprising
+cases before routine passes. Add a deterministic sample of apparent passes and
+report both reviewed and unreviewed coverage.
 
-Use candidate-blind pairwise review for comparative quality. Randomize A/B
-order, record `A`, `B`, `tie`, `neither`, or `unknown`, and select one primary
-reason such as correctness, completeness, clarity, evidence, instruction
-following, safety, or style. Reveal candidate identity only after the
-annotation is recorded. Pairwise annotations remain separate from absolute
-trial grades.
+Use candidate-blind pairwise review for comparative quality only when the
+available review surface supports blinded A/B recording. Randomize A/B order,
+record `A`, `B`, `tie`, `neither`, or `unknown`, and select one primary reason
+such as correctness, completeness, clarity, evidence, instruction following,
+safety, or style. Reveal candidate identity only after the annotation is
+recorded. Pairwise annotations remain separate from absolute trial grades. Do
+not simulate blindness in an interface that exposes candidate identity.
 
 Use absolute review when a declared human grader must decide whether one trial
 meets a requirement. Keep the model label hidden until the reviewer records an

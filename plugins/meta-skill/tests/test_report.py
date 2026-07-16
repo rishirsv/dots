@@ -33,7 +33,7 @@ def fixture(root):
     skill = root / "skill"
     skill.mkdir(parents=True, exist_ok=True)
     (skill / "SKILL.md").write_text('---\nname: demo\ndescription: "Use for report tests."\n---\n')
-    run = root / ".skill" / "runs" / "run-1"
+    run = skill / ".demo" / "runs" / "run-1"
     candidates = [{"candidate": "no-skill", "source_kind": "none"}, {"candidate": "current", "source_kind": "current_worktree"}]
     trials = [{"trial_id": f"a.{candidate}.t1", "eval_id": "a", "candidate": candidate, "repetition": 1} for candidate in ("no-skill", "current")]
     write(run / "run.json", {
@@ -66,6 +66,11 @@ class ReportTests(unittest.TestCase):
             report = build_report(str(run))
             self.assertEqual(report["delta_totals"], {"improved": 1})
             self.assertEqual(report["comparisons"][0]["delta"], "improved")
+            summaries = {row["candidate"]: row for row in report["candidate_summaries"]}
+            self.assertEqual(summaries["no-skill"]["pass_rate"], 0)
+            self.assertEqual(summaries["current"]["pass_rate"], 1)
+            self.assertEqual(summaries["current"]["pass_rate_delta"], 1)
+            self.assertIsNone(summaries["current"]["improvement_multiplier"])
             self.assertEqual(report["trials"][0]["failed_checks"][0]["evidence"], "missing exact result")
             self.assertEqual(report["cases"][0]["eval_id"], "a")
             self.assertEqual(
@@ -76,8 +81,13 @@ class ReportTests(unittest.TestCase):
             self.assertEqual(report["cases"][0]["versions"][1]["verdict"], "passed")
             markdown = render_markdown(report)
             self.assertIn("**Version delta:** 1 improved", markdown)
+            self.assertIn("## Summary", markdown)
+            self.assertIn("## Criteria evidence", markdown)
+            self.assertIn("100.0%", markdown)
+            self.assertIn("+100.0 pp", markdown)
             self.assertIn("missing exact result", markdown)
             path = write_report(report)
+            self.assertEqual(path.name, "demo-evaluation.md")
             self.assertEqual(path.read_text(), markdown)
 
     def test_case_matrix_uses_inconclusive_and_markdown_includes_feedback(self):
@@ -162,11 +172,54 @@ class ReportTests(unittest.TestCase):
             self.assertEqual(report["comparisons"][0]["candidate"], "no-skill")
             self.assertEqual(report["comparisons"][0]["delta"], "regressed")
 
+    def test_equal_passes_do_not_claim_uplift(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run = fixture(Path(tmp))
+            baseline_grades = run / "trials" / "a.no-skill.t1" / "grades.jsonl"
+            jsonl(
+                baseline_grades,
+                [{
+                    "trial_id": "a.no-skill.t1",
+                    "metric": "quality",
+                    "grader": {"kind": "model", "id": "judge"},
+                    "grade_status": "pass",
+                    "rationale": "passed",
+                }],
+            )
+            report = build_report(str(run))
+            self.assertEqual(
+                report["comparisons"][0]["delta"], "no_uplift_demonstrated"
+            )
+            current = next(
+                row for row in report["candidate_summaries"] if row["candidate"] == "current"
+            )
+            self.assertEqual(current["pass_rate_delta"], 0)
+            self.assertEqual(current["improvement_multiplier"], 1)
+            self.assertIn("1 no uplift demonstrated", render_markdown(report))
+
+    def test_equal_failures_are_inconclusive(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run = fixture(Path(tmp))
+            current_grades = run / "trials" / "a.current.t1" / "grades.jsonl"
+            jsonl(
+                current_grades,
+                [{
+                    "trial_id": "a.current.t1",
+                    "metric": "quality",
+                    "grader": {"kind": "model", "id": "judge"},
+                    "grade_status": "fail",
+                    "rationale": "failed",
+                }],
+            )
+            report = build_report(str(run))
+            self.assertEqual(report["comparisons"][0]["delta"], "inconclusive")
+            self.assertIn("1 inconclusive", render_markdown(report))
+
     def test_list_runs_uses_live_artifacts_and_rejects_old_layout(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             run = fixture(root)
-            suite = root / ".skill" / "evals" / "evals.json"
+            suite = root / "skill" / ".demo" / "evals" / "evals.json"
             suite.parent.mkdir(parents=True, exist_ok=True)
             suite.write_text('{"schema_version":2,"evals":[]}')
             listed = list_runs(str(suite))["runs"]

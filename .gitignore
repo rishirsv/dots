@@ -5,10 +5,10 @@
 /.claude/
 
 # Skill companion workspaces keep authored evals trackable and generated state ignored.
-**/.skill/**/runs/
-**/.skill/**/worktrees/
-**/.skill/**/tmp/
-**/.skill/**/packages/
+**/.[a-z0-9_-]*/runs/
+**/.[a-z0-9_-]*/worktrees/
+**/.[a-z0-9_-]*/tmp/
+**/.[a-z0-9_-]*/packages/
 
 # macOS
 .DS_Store

@@ -7,11 +7,6 @@ Don't add features, refactor, or introduce abstractions beyond what the task req
 
 ## Subagent use
 
-Use subagents for bounded independent work such as broad scans, research, or
-review. Give each a narrow scope and exact return format. Avoid tiny tasks,
-sequential dependencies, and overlapping edits. The root agent owns synthesis
-and verifies consequential claims.
-
 ### Model choice
 
 - Sol Medium: root synthesis, ambiguity, architecture, consequential review,
@@ -27,21 +22,3 @@ and verifies consequential claims.
 Escalate a specific lane to Sol High for genuinely difficult work. Reserve
 Ultra for measured gains on hard tasks that split cleanly. Omit model pins when
 dynamic selection is preferable.
-
-## Local resource lifecycle
-
-Treat detached servers, browser mirrors, simulators, recordings, background
-terminals, SSH sessions, and MCP workers as owned resources with an explicit
-lifetime. Stop resources owned by the task before the final response unless
-the user explicitly requests a bounded handoff or persistent session. For a
-bounded handoff, record or report its expiry; for a persistent session, report
-the exact stop command. Never use broad `pkill` or `killall` cleanup when the
-owning PID, process start time, session, simulator, port, or worktree can be
-identified.
-
-Keep local concurrency proportional to the machine and workload. Reuse or
-continue an existing task when it has the same outcome instead of starting a
-duplicate. Prefer one runtime-owning task per shared simulator, browser, or
-desktop surface; other tasks may perform independent read-only or build work.
-Before delegating more work, account for active root tasks and already-running
-subagents rather than treating the per-task thread limit as a global budget.
