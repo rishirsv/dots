@@ -106,7 +106,8 @@ example over several abstract labels.
 Use visuals only when they replace prose:
 
 - `comparison-grid` for a genuine before/after mental model
-- `flow-diagram` for one causal or end-to-end path
+- `process-steps` for one linear causal or end-to-end path
+- `flow-diagram` only when the path branches or rejoins
 - `data-table` for repeated mappings such as product surface to changed behavior
 - real screenshots or clips for visual and interaction changes
 - `callout` for an unfinished boundary or limitation the reader must not miss

@@ -29,7 +29,9 @@
   --a20: rgba(13, 13, 13, 0.20);
   --a40: rgba(13, 13, 13, 0.40);
   --a55: rgba(13, 13, 13, 0.55);
+  --a60: rgba(13, 13, 13, 0.60);
   --a70: rgba(13, 13, 13, 0.70);
+  --text-muted: var(--a60);
   --font-sans: -apple-system, Helvetica Neue, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace;
   --article: 720px;
@@ -43,6 +45,15 @@
   --dur-reveal: 400ms;
   --ease: cubic-bezier(0.2, 0, 0, 1);
   --stagger: 60ms;
+  --chart-emphasis: var(--accent);
+  --chart-value-emphasis: var(--accent-deep);
+  --chart-pos: var(--a40);
+  --chart-neg: var(--a20);
+  --chart-mark: var(--a20);
+  --chart-track: var(--a4);
+  --chart-grid: var(--a12);
+  --chart-label: var(--text-muted);
+  --chart-value: var(--text-muted);
 }
 
 [data-theme="dark"] {
@@ -64,6 +75,7 @@
   --a20: rgba(245, 245, 244, 0.20);
   --a40: rgba(245, 245, 244, 0.40);
   --a55: rgba(245, 245, 244, 0.55);
+  --a60: rgba(245, 245, 244, 0.60);
   --a70: rgba(245, 245, 244, 0.70);
 }
 
@@ -87,6 +99,7 @@
     --a20: rgba(245, 245, 244, 0.20);
     --a40: rgba(245, 245, 244, 0.40);
     --a55: rgba(245, 245, 244, 0.55);
+    --a60: rgba(245, 245, 244, 0.60);
     --a70: rgba(245, 245, 244, 0.70);
   }
 }
@@ -124,6 +137,14 @@ h1 {
   font-weight: 600;
   margin: 0;
   text-wrap: balance;
+}
+
+@media (max-width: 380px) {
+  h1 {
+    font-size: 32px;
+    line-height: 38px;
+    letter-spacing: -1.5px;
+  }
 }
 
 h2 {
@@ -175,7 +196,7 @@ th, td {
 thead th {
   font-size: 12px;
   letter-spacing: 0.02em;
-  color: var(--a55);
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -228,23 +249,30 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
   margin: 0 auto;
   padding: 64px 24px 96px;
 }
-.context-line { font-size: 13px; color: var(--a55); margin: 0 0 20px; }
+.page > header { margin-bottom: var(--section); }
+.context-line { font-size: 13px; color: var(--text-muted); margin: 0 0 20px; }
 .title-row {
-  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap;
   margin-bottom: 8px;
 }
+.title-row h1 { flex: 1 1 480px; min-width: 0; }
 .status {
   display: inline-flex; align-items: center; height: 20px; padding: 0 8px;
   border-radius: var(--r-pill); background: var(--a4); color: var(--a70);
   font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
   white-space: nowrap; border: 1px solid var(--a12);
 }
-.dek { font-size: 16px; color: var(--a55); margin: 0 0 40px; max-width: 62ch; }
+.dek { font-size: 16px; color: var(--text-muted); margin: 0; max-width: 62ch; }
 footer.sources {
   margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--a12);
-  font-size: 12px; color: var(--a40); line-height: 1.7;
+  font-size: 12px; color: var(--text-muted); line-height: 1.7;
 }
-footer.sources a { color: var(--a55); }
+footer.sources a { color: var(--text-muted); }
+@media (max-width: 680px) {
+  .page { padding: 40px 24px 72px; }
+  .title-row { display: block; }
+  .title-row .status { margin-top: 10px; }
+}
 
 /* ---------- toc-rail ---------- */
 
@@ -252,11 +280,15 @@ footer.sources a { color: var(--a55); }
   font-size: 13px;
   margin: 0 0 48px;
 }
-.toc-rail .toc-label {
-  font-size: 11px; letter-spacing: 0.02em; color: var(--a40);
-  margin: 0 0 8px;
+.toc-wide { display: none; }
+.toc-rail summary,
+.toc-label {
+  font-size: 11px; letter-spacing: 0.02em; color: var(--text-muted);
 }
-.toc-rail a { display: block; color: var(--a55); padding: 3px 0; }
+.toc-rail summary { cursor: pointer; padding: 6px 0; }
+.toc-label { margin: 0 0 6px; }
+.toc-links { padding-top: 6px; }
+.toc-rail a { display: block; color: var(--text-muted); padding: 3px 0; }
 .toc-rail a:hover { color: var(--foreground); text-decoration: none; }
 .toc-rail a.active { color: var(--foreground); font-weight: 600; }
 
@@ -270,13 +302,15 @@ footer.sources a { color: var(--a55); }
     overflow-y: auto;
     margin: 8px calc(-200px - 48px) 0 0;
   }
+  .toc-wide { display: block; }
+  .toc-compact { display: none; }
 }
 
 /* ---------- atlas-only chrome ---------- */
 
 .specimen-note {
   font-size: 12px;
-  color: var(--a40);
+  color: var(--text-muted);
   margin-top: 10px;
 }
 .specimen {
@@ -300,8 +334,8 @@ footer.sources a { color: var(--a55); }
   font-size: 22px; font-weight: 600; letter-spacing: -0.6px;
   font-variant-numeric: tabular-nums; margin-bottom: 4px;
 }
-.kpi-label { font-size: 12px; color: var(--a55); line-height: 1.5; }
-.kpi-note { font-size: 11px; color: var(--a40); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.kpi-label { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.kpi-note { font-size: 11px; color: var(--text-muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
 
 /* ---------- callout ---------- */
 .callout {
@@ -340,6 +374,58 @@ footer.sources a { color: var(--a55); }
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
+@media (max-width: 680px) {
+  .table-stack { overflow: visible; }
+  .table-stack table,
+  .table-stack tbody,
+  .table-stack tr,
+  .table-stack td { display: block; width: 100%; }
+  .table-stack thead {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+  .table-stack tr { padding: 12px 0; border-bottom: 1px solid var(--a20); }
+  .table-stack tr:first-child { border-top: 1px solid var(--a20); }
+  .table-stack td {
+    display: grid; grid-template-columns: minmax(88px, 0.42fr) minmax(0, 1fr);
+    gap: 12px; padding: 5px 4px; border: 0; text-align: left;
+    white-space: normal;
+  }
+  .table-stack td::before {
+    content: attr(data-label); color: var(--text-muted); font-size: 12px; font-weight: 500;
+  }
+}
+
+/* ---------- process-steps ---------- */
+.process-steps {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 24px; list-style: none; margin: 0 0 var(--section); padding: 0;
+}
+.process-step { position: relative; min-width: 0; }
+.process-step:not(:last-child)::after {
+  content: "\2192"; position: absolute; top: 3px; right: -17px;
+  color: var(--text-muted); font-size: 14px;
+}
+.process-marker {
+  display: flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; margin-bottom: 10px;
+  border: 1px solid var(--a20); border-radius: 50%; color: var(--text-muted);
+  font-family: var(--font-mono); font-size: 11px;
+}
+.process-step.is-current .process-marker {
+  border-color: var(--accent); color: var(--accent-deep); font-weight: 700;
+}
+.process-title { font-size: 14px; font-weight: 600; line-height: 1.45; }
+.process-detail { margin: 4px 0 0; color: var(--text-muted); font-size: 12px; line-height: 1.55; }
+@media (max-width: 680px) {
+  .process-steps { grid-template-columns: 1fr; gap: 16px; }
+  .process-step { display: grid; grid-template-columns: 28px minmax(0, 1fr); column-gap: 12px; }
+  .process-marker { grid-row: 1 / span 2; margin: 0; }
+  .process-step:not(:last-child)::after {
+    content: ""; top: 27px; bottom: -17px; left: 12px; right: auto;
+    width: 1px; background: var(--a20);
+  }
+}
 
 /* ---------- bar-chart ---------- */
 .chart-card {
@@ -351,7 +437,7 @@ footer.sources a { color: var(--a55); }
 .chart-title {
   font-size: 13px;
   font-weight: 500;
-  color: var(--a55);
+  color: var(--text-muted);
   margin-bottom: 16px;
 }
 .bar-row {
@@ -365,7 +451,7 @@ footer.sources a { color: var(--a55); }
   width: 148px;
   flex-shrink: 0;
   font-size: 13px;
-  color: var(--a55);
+  color: var(--text-muted);
 }
 .bar-track {
   flex: 1;
@@ -388,7 +474,7 @@ footer.sources a { color: var(--a55); }
   flex-shrink: 0;
   font-size: 12px;
   font-variant-numeric: tabular-nums;
-  color: var(--a55);
+  color: var(--text-muted);
 }
 
 /* ---------- sparkline ---------- */
@@ -405,7 +491,7 @@ footer.sources a { color: var(--a55); }
 .sparkline-line {
   fill: none;
   stroke: currentColor;
-  color: var(--a40);
+  color: var(--text-muted);
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -516,7 +602,7 @@ footer.sources a { color: var(--a55); }
 /* ---------- comparison-grid ---------- */
 .comparison-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
   gap: 1px;
   background: var(--a12);
   border: 1px solid var(--a12);
@@ -524,7 +610,10 @@ footer.sources a { color: var(--a55); }
   overflow: hidden;
   margin-bottom: var(--section);
 }
-@media (max-width: 680px) { .comparison-grid { grid-template-columns: 1fr; } }
+.comparison-grid[data-columns="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.comparison-grid[data-columns="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.comparison-grid[data-columns="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 680px) { .comparison-grid[data-columns] { grid-template-columns: 1fr; } }
 .option-card {
   background: var(--background);
   padding: 18px 20px;
@@ -532,7 +621,7 @@ footer.sources a { color: var(--a55); }
 .option-card h3 { margin-bottom: 8px; }
 .option-card p { font-size: 14px; line-height: 1.6; margin: 0 0 12px; }
 .option-card .recommend-mark { font-weight: 700; color: var(--accent-deep); }
-.best-for { font-size: 12px; color: var(--a55); text-transform: none; }
+.best-for { font-size: 12px; color: var(--text-muted); text-transform: none; }
 
 /* ---------- disclosure ---------- */
 .disclosure {
@@ -572,7 +661,7 @@ footer.sources a { color: var(--a55); }
   padding: 4px 0;
   font-size: 13px;
   font-weight: 600;
-  color: var(--a55);
+  color: var(--text-muted);
   list-style: none;
 }
 .disclosure-plain summary::-webkit-details-marker { display: none; }
@@ -631,13 +720,13 @@ footer.sources a { color: var(--a55); }
 }
 .milestone-date {
   font-size: 12px;
-  color: var(--a40);
+  color: var(--text-muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 .milestone-detail {
   font-size: 13px;
-  color: var(--a55);
+  color: var(--text-muted);
   line-height: 1.6;
   margin-top: 2px;
 }
@@ -647,6 +736,8 @@ footer.sources a { color: var(--a55); }
 /* ---------- flow-diagram ---------- */
 .flow-diagram-wrap {
   overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-gutter: stable;
   margin-bottom: 12px;
 }
 .flow-diagram {
@@ -683,9 +774,39 @@ footer.sources a { color: var(--a55); }
 }
 .flow-caption {
   font-size: 13px;
-  color: var(--a55);
+  color: var(--text-muted);
   line-height: 1.6;
   margin: 0;
+}
+
+/* ---------- evidence figures ---------- */
+.wide-figure {
+  width: min(1040px, calc(100vw - 48px));
+  margin: 0 50% var(--section); transform: translateX(-50%);
+}
+.wide-figure.is-contained { width: 100%; margin-inline: 0; transform: none; }
+.wide-figure img, .wide-figure svg,
+.evidence-item img, .evidence-item svg {
+  display: block; width: 100%; height: auto; object-fit: contain;
+  border: 1px solid var(--a12); border-radius: var(--r-card); background: var(--a4);
+}
+.wide-figure img, .wide-figure svg { max-height: 720px; }
+.wide-figure figcaption {
+  max-width: 72ch; margin-top: 10px; color: var(--text-muted); font-size: 13px; line-height: 1.6;
+}
+.evidence-gallery {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px; margin-bottom: var(--section);
+}
+.evidence-item { min-width: 0; margin: 0; }
+.evidence-item.is-featured { grid-column: 1 / -1; }
+.evidence-item img, .evidence-item svg { aspect-ratio: 16 / 9; }
+.evidence-item figcaption {
+  margin-top: 8px; color: var(--text-muted); font-size: 12px; line-height: 1.55;
+}
+@media (max-width: 680px) {
+  .evidence-gallery { grid-template-columns: 1fr; gap: 18px; }
+  .evidence-item.is-featured { grid-column: auto; }
 }
 
 /* ---------- pull-quote ---------- */
@@ -705,7 +826,7 @@ footer.sources a { color: var(--a55); }
   font-size: 13px;
   font-weight: 400;
   letter-spacing: normal;
-  color: var(--a55);
+  color: var(--text-muted);
 }
 
 /* ---------- theme-toggle ---------- */
@@ -783,23 +904,30 @@ footer.sources a { color: var(--a55); }
   </header>
 
   <nav data-component="toc-rail" class="toc-rail" aria-label="On this page">
-    <p class="toc-label">On this page</p>
-    <a href="#page-shell">Page shell</a>
-    <a href="#toc-rail">TOC rail</a>
-    <a href="#stat-tiles">Stat tiles</a>
-    <a href="#callout">Callout</a>
-    <a href="#data-table">Data table</a>
-    <a href="#bar-chart">Bar chart</a>
-    <a href="#sparkline">Sparkline</a>
-    <a href="#recommendation">Recommendation</a>
-    <a href="#code-panel">Code panel</a>
-    <a href="#diff-block">Diff block</a>
-    <a href="#comparison-grid">Comparison grid</a>
-    <a href="#disclosure">Disclosure</a>
-    <a href="#timeline">Timeline</a>
-    <a href="#flow-diagram">Flow diagram</a>
-    <a href="#pull-quote">Pull quote</a>
-    <a href="#theme-toggle">Theme toggle</a>
+    <div class="toc-wide"><p class="toc-label">On this page</p><div class="toc-links">
+      <a href="#page-shell">Page shell</a><a href="#toc-rail">TOC rail</a>
+      <a href="#stat-tiles">Stat tiles</a><a href="#callout">Callout</a>
+      <a href="#data-table">Data table</a><a href="#process-steps">Process steps</a>
+      <a href="#bar-chart">Bar chart</a><a href="#sparkline">Sparkline</a>
+      <a href="#recommendation">Recommendation</a><a href="#code-panel">Code panel</a>
+      <a href="#diff-block">Diff block</a><a href="#comparison-grid">Comparison grid</a>
+      <a href="#disclosure">Disclosure</a><a href="#timeline">Timeline</a>
+      <a href="#flow-diagram">Flow diagram</a><a href="#wide-figure">Wide figure</a>
+      <a href="#evidence-gallery">Evidence gallery</a><a href="#pull-quote">Pull quote</a>
+      <a href="#theme-toggle">Theme toggle</a>
+    </div></div>
+    <details class="toc-compact"><summary>On this page</summary><div class="toc-links">
+      <a href="#page-shell">Page shell</a><a href="#toc-rail">TOC rail</a>
+      <a href="#stat-tiles">Stat tiles</a><a href="#callout">Callout</a>
+      <a href="#data-table">Data table</a><a href="#process-steps">Process steps</a>
+      <a href="#bar-chart">Bar chart</a><a href="#sparkline">Sparkline</a>
+      <a href="#recommendation">Recommendation</a><a href="#code-panel">Code panel</a>
+      <a href="#diff-block">Diff block</a><a href="#comparison-grid">Comparison grid</a>
+      <a href="#disclosure">Disclosure</a><a href="#timeline">Timeline</a>
+      <a href="#flow-diagram">Flow diagram</a><a href="#wide-figure">Wide figure</a>
+      <a href="#evidence-gallery">Evidence gallery</a><a href="#pull-quote">Pull quote</a>
+      <a href="#theme-toggle">Theme toggle</a>
+    </div></details>
   </nav>
 
   <section id="page-shell">
@@ -820,14 +948,15 @@ footer.sources a { color: var(--a55); }
 
   <section id="toc-rail">
     <h2>TOC rail</h2>
-    <p>A sticky margin rail for documents with four or more sections a reader may want to jump between. It docks in the right margin at wide viewports and collapses to a plain inline list on narrow ones; page-behavior optionally adds the active-link scroll-spy.</p>
+    <p>A sticky margin rail for six or more sections, or long reference pages readers navigate non-linearly. It docks in the right margin at wide viewports and becomes a compact native disclosure on narrow ones; short utilitarian pages omit it.</p>
     <div class="specimen">
       <nav data-component="toc-rail" class="toc-rail" aria-label="On this page example" style="position:static; float:none; width:auto; margin:0;">
-        <p class="toc-label">On this page</p>
-        <a href="#section-one" class="active">Section one</a>
-        <a href="#section-two">Section two</a>
-        <a href="#section-three">Section three</a>
-        <a href="#section-four">Section four</a>
+        <details class="toc-compact"><summary>On this page</summary><div class="toc-links">
+          <a href="#section-one" class="active">Section one</a>
+          <a href="#section-two">Section two</a><a href="#section-three">Section three</a>
+          <a href="#section-four">Section four</a><a href="#section-five">Section five</a>
+          <a href="#section-six">Section six</a>
+        </div></details>
       </nav>
     </div>
     <p class="specimen-note">Variants: right-docked (default) or left-docked.</p>
@@ -884,7 +1013,7 @@ footer.sources a { color: var(--a55); }
     <h2>Data table</h2>
     <p>Structured rows a reader compares line by line — decisions, inventories, risk registers. It builds on theme.css's base table styles with a labeled first column, right-aligned numeric columns, and a horizontal scroll wrapper for wide content; dividers stay horizontal only, never a full grid.</p>
     <div class="specimen">
-      <div data-component="data-table" class="table-scroll" style="margin-bottom:0;">
+      <div data-component="data-table" class="table-scroll table-stack" style="margin-bottom:0;">
         <table>
           <thead>
             <tr>
@@ -897,45 +1026,54 @@ footer.sources a { color: var(--a55); }
           </thead>
           <tbody>
             <tr>
-              <td class="cell-label">Vendor SSO deprecation</td>
-              <td>Priya N.</td>
-              <td>High</td>
-              <td class="col-num">$180k</td>
-              <td>Migrate to OIDC before Sept 30 shutdown.</td>
+              <td class="cell-label" data-label="Risk">Vendor SSO deprecation</td>
+              <td data-label="Owner">Priya N.</td><td data-label="Likelihood">High</td>
+              <td class="col-num" data-label="Exposure">$180k</td>
+              <td data-label="Mitigation">Migrate to OIDC before Sept 30 shutdown.</td>
             </tr>
             <tr>
-              <td class="cell-label">Single on-call for billing</td>
-              <td>Marcus T.</td>
-              <td>Medium</td>
-              <td class="col-num">$40k</td>
-              <td>Cross-train two engineers this quarter.</td>
+              <td class="cell-label" data-label="Risk">Single on-call for billing</td>
+              <td data-label="Owner">Marcus T.</td><td data-label="Likelihood">Medium</td>
+              <td class="col-num" data-label="Exposure">$40k</td>
+              <td data-label="Mitigation">Cross-train two engineers this quarter.</td>
             </tr>
             <tr>
-              <td class="cell-label">Unpinned build image</td>
-              <td>Release eng.</td>
-              <td>Medium</td>
-              <td class="col-num">$15k</td>
-              <td>Pin digest, add drift alert.</td>
+              <td class="cell-label" data-label="Risk">Unpinned build image</td>
+              <td data-label="Owner">Release eng.</td><td data-label="Likelihood">Medium</td>
+              <td class="col-num" data-label="Exposure">$15k</td>
+              <td data-label="Mitigation">Pin digest, add drift alert.</td>
             </tr>
             <tr>
-              <td class="cell-label">Data export lacks audit log</td>
-              <td>Priya N.</td>
-              <td>Low</td>
-              <td class="col-num">$25k</td>
-              <td>Ship logging with v2.4, tracked in DATA-118.</td>
+              <td class="cell-label" data-label="Risk">Data export lacks audit log</td>
+              <td data-label="Owner">Priya N.</td><td data-label="Likelihood">Low</td>
+              <td class="col-num" data-label="Exposure">$25k</td>
+              <td data-label="Mitigation">Ship logging with v2.4, tracked in DATA-118.</td>
             </tr>
             <tr>
-              <td class="cell-label">Regional failover untested</td>
-              <td>SRE</td>
-              <td>High</td>
-              <td class="col-num">$210k</td>
-              <td>Run game day before next release freeze.</td>
+              <td class="cell-label" data-label="Risk">Regional failover untested</td>
+              <td data-label="Owner">SRE</td><td data-label="Likelihood">High</td>
+              <td class="col-num" data-label="Exposure">$210k</td>
+              <td data-label="Mitigation">Run game day before next release freeze.</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-    <p class="specimen-note">Variants: plain (default), first-column-labeled, numeric columns.</p>
+    <p class="specimen-note">Variants: plain (default), first-column-labeled, numeric columns, or stacked text rows on narrow screens.</p>
+  </section>
+
+  <section id="process-steps">
+    <h2>Process steps</h2>
+    <p>A linear sequence of two to six stages that stays fully visible at every width. It reads horizontally on larger screens and becomes a connected vertical list on mobile; use the SVG flow diagram only when the path branches.</p>
+    <div class="specimen">
+      <ol data-component="process-steps" class="process-steps" style="margin-bottom:0;">
+        <li class="process-step"><span class="process-marker">1</span><div class="process-title">Collect evidence</div><p class="process-detail">Inspect the source and current behavior.</p></li>
+        <li class="process-step"><span class="process-marker">2</span><div class="process-title">Make the change</div><p class="process-detail">Keep the correction scoped.</p></li>
+        <li class="process-step is-current"><span class="process-marker">3</span><div class="process-title">Verify</div><p class="process-detail">Render at the target widths.</p></li>
+        <li class="process-step"><span class="process-marker">4</span><div class="process-title">Hand off</div><p class="process-detail">Deliver the evidence.</p></li>
+      </ol>
+    </div>
+    <p class="specimen-note">Variants: numbered (default) or compact without detail lines.</p>
   </section>
 
   <section id="bar-chart">
@@ -1044,7 +1182,7 @@ footer.sources a { color: var(--a55); }
     <h2>Comparison grid</h2>
     <p>Two to four options laid side by side so the reader picks one — approaches, vendors, plans — each with a short case and a best-for line. The recommended option is marked with a bold run-in prefix in the body text, never a chip or border change.</p>
     <div class="specimen">
-      <div data-component="comparison-grid" class="comparison-grid" style="margin-bottom:0;">
+      <div data-component="comparison-grid" class="comparison-grid" data-columns="3" style="margin-bottom:0;">
         <div class="option-card">
           <h3>Managed queue</h3>
           <p>Hosted broker, autoscaled consumers, dashboards out of the box. Fastest to stand up, least control over retry semantics.</p>
@@ -1062,7 +1200,7 @@ footer.sources a { color: var(--a55); }
         </div>
       </div>
     </div>
-    <p class="specimen-note">Variants: 2-up, 3-up, 4-up; all collapse to one column under 680px.</p>
+    <p class="specimen-note">Variants: set data-columns to the exact 2-up, 3-up, or 4-up item count; all collapse to one column under 680px.</p>
   </section>
 
   <section id="disclosure">
@@ -1138,7 +1276,7 @@ footer.sources a { color: var(--a55); }
 
   <section id="flow-diagram">
     <h2>Flow diagram</h2>
-    <p>A system or process with a handful of steps where the connections between them matter as much as the steps — a pipeline, request path, or state machine. Hand-authored inline SVG on theme tokens, capped at about eight nodes, with exactly one node emphasized and a text caption carrying the same information for accessibility.</p>
+    <p>A branching system where node-edge relationships carry meaning — a dependency map, request path, or state machine. Hand-authored inline SVG on theme tokens, capped at about eight nodes, with exactly one node emphasized and a text caption carrying the same information for accessibility.</p>
     <div class="specimen">
       <div data-component="flow-diagram" class="flow-diagram-wrap">
         <svg class="flow-diagram reveal" viewBox="0 0 640 260" aria-hidden="true">
@@ -1178,6 +1316,31 @@ footer.sources a { color: var(--a55); }
       </p>
     </div>
     <p class="specimen-note">Variants: none — one node-edge visual language, rearranged per flow.</p>
+  </section>
+
+  <section id="wide-figure">
+    <h2>Wide figure</h2>
+    <p>One focal screenshot or diagram that needs more room than the article column. The figure breaks out to a controlled maximum width, then contracts inside the viewport with a readable point-specific caption. Text-bearing diagrams need HTML labels or a compact mobile composition instead of indiscriminate scaling.</p>
+    <div class="specimen">
+      <figure data-component="wide-figure" class="wide-figure">
+        <svg viewBox="0 0 1040 360" role="img" aria-label="Wide comparison with the recommended option emphasized"><rect width="1040" height="360" fill="var(--a4)"/><rect x="80" y="64" width="880" height="232" rx="6" fill="var(--background)" stroke="var(--a20)"/><rect x="132" y="112" width="440" height="28" rx="4" fill="var(--foreground)" opacity=".8"/><rect x="132" y="176" width="776" height="72" rx="6" fill="var(--a8)"/></svg>
+        <figcaption>The focal view keeps the main comparison readable without shrinking it into a thumbnail.</figcaption>
+      </figure>
+    </div>
+    <p class="specimen-note">Variants: breakout (default) or contained in the article column.</p>
+  </section>
+
+  <section id="evidence-gallery">
+    <h2>Evidence gallery</h2>
+    <p>Two to four screenshots or figures with readable captions, one optionally spanning the grid as the focal piece of evidence. Larger sets should be split by claim instead of compressed into a dense contact sheet; scaled SVG labels remain at least 11px.</p>
+    <div class="specimen">
+      <div data-component="evidence-gallery" class="evidence-gallery">
+        <figure class="evidence-item is-featured"><svg viewBox="0 0 960 540" role="img" aria-label="Desktop report state"><rect width="960" height="540" fill="var(--a4)"/><rect x="120" y="60" width="720" height="420" rx="6" fill="var(--background)" stroke="var(--a20)"/></svg><figcaption><strong>Desktop.</strong> The complete decision and its evidence share a readable frame.</figcaption></figure>
+        <figure class="evidence-item"><svg viewBox="0 0 640 360" role="img" aria-label="Mobile report state"><rect width="640" height="360" fill="var(--a4)"/><rect x="216" y="24" width="208" height="312" rx="16" fill="var(--background)" stroke="var(--a20)"/></svg><figcaption><strong>Mobile.</strong> The title, status, and evidence stack without collision.</figcaption></figure>
+        <figure class="evidence-item"><svg viewBox="0 0 640 360" role="img" aria-label="Dark report state"><rect width="640" height="360" fill="var(--code-surface)"/><rect x="72" y="44" width="496" height="272" rx="6" fill="var(--background)" stroke="var(--a20)"/></svg><figcaption><strong>Dark.</strong> The same hierarchy survives the theme change.</figcaption></figure>
+      </div>
+    </div>
+    <p class="specimen-note">Variants: equal grid or one featured item.</p>
   </section>
 
   <section id="pull-quote">

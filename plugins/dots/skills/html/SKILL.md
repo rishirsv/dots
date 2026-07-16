@@ -55,29 +55,43 @@ Choose the delivery branch before assembly:
 2. **Choose page or fragment.** Do not start with the page shell and strip it
    back later; follow the selected branch in
    [references/authoring.md](references/authoring.md).
-3. **Compose from the catalog.** Start from
+3. **Choose the smallest composition that does the job.** Do not invent
+   controls, KPI rows, cards, legends, or secondary facts to make the artifact
+   feel complete. If filtering, simulation, or mutable state is the main job,
+   stop and use an interactive-visualization or product-UI workflow instead.
+4. **Compose from the catalog.** Start from
    [assets/registry/registry.json](assets/registry/registry.json) — every asset
    lists when to use it. Visual components are self-describing fragments
    (header comment → scoped CSS → copy-paste markup); behavior entries provide
    optional scripts. Copy selected assets verbatim, then replace example
-   content with real content. Custom CSS is allowed only for genuinely novel
+   content with real content. For multi-component pages, use
+   `scripts/assemble.mjs` to package the chosen CSS once instead of rebuilding
+   the document wrapper by hand. Custom CSS is allowed only for genuinely novel
    needs and may only consume existing tokens. When unsure what composition
    fits, open
    [assets/atlas.html](assets/atlas.html) — every component rendered — and
    the finished pages in `assets/exemplars/`.
-4. **Write like it ships.** Real content everywhere — no lorem, no fake
+   When an original raster image would materially improve the artifact, use
+   the `imagegen` skill and follow the first-class integration workflow in
+   [references/generated-images.md](references/generated-images.md). Do not
+   generate diagrams, exact UI evidence, or decorative filler.
+5. **Write like it ships.** Real content everywhere — no lorem, no fake
    numbers, no invented KPIs. Every figure traceable to its source; honest
    gaps marked ("not verified") rather than smoothed over. Include a
    reader-facing sources footer only when attribution helps the artifact.
    Never expose tool names, sessions, prompts, private working paths, scratch
    files, or generation metadata.
-5. **Verify before handoff.** Use the branch-specific checklist in
-   [references/authoring.md](references/authoring.md#verification) — layout
-   at three widths and conformance with the design system; pages also require
-   dark-mode, reduced-motion, and JS-off checks.
+6. **Verify before handoff.** Run `scripts/check-artifact.mjs` on the finished
+   file, then use the branch-specific rendered checklist in
+   [references/authoring.md](references/authoring.md#verification). A failed
+   structural or rendered check blocks handoff; pages also require dark-mode,
+   reduced-motion, and JS-off checks.
 
 For charts of any kind, read [references/charts.md](references/charts.md)
 first — form follows the data's job, and some data should not be a chart.
+For a purpose-built generated photo, illustration, texture, or mockup, read
+[references/generated-images.md](references/generated-images.md), then use the
+`imagegen` skill before assembly.
 For page assembly details and treatment calibration, read
 [references/authoring.md](references/authoring.md). If a page's source material
 lacks a deliberate reading order, read
@@ -93,6 +107,8 @@ without turning it into commit chronology.
 ## Boundaries
 
 Product and app UI, interactive editors, and anything with real form state
-belong to `design`; static artifact mocks without product state belong here.
-Durable repo documentation belongs to `docs-writer`. Slide decks are out of
-scope. Understand sources as deeply as the artifact requires.
+belong to `design`; exploratory visualizations, simulations, and filter-driven
+analysis belong to an interactive-visualization workflow. Static artifact mocks
+without product state belong here. Durable repo documentation belongs to
+`docs-writer`. Slide decks are out of scope. Understand sources as deeply as
+the artifact requires.

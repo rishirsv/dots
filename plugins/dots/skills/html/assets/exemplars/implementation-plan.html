@@ -29,7 +29,9 @@
   --a20: rgba(13, 13, 13, 0.20);
   --a40: rgba(13, 13, 13, 0.40);
   --a55: rgba(13, 13, 13, 0.55);
+  --a60: rgba(13, 13, 13, 0.60);
   --a70: rgba(13, 13, 13, 0.70);
+  --text-muted: var(--a60);
   --font-sans: -apple-system, Helvetica Neue, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace;
   --article: 720px;
@@ -43,6 +45,15 @@
   --dur-reveal: 400ms;
   --ease: cubic-bezier(0.2, 0, 0, 1);
   --stagger: 60ms;
+  --chart-emphasis: var(--accent);
+  --chart-value-emphasis: var(--accent-deep);
+  --chart-pos: var(--a40);
+  --chart-neg: var(--a20);
+  --chart-mark: var(--a20);
+  --chart-track: var(--a4);
+  --chart-grid: var(--a12);
+  --chart-label: var(--text-muted);
+  --chart-value: var(--text-muted);
 }
 
 [data-theme="dark"] {
@@ -64,6 +75,7 @@
   --a20: rgba(245, 245, 244, 0.20);
   --a40: rgba(245, 245, 244, 0.40);
   --a55: rgba(245, 245, 244, 0.55);
+  --a60: rgba(245, 245, 244, 0.60);
   --a70: rgba(245, 245, 244, 0.70);
 }
 
@@ -87,6 +99,7 @@
     --a20: rgba(245, 245, 244, 0.20);
     --a40: rgba(245, 245, 244, 0.40);
     --a55: rgba(245, 245, 244, 0.55);
+    --a60: rgba(245, 245, 244, 0.60);
     --a70: rgba(245, 245, 244, 0.70);
   }
 }
@@ -124,6 +137,14 @@ h1 {
   font-weight: 600;
   margin: 0;
   text-wrap: balance;
+}
+
+@media (max-width: 380px) {
+  h1 {
+    font-size: 32px;
+    line-height: 38px;
+    letter-spacing: -1.5px;
+  }
 }
 
 h2 {
@@ -175,7 +196,7 @@ th, td {
 thead th {
   font-size: 12px;
   letter-spacing: 0.02em;
-  color: var(--a55);
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -222,53 +243,35 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
 }
 
 /* ---------- page-shell ---------- */
-.page {
-  max-width: var(--article);
-  margin: 0 auto;
-  padding: 64px 24px 96px;
-}
-.context-line { font-size: 13px; color: var(--a55); margin: 0 0 20px; }
-.title-row {
-  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-  margin-bottom: 8px;
-}
-.status {
-  display: inline-flex; align-items: center; height: 20px; padding: 0 8px;
-  border-radius: var(--r-pill); background: var(--a4); color: var(--a70);
-  font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
-  white-space: nowrap; border: 1px solid var(--a12);
-}
-.dek { font-size: 16px; color: var(--a55); margin: 0 0 40px; max-width: 62ch; }
-footer.sources {
-  margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--a12);
-  font-size: 12px; color: var(--a40); line-height: 1.7;
-}
-footer.sources a { color: var(--a55); }
-
-/* ---------- toc-rail ---------- */
-.toc-rail {
-  font-size: 13px;
-  margin: 0 0 48px;
-}
-.toc-rail .toc-label {
-  font-size: 11px; letter-spacing: 0.02em; color: var(--a40);
-  margin: 0 0 8px;
-}
-.toc-rail a { display: block; color: var(--a55); padding: 3px 0; }
-.toc-rail a:hover { color: var(--foreground); text-decoration: none; }
-.toc-rail a.active { color: var(--foreground); font-weight: 600; }
-
-@media (min-width: 1264px) {
-  .toc-rail {
-    position: sticky;
-    top: 64px;
-    float: right;
-    width: 200px;
-    max-height: calc(100vh - 128px);
-    overflow-y: auto;
-    margin: 8px calc(-200px - 48px) 0 0;
+  .page {
+    max-width: var(--article);
+    margin: 0 auto;
+    padding: 64px 24px 96px;
   }
-}
+  .page > header { margin-bottom: var(--section); }
+  .context-line { font-size: 13px; color: var(--text-muted); margin: 0 0 20px; }
+  .title-row {
+    display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .title-row h1 { flex: 1 1 480px; min-width: 0; }
+  .status {
+    display: inline-flex; align-items: center; height: 20px; padding: 0 8px;
+    border-radius: var(--r-pill); background: var(--a4); color: var(--a70);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+    white-space: nowrap; border: 1px solid var(--a12);
+  }
+  .dek { font-size: 16px; color: var(--text-muted); margin: 0; max-width: 62ch; }
+  footer.sources {
+    margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--a12);
+    font-size: 12px; color: var(--text-muted); line-height: 1.7;
+  }
+  footer.sources a { color: var(--text-muted); }
+  @media (max-width: 680px) {
+    .page { padding: 40px 24px 72px; }
+    .title-row { display: block; }
+    .title-row .status { margin-top: 10px; }
+  }
 
 /* ---------- stat-tiles ---------- */
 .kpi-grid {
@@ -287,8 +290,8 @@ footer.sources a { color: var(--a55); }
   font-size: 22px; font-weight: 600; letter-spacing: -0.6px;
   font-variant-numeric: tabular-nums; margin-bottom: 4px;
 }
-.kpi-label { font-size: 12px; color: var(--a55); line-height: 1.5; }
-.kpi-note { font-size: 11px; color: var(--a40); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.kpi-label { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.kpi-note { font-size: 11px; color: var(--text-muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
 
 /* ---------- timeline ---------- */
 .timeline {
@@ -342,13 +345,13 @@ footer.sources a { color: var(--a55); }
 }
 .milestone-date {
   font-size: 12px;
-  color: var(--a40);
+  color: var(--text-muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 .milestone-detail {
   font-size: 13px;
-  color: var(--a55);
+  color: var(--text-muted);
   line-height: 1.6;
   margin-top: 2px;
 }
@@ -392,7 +395,7 @@ footer.sources a { color: var(--a55); }
 }
 .flow-caption {
   font-size: 13px;
-  color: var(--a55);
+  color: var(--text-muted);
   line-height: 1.6;
   margin: 0;
 }
@@ -449,7 +452,7 @@ footer.sources a { color: var(--a55); }
 /* ---------- comparison-grid ---------- */
 .comparison-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
   gap: 1px;
   background: var(--a12);
   border: 1px solid var(--a12);
@@ -457,7 +460,10 @@ footer.sources a { color: var(--a55); }
   overflow: hidden;
   margin-bottom: var(--block);
 }
-@media (max-width: 680px) { .comparison-grid { grid-template-columns: 1fr; } }
+.comparison-grid[data-columns="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.comparison-grid[data-columns="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.comparison-grid[data-columns="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 680px) { .comparison-grid[data-columns] { grid-template-columns: 1fr; } }
 .option-card {
   background: var(--background);
   padding: 18px 20px;
@@ -465,7 +471,7 @@ footer.sources a { color: var(--a55); }
 .option-card h3 { margin-bottom: 8px; }
 .option-card p { font-size: 14px; line-height: 1.6; margin: 0 0 12px; }
 .option-card .recommend-mark { font-weight: 700; color: var(--accent-deep); }
-.best-for { font-size: 12px; color: var(--a55); text-transform: none; }
+.best-for { font-size: 12px; color: var(--text-muted); text-transform: none; }
 
 /* ---------- callout ---------- */
 .callout {
@@ -536,7 +542,7 @@ footer.sources a { color: var(--a55); }
   padding: 4px 0;
   font-size: 13px;
   font-weight: 600;
-  color: var(--a55);
+  color: var(--text-muted);
   list-style: none;
 }
 .disclosure-plain summary::-webkit-details-marker { display: none; }
@@ -602,14 +608,6 @@ footer.sources a { color: var(--a55); }
     </div>
     <p class="dek">Implementation plan for adding threaded discussion to task cards, so review feedback and blockers stay attached to the work instead of scattering across chat.</p>
   </header>
-
-  <nav data-component="toc-rail" class="toc-rail" aria-label="On this page">
-    <p class="toc-label">On this page</p>
-    <a href="#data-flow">Data flow</a>
-    <a href="#schema">Schema</a>
-    <a href="#decisions">Decisions</a>
-    <a href="#risks">Risks and rollout</a>
-  </nav>
 
   <div data-component="stat-tiles" class="kpi-grid">
     <div class="kpi-tile">
@@ -781,7 +779,7 @@ footer.sources a { color: var(--a55); }
 
   <section id="risks">
     <h2>Risks and rollout</h2>
-    <div data-component="comparison-grid" class="comparison-grid">
+    <div data-component="comparison-grid" class="comparison-grid" data-columns="2">
       <div class="option-card">
         <h3>Flag on for everyone at once</h3>
         <p>Simplest to ship and support — one code path, no per-workspace state to track. Any write-volume or fanout problem shows up for every workspace simultaneously.</p>

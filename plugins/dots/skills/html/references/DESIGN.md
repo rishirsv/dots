@@ -19,9 +19,12 @@ typography:
   h1:
     fontFamily: -apple-system, Helvetica Neue, Arial, sans-serif
     fontSize: 40px
+    mobileFontSize: 32px
     fontWeight: 600
     lineHeight: 48px
+    mobileLineHeight: 38px
     letterSpacing: -2.4px
+    mobileLetterSpacing: -1.5px
   h2:
     fontFamily: -apple-system, Helvetica Neue, Arial, sans-serif
     fontSize: 24px
@@ -67,7 +70,7 @@ x-dark:
   danger-bg: "rgba(255,120,110,0.07)"
   code-surface: "#161615"
   code-ink: "#ededed"
-x-alpha-steps: [4, 8, 12, 20, 40, 55, 70]
+x-alpha-steps: [4, 8, 12, 20, 40, 55, 60, 70]
 x-chart:
   emphasis: var(--accent)
   value-emphasis: var(--accent-deep)
@@ -76,8 +79,8 @@ x-chart:
   mark: var(--a20)
   track: var(--a4)
   grid: var(--a12)
-  label: var(--a55)
-  value: var(--a55)
+  label: var(--text-muted)
+  value: var(--text-muted)
 x-motion:
   duration-fast: 150ms
   duration-reveal: 400ms
@@ -103,8 +106,10 @@ rules, numbers that line up, motion that happens once and gets out of the way.
 ladder (`--a4` … `--a70`) derived from `foreground` at the `x-alpha-steps`
 opacities, so every border, muted label, and track reads correctly on both
 grounds without a second palette. Borders sit at `--a12` (felt, not seen);
-strong rules at `--a20`; secondary text at `--a55`; primary-but-quiet at
-`--a70`.
+strong rules at `--a20`. Normal-sized secondary text uses the semantic
+`--text-muted` role (`--a60`) so it stays above 4.5:1 in both themes; lower
+alpha steps remain for borders, fills, and non-text marks. Primary-but-quiet
+text may use `--a70`.
 
 `accent` is for links, active states, and the one emphasized data point.
 `accent-deep` is its high-contrast partner for small emphasized text.
@@ -115,23 +120,29 @@ The `x-dark` block redefines the same semantic roles for dark mode.
 
 ## Typography
 
-Use the system grotesque stack; no webfonts. Headings are
-semibold with negative tracking that scales with size — the tracking values
-in the front-matter are per-size absolutes, not a ratio. Body is 15px/1.7 at
-a ~66ch measure inside a 720px article column. Mono (13px/20px, ligatures
-off) is for code and aligned figures only — never for labels or eyebrows.
-Digits that line up vertically always set `font-variant-numeric:
+Use the system grotesque stack; no webfonts. Headings are semibold with
+negative tracking that scales with size — the tracking values in the
+front-matter are per-size absolutes, not a ratio. H1 steps down to its mobile
+size at 380px so a long title does not consume the whole first viewport. Body
+is 15px/1.7 at a ~66ch measure inside a 720px article column. Mono (13px/20px,
+ligatures off) is for code and aligned figures only — never for labels or
+eyebrows. Digits that line up vertically always set `font-variant-numeric:
 tabular-nums`. Headings get `text-wrap: balance`.
 
 ## Layout
 
 One centered article column (`spacing.article`, 720px) on one flat ground.
 Sections separated by `spacing.section` (48px) of air and, at most, a
-hairline rule. The table of contents is a margin rail — sticky, docked left
-or right of the column at wide viewports with a scroll-spy active state,
-collapsing to a plain inline list on narrow viewports. Wide content (tables,
-code, diagrams) scrolls inside its own container; the page never scrolls
+hairline rule. The table of contents is a margin rail — sticky, docked left or
+right of the column at wide viewports with a scroll-spy active state,
+collapsing to a compact native disclosure on narrow viewports. Linear
+processes reflow into a vertical sequence; branching diagrams and genuinely
+wide tables stay bounded inside their own containers. The page never scrolls
 sideways.
+
+The page shell owns the transition from its header to the first content block;
+do not hang structural spacing from the header's last child. Parallel grids
+declare their item count and may not expose empty tracks.
 
 ## Elevation & Depth
 
@@ -152,6 +163,12 @@ alpha ladder.
 Components consume the design tokens rather than introducing local palettes or
 shape systems. Their finished anatomy lives in the component catalog; this file
 defines the shared visual rules that apply across that catalog.
+
+Use semantic HTML and native controls. Preserve native tab order and the shared
+focus-visible outline; do not add `tabindex` or recreate a button, link, input,
+select, or textarea with a generic element. Informative images and figures need
+an accessible name or equivalent adjacent content. Decorative SVGs are hidden
+from assistive technology, and raster decoration is omitted.
 
 Charts use the `x-chart` roles for structure, marks, labels, values, and the
 single emphasized point. Those roles follow light and dark modes automatically
@@ -184,3 +201,6 @@ renders complete and static.
   are for genuine warnings only.
 - **Do** let numbered markers, dividers, and labels encode real structure.
   **Don't** decorate — if the content isn't a sequence, don't number it.
+- **Do** use a generated raster image when it gives the reader meaningful
+  subject matter or atmosphere. **Don't** generate filler for an empty grid
+  track, replace exact diagrams or screenshots, or imply invented evidence.

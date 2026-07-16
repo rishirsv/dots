@@ -1,13 +1,14 @@
 <!-- component: flow-diagram
 title: Flow diagram
 type: ui
-when: A system or process with a handful of steps and the connections
-  between them matter as much as the steps themselves — a pipeline,
-  request path, or state machine.
+when: A branching system where nodes and edges carry meaning — a request path,
+  dependency map, or state machine. Use process-steps for a linear sequence.
 deps: theme.css
 variants: none — one horizontal node-edge layout; rearrange node positions
   and count for the specific flow, keeping the same visual language.
-gotchas: Hand-author only simple flows of up to about 8 nodes; beyond that,
+gotchas: Do not use this for an ordinary left-to-right sequence; process-steps
+  stays fully visible on narrow screens. Hand-author only simple branching
+  flows of up to about 8 nodes; beyond that,
   restructure the content as a table or ordered list instead of fighting an
   SVG layout. The SVG is aria-hidden="true" — the .flow-caption paragraph
   next to it is the accessible description and must state the same flow in
@@ -18,6 +19,8 @@ gotchas: Hand-author only simple flows of up to about 8 nodes; beyond that,
 <style>
   .flow-diagram-wrap {
     overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-gutter: stable;
     margin-bottom: 12px;
   }
 
@@ -61,7 +64,7 @@ gotchas: Hand-author only simple flows of up to about 8 nodes; beyond that,
 
   .flow-caption {
     font-size: 13px;
-    color: var(--a55);
+    color: var(--text-muted);
     line-height: 1.6;
     margin: 0;
   }

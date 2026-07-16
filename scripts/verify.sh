@@ -97,7 +97,10 @@ done < <(find plugins/dots/.skill -path '*/evals/evals.json' -print 2>/dev/null 
 
 echo "==> Dots HTML deterministic checks"
 node plugins/dots/skills/html/scripts/generate-theme.mjs --check
-node --test plugins/dots/skills/html/scripts/chart.test.mjs
+node --test plugins/dots/skills/html/scripts/*.test.mjs
+for artifact in plugins/dots/skills/html/assets/atlas.html plugins/dots/skills/html/assets/exemplars/*.html; do
+  node plugins/dots/skills/html/scripts/check-artifact.mjs "$artifact" >/dev/null
+done
 
 echo "==> Dry-run config sync"
 scripts/sync-configs.sh --dry-run --codex --codex-personal --claude

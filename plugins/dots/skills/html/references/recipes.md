@@ -20,9 +20,10 @@ the source commits to one. `comparison-grid` helps with a small option set;
 **Answer → mental model → mechanism → implications**
 
 Lead with the answer, give the reader a compact model, show how the parts work,
-then explain what follows from that mechanism. Use `flow-diagram` only when
-relationships replace substantial prose; use `code-panel` for the smallest
-example that makes the mechanism concrete.
+then explain what follows from that mechanism. Use `process-steps` for a linear
+mechanism and `flow-diagram` only when branching relationships replace
+substantial prose; use `code-panel` for the smallest example that makes the
+mechanism concrete.
 
 ## Status report
 

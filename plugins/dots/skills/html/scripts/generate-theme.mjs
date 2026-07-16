@@ -109,6 +109,7 @@ const css = `/* GENERATED from DESIGN.md by scripts/generate-theme.mjs — do no
 :root {
 ${colorVars(colors)}
 ${alphaLadder(colors.foreground, steps)}
+  --text-muted: var(--a60);
   --font-sans: ${t("body", "fontFamily")};
   --font-mono: ${t("mono", "fontFamily")};
   --article: ${spacing.article};
@@ -172,6 +173,14 @@ h1 {
   text-wrap: balance;
 }
 
+@media (max-width: 380px) {
+  h1 {
+    font-size: ${t("h1", "mobileFontSize")};
+    line-height: ${t("h1", "mobileLineHeight")};
+    letter-spacing: ${t("h1", "mobileLetterSpacing")};
+  }
+}
+
 h2 {
   font-size: ${t("h2", "fontSize")};
   line-height: ${t("h2", "lineHeight")};
@@ -221,7 +230,7 @@ th, td {
 thead th {
   font-size: 12px;
   letter-spacing: 0.02em;
-  color: var(--a55);
+  color: var(--text-muted);
   font-weight: 500;
 }
 

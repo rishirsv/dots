@@ -15,6 +15,28 @@ sometimes is. Signals for editorial: the user says "beautiful", "shareable",
 "for the team"; the content is a keeper explainer or a decision brief going
 to an audience; the request calls for a showcase.
 
+## Composition restraint
+
+Choose the smallest composition that answers the reader's question. Start with
+the primary argument or dominant visual; add a component only when it carries
+meaning the reader would otherwise miss.
+
+- Do not invent search, filtering, reset, step, or parameter controls. Add a
+  control only when the user requested it or the supplied material requires it,
+  and use one visible mechanism per state.
+- Show only metrics that explain the requested behavior. Do not create
+  qualitative scores, status cards, KPI rows, repeated legends, or secondary
+  fact grids to fill space.
+- Use `stat-tiles` only when two to five supplied headline measures are central
+  to the first read. Do not repeat values already labeled clearly on a chart.
+- Prefer one compact dominant visual to several parallel treatments of the same
+  claim. Crop empty composition space; wide and shallow is a useful default
+  when the subject is not intrinsically square.
+- Keep presentation-only interaction local and optional. If filtering,
+  simulation, drill-down, mutable form state, or step-through control is the
+  artifact's main value, use an interactive-visualization or product-UI
+  workflow instead of building a half-interactive document.
+
 ## Page assembly
 
 1. Start from `page-shell` — it is the invariant frame: context line, title
@@ -25,15 +47,24 @@ to an audience; the request calls for a showcase.
    it has none, choose the closest narrative job from
    [recipes.md](recipes.md); recipes arrange the content but never supply
    missing claims or evidence. Outline sections before styling. Each
-   `<section id="...">` gets an `<h2>`; ids are short and stable. 4+ sections
-   → add `toc-rail` with matching hrefs.
-3. Lead with the instrument panel when numbers summarize the story
-   (`stat-tiles`), or with prose when an argument does. Never lead with a
-   figure the reader can't parse yet.
-4. Pick components by their `when:` line in `registry.json`. Copy the
-   fragment's CSS into the page `<style>` (after theme.css) and the markup
-   into place; replace every piece of example content. Duplicate-component
-   CSS is copied once, markup as often as needed.
+   `<section id="...">` gets an `<h2>`; ids are short and stable. Add
+   `toc-rail` for six or more sections, or when a long reference page benefits
+   from non-linear lookup. Omit it from short utilitarian pages; on narrow
+   screens the component becomes a compact native disclosure.
+3. Lead with `stat-tiles` only when supplied headline measures summarize the
+   story; otherwise lead with the argument or the visual that answers the
+   reader's question. Never lead with a figure the reader cannot parse yet.
+4. Pick components by their `when:` line in `registry.json`. For a page with
+   several components, use `scripts/assemble.mjs` to inline the theme and each
+   selected component's CSS once around a real body fragment. For a small page,
+   copying remains fine: copy the fragment's CSS into the page `<style>` (after
+   theme.css) and the markup into place; replace every piece of example content.
+   Duplicate-component CSS is copied once, markup as often as needed. Use
+   `process-steps` for linear sequences and reserve `flow-diagram` for branches.
+   When an original raster image earns a place, read
+   [generated-images.md](generated-images.md), generate and inspect it through
+   `imagegen`, copy the selected final into the workspace, and reference it with
+   `data-embed-src`; the assembler embeds it as a data URI.
 5. Add `page-behavior` only when the page needs motion, one-time reveals, TOC
    scroll-spy, or a theme toggle. Figures that should animate get
    `class="reveal"` on their container. Use it for charts and diagrams, not
@@ -47,6 +78,33 @@ to an audience; the request calls for a showcase.
    configs) goes in `disclosure` blocks after the footer, never before the
    conclusion.
 
+### Fast assembly
+
+Write the real section markup in a body fragment, including each component's
+`data-component` attribute, then run:
+
+```bash
+node scripts/assemble.mjs \
+  --title "Release readiness" \
+  --context "project / release" \
+  --dek "What is ready, what is blocked, and the next decision." \
+  --components process-steps,callout,data-table \
+  --body /path/to/body.html \
+  --out /path/to/release-readiness.html
+```
+
+Add `--status`, `--footer`, or `page-behavior` in `--components` only when the
+content calls for them. The assembler packages chosen CSS and behavior; it does
+not select components, invent content, or impose a section order.
+
+### Working source and assembled output
+
+Treat the body fragment as the canonical working source while constructing an
+assembled page. Edit it and rerun the assembler rather than hand-editing copied
+theme or component CSS. Keep the fragment in scratch state by default; preserve
+it beside the output only when the user requests continued source editing. The
+single self-contained `.html` remains the deliverable.
+
 ## Editing an existing artifact
 
 Rendered artifacts are machine-editable: every component instance carries
@@ -55,6 +113,8 @@ attribute, look its name up in `registry.json`, and edit against that
 fragment's anatomy — never guess structure from the markup. Keep the
 attribute when copying fragments and when adding instances; an artifact
 whose blocks have lost their names is opaque to the next editor.
+When the original body fragment is available, edit that source and reassemble;
+use component-level editing of the finished file when it is the only source.
 
 ## Fragment delivery
 
@@ -87,27 +147,66 @@ Prefer the platform artifact tool when present. Otherwise write to the location
 the user named — or ask where when it's a keeper — and open it in the browser
 for them. Name files for the content (`sync-rollout-brief.html`), not the skill.
 
+Treat delivery states precisely:
+
+- **Standalone** means the local self-contained file passed structural and
+  rendered inspection.
+- **Published** means the user explicitly asked for hosting, an available
+  publishing workflow completed, and the resulting URL was opened and verified.
+- If publishing is unavailable or fails, return the standalone file and state
+  that it was not published. Never infer publication from file creation.
+
 ## Verification
 
 Before handoff, render and check — headless screenshots are fine for most
 passes, a real browser for keepers:
 
+Run the structural gate first:
+
+```bash
+node scripts/check-artifact.mjs /path/to/finished.html
+```
+
+It rejects host-only APIs, external resource loads, custom tab order, unlabeled
+controls, inaccessible image/SVG content, and text below 11px. A pass proves
+those structural properties only; continue with rendered inspection.
+
 ### Page verification
 
-- **Widths**: 1280, 768, 360. No page-level horizontal scroll at any of
+- **Widths**: 1280, 768, 360, and 320. No page-level horizontal scroll at any of
   them; wide tables/code scroll inside their containers; the TOC rail docks
   in the margin at wide widths, remains visible while the article scrolls,
   and sits inline at narrow ones. A long rail scrolls internally instead of
   running below the viewport.
+- **Responsive components**: linear `process-steps` remain fully visible;
+  stacked tables show every cell label; title and status never overlap; wide
+  figures and evidence galleries keep captions and focal content readable. At
+  320px, a long title must leave room for orientation or supporting context in
+  the first viewport rather than becoming the whole page. Text inside a scaled
+  SVG remains at least 11px effective size; otherwise move it to HTML or author
+  a compact mobile composition.
 - **Dark mode**: force `data-theme="dark"` (or emulate
   `prefers-color-scheme`). Text stays readable, chart emphasis still reads,
-  code surface stays dark, no hard-coded colors leak through.
+  code surface stays dark, no hard-coded colors leak through. Inspect after
+  the documented load stagger settles; also confirm the pre-animation state
+  never becomes the only readable state.
 - **Reduced motion**: with `prefers-reduced-motion: reduce`, the page is
   fully static and complete.
 - **JS off**: everything renders; reveals are visible; details open natively;
   only the theme toggle and scroll-spy go quiet.
 - **Design system**: compare the artifact against [DESIGN.md](DESIGN.md),
   including its tokens, visual rationale, component rules, and Do's and Don'ts.
+- **First impression**: at every width and theme, the title, dek, and first
+  decision-bearing content have deliberate contrast and spacing; no invisible
+  hero text, accidental empty screen, or ornamental delay blocks the answer.
+- **Generated assets**: every generated image has a defined reader purpose,
+  accurate alt text, a useful caption when context is needed, and a data-URI
+  source in the final page. No generated visual fills an accidental layout gap
+  or masquerades as observed evidence.
+- **Accessibility**: use semantic structure and native controls; preserve native
+  tab order and visible focus; give every action a visible label or accessible
+  name; give informative figures equivalent adjacent content or an accessible
+  summary; pair color with text, shape, or line treatment.
 - **Honesty sweep**: every number traceable; helpful reader-facing sources
   included; internal provenance omitted; gaps marked, not smoothed.
 
@@ -121,5 +220,7 @@ passes, a real browser for keepers:
   font; host CSS and theme changes do not make it illegible.
 - **Design and honesty**: apply the same design-system and honesty checks as
   a page.
+- **Structure**: run `check-artifact.mjs` on the wrapped fragment fixture and
+  require a pass before delivery.
 
 Report what was verified with the artifact; if a check was skipped, say so.

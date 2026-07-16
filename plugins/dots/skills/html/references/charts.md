@@ -45,6 +45,8 @@ touching the script.
 | See a trend over time | Sparkline inline, or a line figure for keepers |
 | See above/below a baseline | Diverging bars from a zero rule |
 | See parts of a whole | Stacked bar — one bar, labeled segments |
+| Compare several measures or distributions | Shared-scale small multiples |
+| Show parallel work over time | Aligned lanes on one shared time axis |
 | Absorb one headline number | Not a chart — `stat-tiles` |
 | Scan many attributes per item | Not a chart — `data-table` |
 
@@ -52,6 +54,19 @@ Use a chart when magnitude, direction, or shape is easier to see than read.
 Prefer prose or a table when visual encoding adds no decision value; dataset
 size alone is not the deciding rule. Refuse numbers you would have to invent.
 A missing chart is honest; a decorative one is not.
+
+## Compose the chart, not a dashboard around it
+
+For a named numeric dataset or one-off analysis, start with the chart. Put the
+important values and takeaway on its marks, axis, or annotations when space
+allows. Do not add a KPI row, controls, cards, or a second visualization unless
+they answer a different supplied question.
+
+Render every requested dimension together when comparison is the point. Use
+shared-scale facets or small multiples instead of hiding one dimension behind a
+toggle. For parallel sequences, align lanes to one time axis and annotate
+totals, waits, and bottlenecks where they occur rather than duplicating them in
+cards above the plot.
 
 ## Color by purpose, from tokens only
 
@@ -68,6 +83,10 @@ Never introduce raw hex in a chart. If two series can't be told apart with
 the ladder, that's the signal to split into small multiples, not to add
 color.
 
+Keep each encoding stable throughout the artifact. Apply a category or series
+encoding to its marks, not its text labels, and pair emphasis with a direct
+label, shape, position, or line treatment so color never carries meaning alone.
+
 ## Mark specs (fixed, not per-artifact taste)
 
 - Bars: 18px tall, 4px radius, 10px row gap; value labels right-aligned,
@@ -77,6 +96,11 @@ color.
   gradients, no 3D.
 - Direct labels beat legends: 1-3 series may share a quiet legend line; 4+
   series must be directly labeled or split into small multiples.
+- Reserve space for the longest formatted label and value at every supported
+  width. Move, wrap, or reduce tick density before allowing text to overlap a
+  mark, axis, legend, or edge.
+- Scope SVG selectors to the chart component; never style every `svg` inside a
+  container that may also hold icons or unrelated figures.
 
 ## Accessibility
 
@@ -84,3 +108,5 @@ Every chart is inline SVG with `aria-hidden="true"`; the accessible content
 is adjacent text or a table carrying the same numbers. If the numbers appear
 only in the SVG, the chart is wrong. Bars animate via the shared `.reveal`
 pattern (grow once); with reduced motion or no JS they render at full width.
+Use no network-loaded chart library: author inline SVG or generate a supported
+form locally so the final artifact remains self-contained.
