@@ -50,7 +50,7 @@ def _copy_support(case_root, frozen_root, raw_path, label):
     return {"path": raw_path, "digest": digest}
 
 
-def validate_grading_inputs(cases, *, grading_enabled):
+def validate_grading_inputs(cases, *, grading_enabled, allow_advisory_only=False):
     if not grading_enabled:
         return
     missing = [
@@ -60,6 +60,17 @@ def validate_grading_inputs(cases, *, grading_enabled):
     ]
     if missing:
         raise CliError(f"graded evals require expected_output, expectations, or graders: {', '.join(missing)}", 2)
+    advisory_only = [
+        case.get("id")
+        for case in cases
+        if not case.get("graders") and (case.get("expectations") or case.get("expected_output") is not None)
+    ]
+    if advisory_only and not allow_advisory_only:
+        raise CliError(
+            "durable graded evals require explicit graders; expectations-only feedback is advisory: "
+            + ", ".join(advisory_only),
+            2,
+        )
 
 
 def _freeze_prompt(case, authored_root, frozen_root):
@@ -99,8 +110,21 @@ def _freeze_expected(case, authored_root, frozen_root):
     return {"path": "expected.md", "digest": file_digest(dest), "source": source}
 
 
-def freeze_run_inputs(manifest, suite, run_dir, cases, candidates, *, grading_enabled=True):
-    validate_grading_inputs(cases, grading_enabled=grading_enabled)
+def freeze_run_inputs(
+    manifest,
+    suite,
+    run_dir,
+    cases,
+    candidates,
+    *,
+    grading_enabled=True,
+    allow_advisory_only=False,
+):
+    validate_grading_inputs(
+        cases,
+        grading_enabled=grading_enabled,
+        allow_advisory_only=allow_advisory_only,
+    )
     inputs_root = Path(run_dir) / "inputs"
     frozen_cases = []
     for case in cases:
@@ -115,20 +139,39 @@ def freeze_run_inputs(manifest, suite, run_dir, cases, candidates, *, grading_en
         support_refs.extend(
             grader.get("path") for grader in case.get("graders") or [] if grader.get("path")
         )
+        support_refs.extend(
+            test.get("path") for test in case.get("grader_tests") or [] if test.get("path")
+        )
+        if case.get("state_capture"):
+            support_refs.append(case["state_capture"])
         copied = []
         for ref in support_refs:
             if ref not in {item["path"] for item in copied}:
                 copied.append(_copy_support(authored_root, frozen_root, ref, "support file"))
+        support_digests = {item["path"]: item["digest"] for item in copied}
+        for grader in case.get("graders") or []:
+            if grader.get("kind") != "model" or grader.get("advisory"):
+                continue
+            calibration = grader.get("calibration") or {}
+            if support_digests.get(grader.get("path")) != calibration.get("judge_sha256"):
+                raise CliError(
+                    f"case {case_id} model grader {grader.get('id')} judge changed after calibration",
+                    2,
+                )
         frozen_case = {
             "id": case_id,
             "type": case.get("type"),
+            "outcome": case.get("outcome", "response"),
             "priority": case.get("priority"),
             "split": case.get("split"),
+            "coverage": list(case.get("coverage") or []),
             "repetitions": case.get("repetitions"),
             "prompt": prompt,
             "expected_output": expected,
             "expectations": list(case.get("expectations") or []),
             "graders": list(case.get("graders") or []),
+            "grader_tests": list(case.get("grader_tests") or []),
+            "state_capture": case.get("state_capture"),
             "fixtures": list(case.get("fixtures") or []),
             "annotations": list(case.get("annotations") or []),
             "support_files": copied,
@@ -141,6 +184,9 @@ def freeze_run_inputs(manifest, suite, run_dir, cases, candidates, *, grading_en
         "schema_version": 2,
         "source_suite": str(suite),
         "frozen_at": utc_now(),
+        "evaluation_mode": manifest.get("evaluation_mode", "diagnostic"),
+        "coverage_requirements": list(manifest.get("coverage_requirements") or []),
+        "benchmark": manifest.get("benchmark"),
         "target": manifest.get("target") or {"type": "skill", "ref": "SKILL.md"},
         "defaults": manifest.get("defaults") or {},
         "selected_eval_ids": [case["id"] for case in cases],

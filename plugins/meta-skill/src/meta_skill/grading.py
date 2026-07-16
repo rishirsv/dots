@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 from .codex_exec import judge_output
+from .eval_stats import calibration_metrics
 from .errors import CliError
 from .ids import run_id, utc_now
 from .io import append_jsonl, read_json, read_jsonl, resolve_run_dir
@@ -42,6 +43,14 @@ def grader_descriptor(grader, *, kind, default_id):
         descriptor["advisory"] = bool(grader["advisory"])
     if "uses_transcript" in grader:
         descriptor["uses_transcript"] = bool(grader["uses_transcript"])
+    if "uses_state" in grader:
+        descriptor["uses_state"] = bool(grader["uses_state"])
+    if grader.get("model"):
+        descriptor["model"] = grader["model"]
+    if grader.get("reasoning_effort"):
+        descriptor["reasoning_effort"] = grader["reasoning_effort"]
+    if grader.get("implicit"):
+        descriptor["implicit"] = True
     return descriptor
 
 
@@ -93,7 +102,16 @@ def _grade_row(
     return row
 
 
-def validator_command(path, response_path, expected_path, events_path):
+def validator_command(
+    path,
+    response_path,
+    expected_path,
+    events_path,
+    *,
+    artifacts_path=None,
+    before_state_path=None,
+    after_state_path=None,
+):
     if path.suffix.lower() == ".py":
         command = [sys.executable, str(path)]
     elif path.suffix.lower() == ".sh":
@@ -105,6 +123,12 @@ def validator_command(path, response_path, expected_path, events_path):
     command.extend(["--output", str(response_path), "--events", str(events_path), "--json"])
     if expected_path:
         command.extend(["--expected", str(expected_path)])
+    if artifacts_path:
+        command.extend(["--artifacts", str(artifacts_path)])
+    if before_state_path:
+        command.extend(["--before-state", str(before_state_path)])
+    if after_state_path:
+        command.extend(["--after-state", str(after_state_path)])
     return command
 
 
@@ -119,7 +143,15 @@ def normalize_graders(case):
         item["metric"] = item.get("metric") or item["id"]
         normalized.append(item)
     if not normalized and (case.get("expectations") or case.get("expected_output")):
-        normalized.append({"kind": "model", "id": "expectations", "metric": "expectations"})
+        normalized.append(
+            {
+                "kind": "model",
+                "id": "expectations",
+                "metric": "expectations",
+                "advisory": True,
+                "implicit": True,
+            }
+        )
     return normalized
 
 
@@ -166,10 +198,35 @@ def _code_grade(run, state, root, grader, generation_id):
         raise CliError(f"code grader {grader['id']} missing path", 2)
     response = trial_path(root.parent.parent.parent, state["trial_id"]) / "response.md"
     events = response.parent / "events.jsonl"
+    artifacts = response.parent / "artifacts"
+    before_state = response.parent / "before-state.json"
+    after_state = response.parent / "after-state.json"
     expected = root / "expected.md"
     expected = expected if expected.exists() else None
+    if grader.get("uses_state") and not (before_state.is_file() and after_state.is_file()):
+        return _grade_row(
+            root.parent.parent.parent,
+            run,
+            state,
+            generation_id=generation_id,
+            grader=grader_descriptor(grader, kind="code", default_id=validator.name),
+            grade_status="unknown",
+            rationale="State-aware grader is missing before or after state evidence.",
+            evidence_refs=[response, events, validator],
+        )
     proc = subprocess.run(
-        validator_command(validator, response, expected, events), capture_output=True, text=True, cwd=root
+        validator_command(
+            validator,
+            response,
+            expected,
+            events,
+            artifacts_path=artifacts,
+            before_state_path=before_state if grader.get("uses_state") and before_state.is_file() else None,
+            after_state_path=after_state if grader.get("uses_state") and after_state.is_file() else None,
+        ),
+        capture_output=True,
+        text=True,
+        cwd=root,
     )
     try:
         data = json.loads(proc.stdout) if proc.returncode == 0 else {}
@@ -215,11 +272,26 @@ def _model_grade(
         else []
     )
     judge_path = grader_path(root, grader, "judge") if grader.get("path") else None
+    if not judge_path and not grader.get("implicit"):
+        raise CliError(f"model grader {grader['id']} missing case-local judge path", 2)
+    trusted = not grader.get("advisory")
+    if trusted:
+        calibration = grader.get("calibration")
+        if not isinstance(calibration, dict):
+            raise CliError(f"model grader {grader['id']} missing held-out calibration", 2)
+        if not grader.get("model") or not grader.get("reasoning_effort"):
+            raise CliError(f"model grader {grader['id']} missing calibrated executor settings", 2)
+        actual_digest = hashlib.sha256(judge_path.read_bytes()).hexdigest()
+        if actual_digest != calibration.get("judge_sha256"):
+            raise CliError(f"model grader {grader['id']} judge digest no longer matches calibration", 2)
     applicable = [
         row
         for row in annotations
-        if row.get("judge_use") == "rubric"
-        or (row.get("judge_use") == "evidence" and row.get("trial_id") == state["trial_id"])
+        if not trusted
+        and (
+            row.get("judge_use") == "rubric"
+            or (row.get("judge_use") == "evidence" and row.get("trial_id") == state["trial_id"])
+        )
     ]
     context_payload = json.dumps(applicable, sort_keys=True, separators=(",", ":"))
     context_digest = hashlib.sha256(context_payload.encode()).hexdigest()
@@ -245,10 +317,20 @@ def _model_grade(
         events_text=_read(events, 12000) if grader.get("uses_transcript") else None,
         cwd=run_dir,
         event_path=trial / f"judge-{generation_id}.jsonl",
-        model=model,
-        reasoning_effort=reasoning_effort,
+        model=grader.get("model") or model,
+        reasoning_effort=grader.get("reasoning_effort") or reasoning_effort,
         artifact_paths=artifact_paths,
     )
+    if trusted and detail["label"] == "partial":
+        detail = {
+            **detail,
+            "label": "unknown",
+            "rationale": (
+                "Trusted model graders are binary; the judge returned partial. "
+                "Treat this trial as inconclusive and correct or recalibrate the judge."
+            ),
+            "grader_error": True,
+        }
     return _grade_row(
         run_dir,
         run,
@@ -260,7 +342,14 @@ def _model_grade(
         checks=detail.get("checks") or [],
         rationale=detail.get("rationale") or "",
         evidence_refs=[response, *artifact_paths, judge_path, trial / f"judge-{generation_id}.jsonl"],
-        detail={key: value for key, value in detail.items() if key != "eval_feedback"},
+        detail={
+            **{key: value for key, value in detail.items() if key != "eval_feedback"},
+            **(
+                {"calibration": calibration_metrics(grader["calibration"])}
+                if trusted and grader.get("calibration")
+                else {}
+            ),
+        },
         judge_context={
             "annotation_ids": [row["annotation_id"] for row in applicable],
             "digest": context_digest,

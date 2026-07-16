@@ -1,6 +1,7 @@
 """Grading policy, blinding inputs, and revision tests."""
 
 import json
+import hashlib
 import sys
 import tempfile
 import unittest
@@ -23,6 +24,34 @@ def write(path, value):
 
 def make_run(root, graders):
     run = root / "run-1"
+    judge_text = "Judge one semantic criterion.\n"
+    judge_digest = hashlib.sha256(judge_text.encode()).hexdigest()
+    frozen_graders = []
+    for grader in graders:
+        grader = {**grader}
+        if grader.get("kind") == "model":
+            grader.setdefault("path", "judge.md")
+            if not grader.get("advisory"):
+                grader.setdefault("model", "calibrated-model")
+                grader.setdefault("reasoning_effort", "medium")
+                grader.setdefault("calibration", {
+                    "dataset_id": "held-out-v1",
+                    "data_period": "2026-01-01/2026-06-30",
+                    "validated_at": "2026-07-01",
+                    "model": grader["model"],
+                    "reasoning_effort": grader["reasoning_effort"],
+                    "judge_sha256": judge_digest,
+                    "confidence_level": 0.95,
+                    "minimum_tpr": 0.9,
+                    "minimum_tnr": 0.9,
+                    "test": {
+                        "true_positive": 200,
+                        "false_negative": 0,
+                        "true_negative": 200,
+                        "false_positive": 0,
+                    },
+                })
+        frozen_graders.append(grader)
     write(run / "run.json", {
         "schema_version": 2,
         "run_id": "run-1",
@@ -34,10 +63,11 @@ def make_run(root, graders):
         "trials": [{"trial_id": "a.current.t1", "eval_id": "a", "candidate": "current", "repetition": 1}],
         "candidates": [{"candidate": "current", "source_kind": "current_worktree"}],
     })
-    write(run / "inputs" / "suite.json", {"schema_version": 2, "evals": [{"id": "a", "prompt": {"path": "task.md"}, "expected_output": None, "expectations": ["Good"], "graders": graders}]})
+    write(run / "inputs" / "suite.json", {"schema_version": 2, "evals": [{"id": "a", "prompt": {"path": "task.md"}, "expected_output": None, "expectations": ["Good"], "graders": frozen_graders}]})
     case = run / "inputs" / "cases" / "a"
     case.mkdir(parents=True)
     (case / "task.md").write_text("Do A\n")
+    (case / "judge.md").write_text(judge_text)
     trial = run / "trials" / "a.current.t1"
     trial.mkdir(parents=True)
     (trial / "response.md").write_text("A result")
@@ -67,8 +97,8 @@ class GradingTests(unittest.TestCase):
             rows = read_jsonl(run / "trials" / "a.current.t1" / "grades.jsonl")
             self.assertIsNone(calls[0]["events_text"])
             self.assertIn("tool", calls[1]["events_text"])
-            self.assertEqual({call["model"] for call in calls}, {"judge-model"})
-            self.assertEqual({call["reasoning_effort"] for call in calls}, {"high"})
+            self.assertEqual([call["model"] for call in calls], ["calibrated-model", "judge-model"])
+            self.assertEqual([call["reasoning_effort"] for call in calls], ["medium", "high"])
             self.assertEqual(calls[0]["artifact_paths"], [artifact.resolve()])
             self.assertTrue(rows[1]["grader"]["advisory"])
             self.assertTrue(all(not Path(ref).is_absolute() for row in rows for ref in row["evidence_refs"]))
@@ -105,7 +135,7 @@ class GradingTests(unittest.TestCase):
 
     def test_only_opted_in_annotations_calibrate_model_judge(self):
         with tempfile.TemporaryDirectory() as tmp:
-            run = make_run(Path(tmp), [{"kind": "model", "id": "judge", "metric": "quality"}])
+            run = make_run(Path(tmp), [{"kind": "model", "id": "judge", "metric": "quality", "advisory": True}])
             trial = run / "trials" / "a.current.t1"
             write(
                 trial / "review.json",
@@ -142,10 +172,65 @@ class GradingTests(unittest.TestCase):
             self.assertEqual(rows[0]["judge_context"]["annotation_ids"], ["annotation-rubric"])
             self.assertEqual(len(rows[0]["judge_context"]["digest"]), 64)
 
+    def test_trusted_judge_uses_only_frozen_calibrated_guidance(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run = make_run(Path(tmp), [{"kind": "model", "id": "judge", "metric": "quality"}])
+            trial = run / "trials" / "a.current.t1"
+            write(trial / "review.json", {"annotations": [{
+                "annotation_id": "later-rubric",
+                "artifact": "response",
+                "tag": "taste-rule",
+                "judge_use": "rubric",
+                "note": "This would change the calibrated prompt.",
+            }]})
+            calls = []
+
+            def judge(**kwargs):
+                calls.append(kwargs)
+                return {"label": "pass", "score": 1, "rationale": "ok", "checks": []}
+
+            with patch("meta_skill.grading.judge_output", side_effect=judge):
+                grade_run(str(run))
+            self.assertNotIn("later-rubric", calls[0]["judge_guidance"])
+            row = read_jsonl(trial / "grades.jsonl")[0]
+            self.assertEqual(row["judge_context"]["annotation_ids"], [])
+            self.assertEqual(row["grader"]["model"], "calibrated-model")
+
+    def test_trusted_judge_rejects_non_binary_partial_label(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run = make_run(Path(tmp), [{"kind": "model", "id": "judge", "metric": "quality"}])
+            with patch(
+                "meta_skill.grading.judge_output",
+                return_value={
+                    "label": "partial",
+                    "score": 0.5,
+                    "rationale": "mixed",
+                    "checks": [],
+                },
+            ):
+                grade_run(str(run))
+            row = read_jsonl(run / "trials" / "a.current.t1" / "grades.jsonl")[0]
+            self.assertEqual(row["grade_status"], "unknown")
+            self.assertTrue(row["detail"]["grader_error"])
+            self.assertEqual(build_report(str(run))["trials"][0]["verdict"], "inconclusive")
+
+    def test_expectations_only_model_feedback_is_advisory_and_cannot_pass(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run = make_run(Path(tmp), [])
+            with patch(
+                "meta_skill.grading.judge_output",
+                return_value={"label": "pass", "score": 1, "rationale": "looks good", "checks": []},
+            ):
+                grade_run(str(run))
+            row = read_jsonl(run / "trials" / "a.current.t1" / "grades.jsonl")[0]
+            self.assertTrue(row["grader"]["advisory"])
+            self.assertTrue(row["grader"]["implicit"])
+            self.assertEqual(build_report(str(run))["trials"][0]["verdict"], "inconclusive")
+
     def test_future_run_inherits_only_reusable_rubrics_from_source_and_frozen_case(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            source = make_run(root, [{"kind": "model", "id": "judge", "metric": "quality"}])
+            source = make_run(root, [{"kind": "model", "id": "judge", "metric": "quality", "advisory": True}])
             source = source.rename(root / "run-source")
             write(
                 source / "trials" / "a.current.t1" / "review.json",
@@ -166,7 +251,7 @@ class GradingTests(unittest.TestCase):
                     ]
                 },
             )
-            run = make_run(root, [{"kind": "model", "id": "judge", "metric": "quality"}])
+            run = make_run(root, [{"kind": "model", "id": "judge", "metric": "quality", "advisory": True}])
             run_model = json.loads((run / "run.json").read_text())
             run_model["source_run_id"] = "run-source"
             write(run / "run.json", run_model)

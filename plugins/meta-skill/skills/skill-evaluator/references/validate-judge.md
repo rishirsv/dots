@@ -1,81 +1,121 @@
 # Validate An LLM Judge
 
-Read this after writing a case-local `judge.md` and before trusting that judge
-on production traces. Calibrate the judge against human judgment for the one
-failure mode it evaluates.
+Read this after writing a case-local `judge.md` and before using it as a
+load-bearing grader. Calibrate one frozen judge prompt, model, reasoning effort,
+and input construction against human judgment for one failure mode.
 
-## Prerequisites
+Treat **Fail** as the positive class: the judge detects the defined failure.
+Use an uncalibrated model grader only with `advisory: true`; it cannot decide a
+trial verdict.
 
-- The judgment prompt is written.
-- Candidate few-shot examples are available.
-- Human-labeled Pass and Fail traces are available.
+## Plan The Evidence Before Tuning
 
-Treat **Fail** as the positive class: the judge is detecting the defined
-failure mode.
+Choose the trust thresholds and confidence level before running the judge. The
+default production contract is:
 
-## 1. Split The Human-Labeled Traces
+- minimum TPR: `0.90`;
+- minimum TNR: `0.90`; and
+- confidence level: `0.95`.
 
-Create mutually exclusive, class-balanced splits whose percentages total 100%:
+Do not choose a fixed sample such as 20 Pass and 20 Fail and then trust its
+point estimates. Plan enough held-out human labels that the Wilson confidence
+lower bounds can clear both thresholds. Increase the sample when even a perfect
+observed rate would leave the lower bound below the target.
 
-- **train: 10–20%** for selecting few-shot examples;
-- **development: 40–45%** for iterating on the judge; and
-- **test: 40–45%** for one final evaluation.
+Collect labels from the same task and evidence distribution the judge will see.
+Record the dataset identifier, data period, class counts, and relevant
+prevalence. Keep related or duplicate traces in the same split.
 
-Keep related or duplicate traces in the same split. Draw few-shot examples only
-from train. Do not inspect test outcomes while changing the prompt, examples,
-model, or decision rule.
+## Split Without Leakage
 
-## 2. Measure The Development Set
+Create mutually exclusive, class-balanced working splits:
 
-Run the judge on every development trace and compare its binary label with the
-human label.
+- **train: 10–20%** for selecting two to four few-shot examples;
+- **development: 40–45%** for changing the criterion, prompt, examples, or
+  evidence construction; and
+- **test: 40–45%** for one final held-out evaluation.
 
-| Measure | Formula | Meaning |
-|---|---|---|
-| True positive rate (TPR) | correctly predicted Fail / all human Fail | How often the judge detects the failure mode. |
-| True negative rate (TNR) | correctly predicted Pass / all human Pass | How often the judge accepts valid outputs. |
+Draw few-shot examples only from train. Do not inspect test outcomes while
+changing the prompt, examples, model, reasoning effort, or decision rule. If the
+held-out sample is too small to meet the confidence plan, gather new labels
+rather than moving development examples into test.
 
-Report the confusion matrix with the rates:
+## Measure Development And Held-Out Performance
+
+For development and test, report the confusion matrix:
 
 | Human label | Judge Fail | Judge Pass |
 |---|---:|---:|
 | Fail | true positive | false negative |
 | Pass | false positive | true negative |
 
-Inspect false positives and false negatives. Change only the criterion,
-definitions, few-shot examples, or evidence supplied to the judge. Do not add
-an example copied from development to the judge prompt.
+Report together:
 
-Iterate until both development-set TPR and TNR exceed 90%. If either remains at
-or below 90%, do not use the judge as a trusted production grader.
+- TPR and its confidence interval;
+- TNR and its confidence interval;
+- failure-class precision;
+- human-label prevalence;
+- Pass and Fail sample counts;
+- false-positive and false-negative examples;
+- judge prompt digest, model, reasoning effort, and data period.
 
-## 3. Run The Held-Out Test Once
+Iterate only on development. Freeze the judge and run held-out test once. The
+judge becomes load-bearing only when the held-out TPR and TNR confidence lower
+bounds meet their predeclared thresholds. Point estimates above 90% are not
+sufficient.
 
-Freeze the judge prompt, few-shot examples, model, and input construction. Run
-them once on the held-out test set. Report test TPR, TNR, the confusion matrix,
-and sample counts.
+## Record The Trusted Judge
 
-Do not tune against the test failures. A changed judge requires a new held-out
-test set before making another final claim.
+Declare the frozen evidence in the model grader:
 
-## 4. Correct The Production Failure Rate
-
-Let:
-
-- `q` = the fraction of production traces the judge labels Fail;
-- `TPR` = held-out true positive rate; and
-- `TNR` = held-out true negative rate.
-
-Estimate the corrected production failure rate:
-
-```text
-corrected failure rate = (q + TNR - 1) / (TPR + TNR - 1)
+```json
+{
+  "kind": "model",
+  "id": "quality",
+  "metric": "quality",
+  "path": "judge.md",
+  "model": "exact-judge-model-version",
+  "reasoning_effort": "medium",
+  "calibration": {
+    "dataset_id": "quality-held-out-v1",
+    "data_period": "2026-01-01/2026-06-30",
+    "validated_at": "2026-07-01",
+    "model": "exact-judge-model-version",
+    "reasoning_effort": "medium",
+    "judge_sha256": "<64 lowercase hex characters>",
+    "confidence_level": 0.95,
+    "minimum_tpr": 0.90,
+    "minimum_tnr": 0.90,
+    "test": {
+      "true_positive": 200,
+      "false_negative": 0,
+      "true_negative": 200,
+      "false_positive": 0
+    }
+  }
+}
 ```
 
-Clip the estimate to the range 0–1. Do not apply the correction when
-`TPR + TNR <= 1`, or when production traces differ materially from the held-out
-data. Report the raw judge-labeled rate, corrected estimate, held-out TPR/TNR,
-sample sizes, and data period together.
+MetaSkill recomputes the confidence bounds, pins the calibrated executor, and
+verifies the judge digest before a run and again during grading. The evaluation
+report shows the sample counts, rates, intervals, precision, prevalence, model,
+and data period.
 
-The correction estimates an aggregate rate; it does not change any individual
-trace label.
+## Revalidate On Drift
+
+Create a new judge version and held-out test when any of these changes:
+
+- `judge.md`, its few-shot examples, or input construction;
+- model or reasoning effort;
+- criterion or Pass/Fail boundary;
+- tool, domain, language, user population, or output distribution; or
+- evidence showing material model/human disagreement.
+
+Do not inject later rubric annotations into a trusted judge. Compile durable
+guidance into a revised `judge.md` and recalibrate it. A changed judge must not
+reuse the held-out set used to authorize the previous change.
+
+If estimating a production failure rate from judge labels, report the raw rate,
+the correction method, held-out confusion matrix, prevalence assumptions, and
+an uncertainty interval together. Do not use a correction when the production
+distribution differs materially from the held-out data.

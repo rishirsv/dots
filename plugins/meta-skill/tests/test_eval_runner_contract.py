@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "plugins" / "meta-skill" / "src"))
 
 from meta_skill.errors import CliError
+from meta_skill.codex_exec import _command
 from meta_skill.runner import finalize_eval, prepare_eval, retry_trial, run_eval, submit_trial, unresolved_trials
 from meta_skill.workbench_paths import worktrees_path
 
@@ -62,6 +63,60 @@ def write_result(packet, *, status="completed", response="done", artifact=True, 
 
 
 class RunnerTests(unittest.TestCase):
+    def test_codex_exec_ignores_user_config_and_rules_for_controlled_inventory(self):
+        command = _command("codex", Path("/tmp/work"), "model", "medium", Path("/tmp/out"))
+        self.assertIn("--ignore-user-config", command)
+        self.assertIn("--ignore-rules", command)
+        disabled = [command[index + 1] for index, value in enumerate(command[:-1]) if value == "--disable"]
+        self.assertEqual(disabled, ["plugins", "apps", "memories"])
+
+    def test_native_candidate_comparison_is_rejected_as_unisolated(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "skill"
+            skill(target)
+            manifest = target / ".demo" / "evals" / "evals.json"
+            suite(manifest, [{"id": "a", "type": "capability", "prompt": "Do A"}])
+            with self.assertRaisesRegex(CliError, "cannot guarantee isolated"):
+                prepare_eval(args(manifest), task_executor_kind="native_subagent")
+
+    def test_benchmark_requires_one_split_and_keeps_source_context_out_of_holdout(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "skill"
+            skill(target)
+            manifest = target / ".demo" / "evals" / "evals.json"
+            cases = [
+                {
+                    "id": f"case-{index}",
+                    "prompt": f"Do {index}",
+                    "coverage": ["core" if index % 2 == 0 else "boundary"],
+                    "split": "development" if index < 20 else "test",
+                    "repetitions": 3,
+                    "graders": [{"kind": "human", "id": "review", "metric": "correctness"}],
+                }
+                for index in range(40)
+            ]
+            manifest.parent.mkdir(parents=True)
+            manifest.write_text(json.dumps({
+                "schema_version": 2,
+                "evaluation_mode": "benchmark",
+                "coverage_requirements": ["core", "boundary"],
+                "benchmark": {
+                    "name": "Example",
+                    "source": "local",
+                    "version": "v1",
+                    "held_out_split": "test",
+                    "contamination_controls": "Test prompts are hidden until final evaluation.",
+                },
+                "evals": cases,
+            }))
+            with self.assertRaisesRegex(CliError, "select exactly one"):
+                prepare_eval(args(manifest), task_executor_kind="codex_exec")
+            with self.assertRaisesRegex(CliError, "must not inherit"):
+                prepare_eval(
+                    args(manifest, split="test", source_run_id="run-development"),
+                    task_executor_kind="codex_exec",
+                )
+
     def test_planning_error_records_canonical_executor_provenance(self):
         with tempfile.TemporaryDirectory() as tmp:
             project = Path(tmp)
@@ -93,7 +148,7 @@ class RunnerTests(unittest.TestCase):
                 "id": "a", "type": "capability", "prompt": "Do A",
                 "expected_output": "Hidden answer", "expectations": ["Hidden rubric"],
             }])
-            prepared = prepare_eval(args(manifest), task_executor_kind="native_subagent")
+            prepared = prepare_eval(args(manifest, no_grade=True), task_executor_kind="codex_exec")
             self.assertEqual(prepared["trials"], 2)
             packets = prepared["packets"]
             baseline = next(packet for packet in packets if ".no-skill." in packet["trial_id"])
@@ -111,7 +166,8 @@ class RunnerTests(unittest.TestCase):
                 )
                 self.assertEqual(state["status"], "completed")
                 self.assertNotIn("workspace_path", state)
-                self.assertEqual(state["task_executor"]["provenance"], "inherited")
+                self.assertEqual(state["task_executor"]["provenance"], "requested")
+                self.assertTrue(state["task_executor"]["isolation"]["supports_baseline_effect"])
                 repeated = submit_trial(
                     prepared["run_dir"], packet["trial_id"], packet["attempt_id"], packet["result_path"]
                 )
@@ -125,8 +181,8 @@ class RunnerTests(unittest.TestCase):
             model = json.loads((run / "run.json").read_text())
             self.assertEqual(model["model"], "gpt-5.6-terra")
             self.assertEqual(model["reasoning_effort"], "medium")
-            self.assertEqual(model["task_executor"]["provenance"], "inherited")
-            self.assertIsNone(model["task_executor"]["requested_model"])
+            self.assertEqual(model["task_executor"]["provenance"], "requested")
+            self.assertEqual(model["task_executor"]["requested_model"], "gpt-5.6-terra")
 
     def test_submit_rejects_stale_attempt_escape_and_changed_terminal_result(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -213,6 +269,61 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(state["status"], "timed_out")
             self.assertEqual(state["task_executor"]["kind"], "codex_exec")
             self.assertFalse(result["ok"])
+
+    def test_stateful_trials_capture_hidden_before_and_after_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            target = project / "skill"
+            skill(target)
+            manifest = target / ".demo" / "evals" / "evals.json"
+            case_root = manifest.parent / "cases" / "a"
+            case_root.mkdir(parents=True)
+            (case_root / "capture.py").write_text(
+                "import argparse, json\n"
+                "p=argparse.ArgumentParser(); p.add_argument('--workspace'); p.add_argument('--output'); p.add_argument('--phase'); p.add_argument('--json', action='store_true')\n"
+                "a=p.parse_args(); value=open(a.workspace + '/fixtures/state.txt').read(); open(a.output, 'w').write(json.dumps({'phase':a.phase,'value':value}))\n"
+            )
+            (case_root / "validate.py").write_text("raise SystemExit(1)\n")
+            for name in ("oracle", "negative"):
+                fixture = case_root / "grader-tests" / name
+                fixture.mkdir(parents=True)
+                (fixture / "response.md").write_text(name)
+                (fixture / "before-state.json").write_text("{}")
+                (fixture / "after-state.json").write_text("{}")
+            (case_root / "state.txt").write_text("before")
+            suite(manifest, [{
+                "id": "a",
+                "type": "capability",
+                "outcome": "stateful",
+                "prompt": "Change the state",
+                "fixtures": ["state.txt"],
+                "state_capture": "capture.py",
+                "graders": [{
+                    "kind": "code",
+                    "id": "state",
+                    "metric": "state",
+                    "path": "validate.py",
+                    "uses_state": True,
+                }],
+                "grader_tests": [
+                    {"id": "oracle", "grader": "state", "expected": "pass", "path": "grader-tests/oracle"},
+                    {"id": "negative", "grader": "state", "expected": "fail", "path": "grader-tests/negative"},
+                ],
+            }])
+            prepared = prepare_eval(args(manifest, no_baseline=True, no_grade=True))
+            packet = prepared["packets"][0]
+            before = json.loads((Path(prepared["run_dir"]) / "trials" / packet["trial_id"] / "before-state.json").read_text())
+            self.assertEqual(before, {"phase": "before", "value": "before"})
+            with self.assertRaisesRegex(CliError, "stateful trials"):
+                retry_trial(prepared["run_dir"], packet["trial_id"])
+            (Path(packet["fixture_root"]) / "state.txt").write_text("after")
+            write_result(packet)
+            state = submit_trial(
+                prepared["run_dir"], packet["trial_id"], packet["attempt_id"], packet["result_path"]
+            )
+            after = json.loads((Path(prepared["run_dir"]) / "trials" / packet["trial_id"] / "after-state.json").read_text())
+            self.assertEqual(after, {"phase": "after", "value": "after"})
+            self.assertEqual(set(state["state_evidence"]), {"before", "after"})
 
     def test_resume_reuses_only_exact_completed_trials(self):
         with tempfile.TemporaryDirectory() as tmp:

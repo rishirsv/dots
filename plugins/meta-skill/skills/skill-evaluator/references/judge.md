@@ -5,14 +5,17 @@ selects an LLM judge. Design a binary Pass/Fail evaluator for one specific
 failure mode. Each judge checks exactly one thing.
 
 Save the finished prompt as `evals/cases/<case-id>/judge.md` and set the model
-grader's `path` to `judge.md` in `evals.json`.
+grader's `path` to `judge.md` in `evals.json`. Pin the exact judge model and
+reasoning effort. A load-bearing judge also records the SHA-256 digest of
+`judge.md` and its held-out calibration; changing the prompt, model, reasoning
+effort, evidence construction, or data distribution requires revalidation.
 
 ## Prerequisites
 
 - [Error analysis](error-analysis.md) is complete. The user has confirmed the
   failure mode and its Pass/Fail boundary.
-- You have human-labeled traces for this failure mode: at least 20 Pass and 20
-  Fail examples.
+- You have enough human-labeled Pass and Fail traces to meet the confidence-
+  bound sample plan in [validate-judge.md](validate-judge.md).
 - A code-based evaluator cannot check this failure mode.
 
 Exhaust code-based options before reaching for a judge. Many failure modes that
@@ -163,7 +166,14 @@ criterion.
 
 Start with the most capable model available. The same model used for the main
 task can serve as judge because the judge performs a different, narrower task.
-Optimize for cost only after alignment with human labels is confirmed.
+Optimize for cost only after alignment with human labels is confirmed. Freeze
+the chosen model and reasoning effort in the grader definition; the evaluator
+uses those pinned settings instead of the task-worker defaults.
+
+Compile reusable rubric guidance into `judge.md` before calibration. Do not add
+source-run annotations or later rubric notes to a load-bearing judge at grade
+time because that changes the calibrated prompt. Use those notes with an
+advisory judge, or revise `judge.md` and validate a new judge version.
 
 ## Anti-Patterns
 
@@ -180,6 +190,9 @@ Optimize for cost only after alignment with human labels is confirmed.
   separate binary judges, such as “factually wrong” and “dangerously wrong.”
 - **Skipping validation.** Measure alignment against held-out human labels
   before trusting the judge. Follow [validate-judge.md](validate-judge.md).
+- **Trusting a point estimate from a small test set.** Require confidence lower
+  bounds, report the confusion matrix and prevalence, and increase the held-out
+  sample until the claim is statistically supported.
 - **Judging a specification failure before fixing the prompt.** If the prompt
   never requested the behavior, add the instruction before building the
   evaluator. A judge may still serve as a regression guard for a critical

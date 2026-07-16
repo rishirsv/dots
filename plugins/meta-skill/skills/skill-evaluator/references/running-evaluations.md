@@ -16,7 +16,10 @@ metaskill eval run \
   --check --json
 ```
 
-Stop if the suite cannot load or a warning makes a case ungradable or unfair.
+Stop unless `ok` is true. The check enforces the evaluation-mode contract,
+rejects implicit load-bearing graders, executes deterministic known-Pass and
+known-Fail fixtures, recomputes judge calibration confidence bounds, and
+verifies calibrated judge digests.
 
 ## 2. Choose The Execution Path
 
@@ -29,6 +32,10 @@ metaskill eval run --adhoc \
   --expectation "<observable success criterion>" \
   --json
 ```
+
+An ad hoc expectation without an explicit grader produces advisory model
+feedback and an inconclusive verdict. Treat it as a single-run observation for
+inspection, not a passing evaluation.
 
 Use `eval prepare --adhoc` instead when native subagents should execute the
 ad hoc trial. Promote the prompt into `evals.json` only after the user confirms
@@ -43,23 +50,37 @@ metaskill eval run \
   --json
 ```
 
-Use interactive execution when native subagents should perform the trials:
+Use interactive execution only for a one-candidate observation when native
+subagents are required:
 
 ```bash
 metaskill eval prepare \
   --suite <skill-name>/.<skill-name>/evals/evals.json \
+  --no-baseline \
   --objective "<question this run should answer>" \
   --json
 ```
 
 Add `--case <id>`, `--type <type>`, `--split <name>`, `--candidates <ids>`, or
 `--repetitions <n>` only when the evaluation question requires that selection.
-The no-skill version is included by default. Use unattended execution whenever
-a grader sets `uses_transcript: true`; Codex Exec captures its event stream.
-Native-subagent trials should be judged from outcomes unless their execution
-surface supplies a real event stream.
+The no-skill version is included by default for unattended execution. Codex
+Exec ignores user config and rules, disables plugins, apps, and memories, records an empty plugin inventory, and
+supplies only the frozen candidate skill. This is the comparison lane. Native
+subagents inherit an uncontrolled skill and plugin inventory, so MetaSkill
+rejects native multi-candidate preparation. Native trials should be judged from
+outcomes unless their execution surface supplies a real event stream.
 
-## 3. Dispatch Interactive Trials
+Because the comparison lane disables apps and plugins, use it for core-tool or
+fixture-backed cases. Connector-dependent skills need an externally controlled
+executor that gives every candidate identical authenticated tool access; until that
+exists, record only a diagnostic observation and make no baseline-effect claim.
+
+For a benchmark, select exactly one development or held-out split with
+`--split`. Do not pass `--source-run-id` to the held-out split. For readiness
+and benchmark runs, select at least 20 cases and keep at least three repetitions
+per case.
+
+## 3. Dispatch Interactive Observations
 
 `eval prepare` returns the immutable `run_dir` and one worker packet for every
 unresolved trial. Dispatch one native subagent per packet, in bounded waves.
@@ -70,7 +91,7 @@ Give the worker only:
 - `workspace_path` as its working directory;
 - `artifact_root` for every produced file;
 - `result_path` for its result object; and
-- `skill_path` when present. A no-skill trial has no `skill_path`.
+- `skill_path` for the selected candidate.
 
 Do not mention the comparison or reveal expectations, expected output,
 validators, judge guidance, human labels, or the durable run directory.
@@ -126,12 +147,15 @@ metaskill eval finalize --run <run_dir> --grade --json
 Finalization executes every declared grader:
 
 - A **deterministic grader** runs its case-local validator with `--output`,
-  `--events`, optional `--expected`, and `--json`. It exits zero and returns
-  JSON containing positive `total`, `passed`, optional `checks`, and
-  `rationale` only when all load-bearing checks pass.
+  `--events`, `--artifacts`, optional `--expected`, optional `--before-state`,
+  optional `--after-state`, and `--json`. It exits zero and returns JSON
+  containing positive `total`, `passed`, optional `checks`, and `rationale`
+  only when all load-bearing checks pass.
 - An **LLM grader** reads the frozen task, response, artifacts, expectations,
-  expected output, and case-local `judge.md`. It receives transcript events only
-  when `uses_transcript` is true.
+  expected output, and case-local `judge.md`. A load-bearing judge uses its
+  calibrated, pinned model and reasoning effort and receives no later rubric
+  annotations. It receives transcript events only when `uses_transcript` is
+  true.
 - A **human grader** remains pending until a person records a judgment through
   the workbench or `eval record`.
 
@@ -161,12 +185,22 @@ metaskill eval grade --run <run_dir> --json
 Changing a case, version, rubric, grader source, or execution setting requires a
 new run.
 
+For `outcome: "stateful"`, MetaSkill runs the hidden capture script before
+dispatch and again at submission, saves `before-state.json` and
+`after-state.json` in the durable trial, and passes both to the state-aware
+validator. A stateful nonterminal trial cannot be retried in its mutated
+workspace; create a new run.
+
 ## 5. Inspect The Evaluation
 
 Read `<run_dir>/<skill-name>-evaluation.md` and inspect the trial responses,
-artifacts, and grades behind every failure, regression, disagreement, or
-unknown result. Open `metaskill workbench open` when side-by-side inspection or
-human feedback is useful.
+artifacts, state evidence, and grades behind every failure, case regression,
+disagreement, or unknown result. The report labels diagnostic runs as
+observations. Eligible readiness and benchmark reports include all-trial
+success rates, confidence intervals, missing evidence, the declared `pass@k`
+or `pass^k` rule, paired exact inference, and judge calibration details. Open
+`metaskill workbench open` when side-by-side inspection or human feedback is
+useful.
 
 Use `eval report` only to regenerate or write the report from the frozen run:
 

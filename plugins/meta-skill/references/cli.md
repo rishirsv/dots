@@ -68,8 +68,10 @@ metaskill eval record --run RUN --trial ID --label LABEL --rationale TEXT
   [--grader ID] [--metric ID] [--score 0..1] [--json]
 ```
 
-`eval prepare`, `eval submit`, and `eval finalize` are the interactive
-subagent lifecycle. `prepare --json` freezes the selected inputs and returns
+`eval prepare --no-baseline`, `eval submit`, and `eval finalize` are the
+one-candidate interactive-subagent lifecycle. Native subagents inherit an
+uncontrolled skill and plugin inventory, so `prepare` rejects multi-candidate
+comparisons. `prepare --json` freezes the selected inputs and returns
 one packet per unresolved trial. Each packet contains `trial_id`, `attempt_id`,
 `workspace_path`, `task_path`, `fixture_root`, `result_path`, and
 `artifact_root`, plus `skill_path` for an attached-skill candidate. A native
@@ -86,16 +88,25 @@ returns a packet with a fresh `attempt_id`. It rejects completed, failed,
 timed-out, and skipped trials. Never retry a terminal trial in place; use a new run when new task
 evidence is required.
 
-`eval run` is the unattended lane. It uses ephemeral Codex Exec workers and the
-same prepare, submit, grade, and report contracts; it does not create persistent
-user-visible Codex tasks. Both paths include the suite's no-skill candidate by
-default. `--baseline` selects another declared candidate as the comparator;
-`--no-baseline` is the explicit opt-out. `--check` validates and lints without
-creating a run. An ad hoc run is ungraded unless it supplies an expected output
-or expectations.
+`eval run` is the unattended comparison lane. It uses ephemeral Codex Exec
+workers, ignores user config and rules, disables plugins, apps, and memories,
+records an empty plugin inventory, and supplies only the frozen candidate skill. It uses the same prepare, submit,
+grade, and report contracts and does not create persistent user-visible Codex
+tasks. It includes the suite's no-skill candidate by default. `--baseline`
+selects another declared candidate as the comparator; `--no-baseline` is the
+explicit opt-out. `--check` validates and lints without creating a run, runs
+deterministic Pass/Fail grader fixtures, and verifies calibrated judge digests
+and confidence bounds. An ad hoc expectation without an explicit grader
+produces advisory feedback and an inconclusive verdict.
 
-The unattended worker and model judge default to `gpt-5.6-terra` with `medium`
-reasoning unless the suite or command overrides them. Native workers inherit
+Readiness and benchmark runs require at least 20 selected cases and three
+repetitions per case. A benchmark run must select one split with `--split`; its
+held-out split rejects `--source-run-id`.
+
+The unattended worker and advisory model judge default to `gpt-5.6-terra` with
+`medium` reasoning unless the suite or command overrides them. A load-bearing
+model grader uses the model and reasoning effort pinned in its calibration.
+Native workers inherit
 the current Codex task's model choice; `--model` on `prepare` records requested
 provenance but cannot override the native subagent model. `run.json` records
 task and judge executor provenance separately; a native model value is
@@ -106,8 +117,10 @@ Runs freeze the selected suite, grader definitions, and candidate payloads.
 whose model, case digest, candidate payload digest, and trial identity still
 match; missing, incomplete, or changed trials execute normally.
 `eval grade` reruns those frozen graders; changing authored grader source needs
-a new run. Only annotations explicitly marked `rubric` or `evidence` enter
-model-judge context; absence and `exclude` remain human-only. `eval record`
+a new run. Annotations explicitly marked `rubric` or `evidence` may enter an
+advisory model judge. They never modify a calibrated load-bearing judge;
+changing that guidance needs a new judge version and calibration. Absence and
+`exclude` remain human-only. `eval record`
 appends a revision for one human grader already declared by the frozen suite.
 The report is regenerated after grade or review mutation.
 

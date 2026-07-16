@@ -1,7 +1,11 @@
 """Ephemeral trial staging and outcome capture."""
 
+import hashlib
+import json
 import re
 import shutil
+import subprocess
+import sys
 from pathlib import Path
 
 from .candidates import copy_candidate_payload
@@ -52,6 +56,57 @@ def stage_workspace(workspace_root, trial_id, frozen_case, candidate):
     staged["workspace"] = str(workspace)
     staged["cwd"] = str(workspace)
     return staged
+
+
+def capture_state_snapshot(frozen_case, workspace, output_path, phase):
+    """Run a case-local state capture without exposing its implementation to the worker."""
+    raw = frozen_case.get("state_capture")
+    if not raw:
+        return None
+    case_root = Path(frozen_case["case_root"])
+    script = safe_case_file(case_root, raw, "state capture")
+    if not script.is_file():
+        raise CliError(f"state capture missing: {script}", 2)
+    if script.suffix.lower() == ".py":
+        command = [sys.executable, str(script)]
+    elif script.suffix.lower() == ".sh":
+        command = ["sh", str(script)]
+    elif script.stat().st_mode & 0o111:
+        command = [str(script)]
+    else:
+        raise CliError(f"unsupported state capture file: {script}", 2)
+    output = Path(output_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    proc = subprocess.run(
+        [
+            *command,
+            "--workspace",
+            str(Path(workspace).resolve()),
+            "--output",
+            str(output.resolve()),
+            "--phase",
+            phase,
+            "--json",
+        ],
+        capture_output=True,
+        text=True,
+        cwd=Path(workspace),
+    )
+    if proc.returncode != 0:
+        raise CliError((proc.stderr or proc.stdout or "state capture failed").strip(), 2)
+    if not output.is_file() and proc.stdout.strip():
+        output.write_text(proc.stdout)
+    try:
+        payload = json.loads(output.read_text())
+    except (OSError, json.JSONDecodeError) as exc:
+        raise CliError(f"state capture must produce JSON for {phase}: {exc}", 2) from exc
+    if not isinstance(payload, (dict, list)):
+        raise CliError(f"state capture must produce a JSON object or list for {phase}", 2)
+    return {
+        "path": output.name,
+        "digest": hashlib.sha256(output.read_bytes()).hexdigest(),
+        "phase": phase,
+    }
 
 
 def _safe_artifact_path(artifact_root, rel_path):

@@ -5,6 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 
+from .eval_stats import calibration_metrics, exact_mcnemar_pvalue, wilson_interval
 from .errors import CliError
 from .grading import is_recorded_human_grade, normalize_graders
 from .io import read_json, read_jsonl, resolve_run_dir
@@ -118,6 +119,9 @@ def _trial_model(run_dir, planned, grading_enabled):
         "response_path": str(root / "response.md"),
         "events_path": str(root / "events.jsonl"),
         "artifacts_path": str(root / "artifacts"),
+        "before_state_path": str(root / "before-state.json") if (root / "before-state.json").is_file() else None,
+        "after_state_path": str(root / "after-state.json") if (root / "after-state.json").is_file() else None,
+        "state_evidence": state.get("state_evidence") or {},
         "state_path": str(root / "state.json"),
         "grades_path": str(root / "grades.jsonl"),
         "grades": grades,
@@ -146,11 +150,26 @@ def _grading_complete(trials, cases, grading_enabled):
         return True
     for trial in trials:
         if trial.get("status") == "completed":
-            required = sum(
-                grader["kind"] != "human"
-                for grader in normalize_graders(cases.get(trial.get("eval_id"), {}))
-            )
-            if required and len(trial.get("grades") or []) < required:
+            case = cases.get(trial.get("eval_id"), {})
+            grades = trial.get("grades") or []
+            graders = normalize_graders(case)
+            if _human_review_pending(case, grades):
+                return False
+            required = {
+                (grader["kind"], grader["id"], grader["metric"])
+                for grader in graders
+                if grader["kind"] != "human"
+            }
+            recorded = {
+                (
+                    (grade.get("grader") or {}).get("kind"),
+                    (grade.get("grader") or {}).get("id"),
+                    grade.get("metric"),
+                )
+                for grade in grades
+                if (grade.get("grader") or {}).get("kind") != "human"
+            }
+            if not required.issubset(recorded):
                 return False
         elif trial.get("status") in {"failed", "timed_out", "skipped"}:
             if not trial.get("grades"):
@@ -176,16 +195,27 @@ def _blind_pending_trial(trial, case, grading_enabled):
     }
 
 
-def _behavior(trials):
-    verdicts = {trial.get("verdict") for trial in trials}
-    if verdicts == {"passed"}:
+def _behavior(trials, reliability_metric="pass^k"):
+    verdicts = [trial.get("verdict") for trial in trials]
+    if not verdicts or any(verdict not in {"passed", "failed"} for verdict in verdicts):
+        return "unknown"
+    if reliability_metric == "pass@k":
+        return "pass" if "passed" in verdicts else "fail"
+    if all(verdict == "passed" for verdict in verdicts):
         return "pass"
-    if verdicts == {"failed"}:
+    if any(verdict == "failed" for verdict in verdicts):
         return "fail"
     return "unknown"
 
 
-def _comparisons(candidates, trials, baseline_candidate=None):
+def _comparisons(
+    candidates,
+    trials,
+    baseline_candidate=None,
+    *,
+    reliability_metric="pass^k",
+    claim_supported=False,
+):
     candidate_ids = [candidate.get("candidate") for candidate in candidates if candidate.get("candidate")]
     baseline = baseline_candidate or next(
         (candidate.get("candidate") for candidate in candidates if candidate.get("source_kind") == "none"),
@@ -200,13 +230,13 @@ def _comparisons(candidates, trials, baseline_candidate=None):
     rows = []
     eval_ids = sorted({trial.get("eval_id") for trial in trials if trial.get("eval_id")})
     for eval_id in eval_ids:
-        baseline_state = _behavior(by_pair[(eval_id, baseline)])
+        baseline_state = _behavior(by_pair[(eval_id, baseline)], reliability_metric)
         for candidate in payload_ids:
-            candidate_state = _behavior(by_pair[(eval_id, candidate)])
+            candidate_state = _behavior(by_pair[(eval_id, candidate)], reliability_metric)
             if baseline_state == "fail" and candidate_state == "pass":
-                delta = "improved"
+                delta = "case_improvement" if claim_supported else "observed_improvement"
             elif baseline_state == "pass" and candidate_state == "fail":
-                delta = "regressed"
+                delta = "case_regression" if claim_supported else "observed_regression"
             elif baseline_state == candidate_state == "pass":
                 delta = "no_uplift_demonstrated"
             else:
@@ -224,7 +254,7 @@ def _comparisons(candidates, trials, baseline_candidate=None):
     return rows
 
 
-def _case_versions(cases, candidates, trials):
+def _case_versions(cases, candidates, trials, reliability_metric="pass^k"):
     by_case_version = defaultdict(list)
     for trial in trials:
         by_case_version[(trial.get("eval_id"), trial.get("candidate"))].append(trial)
@@ -249,7 +279,7 @@ def _case_versions(cases, candidates, trials):
                         "pass": "passed",
                         "fail": "failed",
                         "unknown": "inconclusive",
-                    }[_behavior(cells)],
+                    }[_behavior(cells, reliability_metric)],
                     "trials": [
                         {
                             "trial_id": trial.get("trial_id"),
@@ -298,8 +328,10 @@ def _candidate_summaries(candidates, trials, baseline_candidate):
         candidate_id = candidate.get("candidate")
         candidate_trials = by_candidate[candidate_id]
         verdicts = Counter(trial.get("verdict") for trial in candidate_trials)
+        total = len(candidate_trials)
         scored = verdicts.get("passed", 0) + verdicts.get("failed", 0)
-        pass_rate = verdicts.get("passed", 0) / scored if scored else None
+        pass_rate = verdicts.get("passed", 0) / total if total else None
+        scored_pass_rate = verdicts.get("passed", 0) / scored if scored else None
         durations = [int(trial.get("duration_ms")) for trial in candidate_trials if trial.get("duration_ms") is not None]
         tokens = [
             int((trial.get("usage") or {}).get("total_tokens"))
@@ -318,6 +350,10 @@ def _candidate_summaries(candidates, trials, baseline_candidate):
                 "ungraded": verdicts.get("ungraded", 0),
                 "scored": scored,
                 "pass_rate": pass_rate,
+                "pass_rate_interval": wilson_interval(verdicts.get("passed", 0), total),
+                "scored_pass_rate": scored_pass_rate,
+                "missing": total - scored,
+                "missing_rate": (total - scored) / total if total else None,
                 "mean_duration_ms": sum(durations) / len(durations) if durations else None,
                 "mean_total_tokens": sum(tokens) / len(tokens) if tokens else None,
             }
@@ -329,11 +365,84 @@ def _candidate_summaries(candidates, trials, baseline_candidate):
         row["pass_rate_delta"] = (
             rate - baseline_rate if rate is not None and baseline_rate is not None else None
         )
-        row["improvement_multiplier"] = (
-            rate / baseline_rate
-            if rate is not None and baseline_rate is not None and baseline_rate > 0
-            else None
-        )
+    return rows
+
+
+def _paired_inference(candidates, trials, baseline_candidate, claim_supported):
+    candidate_ids = [candidate.get("candidate") for candidate in candidates if candidate.get("candidate")]
+    if not baseline_candidate or baseline_candidate not in candidate_ids:
+        return []
+    keyed = {
+        (trial.get("eval_id"), trial.get("repetition"), trial.get("candidate")): trial
+        for trial in trials
+    }
+    pair_keys = sorted({(trial.get("eval_id"), trial.get("repetition")) for trial in trials})
+    rows = []
+    for candidate in [item for item in candidate_ids if item != baseline_candidate]:
+        improved = regressed = agreements = pairs = candidate_passed = baseline_passed = 0
+        for eval_id, repetition in pair_keys:
+            baseline = keyed.get((eval_id, repetition, baseline_candidate))
+            current = keyed.get((eval_id, repetition, candidate))
+            if not baseline or not current:
+                continue
+            if baseline.get("verdict") not in {"passed", "failed"} or current.get("verdict") not in {"passed", "failed"}:
+                continue
+            pairs += 1
+            baseline_ok = baseline["verdict"] == "passed"
+            current_ok = current["verdict"] == "passed"
+            baseline_passed += int(baseline_ok)
+            candidate_passed += int(current_ok)
+            if current_ok and not baseline_ok:
+                improved += 1
+            elif baseline_ok and not current_ok:
+                regressed += 1
+            else:
+                agreements += 1
+        p_value = exact_mcnemar_pvalue(improved, regressed) if pairs else None
+        if not claim_supported:
+            conclusion = "diagnostic_observation"
+        elif p_value is not None and p_value <= 0.05 and improved > regressed:
+            conclusion = "supported_improvement"
+        elif p_value is not None and p_value <= 0.05 and regressed > improved:
+            conclusion = "supported_regression"
+        else:
+            conclusion = "no_supported_difference"
+        rows.append({
+            "baseline": baseline_candidate,
+            "candidate": candidate,
+            "pairs": pairs,
+            "improved_pairs": improved,
+            "regressed_pairs": regressed,
+            "agreement_pairs": agreements,
+            "unpaired_or_missing": len(pair_keys) - pairs,
+            "paired_pass_rate_delta": (
+                (candidate_passed - baseline_passed) / pairs if pairs else None
+            ),
+            "exact_mcnemar_p": p_value,
+            "claim_supported": claim_supported,
+            "conclusion": conclusion,
+        })
+    return rows
+
+
+def _judge_calibrations(cases):
+    rows = []
+    for case in cases.values():
+        for grader in case.get("graders") or []:
+            calibration = grader.get("calibration")
+            if grader.get("kind") != "model" or grader.get("advisory") or not calibration:
+                continue
+            metrics = calibration_metrics(calibration)
+            rows.append({
+                "case_id": case.get("id"),
+                "grader": grader.get("id"),
+                "model": grader.get("model"),
+                "reasoning_effort": grader.get("reasoning_effort"),
+                "dataset_id": calibration.get("dataset_id"),
+                "data_period": calibration.get("data_period"),
+                "validated_at": calibration.get("validated_at"),
+                **metrics,
+            })
     return rows
 
 
@@ -368,8 +477,51 @@ def build_report(raw_run, *, blind_pending_human=False):
             _blind_pending_trial(trial, cases.get(trial.get("eval_id"), {}), grading_enabled)
             for trial in trials
         ]
+    task_executor = _executor_model(run, "task_executor")
+    judge_executor = _executor_model(run, "judge_executor")
+    evaluation_mode = run.get("evaluation_mode", suite.get("evaluation_mode", "diagnostic"))
+    reliability_metric = run.get("reliability_metric") or (suite.get("defaults") or {}).get(
+        "reliability_metric", "pass^k"
+    )
+    isolated = bool((task_executor.get("isolation") or {}).get("supports_baseline_effect"))
+    repetitions = run.get("repetitions") or {}
+    coverage_requirements = run.get("coverage_requirements") or suite.get("coverage_requirements") or []
+    covered = {tag for case in cases.values() for tag in case.get("coverage") or []}
+    candidates = [candidate.get("candidate") for candidate in run.get("candidates") or []]
+    expected_trial_count = sum(int(count) * len(candidates) for count in repetitions.values())
+    design_complete = bool(
+        len(cases) >= 20
+        and coverage_requirements
+        and set(coverage_requirements).issubset(covered)
+        and expected_trial_count == len(trials)
+    )
+    if evaluation_mode == "benchmark":
+        benchmark = run.get("benchmark") or suite.get("benchmark") or {}
+        splits = {case.get("split") for case in cases.values()}
+        benchmark_split = run.get("benchmark_split")
+        design_complete = bool(
+            design_complete
+            and benchmark_split
+            and splits == {benchmark_split}
+            and benchmark.get("held_out_split")
+        )
+    claim_supported = bool(
+        evaluation_mode in {"readiness", "benchmark"}
+        and design_complete
+        and isolated
+        and run.get("baseline_candidate")
+        and repetitions
+        and all(int(count) >= 3 for count in repetitions.values())
+        and runtime_terminal
+        and grading_complete
+        and all(trial.get("verdict") in {"passed", "failed"} for trial in trials)
+    )
     comparisons = _comparisons(
-        run.get("candidates") or [], trials, baseline_candidate=run.get("baseline_candidate")
+        run.get("candidates") or [],
+        trials,
+        baseline_candidate=run.get("baseline_candidate"),
+        reliability_metric=reliability_metric,
+        claim_supported=claim_supported,
     )
     runtime_totals = dict(Counter(trial["status"] for trial in trials))
     verdict_totals = dict(Counter(trial["verdict"] for trial in trials))
@@ -403,8 +555,30 @@ def build_report(raw_run, *, blind_pending_human=False):
         coverage_limits.append("No baseline candidate was run; candidate delta cannot be calculated.")
     if not grading_enabled:
         coverage_limits.append("Grading was disabled; completed trials remain ungraded.")
+    if evaluation_mode == "diagnostic":
+        coverage_limits.append(
+            "Diagnostic results are observations from this run, not evidence of general skill effect."
+        )
+    elif not design_complete:
+        coverage_limits.append(
+            "The broad-suite coverage or planned repetition contract is incomplete; comparative effect claims are disabled."
+        )
+    if run.get("baseline_candidate") and not isolated:
+        coverage_limits.append(
+            "The task executor did not guarantee an isolated skill inventory; baseline effect claims are disabled."
+        )
+    missing_trials = sum(
+        trial.get("verdict") not in {"passed", "failed"} for trial in trials
+    )
+    if missing_trials:
+        coverage_limits.append(
+            f"{missing_trials} trial(s) were inconclusive, ungraded, or skipped and remain in the all-trial denominator."
+        )
     candidate_summaries = _candidate_summaries(
         run.get("candidates") or [], trials, run.get("baseline_candidate")
+    )
+    paired_inference = _paired_inference(
+        run.get("candidates") or [], trials, run.get("baseline_candidate"), claim_supported
     )
     report = {
         "schema_version": 2,
@@ -413,14 +587,22 @@ def build_report(raw_run, *, blind_pending_human=False):
         "created_at": run.get("created_at"),
         "adhoc": bool(run.get("adhoc")),
         "objective": run.get("objective"),
+        "evaluation_mode": evaluation_mode,
+        "reliability_metric": reliability_metric,
+        "claim_supported": claim_supported,
+        "conclusion_level": "comparative_estimate" if claim_supported else "diagnostic_observation",
+        "coverage_requirements": coverage_requirements,
+        "benchmark": run.get("benchmark") or suite.get("benchmark"),
+        "benchmark_split": run.get("benchmark_split"),
+        "holdout_evaluation": bool(run.get("holdout_evaluation")),
         "skill_id": run.get("skill_id"),
         "skill_name": run.get("skill_name") or Path(str(run.get("skill_id") or "skill")).name,
         "suite": run.get("suite"),
         "project": run.get("project"),
         "model": run.get("model"),
         "reasoning_effort": run.get("reasoning_effort"),
-        "task_executor": _executor_model(run, "task_executor"),
-        "judge_executor": _executor_model(run, "judge_executor"),
+        "task_executor": task_executor,
+        "judge_executor": judge_executor,
         "runner": run.get("runner") or {},
         "baseline_candidate": run.get("baseline_candidate"),
         "source_run_id": run.get("source_run_id"),
@@ -429,10 +611,12 @@ def build_report(raw_run, *, blind_pending_human=False):
         "eval_digests": run.get("eval_digests") or [],
         "planning_error": run.get("planning_error"),
         "candidates": run.get("candidates") or [],
-        "cases": _case_versions(cases, run.get("candidates") or [], trials),
+        "cases": _case_versions(cases, run.get("candidates") or [], trials, reliability_metric),
         "trials": trials,
         "comparisons": comparisons,
         "candidate_summaries": candidate_summaries,
+        "paired_inference": paired_inference,
+        "judge_calibrations": _judge_calibrations(cases),
         "delta_totals": delta_totals,
         "runtime_status_totals": runtime_totals,
         "verdict_totals": verdict_totals,
@@ -456,7 +640,7 @@ def build_report(raw_run, *, blind_pending_human=False):
         "terminal": runtime_terminal and grading_complete,
     }
     report["ok"] = not report["planning_error"] and not any(
-        trial["verdict"] in {"failed", "inconclusive"} for trial in trials
+        trial["verdict"] in {"failed", "inconclusive", "ungraded", "skipped"} for trial in trials
     )
     return report
 
@@ -610,15 +794,20 @@ def _average(value, suffix=""):
     return "-" if value is None else f"{value:.0f}{suffix}"
 
 
-def _effect(row):
+def _interval(value):
+    if not value:
+        return "-"
+    return f"{value[0] * 100:.1f}–{value[1] * 100:.1f}%"
+
+
+def _effect(row, claim_supported):
     if row.get("baseline"):
         return "baseline"
     delta = row.get("pass_rate_delta")
     if delta is None:
         return "-"
-    multiplier = row.get("improvement_multiplier")
-    multiplier_text = "not calculable from 0% baseline" if multiplier is None else f"{multiplier:.2f}x"
-    return f"{delta * 100:+.1f} pp · {multiplier_text}"
+    prefix = "estimated" if claim_supported else "observed"
+    return f"{prefix} {delta * 100:+.1f} pp"
 
 
 def _criterion_rows(report):
@@ -656,8 +845,19 @@ def render_markdown(report):
     lines = [f"# Skill evaluation: {report.get('skill_id') or report['run_id']}", "", "## Summary", ""]
     if report.get("objective"):
         lines += [f"**Question:** {report['objective']}", ""]
+    supported = bool(report.get("claim_supported"))
+    level = (
+        "Comparative estimate with paired inference"
+        if supported
+        else "Diagnostic observation; this run does not establish general skill effect"
+    )
     lines += [
-        f"**Version delta:** {delta.get('improved', 0)} improved, {delta.get('regressed', 0)} regressed, "
+        f"**Conclusion level:** {level}.",
+        "",
+        f"**Version comparison:** {delta.get('case_improvement', 0)} case improvements, "
+        f"{delta.get('case_regression', 0)} case regressions, "
+        f"{delta.get('observed_improvement', 0)} observed improvements, "
+        f"{delta.get('observed_regression', 0)} observed regressions, "
         f"{delta.get('no_uplift_demonstrated', 0)} no uplift demonstrated, "
         f"{delta.get('inconclusive', 0)} inconclusive.",
         "",
@@ -668,13 +868,15 @@ def render_markdown(report):
     summaries = report.get("candidate_summaries") or []
     if summaries:
         lines += _table(
-            ["Version", "Passed / scored", "Pass rate", "Effect vs baseline", "Mean time", "Mean tokens"],
+            ["Version", "Passed / all", "Success rate", "95% CI", "Missing", "Delta vs baseline", "Mean time", "Mean tokens"],
             [
                 [
                     row.get("display"),
-                    f"{row.get('passed', 0)} / {row.get('scored', 0)}",
+                    f"{row.get('passed', 0)} / {row.get('trials', 0)}",
                     _percent(row.get("pass_rate")),
-                    _effect(row),
+                    _interval(row.get("pass_rate_interval")),
+                    f"{row.get('missing', 0)} ({_percent(row.get('missing_rate'))})",
+                    _effect(row, supported),
                     _average(row.get("mean_duration_ms"), " ms"),
                     _average(row.get("mean_total_tokens")),
                 ]
@@ -683,7 +885,7 @@ def render_markdown(report):
         )
     lines += [
         "",
-        "Pass rate excludes inconclusive and ungraded trials. The per-case comparison below is the primary evidence of skill effect.",
+        "Success rate uses every planned trial as the denominator; inconclusive and ungraded outcomes remain visible as missing evidence.",
         "",
         "## Scenario results",
         "",
@@ -699,6 +901,25 @@ def render_markdown(report):
         )
     else:
         lines.append("No candidate comparison is available.")
+    inference = report.get("paired_inference") or []
+    if inference:
+        lines += ["", "## Paired inference", ""]
+        lines += _table(
+            ["Version", "Paired trials", "Improved", "Regressed", "Missing", "Paired delta", "Exact p", "Conclusion"],
+            [
+                [
+                    row.get("candidate"),
+                    row.get("pairs"),
+                    row.get("improved_pairs"),
+                    row.get("regressed_pairs"),
+                    row.get("unpaired_or_missing"),
+                    _percent(row.get("paired_pass_rate_delta")),
+                    "-" if row.get("exact_mcnemar_p") is None else f"{row['exact_mcnemar_p']:.4f}",
+                    row.get("conclusion"),
+                ]
+                for row in inference
+            ],
+        )
     lines += ["", "## Trial results", ""]
     lines += _table(
         ["Trial", "Runtime", "Verdict", "Duration"],
@@ -711,6 +932,25 @@ def render_markdown(report):
     if criterion_rows:
         lines += ["", "## Criteria evidence", ""]
         lines += _table(["Case", "Version", "Criterion", "Result", "Evidence"], criterion_rows)
+    calibrations = report.get("judge_calibrations") or []
+    if calibrations:
+        lines += ["", "## Judge calibration", ""]
+        lines += _table(
+            ["Case / grader", "Model", "Held-out Fail / Pass", "TPR interval", "TNR interval", "Precision", "Prevalence", "Data period"],
+            [
+                [
+                    f"{row.get('case_id')} / {row.get('grader')}",
+                    f"{row.get('model')} · {row.get('reasoning_effort')}",
+                    f"{row.get('fail_count')} / {row.get('pass_count')}",
+                    f"{_percent(row.get('tpr'))} ({_interval(row.get('tpr_interval'))} at {_percent(row.get('confidence_level'))})",
+                    f"{_percent(row.get('tnr'))} ({_interval(row.get('tnr_interval'))} at {_percent(row.get('confidence_level'))})",
+                    _percent(row.get("precision")),
+                    _percent(row.get("prevalence")),
+                    f"{row.get('data_period')} · validated {row.get('validated_at')}",
+                ]
+                for row in calibrations
+            ],
+        )
     unresolved = [
         trial
         for trial in report.get("trials") or []
@@ -737,6 +977,16 @@ def render_markdown(report):
         "## Run details",
         "",
         f"- Run: `{report['run_id']}`",
+        f"- Evaluation mode: {report.get('evaluation_mode') or 'diagnostic'}",
+        f"- Reliability metric: {report.get('reliability_metric') or 'pass^k'}",
+        *(
+            [
+                f"- Benchmark split: {report.get('benchmark_split')}",
+                f"- Held-out evaluation: {'yes' if report.get('holdout_evaluation') else 'no'}",
+            ]
+            if report.get("evaluation_mode") == "benchmark"
+            else []
+        ),
         f"- Baseline version: {report.get('baseline_candidate') or 'none'}",
         f"- Versions: {', '.join(row.get('candidate') or '' for row in report.get('candidates') or []) or 'none'}",
         f"- Task executor: {_executor_label(report.get('task_executor'))}",

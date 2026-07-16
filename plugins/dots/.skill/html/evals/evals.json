@@ -18,14 +18,17 @@
   ],
   "defaults": {
     "repetitions": 1,
-    "runner": "native_subagent",
+    "reliability_metric": "pass^k",
+    "runner": "codex_exec",
     "timeout_seconds": 600
   },
+  "evaluation_mode": "diagnostic",
   "evals": [
     {
       "id": "reviewer-pr-walkthrough",
       "type": "regression",
       "priority": "high",
+      "outcome": "artifact",
       "prompt": "Create a reviewer-facing, self-contained HTML walkthrough from the facts below. Save exactly one finished .html artifact in the requested artifact directory and return a concise link to it.\n\nTitle: Replace startup-wide health permissions with feature-owned authorization without changing Steady's canonical data ownership\nStatus: ready for review\nAudience: a senior engineer deciding whether the change is safe to merge.\n\nFacts:\n- Before: app startup asked for every available HealthKit scope.\n- After: Initial Connect requests only baseline readiness data; Workout Player requests workout routes when the user opens route-aware playback; Recovery asks for sleep stages only when its trend screen is opened.\n- Steady's SQLite store remains canonical; HealthKit is an import source, not a second source of truth.\n- Five-step review path: inspect current ownership, route each scope to its visible feature, preserve the canonical store boundary, run focused authorization tests, verify the narrow UI states.\n- Evidence: 14 authorization tests pass; the baseline startup request falls from 9 scopes to 3; no schema or migration changes; route and sleep requests remain user-initiated.\n- Risks: a feature can forget to request its scope; a denied scope must remain recoverable; tests currently cover three owning features.\n- Recommendation: approve after confirming the denied-sleep recovery state in the simulator.\n\nMake the review path fully readable on a 360px viewport, make the risk comparison readable without page-level horizontal scrolling, and keep confirmed facts distinct from the one remaining simulator check.",
       "expected_output": "One polished self-contained HTML walkthrough with a long title and readable status, a responsive linear five-step review path, a mobile-readable risk table or equivalent, clear ownership/source-of-truth explanation, and the unresolved simulator check labeled as such.",
       "expectations": [
@@ -36,13 +39,15 @@
         "The SQLite ownership invariant, supplied evidence, and unresolved denied-sleep simulator check are accurate and visibly distinct."
       ],
       "graders": [
-        { "kind": "model", "id": "artifact-quality", "metric": "quality" }
+        { "kind": "model", "id": "artifact-quality", "metric": "quality", "path": "judge.md", "advisory": true },
+        { "kind": "human", "id": "artifact-review", "metric": "artifact-correctness" }
       ]
     },
     {
       "id": "evidence-led-comparison",
       "type": "capability",
       "priority": "high",
+      "outcome": "artifact",
       "prompt": "Create a shareable, self-contained HTML comparison brief from the supplied research notes. Save exactly one finished .html artifact in the requested artifact directory and return a concise link to it. Do not browse or invent missing facts.\n\nDecision: choose an onboarding direction for a privacy-first household budgeting product.\nAudience: product and design leads.\nOptions:\n1. Guided interview — strongest explanation and trust, 6-8 minutes, highest completion burden.\n2. Statement-first import — fastest path to useful data, 2-3 minutes, requires a clear preview before apply.\n3. Empty workspace — maximum agency, lowest initial comprehension, users must discover import and categories.\n\nObserved evidence:\n- In five moderated sessions, four people asked what would change before importing a statement.\n- Three people abandoned the guided interview when asked to classify recurring transfers.\n- All five understood the statement preview when changed rows were grouped as Added, Matched, and Needs review.\n- No production funnel data exists yet.\n\nRecommendation: statement-first import with validate -> preview -> explicit apply; retain a short optional interview for household goals after the first successful import.\n\nStructure the brief so the recommendation is available early, use one focal evidence figure plus two supporting evidence views with readable captions, compare the three options clearly, include six or more useful sections with mobile navigation that does not dominate the page, and label the small sample and missing production data as limitations. The figures may be inline SVG diagrams derived only from the supplied notes.",
       "expected_output": "One polished editorial HTML comparison brief with an early recommendation, a clear three-option comparison, a focal evidence figure and two supporting captioned views, compact mobile navigation, and explicit research limitations.",
       "expectations": [
@@ -53,13 +58,15 @@
         "The six-or-more-section page provides useful desktop navigation and a compact collapsed mobile navigation treatment."
       ],
       "graders": [
-        { "kind": "model", "id": "artifact-quality", "metric": "quality" }
+        { "kind": "model", "id": "artifact-quality", "metric": "quality", "path": "judge.md", "advisory": true },
+        { "kind": "human", "id": "artifact-review", "metric": "artifact-correctness" }
       ]
     },
     {
       "id": "compact-release-brief",
       "type": "regression",
       "priority": "medium",
+      "outcome": "artifact",
       "prompt": "Create a compact, utilitarian, self-contained HTML release brief from the facts below. Save exactly one finished .html artifact in the requested artifact directory and return a concise link to it.\n\nTitle: CSV export hardening release brief\nAudience: the engineer running today's release.\nFacts:\n- Change: escape spreadsheet-formula prefixes in user-supplied cells and preserve UTF-8 output.\n- Verification: 27 focused tests pass; fixtures cover =, +, -, and @ prefixes; a 100,000-row export completes in 1.8 seconds on the recorded local benchmark.\n- Rollout: build, run focused tests, export the four malicious fixtures, inspect the first and last rows, deploy.\n- Remaining risk: the timing is a local benchmark, not a production SLO.\n- Exact config line: EXPORT_FORMULA_ESCAPE=enabled\n- Decision: ship today and monitor export errors for one release cycle.\n\nUse no more than four main sections. Keep the exact config line easy to copy, make the five-step rollout readable at 360px, and do not add a table of contents, theme toggle, decorative figure gallery, or unsupported metrics.",
       "expected_output": "One restrained self-contained HTML release brief with no TOC, a copyable config line, responsive five-step rollout, supplied verification evidence, explicit local-benchmark caveat, and ship decision.",
       "expectations": [
@@ -70,13 +77,15 @@
         "The 1.8-second local benchmark is not presented as a production SLO and the ship-today decision is explicit."
       ],
       "graders": [
-        { "kind": "model", "id": "artifact-quality", "metric": "quality" }
+        { "kind": "model", "id": "artifact-quality", "metric": "quality", "path": "judge.md", "advisory": true },
+        { "kind": "human", "id": "artifact-review", "metric": "artifact-correctness" }
       ]
     },
     {
       "id": "direct-plot-no-dashboard",
       "type": "regression",
       "priority": "high",
+      "outcome": "artifact",
       "prompt": "Create a compact, self-contained HTML analysis from the supplied values. Save exactly one finished .html artifact in the requested artifact directory and return a concise link to it. Do not browse or invent missing facts.\n\nAudience: the release engineer investigating a slow deployment.\nQuestion: which phase dominates recorded deployment latency?\nValues:\n- Parse: 42 ms\n- Validate: 88 ms\n- Persist: 31 ms\n- Notify: 19 ms\n\nUse one directly labeled plot and a short takeaway. Show every supplied phase at once. Do not add filters, toggles, reset controls, KPI cards, qualitative scores, status panels, repeated legends, or a second chart.",
       "expected_output": "One compact self-contained HTML analysis with a single directly labeled plot containing all four values, a clear takeaway that Validate dominates the recorded latency, and no invented dashboard chrome.",
       "expectations": [
@@ -87,7 +96,8 @@
         "The page remains readable at a 320px viewport without page-level horizontal overflow."
       ],
       "graders": [
-        { "kind": "model", "id": "artifact-quality", "metric": "quality" }
+        { "kind": "model", "id": "artifact-quality", "metric": "quality", "path": "judge.md", "advisory": true },
+        { "kind": "human", "id": "artifact-review", "metric": "artifact-correctness" }
       ]
     }
   ],

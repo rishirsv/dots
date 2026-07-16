@@ -26,6 +26,7 @@ from .packaging import package_skill
 from .report import build_report, list_runs, render_markdown, write_report
 from .runner import finalize_eval, prepare_eval, retry_trial, run_eval, submit_trial, unresolved_trials
 from .sessions import list_threads, render_thread_list, show_thread
+from .suite_checks import check_suite
 from .validation import validate_report
 from .workbench import init_target, status_snapshot
 
@@ -128,7 +129,8 @@ def command_eval_run(args):
     lint = lint_suite(str(context["suite"]))
     fatal = _fatal_lint(lint)
     if args.check:
-        result = {"ok": not fatal, "lint": lint}
+        checks = check_suite(context["manifest"], context["suite"])
+        result = {"ok": not fatal and checks["ok"], "lint": lint, "suite_checks": checks}
         emit(result, args.json)
         return 0 if result["ok"] else 1
     if fatal:

@@ -43,6 +43,18 @@ Apply every load-bearing criterion to at least one known Pass and one known
 Fail trace. Include a borderline trace when the decision boundary is unclear.
 Ask the user to confirm disputed labels or interpretations.
 
+For a deterministic grader, save the known Pass as an oracle outcome and the
+known Fail as a negative outcome under the case's `grader-tests/` folder.
+Declare both in `grader_tests`; `eval run --check` must execute the grader
+against them before a run can start. Include the response, produced artifacts,
+and before/after state required by the grader rather than testing only a
+descriptive surrogate.
+
+For a stateful task, verify the requested state transition and relevant
+unchanged state separately. A correct target mutation with collateral changes
+must fail. Prefer backend or filesystem state evidence over a response that
+merely claims the action happened.
+
 Remove or rewrite a criterion when it:
 
 - restates the prompt without identifying evidence;

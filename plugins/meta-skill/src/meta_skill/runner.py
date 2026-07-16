@@ -29,7 +29,8 @@ from .manifest import (
 )
 from .run_inputs import freeze_run_inputs, validate_grading_inputs
 from .runtime import DEFAULT_EVAL_MODEL, DEFAULT_EVAL_REASONING_EFFORT
-from .staging import capture_artifacts, relocate_workspace_links, stage_workspace
+from .staging import capture_artifacts, capture_state_snapshot, relocate_workspace_links, stage_workspace
+from .suite_checks import check_suite
 from .workbench_paths import evals_path, runs_path, skill_dir_for_target, skill_id_for_target, skill_name_for_target, state_root, worktrees_path
 
 
@@ -183,6 +184,18 @@ def submit_trial(raw_run, trial_id, attempt_id, raw_result):
         raise CliError(f"trial cannot accept a result while {current.get('status')}", 2)
 
     root = trial_dir(run_dir, trial_id)
+    frozen_suite = read_json(run_dir / "inputs" / "suite.json")
+    frozen_case = next(
+        (case for case in frozen_suite.get("evals") or [] if case.get("id") == planned.get("eval_id")),
+        None,
+    )
+    if frozen_case is None:
+        raise CliError(f"frozen eval not found for trial: {trial_id}", 2)
+    frozen_case = {
+        **frozen_case,
+        "case_root": str(run_dir / "inputs" / "cases" / planned["eval_id"]),
+    }
+    after_state = capture_state_snapshot(frozen_case, workspace, root / "after-state.json", "after")
     import_root = Path(tempfile.mkdtemp(prefix=".submission-", dir=root))
     try:
         response_path = import_root / "response.md"
@@ -219,6 +232,10 @@ def submit_trial(raw_run, trial_id, attempt_id, raw_result):
         "error": result.get("error"),
         "task_executor": _submitted_executor(run, result),
         "result_digest": digest,
+        "state_evidence": {
+            **(current.get("state_evidence") or {}),
+            **({"after": after_state} if after_state else {}),
+        },
     }
     write_json(state_path(run_dir, trial_id), final)
     return final
@@ -243,6 +260,8 @@ def retry_trial(raw_run, trial_id):
     current = read_json(state_path(run_dir, trial_id))
     if current.get("status") not in {"queued", "running"}:
         raise CliError("only a queued or running trial can be retried", 2)
+    if (current.get("state_evidence") or {}).get("before"):
+        raise CliError("stateful trials require a new run instead of an in-place retry", 2)
     workspace = Path(current["workspace_path"])
     packet = read_json(workspace / "worker.json")
     packet["attempt_id"] = uuid.uuid4().hex
@@ -345,7 +364,7 @@ def _reuse_completed_trials(run_dir, runs_root, resume_run_id, run_model, plan):
         return set()
     executor_identity = (
         "kind", "requested_model", "requested_reasoning", "observed_model",
-        "provenance", "runtime_version",
+        "provenance", "runtime_version", "isolation",
     )
     if any(source_executor.get(key) != current_executor.get(key) for key in executor_identity):
         return set()
@@ -418,10 +437,50 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
         include_baseline=include_baseline,
         baseline_id=baseline_candidate,
     )
+    if task_executor_kind != "codex_exec" and len(candidate_defs) > 1:
+        raise CliError(
+            "native subagents cannot guarantee isolated candidate comparisons; "
+            "use eval run or select one candidate with --no-baseline",
+            2,
+        )
     grading_enabled = not bool(getattr(args, "no_grade", False)) and (
         not adhoc or any(case.get("expectations") or case.get("graders") or case.get("expected_output") for case in cases)
     )
-    validate_grading_inputs(cases, grading_enabled=grading_enabled)
+    validate_grading_inputs(
+        cases,
+        grading_enabled=grading_enabled,
+        allow_advisory_only=adhoc,
+    )
+    if grading_enabled and not adhoc:
+        checks = check_suite(manifest, suite)
+        if not checks["ok"]:
+            failed = ", ".join(
+                f"{row['case_id']}/{row['grader']}/{row['check']}"
+                for row in checks["checks"]
+                if not row["ok"]
+            )
+            raise CliError(f"suite grader checks failed: {failed}", 2)
+    evaluation_mode = manifest.get("evaluation_mode", "diagnostic")
+    benchmark_split = getattr(args, "split", None)
+    if evaluation_mode == "benchmark":
+        benchmark = manifest.get("benchmark") or {}
+        if not benchmark_split:
+            raise CliError("benchmark runs must select exactly one declared split with --split", 2)
+        if (
+            benchmark_split == benchmark.get("held_out_split")
+            and getattr(args, "source_run_id", None)
+        ):
+            raise CliError("held-out benchmark runs must not inherit source-run rubric context", 2)
+    repetitions = {case["id"]: repetition_count(case, args, defaults) for case in cases}
+    if evaluation_mode in {"readiness", "benchmark"}:
+        if len(cases) < 20:
+            raise CliError(f"{evaluation_mode} runs need at least 20 selected cases", 2)
+        too_small = [case_id for case_id, count in repetitions.items() if count < 3]
+        if too_small:
+            raise CliError(
+                f"{evaluation_mode} comparisons need at least three repetitions: {', '.join(too_small)}",
+                2,
+            )
     rid = run_id_value or run_id()
     run_dir = runs_root / rid
     run_dir.mkdir(parents=True, exist_ok=False)
@@ -441,7 +500,15 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
                 candidates.append(snapshot_candidate(run_dir, resolved))
             finally:
                 cleanup_candidate_source(project, resolved)
-        frozen_suite = freeze_run_inputs(manifest, suite, run_dir, cases, candidate_defs, grading_enabled=grading_enabled)
+        frozen_suite = freeze_run_inputs(
+            manifest,
+            suite,
+            run_dir,
+            cases,
+            candidate_defs,
+            grading_enabled=grading_enabled,
+            allow_advisory_only=adhoc,
+        )
         frozen_cases = {
             case["id"]: {**case, "case_root": str(run_dir / "inputs" / "cases" / case["id"])}
             for case in frozen_suite["evals"]
@@ -454,6 +521,15 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
             "created_at": utc_now(),
             "adhoc": adhoc,
             "objective": getattr(args, "objective", None) or manifest.get("objective"),
+            "evaluation_mode": evaluation_mode,
+            "reliability_metric": defaults.get("reliability_metric", "pass^k"),
+            "coverage_requirements": list(manifest.get("coverage_requirements") or []),
+            "benchmark": manifest.get("benchmark"),
+            "benchmark_split": benchmark_split if evaluation_mode == "benchmark" else None,
+            "holdout_evaluation": bool(
+                evaluation_mode == "benchmark"
+                and benchmark_split == (manifest.get("benchmark") or {}).get("held_out_split")
+            ),
             "skill_id": skill_id,
             "skill_name": skill_name_for_target(project),
             "suite": str(suite),
@@ -496,7 +572,7 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
             ],
             "eval_ids": [case["id"] for case in cases],
             "candidates": [candidate_source(candidate) for candidate in candidates],
-            "repetitions": {case["id"]: repetition_count(case, args, defaults) for case in cases},
+            "repetitions": repetitions,
             "trials": [
                 {
                     "trial_id": row["trial_id"],
@@ -522,6 +598,12 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
                 continue
             frozen_case = dict(frozen_cases[row["eval"]["id"]])
             staged = stage_workspace(workspace_root, row["trial_id"], frozen_case, row["candidate"])
+            before_state = capture_state_snapshot(
+                frozen_case,
+                staged["workspace"],
+                trial_dir(run_dir, row["trial_id"]) / "before-state.json",
+                "before",
+            )
             packet = _packet(row, staged)
             state = read_json(state_path(run_dir, row["trial_id"]))
             write_json(
@@ -530,6 +612,7 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
                     **state,
                     "attempt_id": packet["attempt_id"],
                     "workspace_path": packet["workspace_path"],
+                    "state_evidence": {"before": before_state} if before_state else {},
                 },
             )
             packets.append(packet)
@@ -596,7 +679,7 @@ def finalize_eval(raw_run, *, grade=None, parallel=None, model=None, reasoning_e
 
     report = build_report(str(run_dir))
     report_path = write_report(report)
-    ok = not any(item.get("verdict") in {"failed", "inconclusive"} for item in report.get("trials", []))
+    ok = bool(report.get("ok"))
     project = Path(run["project"])
     shutil.rmtree(state_root(project) / "tmp" / run_dir.name, ignore_errors=True)
     return {

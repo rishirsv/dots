@@ -22,18 +22,18 @@ class LintTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "skill" / "evals"
             path = root / "evals.json"
-            suite(path, [{"id": "a", "type": "capability", "prompt": {"path": "task.md"}, "expectations": ["Pass"]}])
+            suite(path, [{"id": "a", "type": "capability", "prompt": {"path": "task.md"}, "graders": [{"kind": "human", "id": "review", "metric": "correctness"}]}])
             task = root / "cases" / "a" / "task.md"
             task.parent.mkdir(parents=True)
             task.write_text("---\nsecret: yes\n---\nDo A")
             result = lint_suite(str(path))
             self.assertIn("hidden_metadata_in_task", {row["kind"] for row in result["warnings"]})
-            self.assertEqual(FATAL_SUITE_WARNINGS, {"hidden_metadata_in_task"})
+            self.assertIn("hidden_metadata_in_task", FATAL_SUITE_WARNINGS)
 
     def test_advisory_only_and_unbalanced_attached_warn(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "skill" / "evals" / "evals.json"
-            suite(path, [{"id": "a", "type": "attached", "prompt": "A", "graders": [{"kind": "model", "id": "judge", "advisory": True}]}])
+            suite(path, [{"id": "a", "type": "attached", "prompt": "A", "graders": [{"kind": "model", "id": "judge", "path": "judge.md", "advisory": True}]}])
             kinds = {row["kind"] for row in lint_suite(str(path))["warnings"]}
             self.assertEqual(kinds, {"all_graders_advisory", "unbalanced_attached_suite"})
 

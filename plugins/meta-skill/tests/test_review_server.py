@@ -28,7 +28,7 @@ def fixture(root):
     skill.mkdir()
     (skill / "SKILL.md").write_text('---\nname: demo\ndescription: "Use when testing the workbench; not for production."\n---\n\n# Demo\n')
     workbench = skill / ".demo" / "evals"
-    eval_row = {"id": "a", "type": "capability", "prompt": "Do A", "expectations": ["Good"], "graders": [{"kind": "model", "id": "judge", "metric": "quality"}, {"kind": "human", "id": "taste", "metric": "quality"}]}
+    eval_row = {"id": "a", "type": "capability", "prompt": "Do A", "expectations": ["Good"], "graders": [{"kind": "model", "id": "judge", "metric": "quality", "path": "judge.md", "advisory": True}, {"kind": "human", "id": "taste", "metric": "quality"}]}
     write(workbench / "evals.json", {"schema_version": 2, "skill_name": "demo", "target": {"type": "skill", "ref": "SKILL.md"}, "evals": [eval_row]})
     run = skill / ".demo" / "runs" / "run-1"
     write(run / "run.json", {

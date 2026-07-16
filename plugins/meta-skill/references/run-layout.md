@@ -33,6 +33,8 @@ metadata index.
         response.md
         events.jsonl
         artifacts/
+        before-state.json      # when the case declares state capture
+        after-state.json       # when the case declares state capture
         grades.jsonl
         review.json             # after an annotation
     worktrees/<run-id>/
@@ -57,6 +59,7 @@ cases, candidates, and trials changes:
 - notes: `trials/<trial-id>/review.json` when the user annotates a result
 
 `run.json` is immutable experiment planning and provenance: objective,
+evaluation mode, reliability metric, coverage requirements, benchmark split,
 baseline, candidates, case digests, repetitions, human-review sample, planned
 trials, and separate task-executor and judge-executor records. Native task
 workers record the requested inherited model context; Codex Exec task workers
@@ -87,14 +90,25 @@ for skill trials. The no-skill trial receives no skill path. They do not receive
 the durable run path. Produced files move into the authoritative run folder
 before the workspace is deleted; no second artifact store is kept. The parent
 orchestrator is the sole writer of durable trial state and executor identity.
-Expected outputs, expectations, validators,
-judge guidance, and human labels remain hidden.
+Expected outputs, expectations, validators, grader tests, state capture,
+before/after snapshots, judge guidance, calibration, and human labels remain
+hidden.
 
 Native subagents use these workspaces for separation, but they share the parent
-task's filesystem and are not a security sandbox. The unattended Codex Exec
-lane adds a workspace-write sandbox and an explicitly selected worker model.
+task's filesystem, user configuration, and installed skill/plugin inventory.
+They are not a security sandbox and cannot run candidate comparisons; native
+packets are limited to one-candidate observations. The unattended Codex Exec
+comparison lane adds a workspace-write sandbox, ignores user configuration and
+rules, disables plugins, apps, and memories, records an empty plugin inventory, supplies only the frozen candidate
+skill, and uses an explicitly selected worker model.
 The Codex Exec judge receives read-only access to the durable run while it
 inspects responses and artifacts.
+
+For a stateful case, the parent runs the frozen capture script before dispatch
+and at result submission. It stores the JSON snapshots and digests in the
+durable trial and passes them to state-aware deterministic graders. The worker
+never sees the capture script or snapshots. A stateful workspace is not retried
+in place after a stopped attempt because its initial state may have changed.
 Only `branch` and `git_ref` candidate sources use detached Git worktrees during
 materialization. Current-worktree and local-path candidates are frozen by
 snapshot without creating a Git worktree.
@@ -107,9 +121,11 @@ trial identity match. A selective rerun creates a new run with
 annotations remain immutable and linked by provenance rather than copied.
 
 `<skill-name>-evaluation.md` is derived from the canonical read model and regenerated after
-grading or review changes. It records experiment configuration, candidate
-deltas, trial outcomes, failed checks with evidence, pairwise and absolute
-review, annotations, token and latency data, provenance, and coverage limits.
+grading or review changes. It records the conclusion level, all-trial success
+rates and confidence intervals, missing evidence, paired exact inference when
+eligible, case outcomes, failed checks, judge calibration, pairwise and
+absolute review, annotations, token and latency data, provenance, and coverage
+limits.
 It is never a second source of truth.
 
 The workbench is also a derived filesystem view. It discovers runs and serves

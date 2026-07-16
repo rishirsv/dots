@@ -115,7 +115,7 @@ def _pair_models(run_dir):
             reasons = []
             if baseline_trial.get("priority") == "high" or candidate_trial.get("priority") == "high":
                 reasons.append("high-priority")
-            if delta.get((eval_id, candidate)) == "regressed":
+            if delta.get((eval_id, candidate)) in {"case_regression", "observed_regression"}:
                 reasons.append("regression")
             if baseline_trial.get("disagreements") or candidate_trial.get("disagreements"):
                 reasons.append("grader-disagreement")

@@ -5,7 +5,13 @@ from collections import Counter
 from .manifest import load_manifest, suite_path
 
 
-FATAL_SUITE_WARNINGS = {"hidden_metadata_in_task"}
+FATAL_SUITE_WARNINGS = {
+    "all_graders_advisory",
+    "hidden_metadata_in_task",
+    "implicit_advisory_model",
+    "missing_grader",
+    "unbalanced_attached_suite",
+}
 """Warning kinds that must block eval execution when surfaced on the run path."""
 
 
@@ -13,8 +19,8 @@ def case_grader_kinds(case):
     kinds = Counter()
     for grader in case.get("graders") or []:
         kinds[grader.get("kind") or "unknown"] += 1
-    if case.get("expectations"):
-        kinds["model"] += 1
+    if not case.get("graders") and (case.get("expectations") or case.get("expected_output") is not None):
+        kinds["model_advisory"] += 1
     return kinds
 
 
@@ -49,6 +55,12 @@ def lint_suite(raw_suite):
                 warnings.append({"case_id": case_id, "kind": "hidden_metadata_in_task", "detail": "task.md must contain only visible agent bytes; move metadata into evals.json."})
         if not case.get("expectations") and not case.get("graders") and case.get("expected_output") is None:
             warnings.append({"case_id": case_id, "kind": "missing_grader", "detail": "Add code, model, or human grading guidance."})
+        elif not case.get("graders"):
+            warnings.append({
+                "case_id": case_id,
+                "kind": "implicit_advisory_model",
+                "detail": "Expectations without an explicit grader produce advisory feedback only and cannot decide the verdict.",
+            })
         if case_type == "regression" and not case.get("expectations"):
             warnings.append({"case_id": case_id, "kind": "missing_reference", "detail": "Regression tasks should have exact expectations."})
         graders = case.get("graders") or []

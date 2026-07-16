@@ -15,6 +15,21 @@ from .errors import CliError
 SANDBOX = "workspace-write"
 GRADE_LABELS = {"pass", "partial", "fail", "unknown"}
 CHECK_LABELS = {"pass", "fail", "unknown"}
+CODEX_EXEC_ISOLATION = {
+    "user_config": "ignored",
+    "rules": "ignored",
+    "plugin_inventory": [],
+    "features_disabled": ["apps", "memories", "plugins"],
+    "candidate_skill": "frozen_snapshot_only",
+    "supports_baseline_effect": True,
+}
+NATIVE_ISOLATION = {
+    "user_config": "inherited",
+    "rules": "inherited",
+    "plugin_inventory": "uncontrolled",
+    "candidate_skill": "attached_path_only",
+    "supports_baseline_effect": False,
+}
 
 
 def codex_binary():
@@ -56,6 +71,7 @@ def executor_provenance(kind, model, reasoning_effort, *, observed_model=None, p
         "observed_model": observed_model,
         "provenance": provenance,
         "runtime_version": codex_version() if kind == "codex_exec" else None,
+        "isolation": dict(CODEX_EXEC_ISOLATION if kind == "codex_exec" else NATIVE_ISOLATION),
     }
 
 
@@ -65,6 +81,14 @@ def _command(binary, cwd, model, reasoning_effort, output_path, *, schema_path=N
         "exec",
         "--ephemeral",
         "--json",
+        "--ignore-user-config",
+        "--ignore-rules",
+        "--disable",
+        "plugins",
+        "--disable",
+        "apps",
+        "--disable",
+        "memories",
         "--cd",
         str(cwd),
         "--sandbox",
@@ -357,7 +381,7 @@ def judge_output(
         "events": detail.get("events", 0),
         "sdk_version": None,
         "runtime_version": detail.get("runtime_version"),
-        "sandbox": SANDBOX,
+        "sandbox": "read-only",
         "runtime_approval_policy": "never",
         "raw_response": raw,
         "executor": executor_provenance(

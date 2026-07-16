@@ -64,7 +64,16 @@ class CliTests(unittest.TestCase):
             skill(target)
             suite = target / ".demo" / "evals" / "evals.json"
             suite.parent.mkdir(parents=True)
-            suite.write_text(json.dumps({"schema_version": 2, "evals": [{"id": "a", "type": "capability", "prompt": "A", "expected_output": "A"}]}))
+            suite.write_text(json.dumps({
+                "schema_version": 2,
+                "evals": [{
+                    "id": "a",
+                    "type": "capability",
+                    "prompt": "A",
+                    "expected_output": "A",
+                    "graders": [{"kind": "human", "id": "human-review", "metric": "correctness"}],
+                }],
+            }))
             code, result = self.json_main(["eval", "run", "--suite", str(suite), "--check", "--json"])
             self.assertEqual(code, 0)
             self.assertEqual(result["lint"]["shape"], "evals-v2")
@@ -74,6 +83,20 @@ class CliTests(unittest.TestCase):
         for flag in ("--repetitions", "--parallel", "--timeout"):
             with self.subTest(flag=flag), self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
                 parser.parse_args(["eval", "run", flag, "0"])
+
+    def test_eval_check_rejects_expectations_only_as_advisory(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "skill"
+            skill(target)
+            suite = target / ".demo" / "evals" / "evals.json"
+            suite.parent.mkdir(parents=True)
+            suite.write_text(json.dumps({
+                "schema_version": 2,
+                "evals": [{"id": "a", "prompt": "A", "expectations": ["A is correct"]}],
+            }))
+            code, result = self.json_main(["eval", "run", "--suite", str(suite), "--check", "--json"])
+            self.assertEqual(code, 1)
+            self.assertIn("implicit_advisory_model", {row["kind"] for row in result["lint"]["warnings"]})
 
     def test_professional_eval_vocabulary_is_exposed_without_branded_aliases(self):
         app = (ROOT / "plugins" / "meta-skill" / "src" / "meta_skill" / "workbench_server" / "app.html").read_text()

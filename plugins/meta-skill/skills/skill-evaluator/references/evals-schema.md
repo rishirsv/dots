@@ -3,16 +3,18 @@
 Read this before creating or changing
 `<skill-name>/.<skill-name>/evals/evals.json` for the MetaSkill CLI.
 
-## Minimal Suite
+## Minimal Diagnostic Suite
 
 ```json
 {
   "schema_version": 2,
   "skill_name": "example-skill",
+  "evaluation_mode": "diagnostic",
   "target": {"type": "skill", "ref": "SKILL.md"},
   "defaults": {
     "runner": "codex_exec",
     "repetitions": 1,
+    "reliability_metric": "pass^k",
     "timeout_seconds": 600
   },
   "candidates": [
@@ -31,6 +33,7 @@ Read this before creating or changing
     {
       "id": "create-monthly-forecast",
       "type": "capability",
+      "outcome": "artifact",
       "priority": "high",
       "prompt": "Build a monthly forecast from the attached historical results and assumptions.",
       "expected_output": "A usable forecast workbook with linked formulas, reconciled totals, and clearly identified assumptions.",
@@ -38,6 +41,9 @@ Read this before creating or changing
         "The workbook covers every requested forecast period.",
         "Forecast calculations use formulas rather than hard-coded outputs.",
         "The forecast reconciles to the supplied historical totals."
+      ],
+      "graders": [
+        {"kind": "human", "id": "forecast-review", "metric": "forecast-quality"}
       ]
     }
   ]
@@ -45,7 +51,51 @@ Read this before creating or changing
 ```
 
 When `candidates` is omitted, MetaSkill supplies the no-skill and current-skill
-candidates shown above.
+candidates shown above. Expectations without an explicit grader are advisory
+only and make a durable suite fail `--check`.
+
+## Evaluation Modes
+
+| `evaluation_mode` | Contract |
+|---|---|
+| `diagnostic` | Focused observation. Usually one to three cases; one repetition is allowed. |
+| `readiness` | General capability estimate. At least 20 selected cases, `coverage_requirements`, coverage tags on every case, and at least three repetitions. |
+| `benchmark` | Readiness contract plus `benchmark` provenance, development and held-out splits, contamination controls, and one selected split per run. |
+
+Readiness and benchmark suites use `defaults.reliability_metric`:
+
+- `pass@k`: the case succeeds when any of its repeated trials passes;
+- `pass^k`: the case succeeds only when every repeated trial passes.
+
+A readiness suite declares the dimensions it claims to cover:
+
+```json
+{
+  "evaluation_mode": "readiness",
+  "coverage_requirements": ["common-path", "boundary", "near-miss", "regression"],
+  "defaults": {"repetitions": 3, "reliability_metric": "pass^k"}
+}
+```
+
+Every case then sets one or more matching `coverage` tags.
+
+A benchmark suite also declares:
+
+```json
+{
+  "evaluation_mode": "benchmark",
+  "benchmark": {
+    "name": "Named benchmark",
+    "source": "Repository, dataset, or immutable local snapshot",
+    "version": "release or snapshot identifier",
+    "held_out_split": "test",
+    "contamination_controls": "How held-out prompts remain unavailable during development."
+  }
+}
+```
+
+Every benchmark case sets `split`. Run exactly one split with `--split`; a
+held-out run cannot inherit rubric context through `--source-run-id`.
 
 ## Candidate Fields
 
@@ -59,57 +109,130 @@ Each candidate needs a unique `candidate`, optional `display`, and `source`:
 | `branch` | `ref` naming a Git branch. |
 | `git_ref` | `ref` naming a commit, tag, or other Git revision. |
 
-For a revision comparison, declare both versions and select them by candidate
-id:
-
-```json
-"candidates": [
-  {
-    "candidate": "current",
-    "display": "Current skill",
-    "source": {"kind": "current_worktree", "ref": "."}
-  },
-  {
-    "candidate": "proposed",
-    "display": "Proposed revision",
-    "source": {"kind": "branch", "ref": "skill-revision"}
-  }
-]
-```
-
-Then run with `--baseline current --candidates proposed`. Candidate ids select
-sources already declared in the suite; they do not define new sources.
+For a revision comparison, declare both versions and run with `--baseline
+current --candidates proposed`. Candidate IDs select declared sources; they do
+not define new sources.
 
 ## Case Fields
 
 | Field | Contract |
 |---|---|
 | `id` | Required unique identifier. |
-| `prompt` | Required non-empty string, or `{"path":"task.md"}` for a file-backed case. |
-| `expected_output` | Optional non-empty string, or `{"path":"expected.md"}`. Use it for a reference result, not as a hidden new requirement. |
-| `expectations` | Optional list of non-empty, observable criteria. |
+| `prompt` | Required string, or `{"path":"task.md"}`. |
+| `expected_output` | Optional string, or `{"path":"expected.md"}`. It is reference evidence, not a hidden requirement. |
+| `expectations` | Optional observable criteria. They do not choose the grader. |
 | `type` | Optional: `attached`, `near_miss`, `capability`, `regression`, or `failure`. |
+| `outcome` | `response`, `artifact`, or `stateful`; defaults to `response`. |
 | `priority` | Optional: `high`, `medium`, or `low`. |
+| `coverage` | Coverage tags required for readiness and benchmark cases. |
 | `repetitions` | Optional case-level repetition count. |
-| `split` | Optional selection label used by `--split`. |
-| `fixtures` | Optional list of files or directories under the case folder. |
-| `graders` | Optional list of deterministic, model, or human graders. |
-| `annotations` | Optional reviewed notes with `tag`, `note`, and optional `judge_use`. |
+| `split` | Selection label; required for benchmark cases. |
+| `fixtures` | Files or directories copied into the worker workspace. |
+| `graders` | Explicit deterministic, model, or human graders. |
+| `grader_tests` | Known-Pass and known-Fail outcome fixtures for deterministic graders. |
+| `state_capture` | Hidden script that snapshots world state before and after a stateful trial. |
+| `annotations` | Reviewed notes with `tag`, `note`, and optional `judge_use`. |
 
-A graded case needs at least one of `expected_output`, `expectations`, or
-`graders`. Read [rubrics.md](rubrics.md) before defining these criteria.
+## Graders
 
-## Grader Fields
+Every grader requires `kind` and a stable `id`; set `metric` when it differs
+from the ID. `advisory: true` excludes a grader from a Pass verdict.
 
-Each grader has `kind: "code"`, `"model"`, or `"human"`. It may set `id`,
-`metric`, `advisory`, and `uses_transcript`. A deterministic grader sets `path`
-to its validator. An LLM grader sets `path` to its case-local `judge.md`. A
-human grader must not set `path`. Read [judge.md](judge.md) before authoring an
-LLM judge.
+### Deterministic grader
 
 ```json
-{"kind": "model", "id": "quality", "metric": "quality", "path": "judge.md"}
+{
+  "kind": "code",
+  "id": "workbook-validator",
+  "metric": "workbook-correctness",
+  "path": "validate.py"
+}
 ```
+
+A load-bearing code grader needs one Pass and one Fail fixture:
+
+```json
+"grader_tests": [
+  {
+    "id": "oracle",
+    "grader": "workbook-validator",
+    "expected": "pass",
+    "path": "grader-tests/oracle"
+  },
+  {
+    "id": "negative-hardcoded-values",
+    "grader": "workbook-validator",
+    "expected": "fail",
+    "path": "grader-tests/negative-hardcoded-values"
+  }
+]
+```
+
+Each fixture directory contains `response.md`, optional `events.jsonl`, and an
+optional `artifacts/` tree. A state-aware grader also sets `uses_state: true`
+and each fixture contains `before-state.json` and `after-state.json`.
+
+The validator receives `--output`, `--events`, `--artifacts`, optional
+`--expected`, optional `--before-state`, optional `--after-state`, and `--json`.
+It exits zero and returns positive `total` with `passed == total` only for a
+Pass. `eval run --check` executes every declared grader test.
+
+### Model grader
+
+An uncalibrated model grader must be advisory:
+
+```json
+{
+  "kind": "model",
+  "id": "quality-feedback",
+  "metric": "quality",
+  "path": "judge.md",
+  "advisory": true
+}
+```
+
+A load-bearing model grader pins `model` and `reasoning_effort` and includes the
+held-out `calibration` record described in
+[validate-judge.md](validate-judge.md). MetaSkill recomputes confidence bounds
+and verifies the `judge.md` digest before execution and grading.
+
+Set `uses_transcript: true` only when process is part of the criterion. Later
+rubric annotations may inform an advisory judge; they never alter a trusted
+load-bearing judge.
+
+### Human grader
+
+```json
+{"kind": "human", "id": "specialist-review", "metric": "domain-correctness"}
+```
+
+A human grader has no `path` and remains pending until blind review is recorded.
+
+## Stateful Outcomes
+
+A stateful case declares a hidden capture script and a load-bearing state-aware
+code grader:
+
+```json
+{
+  "outcome": "stateful",
+  "state_capture": "capture-state.py",
+  "graders": [
+    {
+      "kind": "code",
+      "id": "state-validator",
+      "metric": "state-correctness",
+      "path": "validate-state.py",
+      "uses_state": true
+    }
+  ]
+}
+```
+
+The capture script receives `--workspace`, `--output`, `--phase before|after`,
+and `--json`; it writes a JSON object or array to `--output`. The worker never
+receives the capture script or snapshots. The state validator should check the
+requested change and relevant unchanged state separately.
 
 ## File-Backed Case
 
@@ -117,16 +240,29 @@ LLM judge.
 .<skill-name>/evals/
   evals.json
   cases/<case-id>/
-    task.md       # when prompt is {"path":"task.md"}
-    expected.md   # when expected_output is {"path":"expected.md"}
-    judge.md      # when an LLM judge needs case-specific guidance
-    <fixtures>
-    <validators>
+    task.md
+    expected.md
+    judge.md
+    validate.py
+    capture-state.py
+    fixtures/
+    grader-tests/
+      oracle/
+        response.md
+        artifacts/
+        before-state.json
+        after-state.json
+      negative-example/
+        response.md
+        artifacts/
+        before-state.json
+        after-state.json
 ```
 
-Paths must stay inside the case folder. Trial workers receive `task.md` and
-declared fixtures, but never `expected.md`, validators, expectations, judgment
-guidance, annotations, or human labels.
+Paths must stay inside the case folder. Trial workers receive only `task.md`,
+declared fixtures, and the frozen candidate skill. Expected output, criteria,
+validators, state capture, snapshots, judge guidance, calibration, annotations,
+and human labels remain hidden.
 
 ## Validate Before Running
 
@@ -136,5 +272,6 @@ metaskill eval run \
   --check --json
 ```
 
-Require a successful result and resolve every warning that would make the case
-unfair or ungradable before creating a run.
+Require `ok: true`. This loads the schema, enforces the mode and grader
+contracts, executes deterministic Pass/Fail fixtures, verifies calibrated judge
+digests and confidence bounds, and blocks unfair or ungradable suites.

@@ -523,7 +523,9 @@ class Handler(BaseHTTPRequestHandler):
             "priority": body.get("priority") or "medium",
             "prompt": prompt,
             "expectations": list(body.get("expectations") or []),
-            "graders": list(body.get("graders") or []),
+            "graders": list(body.get("graders") or [
+                {"kind": "human", "id": "human-review", "metric": "accepted-behavior"}
+            ]),
         }
         if body.get("expected_output") is not None:
             case["expected_output"] = str(body.get("expected_output"))
