@@ -7,18 +7,14 @@ Don't add features, refactor, or introduce abstractions beyond what the task req
 
 ## Subagent use
 
+Subagents are optional. Do not introduce them by default. If you choose to use
+them, give each one a bounded, independent scope and a clear return format.
+Avoid delegating tiny tasks, sequential work, or overlapping edits. The root
+agent owns synthesis and verifies consequential claims.
+
 ### Model choice
 
-- Sol Medium: root synthesis, ambiguity, architecture, consequential review,
-  and final judgment.
-- Luna Max: scoped implementation and tests when the brief and completion
-  criteria are clear.
-- Luna High: bounded research, extraction, reference comparison, and codebase
-  scans with a defined output.
-- Terra Medium: unclear bugs, unfamiliar business logic, broad repository
-  exploration, and tool-heavy investigation where the worker must determine
-  what should be done.
-
-Escalate a specific lane to Sol High for genuinely difficult work. Reserve
-Ultra for measured gains on hard tasks that split cleanly. Omit model pins when
-dynamic selection is preferable.
+- Sol Ultra: high-stakes work, scattered context, or problems that are still
+  taking shape.
+- Sol Low: well-scoped implementation that still has meaningful complexity.
+- Luna xHigh: well-scoped implementation where speed matters.

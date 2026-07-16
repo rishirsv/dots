@@ -1,5 +1,4 @@
 {
-  "model": "opus",
   "enabledPlugins": {
     "build-ios-apps@steady-app": true,
     "codex@openai-codex": true,
