@@ -16,11 +16,18 @@ implementation.
 
 1. Start by briefly restating the current desire, audience, desired success,
    constraints, and unresolved decisions so the user can correct the framing.
-2. Grill one dependent decision branch at a time. Ask one decision-changing
-   question with your recommended answer and reason, then wait for the user's
-   response before advancing. Batch a small set only when the questions are
-   tightly related and easier to answer together.
-3. Choose the move that resolves the current uncertainty:
+2. Map dependencies among the unresolved decisions. Put a question on the
+   **decision frontier** only when the settled context is enough to answer it
+   and its answer does not depend on another open decision.
+3. Ask two or three frontier questions per round by default. Ask more when the
+   questions are short and independent and batching materially improves the
+   pace; ask one when it unlocks the next branch or deserves focused
+   deliberation. Prefer a coherent topic, but never treat related questions as
+   independent when one assumes another's answer.
+4. Recompute the frontier after each reply. Record settled decisions, preserve
+   open decisions, and use new answers or research findings to unlock the next
+   batch.
+5. Choose the move that resolves the current uncertainty:
    - **Interview** for goals, users, constraints, current workarounds, and domain
      meaning only the user can supply. When concepts or boundaries remain fuzzy,
      test them with a concrete edge-case scenario.
@@ -31,20 +38,30 @@ implementation.
      inversion or removal when useful, and explain why weaker options lose.
    - **Prototype probe** when the uncertainty is taste, composition, tone,
      interaction feel, or another quality the user must react to directly.
-4. Turn each answer or research finding into the next decision. Converge when
-   the user confirms the direction and desired success and remaining uncertainty
-   would change neither, then produce the decision snapshot and handoff.
+6. Converge when the user confirms the direction and desired success and the
+   remaining uncertainty would change neither. Produce the decision snapshot
+   and handoff.
 
 Recommend, push back, and name assumptions instead of returning neutral option
 lists. Keep one term per concept and flag overloaded language before it produces
 conflicting requirements.
 
-Do not attach a second question as a rider to the primary decision. If the user
-skips a consequential question, surface it once more as the only question or
-keep it open in the snapshot; do not settle it on the user's behalf.
+Keep every question discrete. When the user answers only part of a batch,
+surface each skipped consequential question again when it returns to the
+frontier or keep it open in the snapshot.
 
-For a consequential fork with several viable directions, use this shape. Keep
-low-stakes questions to one plain line.
+Use this compact shape for a normal batch:
+
+```md
+**Read:** <what changed and what this batch will settle>
+
+1. **<question>** — Recommended: <answer and brief reason>
+2. **<question>** — Recommended: <answer and brief reason>
+3. **<question>** — Recommended: <answer and brief reason>
+```
+
+Isolate a consequential fork with several viable directions as one frontier
+question and give it the space it needs:
 
 ```md
 **Read:** <what you notice, what worries you, and why the recommendation wins>
@@ -129,13 +146,17 @@ self-contained enough that the recipient does not need the Scout conversation
 or completed research to continue. Read
 [handoff.md](references/handoff.md) when this durable handoff branch applies.
 
-When formal planning is next, hand this context to Ultraplan or the active
-planning workflow. Scout does not sequence implementation tasks.
+Recheck the frontier when the user asks to plan or build. Resolve or explicitly
+carry forward any open decision that could change the downstream work, then
+produce the snapshot and hand its context to Ultraplan or the active planning
+workflow. Scout does not sequence or enter implementation.
 
 ## Final Check
 
 - The user confirmed the direction and success, and all source research was
   delegated.
+- Every question batch contained only decisions on the current frontier.
+- Skipped consequential questions were resurfaced or recorded as open.
 - Prototype probes produced reusable criteria rather than accidental final work.
 - The snapshot or handoff is sufficient for the next mode without repeating the
   conversation or research.

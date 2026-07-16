@@ -104,7 +104,7 @@ def main() -> int:
             if pattern.search(text):
                 fail(errors, f"{path}: {label}")
 
-    for path in sorted((ROOT / ".skill").rglob("evals/evals.json")):
+    for path in sorted(ROOT.rglob("evals/evals.json")):
         validate_eval(path, errors)
 
     if errors:

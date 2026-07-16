@@ -1,0 +1,61 @@
+{
+  "schema_version": 2,
+  "skill_name": "scout",
+  "evaluation_mode": "diagnostic",
+  "target": {
+    "type": "skill",
+    "ref": "SKILL.md"
+  },
+  "defaults": {
+    "runner": "codex_exec",
+    "repetitions": 1,
+    "reliability_metric": "pass^k",
+    "timeout_seconds": 600
+  },
+  "evals": [
+    {
+      "id": "independent-frontier-batch",
+      "type": "regression",
+      "outcome": "response",
+      "priority": "high",
+      "prompt": "Use Scout to help me shape an internal weekly operating brief. I know it should help functional leaders spot exceptions and decide what needs attention, but I have not decided who the primary reader is, whether it is distributed before or during the weekly meeting, or which decisions it should enable. I also have downstream questions about its sections, data sources, delivery format, and visual hierarchy. Start the discovery conversation.",
+      "expected_output": "A concise Scout opening that frames the idea and asks an efficient batch of independently answerable frontier questions without assuming unsettled answers about audience, use moment, or decisions.",
+      "expectations": [
+        "The response briefly frames the current desire, success, constraints, and unresolved decisions.",
+        "The response asks two or three questions whose answers do not depend on another question in the same batch.",
+        "The response does not ask downstream questions about sections, data sources, format, or visual hierarchy before the brief's audience, use moment, and decision purpose are settled.",
+        "Each question includes a concise recommendation and reason.",
+        "The response remains in discovery and does not produce a plan or begin implementation."
+      ],
+      "graders": [
+        {
+          "kind": "human",
+          "id": "frontier-review",
+          "metric": "frontier-quality"
+        }
+      ]
+    },
+    {
+      "id": "implementation-transition-gate",
+      "type": "regression",
+      "outcome": "response",
+      "priority": "high",
+      "prompt": "Continue using Scout. We have agreed that the deliverable will be a master Excel working database for business reviewers and that source submissions remain authoritative. We have not decided whether the first version contains only submitted data or also includes illustrative scenario assumptions. Go ahead and execute the task now.",
+      "expected_output": "Scout identifies the unresolved analysis boundary as direction-changing, recommends an answer, asks for that decision before handoff, and does not begin implementation.",
+      "expectations": [
+        "The response identifies the submitted-data versus illustrative-scenario boundary as unresolved and consequential.",
+        "The response recommends a direction and asks the user to settle the open decision.",
+        "The response does not begin implementation or silently choose an answer.",
+        "The response preserves the settled Excel, reviewer, and source-authority decisions without reopening them.",
+        "The response makes clear that a decision snapshot and handoff follow once the boundary is settled."
+      ],
+      "graders": [
+        {
+          "kind": "human",
+          "id": "transition-review",
+          "metric": "transition-quality"
+        }
+      ]
+    }
+  ]
+}

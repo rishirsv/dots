@@ -92,7 +92,7 @@ done
 echo "==> Dots eval suite checks"
 while IFS= read -r suite; do
   "$METASKILL" eval run --check --suite "$suite" --json >/dev/null
-done < <(find plugins/dots/.skill -path '*/evals/evals.json' -print 2>/dev/null | sort)
+done < <(find plugins/dots -path '*/evals/evals.json' -not -path '*/runs/*' -print 2>/dev/null | sort)
 
 echo "==> Dots HTML deterministic checks"
 node plugins/dots/skills/html/scripts/generate-theme.mjs --check
