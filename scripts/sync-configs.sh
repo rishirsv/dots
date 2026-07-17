@@ -194,11 +194,11 @@ install_symlink() {
 }
 
 sync_codex_agents() {
-  install_symlink "$ROOT/configs/agents/AGENTS.md" "$HOME/.codex/AGENTS.md"
+  install_symlink "$ROOT/configs/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
 }
 
 sync_codex_personal_agents() {
-  install_symlink "$ROOT/configs/agents/AGENTS.md" "$HOME/.codex-personal/AGENTS.md"
+  install_symlink "$ROOT/configs/codex/AGENTS.md" "$HOME/.codex-personal/AGENTS.md"
 }
 
 sync_claude_agents() {
