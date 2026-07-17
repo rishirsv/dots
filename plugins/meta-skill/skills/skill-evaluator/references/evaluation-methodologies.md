@@ -16,6 +16,11 @@ regressions, and applicable adversarial failures before selecting cases. For a
 benchmark, tune only against development data and run the held-out split after
 the candidate and graders are frozen.
 
+Before making a readiness or benchmark claim, record a validity review with a
+`pass`, `fail`, or `unknown` status. Check four things: the tasks are solvable,
+the graders measure the claimed behavior, the harness represents real use, and
+the cases do not reward shortcuts. Only `pass` supports the claim.
+
 ## Start With Real Signal
 
 Prefer prompts grounded in observed failures, accepted outputs, common user
@@ -54,14 +59,16 @@ The built-in comparison lane therefore covers skills whose cases use core tools 
 frozen fixtures. A skill that requires authenticated app or plugin tools needs an
 externally controlled environment with equivalent isolation; do not claim a baseline
 effect from a native observation or from candidates run with different tool access.
+Natural skill discovery and multi-turn behavior also need an external harness;
+the built-in lane evaluates an explicitly attached skill in one task.
 
 ## Choose Repetitions And Reliability
 
 Predeclare what reliability means:
 
-- use `pass@k` when one success across `k` independent attempts satisfies the
+- use `any_trial` when one success across repeated attempts satisfies the
   product requirement;
-- use `pass^k` when every attempt must succeed; and
+- use `all_trials` when every attempt must succeed; and
 - use one trial only for a diagnostic observation when consistency is not the
   claim.
 
@@ -87,10 +94,20 @@ behavior. Keep expected outputs, judge guidance, validators, and human labels
 hidden from trial workers.
 
 Expectations without an explicit grader create advisory model feedback only;
-they cannot decide a verdict. A load-bearing deterministic grader needs
-executable known-Pass and known-Fail fixtures. A load-bearing model judge needs
+they cannot decide a verdict. A load-bearing exact deterministic grader needs
+executable known-Pass and known-Fail fixtures. For open-ended output, make
+deterministic checks advisory, test at least two valid alternatives plus one
+invalid result, and route the verdict to a human or calibrated model judge. A
+load-bearing model judge needs
 a case-local prompt, pinned executor settings, and held-out calibration whose
 TPR and TNR confidence lower bounds clear the declared trust thresholds.
+
+## Add Safety Cases When Applicable
+
+When the task handles untrusted content, private data, or external actions, add
+cases for indirect prompt injection, unauthorized actions, data disclosure,
+and unintended side effects as applicable. Grade the resulting state and tool
+actions, not whether the response merely uses refusal language.
 
 When a result fails or the candidates disagree unexpectedly, read
 [error-analysis.md](error-analysis.md) and review the traces with the user

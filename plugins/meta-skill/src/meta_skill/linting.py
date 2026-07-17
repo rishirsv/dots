@@ -38,6 +38,8 @@ def lint_suite(raw_suite):
     }
     has_attached = False
     has_negative = False
+    benchmark = manifest.get("benchmark") or {}
+    public_benchmark = str(benchmark.get("source") or "").startswith(("http://", "https://"))
 
     for case in cases:
         case_id = case.get("id")
@@ -63,6 +65,12 @@ def lint_suite(raw_suite):
             })
         if case_type == "regression" and not case.get("expectations"):
             warnings.append({"case_id": case_id, "kind": "missing_reference", "detail": "Regression tasks should have exact expectations."})
+        if public_benchmark and not case.get("created_at"):
+            warnings.append({
+                "case_id": case_id,
+                "kind": "benchmark_case_missing_created_at",
+                "detail": "Public benchmark cases should record an ISO creation or release date when known.",
+            })
         graders = case.get("graders") or []
         if graders and all(grader.get("advisory") for grader in graders):
             warnings.append({"case_id": case_id, "kind": "all_graders_advisory", "detail": "Case can never reach a passed verdict because every explicit grader is advisory."})

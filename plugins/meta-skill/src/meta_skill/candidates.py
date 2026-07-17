@@ -214,7 +214,7 @@ def resolve_candidate(project, worktree_root, run_id_value, manifest, candidate,
             git(project, ["worktree", "add", "--detach", str(worktree), base_commit], check=True)
         cwd = worktree
         head_commit = git_ref(cwd, "HEAD")
-        branch = ref if kind == "branch" else None
+        branch = None
         candidate_root = Path(cwd) / Path(skill_id_value) if skill_id_value else Path(cwd)
         payload = resolve_target_payload(manifest, candidate_root)
     if payload:

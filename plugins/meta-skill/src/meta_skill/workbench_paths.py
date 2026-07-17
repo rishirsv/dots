@@ -104,31 +104,22 @@ def evals_dir(target):
     return evals_path(target).parent
 
 
-def state_root(target, root=None):
-    """Return authored and generated state owned by the target skill.
-
-    ``root`` remains accepted because workbench discovery callers already pass
-    it, but skill state is intentionally owned by the skill-local companion.
-    """
+def state_root(target):
+    """Return authored and generated state owned by the target skill."""
     return workspace_root(target)
 
 
-def skill_state_path(target, kind, root=None):
-    return state_root(target, root=root) / kind
+def skill_state_path(target, kind):
+    return state_root(target) / kind
 
 
-def runs_path(target, root=None):
-    return skill_state_path(target, "runs", root=root)
+def runs_path(target):
+    return skill_state_path(target, "runs")
 
 
-def worktrees_path(target, root=None):
-    return skill_state_path(target, "worktrees", root=root)
+def worktrees_path(target):
+    return skill_state_path(target, "worktrees")
 
 
-def packages_path(target, root=None):
-    return skill_state_path(target, "packages", root=root)
-
-
-def workbench_path(target):
-    """Compatibility alias for the authored eval directory."""
-    return evals_dir(target)
+def packages_path(target):
+    return skill_state_path(target, "packages")

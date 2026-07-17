@@ -27,6 +27,11 @@ claim before choosing cases:
 - use `benchmark` for a versioned external or internal benchmark with separate
   development and held-out splits and contamination controls.
 
+Before a readiness or benchmark run, record one `validity_review` with status
+`pass`, `fail`, or `unknown` and a concise note covering task solvability,
+grader correctness, harness fidelity, and shortcut risk. Only `pass` supports a
+comparative claim.
+
 Write prompts that sound like things a real user would actually say. Use
 natural requests, not descriptions of the skill's internal workflow or
 language copied from its instructions. For readiness and benchmark suites,
@@ -77,6 +82,9 @@ trial.
 
 Give every load-bearing deterministic grader a known-Pass oracle fixture and a
 known-Fail negative fixture, and require `eval run --check` to execute both.
+An open-ended code grader must be advisory, exercise at least two materially
+different valid outputs plus one invalid output, and defer the verdict to a
+human or calibrated model grader.
 For a stateful task, declare `outcome: "stateful"`, a hidden `state_capture`
 script, and a state-aware deterministic grader that checks the intended change
 and unrelated state. Use a load-bearing model judge only after its exact
@@ -114,9 +122,9 @@ trial for every selected case × version × repetition.
 
 For a diagnostic, one trial may support a single-run observation. It does not
 establish skill effect. For readiness or benchmark comparisons, predeclare
-`pass@k` when any successful attempt satisfies the product requirement or
-`pass^k` when every attempt must succeed, use at least three repetitions per
-selected case, and retain every inconclusive or ungraded trial in the
+`any_trial` when one successful repetition satisfies the product requirement or
+`all_trials` when every repetition must succeed. Use at least three repetitions
+per selected case and retain every inconclusive or ungraded trial in the
 denominator.
 
 See [run-layout.md](../../references/run-layout.md) for the frozen run contents.
@@ -157,7 +165,7 @@ Use
 outcome terms.
 
 Interpret each case-level comparison precisely, using the suite's declared
-`pass@k` or `pass^k` rule:
+`any_trial` or `all_trials` policy:
 
 | Baseline | Skill | Conclusion |
 |---|---|---|
@@ -181,6 +189,9 @@ comparative estimate. Show all-trial success rates with confidence intervals,
 missing evidence, paired inference when eligible, scenario outcomes, criteria
 evidence, judge calibration, time and token usage, execution issues, and run
 details. For every failure, identify the failed criterion and its evidence.
+Distinguish whether execution completed, whether candidate trials passed, and
+whether the optional regression gate passed. Use `--gate` only when CI should
+fail on a candidate regression or unknown candidate outcome.
 
 Open the workbench when side-by-side inspection or feedback is useful. The
 workbench reads the same filesystem evidence; it is not a separate source of

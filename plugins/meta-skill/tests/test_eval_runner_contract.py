@@ -99,6 +99,10 @@ class RunnerTests(unittest.TestCase):
             manifest.write_text(json.dumps({
                 "schema_version": 2,
                 "evaluation_mode": "benchmark",
+                "validity_review": {
+                    "status": "pass",
+                    "notes": "Cases are solvable, graders match the claim, the harness is isolated, and no material shortcuts are known.",
+                },
                 "coverage_requirements": ["core", "boundary"],
                 "benchmark": {
                     "name": "Example",
@@ -106,16 +110,17 @@ class RunnerTests(unittest.TestCase):
                     "version": "v1",
                     "held_out_split": "test",
                     "contamination_controls": "Test prompts are hidden until final evaluation.",
+                    "freshness": "The local snapshot was reviewed for relevance in July 2026.",
                 },
                 "evals": cases,
             }))
             with self.assertRaisesRegex(CliError, "select exactly one"):
                 prepare_eval(args(manifest), task_executor_kind="codex_exec")
-            with self.assertRaisesRegex(CliError, "must not inherit"):
-                prepare_eval(
-                    args(manifest, split="test", source_run_id="run-development"),
-                    task_executor_kind="codex_exec",
-                )
+            prepared = prepare_eval(
+                args(manifest, split="test"), task_executor_kind="codex_exec"
+            )
+            run = json.loads((Path(prepared["run_dir"]) / "run.json").read_text())
+            self.assertEqual(run["benchmark_split"], "test")
 
     def test_planning_error_records_canonical_executor_provenance(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -173,6 +178,10 @@ class RunnerTests(unittest.TestCase):
                 )
                 self.assertEqual(repeated["result_digest"], state["result_digest"])
             result = finalize_eval(prepared["run_dir"], grade=False)
+            self.assertTrue(result["ok"])
+            self.assertTrue(result["execution_ok"])
+            self.assertFalse(result["evaluation_passed"])
+            self.assertFalse(result["regression_gate_enabled"])
             run = Path(result["run_dir"])
             self.assertTrue((run / "demo-evaluation.md").is_file())
             self.assertTrue((run / "trials" / current["trial_id"] / "artifacts" / "made.txt").is_file())
@@ -183,6 +192,28 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(model["reasoning_effort"], "medium")
             self.assertEqual(model["task_executor"]["provenance"], "requested")
             self.assertEqual(model["task_executor"]["requested_model"], "gpt-5.6-terra")
+
+    def test_regression_gate_can_fail_without_reclassifying_execution(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "skill"
+            skill(target)
+            manifest = target / ".demo" / "evals" / "evals.json"
+            suite(manifest, [{"id": "a", "type": "capability", "prompt": "Do A"}])
+            prepared = prepare_eval(
+                args(manifest, no_baseline=True, no_grade=True, gate=True),
+                task_executor_kind="codex_exec",
+            )
+            packet = prepared["packets"][0]
+            write_result(packet)
+            submit_trial(
+                prepared["run_dir"], packet["trial_id"], packet["attempt_id"], packet["result_path"]
+            )
+            result = finalize_eval(prepared["run_dir"], grade=False)
+            self.assertFalse(result["ok"])
+            self.assertTrue(result["execution_ok"])
+            self.assertFalse(result["evaluation_passed"])
+            self.assertTrue(result["regression_gate_enabled"])
+            self.assertFalse(result["regression_gate_passed"])
 
     def test_submit_rejects_stale_attempt_escape_and_changed_terminal_result(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -21,7 +21,6 @@ metadata index.
     runs/<run-id>/
       run.json
       <skill-name>-evaluation.md
-      pairwise-reviews.jsonl    # after pairwise human review
       inputs/
         suite.json
         cases/<eval-id>/
@@ -59,8 +58,8 @@ cases, candidates, and trials changes:
 - notes: `trials/<trial-id>/review.json` when the user annotates a result
 
 `run.json` is immutable experiment planning and provenance: objective,
-evaluation mode, reliability metric, coverage requirements, benchmark split,
-baseline, candidates, case digests, repetitions, human-review sample, planned
+evaluation mode, repetition policy, validity review, coverage requirements,
+benchmark split, baseline, candidates, case digests, repetitions, planned
 trials, and separate task-executor and judge-executor records. Native task
 workers record the requested inherited model context; Codex Exec task workers
 and judges record their explicitly resolved model and reasoning effort.
@@ -75,8 +74,6 @@ run folder. A model-grade row also records any judge-context annotation IDs and
 its context digest. `review.json` holds trial annotations, including
 `judge_use` as `rubric`, `evidence`, or `exclude`; absence means `exclude` for
 older runs.
-`pairwise-reviews.jsonl` stores append-only candidate-blind A/B annotations and
-is separate from absolute trial grades.
 
 Trial state stores identity and lifecycle data, not absolute paths. Readers
 derive response, event, and artifact locations from the fixed trial layout so a
@@ -109,23 +106,23 @@ and at result submission. It stores the JSON snapshots and digests in the
 durable trial and passes them to state-aware deterministic graders. The worker
 never sees the capture script or snapshots. A stateful workspace is not retried
 in place after a stopped attempt because its initial state may have changed.
-Only `branch` and `git_ref` candidate sources use detached Git worktrees during
+Only `git_ref` candidate sources use detached Git worktrees during
 materialization. Current-worktree and local-path candidates are frozen by
 snapshot without creating a Git worktree.
 
 An interrupted run may expose unresolved worker packets. Terminal trials are
 never dispatched again in place. Recovery into a new run may reuse an exact
 completed trial only when its model, case digest, candidate payload digest, and
-trial identity match. A selective rerun creates a new run with
-`source_run_id`, selected case IDs, and a fresh current-skill snapshot; source
-annotations remain immutable and linked by provenance rather than copied.
+trial identity match. A selective rerun creates a new run with selected case
+IDs and a fresh current-skill snapshot. Reviewed guidance must be promoted into
+the authored case or grader explicitly; annotations are not inherited.
 
 `<skill-name>-evaluation.md` is derived from the canonical read model and regenerated after
 grading or review changes. It records the conclusion level, all-trial success
 rates and confidence intervals, missing evidence, paired exact inference when
-eligible, case outcomes, failed checks, judge calibration, pairwise and
-absolute review, annotations, token and latency data, provenance, and coverage
-limits.
+eligible, case outcomes, failed checks, judge calibration, absolute review,
+annotations, execution and evaluation status, token and latency data,
+provenance, validity review, and coverage limits.
 It is never a second source of truth.
 
 The workbench is also a derived filesystem view. It discovers runs and serves

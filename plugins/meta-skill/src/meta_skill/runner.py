@@ -463,14 +463,8 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
     evaluation_mode = manifest.get("evaluation_mode", "diagnostic")
     benchmark_split = getattr(args, "split", None)
     if evaluation_mode == "benchmark":
-        benchmark = manifest.get("benchmark") or {}
         if not benchmark_split:
             raise CliError("benchmark runs must select exactly one declared split with --split", 2)
-        if (
-            benchmark_split == benchmark.get("held_out_split")
-            and getattr(args, "source_run_id", None)
-        ):
-            raise CliError("held-out benchmark runs must not inherit source-run rubric context", 2)
     repetitions = {case["id"]: repetition_count(case, args, defaults) for case in cases}
     if evaluation_mode in {"readiness", "benchmark"}:
         if len(cases) < 20:
@@ -522,7 +516,8 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
             "adhoc": adhoc,
             "objective": getattr(args, "objective", None) or manifest.get("objective"),
             "evaluation_mode": evaluation_mode,
-            "reliability_metric": defaults.get("reliability_metric", "pass^k"),
+            "repetition_policy": defaults.get("repetition_policy", "all_trials"),
+            "validity_review": manifest.get("validity_review"),
             "coverage_requirements": list(manifest.get("coverage_requirements") or []),
             "benchmark": manifest.get("benchmark"),
             "benchmark_split": benchmark_split if evaluation_mode == "benchmark" else None,
@@ -539,6 +534,7 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
                 "grading": grading_enabled,
                 "parallel": max(1, int(getattr(args, "parallel", 1) or 1)),
                 "timeout_seconds": timeout_seconds,
+                "regression_gate": bool(getattr(args, "gate", False)),
             },
             "task_executor": executor_provenance(
                 task_executor_kind,
@@ -562,9 +558,7 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
                 ),
                 None,
             ),
-            "source_run_id": getattr(args, "source_run_id", None),
             "resume_run_id": getattr(args, "resume_run_id", None),
-            "human_review_sample": getattr(args, "human_review_sample", None),
             "suite_digest": frozen_suite["suite_digest"],
             "eval_digests": [
                 {"eval_id": case["id"], "case_digest": case["case_digest"]}
@@ -679,11 +673,18 @@ def finalize_eval(raw_run, *, grade=None, parallel=None, model=None, reasoning_e
 
     report = build_report(str(run_dir))
     report_path = write_report(report)
-    ok = bool(report.get("ok"))
+    execution_ok = bool(report.get("execution_ok"))
+    gate_enabled = bool((run.get("runner") or {}).get("regression_gate"))
+    gate_passed = bool(report.get("regression_gate_passed"))
+    ok = execution_ok and (gate_passed if gate_enabled else True)
     project = Path(run["project"])
     shutil.rmtree(state_root(project) / "tmp" / run_dir.name, ignore_errors=True)
     return {
         "ok": ok,
+        "execution_ok": execution_ok,
+        "evaluation_passed": bool(report.get("evaluation_passed")),
+        "regression_gate_enabled": gate_enabled,
+        "regression_gate_passed": gate_passed,
         "run_id": run.get("run_id") or run_dir.name,
         "run_dir": str(run_dir),
         "adhoc": bool(run.get("adhoc")),

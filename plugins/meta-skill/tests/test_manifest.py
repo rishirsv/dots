@@ -180,6 +180,10 @@ class ManifestTests(unittest.TestCase):
             readiness = {
                 "schema_version": 2,
                 "evaluation_mode": "readiness",
+                "validity_review": {
+                    "status": "pass",
+                    "notes": "Solvability, grader fit, harness fidelity, and shortcuts were reviewed.",
+                },
                 "coverage_requirements": ["core", "boundary"],
                 "evals": cases,
             }
@@ -197,6 +201,10 @@ class ManifestTests(unittest.TestCase):
             benchmark = {
                 "schema_version": 2,
                 "evaluation_mode": "benchmark",
+                "validity_review": {
+                    "status": "pass",
+                    "notes": "Solvability, grader fit, harness fidelity, and shortcuts were reviewed.",
+                },
                 "coverage_requirements": ["core", "boundary"],
                 "benchmark": {
                     "name": "Example benchmark",
@@ -204,11 +212,40 @@ class ManifestTests(unittest.TestCase):
                     "version": "v1",
                     "held_out_split": "test",
                     "contamination_controls": "Cases remain hidden until the final test run.",
+                    "freshness": "The snapshot was reviewed in July 2026.",
                 },
                 "evals": benchmark_cases,
             }
             write(path, benchmark)
             self.assertEqual(load_manifest(path)["benchmark"]["held_out_split"], "test")
+
+    def test_open_ended_code_grader_is_advisory_and_has_diverse_fixtures(self):
+        code = {
+            "kind": "code",
+            "id": "format-check",
+            "metric": "format",
+            "path": "validate.py",
+            "scope": "open_ended",
+            "advisory": True,
+        }
+        case = {
+            "id": "a",
+            "prompt": "Produce a useful plan",
+            "graders": [code, {"kind": "human", "id": "review", "metric": "quality"}],
+            "grader_tests": [
+                {"id": "valid-a", "grader": "format-check", "expected": "pass", "path": "grader-tests/valid-a"},
+                {"id": "valid-b", "grader": "format-check", "expected": "pass", "path": "grader-tests/valid-b"},
+                {"id": "invalid", "grader": "format-check", "expected": "fail", "path": "grader-tests/invalid"},
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "evals.json"
+            write(path, {"schema_version": 2, "evals": [case]})
+            self.assertEqual(load_manifest(path)["evals"][0]["graders"][0]["scope"], "open_ended")
+            case["grader_tests"] = case["grader_tests"][:2]
+            write(path, {"schema_version": 2, "evals": [case]})
+            with self.assertRaisesRegex(CliError, "invalid-output fixture"):
+                load_manifest(path)
 
     def test_stateful_outcome_requires_capture_and_state_aware_grader(self):
         case = {

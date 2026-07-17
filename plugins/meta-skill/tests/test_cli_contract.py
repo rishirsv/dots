@@ -109,11 +109,11 @@ class CliTests(unittest.TestCase):
             self.assertNotIn(term, app)
         args = build_parser().parse_args([
             "eval", "run", "--objective", "Compare revisions", "--baseline", "current",
-            "--human-review-sample", "2", "--source-run-id", "run-1",
+            "--gate",
             "--model", "gpt-5.6-terra", "--reasoning-effort", "medium",
         ])
         self.assertEqual(args.baseline, "current")
-        self.assertEqual(args.human_review_sample, 2)
+        self.assertTrue(args.gate)
         self.assertEqual(args.model, "gpt-5.6-terra")
         self.assertEqual(args.reasoning_effort, "medium")
 

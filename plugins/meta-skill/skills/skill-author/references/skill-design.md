@@ -118,8 +118,7 @@ Treat the description as the always-visible discovery contract, the body as
 the common operating context, and linked resources as conditional context.
 Spend the description on distinct trigger branches rather than synonyms. Move
 branch-specific detail behind precise pointers when the body becomes hard to
-navigate. Use [payload-hygiene.md](../../../references/payload-hygiene.md) for
-the complete runtime-versus-development placement rules.
+navigate.
 
 When one skill supports several providers, frameworks, or domains, keep the
 shared workflow and selection rule in `SKILL.md` and place each variant's detail

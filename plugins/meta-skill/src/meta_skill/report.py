@@ -195,16 +195,18 @@ def _blind_pending_trial(trial, case, grading_enabled):
     }
 
 
-def _behavior(trials, reliability_metric="pass^k"):
+def _behavior(trials, repetition_policy="all_trials"):
     verdicts = [trial.get("verdict") for trial in trials]
-    if not verdicts or any(verdict not in {"passed", "failed"} for verdict in verdicts):
+    if not verdicts:
         return "unknown"
-    if reliability_metric == "pass@k":
-        return "pass" if "passed" in verdicts else "fail"
+    if repetition_policy == "any_trial":
+        if "passed" in verdicts:
+            return "pass"
+        return "fail" if all(verdict == "failed" for verdict in verdicts) else "unknown"
+    if "failed" in verdicts:
+        return "fail"
     if all(verdict == "passed" for verdict in verdicts):
         return "pass"
-    if any(verdict == "failed" for verdict in verdicts):
-        return "fail"
     return "unknown"
 
 
@@ -213,7 +215,7 @@ def _comparisons(
     trials,
     baseline_candidate=None,
     *,
-    reliability_metric="pass^k",
+    repetition_policy="all_trials",
     claim_supported=False,
 ):
     candidate_ids = [candidate.get("candidate") for candidate in candidates if candidate.get("candidate")]
@@ -230,9 +232,9 @@ def _comparisons(
     rows = []
     eval_ids = sorted({trial.get("eval_id") for trial in trials if trial.get("eval_id")})
     for eval_id in eval_ids:
-        baseline_state = _behavior(by_pair[(eval_id, baseline)], reliability_metric)
+        baseline_state = _behavior(by_pair[(eval_id, baseline)], repetition_policy)
         for candidate in payload_ids:
-            candidate_state = _behavior(by_pair[(eval_id, candidate)], reliability_metric)
+            candidate_state = _behavior(by_pair[(eval_id, candidate)], repetition_policy)
             if baseline_state == "fail" and candidate_state == "pass":
                 delta = "case_improvement" if claim_supported else "observed_improvement"
             elif baseline_state == "pass" and candidate_state == "fail":
@@ -254,7 +256,7 @@ def _comparisons(
     return rows
 
 
-def _case_versions(cases, candidates, trials, reliability_metric="pass^k"):
+def _case_versions(cases, candidates, trials, repetition_policy="all_trials"):
     by_case_version = defaultdict(list)
     for trial in trials:
         by_case_version[(trial.get("eval_id"), trial.get("candidate"))].append(trial)
@@ -279,7 +281,7 @@ def _case_versions(cases, candidates, trials, reliability_metric="pass^k"):
                         "pass": "passed",
                         "fail": "failed",
                         "unknown": "inconclusive",
-                    }[_behavior(cells, reliability_metric)],
+                    }[_behavior(cells, repetition_policy)],
                     "trials": [
                         {
                             "trial_id": trial.get("trial_id"),
@@ -296,6 +298,7 @@ def _case_versions(cases, candidates, trials, reliability_metric="pass^k"):
             {
                 "eval_id": eval_id,
                 "prompt": case.get("prompt"),
+                "created_at": case.get("created_at"),
                 "expectations": case.get("expectations") or [],
                 "versions": versions,
             }
@@ -446,14 +449,6 @@ def _judge_calibrations(cases):
     return rows
 
 
-def _pairwise_reviews(run_dir):
-    latest = {}
-    for row in read_jsonl(Path(run_dir) / "pairwise-reviews.jsonl"):
-        if row.get("comparison_id"):
-            latest[row["comparison_id"]] = row
-    return list(latest.values())
-
-
 def build_report(raw_run, *, blind_pending_human=False):
     run_dir = resolve_run_dir(raw_run)
     run = read_json(run_dir / "run.json")
@@ -480,9 +475,10 @@ def build_report(raw_run, *, blind_pending_human=False):
     task_executor = _executor_model(run, "task_executor")
     judge_executor = _executor_model(run, "judge_executor")
     evaluation_mode = run.get("evaluation_mode", suite.get("evaluation_mode", "diagnostic"))
-    reliability_metric = run.get("reliability_metric") or (suite.get("defaults") or {}).get(
-        "reliability_metric", "pass^k"
+    repetition_policy = run.get("repetition_policy") or (suite.get("defaults") or {}).get(
+        "repetition_policy", "all_trials"
     )
+    validity_review = run.get("validity_review") or suite.get("validity_review")
     isolated = bool((task_executor.get("isolation") or {}).get("supports_baseline_effect"))
     repetitions = run.get("repetitions") or {}
     coverage_requirements = run.get("coverage_requirements") or suite.get("coverage_requirements") or []
@@ -508,6 +504,7 @@ def build_report(raw_run, *, blind_pending_human=False):
     claim_supported = bool(
         evaluation_mode in {"readiness", "benchmark"}
         and design_complete
+        and (validity_review or {}).get("status") == "pass"
         and isolated
         and run.get("baseline_candidate")
         and repetitions
@@ -520,7 +517,7 @@ def build_report(raw_run, *, blind_pending_human=False):
         run.get("candidates") or [],
         trials,
         baseline_candidate=run.get("baseline_candidate"),
-        reliability_metric=reliability_metric,
+        repetition_policy=repetition_policy,
         claim_supported=claim_supported,
     )
     runtime_totals = dict(Counter(trial["status"] for trial in trials))
@@ -532,7 +529,6 @@ def build_report(raw_run, *, blind_pending_human=False):
         if trial.get("review") or any(is_recorded_human_grade(row) for row in trial.get("grades") or [])
     )
     disagreement_count = sum(len(trial.get("disagreements") or []) for trial in trials)
-    pairwise_reviews = _pairwise_reviews(run_dir)
     annotation_totals = Counter(
         annotation.get("tag")
         for trial in trials
@@ -563,6 +559,10 @@ def build_report(raw_run, *, blind_pending_human=False):
         coverage_limits.append(
             "The broad-suite coverage or planned repetition contract is incomplete; comparative effect claims are disabled."
         )
+    if evaluation_mode in {"readiness", "benchmark"} and (validity_review or {}).get("status") != "pass":
+        coverage_limits.append(
+            "The validity review is not passed; comparative effect claims are disabled."
+        )
     if run.get("baseline_candidate") and not isolated:
         coverage_limits.append(
             "The task executor did not guarantee an isolated skill inventory; baseline effect claims are disabled."
@@ -580,6 +580,41 @@ def build_report(raw_run, *, blind_pending_human=False):
     paired_inference = _paired_inference(
         run.get("candidates") or [], trials, run.get("baseline_candidate"), claim_supported
     )
+    baseline_candidate = run.get("baseline_candidate")
+    candidate_trials = [
+        trial for trial in trials
+        if not baseline_candidate or trial.get("candidate") != baseline_candidate
+    ]
+    candidate_groups = defaultdict(list)
+    for trial in candidate_trials:
+        candidate_groups[(trial.get("eval_id"), trial.get("candidate"))].append(trial)
+    candidate_case_states = [
+        _behavior(group, repetition_policy) for group in candidate_groups.values()
+    ]
+    evaluation_passed = bool(candidate_case_states) and all(
+        state == "pass" for state in candidate_case_states
+    )
+    candidate_outcomes_known = bool(candidate_case_states) and all(
+        state in {"pass", "fail"} for state in candidate_case_states
+    )
+    regressions = any(
+        row.get("delta") in {"case_regression", "observed_regression"}
+        for row in comparisons
+    )
+    regression_gate_passed = (
+        candidate_outcomes_known and not regressions
+        if baseline_candidate
+        else evaluation_passed
+    )
+    runtime_failed = any(
+        trial.get("status") in {"failed", "timed_out", "skipped"} for trial in trials
+    )
+    execution_ok = bool(
+        not run.get("planning_error")
+        and runtime_terminal
+        and grading_complete
+        and not runtime_failed
+    )
     report = {
         "schema_version": 2,
         "run_id": run.get("run_id") or run_dir.name,
@@ -588,7 +623,8 @@ def build_report(raw_run, *, blind_pending_human=False):
         "adhoc": bool(run.get("adhoc")),
         "objective": run.get("objective"),
         "evaluation_mode": evaluation_mode,
-        "reliability_metric": reliability_metric,
+        "repetition_policy": repetition_policy,
+        "validity_review": validity_review,
         "claim_supported": claim_supported,
         "conclusion_level": "comparative_estimate" if claim_supported else "diagnostic_observation",
         "coverage_requirements": coverage_requirements,
@@ -604,14 +640,12 @@ def build_report(raw_run, *, blind_pending_human=False):
         "task_executor": task_executor,
         "judge_executor": judge_executor,
         "runner": run.get("runner") or {},
-        "baseline_candidate": run.get("baseline_candidate"),
-        "source_run_id": run.get("source_run_id"),
-        "human_review_sample": run.get("human_review_sample"),
+        "baseline_candidate": baseline_candidate,
         "suite_digest": run.get("suite_digest"),
         "eval_digests": run.get("eval_digests") or [],
         "planning_error": run.get("planning_error"),
         "candidates": run.get("candidates") or [],
-        "cases": _case_versions(cases, run.get("candidates") or [], trials, reliability_metric),
+        "cases": _case_versions(cases, run.get("candidates") or [], trials, repetition_policy),
         "trials": trials,
         "comparisons": comparisons,
         "candidate_summaries": candidate_summaries,
@@ -625,11 +659,6 @@ def build_report(raw_run, *, blind_pending_human=False):
             **{key: verdict_totals.get(key, 0) for key in ("passed", "failed", "inconclusive", "ungraded", "skipped")},
         },
         "review": {"reviewed": reviewed, "total": len(trials), "disagreements": disagreement_count},
-        "pairwise_review": {
-            "reviewed": len(pairwise_reviews),
-            "reviews": pairwise_reviews,
-            "requested_sample": run.get("human_review_sample"),
-        },
         "annotation_totals": dict(annotation_totals),
         "token_usage": _token_usage(trials),
         "duration_ms": sum(int(trial.get("duration_ms") or 0) for trial in trials),
@@ -638,10 +667,11 @@ def build_report(raw_run, *, blind_pending_human=False):
         "runtime_terminal": runtime_terminal,
         "grading_complete": grading_complete,
         "terminal": runtime_terminal and grading_complete,
+        "execution_ok": execution_ok,
+        "evaluation_passed": evaluation_passed,
+        "regression_gate_passed": regression_gate_passed,
     }
-    report["ok"] = not report["planning_error"] and not any(
-        trial["verdict"] in {"failed", "inconclusive", "ungraded", "skipped"} for trial in trials
-    )
+    report["ok"] = execution_ok
     return report
 
 
@@ -669,7 +699,9 @@ def list_runs(raw_suite, *, blind_pending_human=False, runs_root=None):
                     "verdict_totals": report["verdict_totals"],
                     "delta_totals": report["delta_totals"],
                     "review": report["review"],
-                    "pairwise_review": report["pairwise_review"],
+                    "execution_ok": report["execution_ok"],
+                    "evaluation_passed": report["evaluation_passed"],
+                    "regression_gate_passed": report["regression_gate_passed"],
                     "duration_ms": report.get("duration_ms"),
                     "terminal": report["terminal"],
                     "run_dir": str(run_dir),
@@ -978,11 +1010,24 @@ def render_markdown(report):
         "",
         f"- Run: `{report['run_id']}`",
         f"- Evaluation mode: {report.get('evaluation_mode') or 'diagnostic'}",
-        f"- Reliability metric: {report.get('reliability_metric') or 'pass^k'}",
+        f"- Repetition policy: {report.get('repetition_policy') or 'all_trials'}",
+        *(
+            [
+                f"- Validity review: {(report.get('validity_review') or {}).get('status')} — "
+                f"{(report.get('validity_review') or {}).get('notes')}"
+            ]
+            if report.get("validity_review")
+            else []
+        ),
+        f"- Execution complete: {'yes' if report.get('execution_ok') else 'no'}",
+        f"- Candidate evaluation passed: {'yes' if report.get('evaluation_passed') else 'no'}",
+        f"- Regression gate passed: {'yes' if report.get('regression_gate_passed') else 'no'}",
         *(
             [
                 f"- Benchmark split: {report.get('benchmark_split')}",
                 f"- Held-out evaluation: {'yes' if report.get('holdout_evaluation') else 'no'}",
+                f"- Benchmark freshness: {(report.get('benchmark') or {}).get('freshness')}",
+                f"- Contamination controls: {(report.get('benchmark') or {}).get('contamination_controls')}",
             ]
             if report.get("evaluation_mode") == "benchmark"
             else []
@@ -995,15 +1040,12 @@ def render_markdown(report):
         "",
     ]
     review = report.get("review") or {}
-    pairwise = report.get("pairwise_review") or {}
-    if review.get("reviewed") or review.get("disagreements") or pairwise.get("reviewed") or report.get("annotation_totals"):
+    if review.get("reviewed") or review.get("disagreements") or report.get("annotation_totals"):
         lines += [
             "## Feedback",
             "",
             f"{review.get('reviewed', 0)}/{review.get('total', 0)} trials reviewed; "
             f"{review.get('disagreements', 0)} model/human disagreements.",
-            "",
-            f"{pairwise.get('reviewed', 0)} pairwise comparisons reviewed.",
         ]
     if report.get("annotation_totals"):
         lines += ["", "Annotations: " + ", ".join(

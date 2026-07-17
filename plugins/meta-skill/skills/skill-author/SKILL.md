@@ -139,6 +139,15 @@ Re-read changed runtime files as a fresh agent. Check that discovery,
 instructions, resources, output, and completion agree. Remove stale names,
 duplicated rules, no-op instructions, and source leakage.
 
+For a new or substantially revised skill, a portability cleanup, or packaging,
+inspect the effective payload: `SKILL.md`, linked references including shared
+plugin references, metadata, scripts, assets, fixtures, and visible or copyable
+strings. Derive task-local search terms from the source evidence for names,
+URLs, prompt-role text, identifiers, local paths, and design history; classify
+each hit as a required runtime dependency or leakage. For every runtime section,
+ask whether a future agent needs it while handling a user's task. Move
+maintainer-only material to development state or deterministic tooling.
+
 Run changed scripts the way a future agent will. Test valid and failing inputs
 where failure behavior matters. Resolve runtime links from the effective
 package when the skill depends on shared resources. Run
@@ -168,7 +177,6 @@ skill unchanged when no decision-changing improvement is supported.
 | Creating or updating a research-and-synthesis skill | [research-synthesis.md](references/research-synthesis.md) |
 | Adding or changing discoverable frontmatter | [description-standard.md](../../references/description-standard.md) |
 | Using natural-discovery evidence to improve a description | [description-improvement.md](../../references/description-improvement.md) |
-| Finalizing a new or substantially revised skill, or packaging any skill | [payload-hygiene.md](../../references/payload-hygiene.md) |
 | Creating or revising a skill shipped inside a plugin | [plugin-context.md](references/plugin-context.md) |
 | Creating or changing `agents/openai.yaml` | [openai_yaml.md](references/openai_yaml.md) |
 
@@ -202,14 +210,14 @@ plugin workflow for a plugin-contained skill.
 
 ## Completion
 
-Finish only after applicable deterministic validation passes. For a new or
-substantially revised skill, also run the payload-hygiene and placement sweeps
-from [payload-hygiene.md](../../references/payload-hygiene.md).
+Finish only after applicable deterministic validation passes. For the broad
+changes named above, include the payload scan, allowed runtime dependencies,
+and maintainer-placement findings in the completion evidence.
 
 Report:
 
 - source path and behavior changed;
 - files changed;
 - validation and changed-script results;
-- payload-hygiene and placement results when applicable;
+- payload and maintainer-placement findings when applicable;
 - remaining uncertainty that affects use.

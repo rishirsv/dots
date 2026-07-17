@@ -15,13 +15,7 @@ from ..ids import require_id, utc_now
 from ..io import read_json, write_json
 from ..manifest import DEFAULT_EVALS, load_manifest
 from ..report import build_report, build_suite_report, list_runs, write_report
-from .queue import (
-    build_pairwise_packet,
-    build_pairwise_queue,
-    build_queue,
-    pairwise_artifact_path,
-    record_pairwise_review,
-)
+from .queue import build_queue
 from ..workbench_paths import evals_path, parse_frontmatter, runs_path, skill_id_for_target, state_root
 
 APP_PATH = Path(__file__).with_name("app.html")
@@ -147,7 +141,7 @@ def discover_skills(root):
                 manifest = load_manifest(suite)
             except CliError as exc:
                 suite_error = exc.message
-        skill_runs_root = runs_path(skill_dir, root=root)
+        skill_runs_root = runs_path(skill_dir)
         runs = (
             list_runs(
                 str(suite), blind_pending_human=True, runs_root=skill_runs_root
@@ -326,7 +320,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def _run_dir(self, skill_id, run_id_value):
         skill = self._skill(skill_id)
-        root = runs_path(skill["path"], root=self.server.root).resolve()
+        root = runs_path(skill["path"]).resolve()
         candidate = (root / run_id_value).resolve()
         if candidate.parent != root or not (candidate / "run.json").is_file():
             raise CliError(f"run not found: {run_id_value}", 2)
@@ -356,7 +350,7 @@ class Handler(BaseHTTPRequestHandler):
                 skill = self._skill(parts[2])
                 suite = build_suite_report(
                     skill["suite"],
-                    runs_root=runs_path(skill["path"], root=self.server.root),
+                    runs_root=runs_path(skill["path"]),
                 )
                 suite["data_boundary"] = {
                     "surface": "review_only",
@@ -370,7 +364,7 @@ class Handler(BaseHTTPRequestHandler):
                     list_runs(
                         skill["suite"],
                         blind_pending_human=True,
-                        runs_root=runs_path(skill["path"], root=self.server.root),
+                        runs_root=runs_path(skill["path"]),
                     )
                 )
             if len(parts) == 3 and parts[:2] == ["api", "runs"]:
@@ -379,9 +373,6 @@ class Handler(BaseHTTPRequestHandler):
             if len(parts) == 4 and parts[:2] == ["api", "runs"] and parts[3] == "queue":
                 run_dir = self._run_dir(self._query(query, "skill"), parts[2])
                 return self._json({"ok": True, "run_id": parts[2], "queue": build_queue(run_dir)})
-            if len(parts) == 4 and parts[:2] == ["api", "runs"] and parts[3] == "pairs":
-                run_dir = self._run_dir(self._query(query, "skill"), parts[2])
-                return self._json(build_pairwise_queue(run_dir))
             if len(parts) == 5 and parts[:2] == ["api", "runs"] and parts[3] == "cases":
                 run_dir = self._run_dir(self._query(query, "skill"), parts[2])
                 return self._json(build_case_packet(run_dir, parts[4]))
@@ -391,9 +382,6 @@ class Handler(BaseHTTPRequestHandler):
             if len(parts) == 4 and parts[:2] == ["api", "trials"] and parts[3] == "judge":
                 run_dir = self._run_dir(self._query(query, "skill"), self._query(query, "run"))
                 return self._json(build_judge_reveal(run_dir, parts[2]))
-            if len(parts) == 3 and parts[:2] == ["api", "comparisons"]:
-                run_dir = self._run_dir(self._query(query, "skill"), self._query(query, "run"))
-                return self._json(build_pairwise_packet(run_dir, parts[2]))
             if len(parts) >= 4 and parts[:2] == ["api", "artifacts"]:
                 run_dir = self._run_dir(self._query(query, "skill"), self._query(query, "run"))
                 trial_id_value = parts[2]
@@ -402,16 +390,6 @@ class Handler(BaseHTTPRequestHandler):
                 artifact = (artifact_root / relative).resolve()
                 if not artifact.is_relative_to(artifact_root) or not artifact.is_file():
                     raise CliError("artifact not found", 2)
-                mime = mimetypes.guess_type(artifact.name)[0] or "application/octet-stream"
-                inline = mime.startswith("text/") or mime in {
-                    "application/json", "application/pdf", "image/png", "image/jpeg", "image/webp"
-                }
-                if mime in {"text/html", "image/svg+xml"}:
-                    inline = False
-                return self._send_file(artifact, mime, inline)
-            if len(parts) >= 5 and parts[:2] == ["api", "comparison-artifacts"]:
-                run_dir = self._run_dir(self._query(query, "skill"), self._query(query, "run"))
-                artifact = pairwise_artifact_path(run_dir, parts[2], parts[3], Path(*parts[4:]))
                 mime = mimetypes.guess_type(artifact.name)[0] or "application/octet-stream"
                 inline = mime.startswith("text/") or mime in {
                     "application/json", "application/pdf", "image/png", "image/jpeg", "image/webp"
@@ -433,8 +411,6 @@ class Handler(BaseHTTPRequestHandler):
                 return self._post_grade(body)
             if parts == ["api", "annotations"]:
                 return self._post_annotation(body)
-            if parts == ["api", "pairwise"]:
-                return self._post_pairwise(body)
             if parts == ["api", "evals"]:
                 return self._post_eval(body)
             return self._error("not found", 404)
@@ -488,18 +464,6 @@ class Handler(BaseHTTPRequestHandler):
             write_json(review_path, review)
             write_report(build_report(str(run_dir)))
         return self._json({"ok": True, "annotation": row})
-
-    def _post_pairwise(self, body):
-        run_dir = self._run_dir(str(body.get("skill") or ""), str(body.get("run") or ""))
-        with self.server.write_lock:
-            result = record_pairwise_review(
-                run_dir,
-                str(body.get("comparison_id") or ""),
-                str(body.get("preferred") or ""),
-                str(body.get("reason") or ""),
-                str(body.get("rationale") or ""),
-            )
-        return self._json(result)
 
     def _post_eval(self, body):
         if body.get("approved") is not True:

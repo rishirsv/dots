@@ -104,7 +104,7 @@ class GradingTests(unittest.TestCase):
             self.assertTrue(all(not Path(ref).is_absolute() for row in rows for ref in row["evidence_refs"]))
             self.assertIn("trials/a.current.t1/response.md", rows[0]["evidence_refs"])
             self.assertIn("trials/a.current.t1/artifacts/result.csv", rows[0]["evidence_refs"])
-            self.assertEqual(build_report(str(run))["trials"][0]["verdict"], "inconclusive")
+            self.assertEqual(build_report(str(run))["trials"][0]["verdict"], "passed")
 
     def test_custom_human_grader_records_and_supersedes(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -227,34 +227,10 @@ class GradingTests(unittest.TestCase):
             self.assertTrue(row["grader"]["implicit"])
             self.assertEqual(build_report(str(run))["trials"][0]["verdict"], "inconclusive")
 
-    def test_future_run_inherits_only_reusable_rubrics_from_source_and_frozen_case(self):
+    def test_frozen_case_rubrics_inform_advisory_judge(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            source = make_run(root, [{"kind": "model", "id": "judge", "metric": "quality", "advisory": True}])
-            source = source.rename(root / "run-source")
-            write(
-                source / "trials" / "a.current.t1" / "review.json",
-                {
-                    "annotations": [
-                        {
-                            "annotation_id": "source-rubric",
-                            "judge_use": "rubric",
-                            "artifact": "response",
-                            "note": "Keep explanations concise.",
-                        },
-                        {
-                            "annotation_id": "source-evidence",
-                            "judge_use": "evidence",
-                            "artifact": "response",
-                            "note": "This old response omitted a link.",
-                        },
-                    ]
-                },
-            )
             run = make_run(root, [{"kind": "model", "id": "judge", "metric": "quality", "advisory": True}])
-            run_model = json.loads((run / "run.json").read_text())
-            run_model["source_run_id"] = "run-source"
-            write(run / "run.json", run_model)
             suite = json.loads((run / "inputs" / "suite.json").read_text())
             suite["evals"][0]["annotations"] = [
                 {
@@ -281,14 +257,12 @@ class GradingTests(unittest.TestCase):
                 grade_run(str(run))
 
             guidance = calls[0]["judge_guidance"]
-            self.assertIn("source-rubric", guidance)
             self.assertIn("case-rubric", guidance)
-            self.assertNotIn("source-evidence", guidance)
             self.assertNotIn("case-evidence", guidance)
             row = read_jsonl(run / "trials" / "a.current.t1" / "grades.jsonl")[0]
             self.assertEqual(
                 set(row["judge_context"]["annotation_ids"]),
-                {"source-rubric", "case-rubric"},
+                {"case-rubric"},
             )
 
     def test_regrade_skips_running_trial_without_poisoning_completed_verdict(self):

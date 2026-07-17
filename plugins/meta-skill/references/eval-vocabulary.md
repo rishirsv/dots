@@ -8,7 +8,8 @@
 | **run** | One immutable comparison of selected cases and versions, with frozen inputs, planned trials, and a derived report. |
 | **trial** | One case × version × repetition, with local state, response, events, artifacts, optional before/after state, grades, and optional review. |
 | **grader** | A deterministic, model, or human check declared by the eval and written to that trial's `grades.jsonl`. |
-| **advisory** | A grader whose failure makes the trial inconclusive but does not fail it. |
+| **advisory** | A grader recorded as feedback but excluded from the trial verdict. |
+| **repetition policy** | `any_trial` passes a case when one repetition passes; `all_trials` requires every repetition to pass. |
 | **annotation** | A plain trial-local review note. The reviewing agent determines whether it points to the skill, case, grader, harness, or environment. |
 | **version delta** | The per-case conclusion from a selected baseline version to another version: `observed_improvement` or `observed_regression` for diagnostics; `case_improvement` or `case_regression` for eligible broad comparisons; `no_uplift_demonstrated`; or `inconclusive`. |
 
@@ -26,3 +27,7 @@ comparison whose evidence is unavailable or uncertain.
 A case delta is descriptive. `supported_improvement`, `supported_regression`,
 or `no_supported_difference` comes from the report's paired exact inference,
 not from one case or a raw rate delta.
+
+`execution_ok` means execution and grading completed. `evaluation_passed`
+means candidate trials passed. `regression_gate_passed` means the optional
+automation gate found no regression or unknown candidate outcome.

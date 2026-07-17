@@ -31,7 +31,7 @@ metaskill eval run [--suite PATH] [--objective TEXT]
   [--baseline ID] [--candidates IDS] [--split NAME] [--case ID]... [--type TYPE]...
   [--repetitions N] [--model MODEL] [--reasoning-effort EFFORT]
   [--parallel N] [--timeout SECONDS]
-  [--human-review-sample N] [--source-run-id ID] [--resume-run-id ID]
+  [--resume-run-id ID] [--gate]
   [--no-baseline] [--no-grade] [--check] [--json]
 
 metaskill eval run --adhoc --task PROMPT [--skill DIR]
@@ -44,7 +44,7 @@ metaskill eval prepare [--suite PATH] [--objective TEXT]
   [--baseline ID] [--candidates IDS] [--split NAME] [--case ID]... [--type TYPE]...
   [--repetitions N] [--model MODEL] [--reasoning-effort EFFORT]
   [--parallel N] [--timeout SECONDS]
-  [--human-review-sample N] [--source-run-id ID] [--resume-run-id ID]
+  [--resume-run-id ID] [--gate]
   [--no-baseline] [--no-grade] [--json]
 
 metaskill eval prepare --adhoc --task PROMPT [--skill DIR]
@@ -100,8 +100,7 @@ and confidence bounds. An ad hoc expectation without an explicit grader
 produces advisory feedback and an inconclusive verdict.
 
 Readiness and benchmark runs require at least 20 selected cases and three
-repetitions per case. A benchmark run must select one split with `--split`; its
-held-out split rejects `--source-run-id`.
+repetitions per case. A benchmark run must select one split with `--split`.
 
 The unattended worker and advisory model judge default to `gpt-5.6-terra` with
 `medium` reasoning unless the suite or command overrides them. A load-bearing
@@ -123,6 +122,12 @@ changing that guidance needs a new judge version and calibration. Absence and
 `exclude` remain human-only. `eval record`
 appends a revision for one human grader already declared by the frozen suite.
 The report is regenerated after grade or review mutation.
+
+Command success means the run executed and grading completed. The report keeps
+that `execution_ok` status separate from `evaluation_passed`. Add `--gate` when
+automation should also fail on candidate regressions, unknown candidate
+outcomes, or an unsuccessful candidate when no baseline is present. A failing
+baseline alone does not make execution fail.
 
 ## Sessions
 

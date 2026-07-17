@@ -4,9 +4,6 @@ Use this optional rubric when the user asks for a scored static skill-quality
 review. It scores the portable skill payload plus structural validation. It is
 static evidence, not a behavioral eval suite.
 
-For payload contamination and maintainer-placement checks, read
-[payload-hygiene.md](payload-hygiene.md) before assigning final scores.
-
 ## Phases
 
 | Review phase | Review focus | How scored |
@@ -105,9 +102,8 @@ Question: does the skill give agents clear, useful runtime guidance?
 
 ## Payload Hygiene Score Caps
 
-Use [payload-hygiene.md](payload-hygiene.md) before final scoring. Apply these
-caps until the finding is cleaned or explicitly classified as an allowed runtime
-dependency:
+Apply these caps until the finding is cleaned or explicitly classified as an
+allowed runtime dependency:
 
 - Provider names, research-session provenance, raw commands, thread/workbench
   paths, or source-specific copy in shipped payload: cap **Directive Quality** at
@@ -146,8 +142,7 @@ Return the review in chat:
 - Overall Skill Quality Score and phase percentages
 - Discovery assessment and scored table, ending in `Total X / 12`
 - Implementation assessment and scored table, ending in `Total X / 15`
-- Payload hygiene and placement audit result from
-  [payload-hygiene.md](payload-hygiene.md)
+- Payload hygiene and maintainer-placement findings
 - Validation result and Validation %
 - Combined findings, prioritized by behavior risk
 

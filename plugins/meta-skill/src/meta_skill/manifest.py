@@ -1,5 +1,6 @@
 """Eval suite loading, validation, and selection helpers."""
 
+from datetime import date
 from pathlib import Path
 
 from .eval_stats import calibration_metrics
@@ -9,11 +10,11 @@ from .io import read_json
 from .workbench_paths import evals_path, repository_root, skill_id_for_target, state_root
 
 
-SOURCE_KINDS = {"branch", "current_worktree", "git_ref", "local_path", "none"}
+SOURCE_KINDS = {"current_worktree", "git_ref", "local_path", "none"}
 CASE_TYPES = {"attached", "near_miss", "capability", "regression", "failure"}
 EVALUATION_MODES = {"diagnostic", "readiness", "benchmark"}
 OUTCOME_TYPES = {"response", "artifact", "stateful"}
-RELIABILITY_METRICS = {"pass@k", "pass^k"}
+REPETITION_POLICIES = {"any_trial", "all_trials"}
 DEFAULT_CANDIDATES = [
     {"candidate": "no-skill", "display": "No skill baseline", "source": {"kind": "none"}},
     {"candidate": "current", "display": "Current skill", "source": {"kind": "current_worktree", "ref": "."}},
@@ -26,7 +27,7 @@ DEFAULT_EVALS = {
     "defaults": {
         "runner": "codex_exec",
         "repetitions": 1,
-        "reliability_metric": "pass^k",
+        "repetition_policy": "all_trials",
         "timeout_seconds": 600,
     },
     "candidates": DEFAULT_CANDIDATES,
@@ -172,6 +173,8 @@ def _validate_grader(case_id, grader):
         raise CliError(f"case {case_id} human grader must not set path", 2)
     if grader.get("kind") in {"code", "model"}:
         _relative_support_path(case_id, grader.get("path"), f"grader {grader['id']} path")
+    if grader.get("kind") == "code" and grader.get("scope", "exact") not in {"exact", "open_ended"}:
+        raise CliError(f"case {case_id} code grader scope must be exact or open_ended", 2)
     if "uses_transcript" in grader and not isinstance(grader.get("uses_transcript"), bool):
         raise CliError(f"case {case_id} grader uses_transcript must be boolean", 2)
     if "uses_state" in grader and not isinstance(grader.get("uses_state"), bool):
@@ -215,6 +218,51 @@ def _validate_grader_tests(case, graders):
                 f"case {case_id} load-bearing code grader {grader['id']} needs known Pass and Fail tests",
                 2,
             )
+    for grader in graders:
+        if grader["kind"] != "code" or grader.get("scope", "exact") != "open_ended":
+            continue
+        if not grader.get("advisory"):
+            raise CliError(
+                f"case {case_id} open-ended code grader {grader['id']} must be advisory",
+                2,
+            )
+        pass_tests = [
+            test for test in tests
+            if test.get("grader") == grader["id"] and test.get("expected") == "pass"
+        ]
+        if len(pass_tests) < 2:
+            raise CliError(
+                f"case {case_id} open-ended code grader {grader['id']} needs at least two valid-output fixtures",
+                2,
+            )
+        if not any(
+            test.get("grader") == grader["id"] and test.get("expected") == "fail"
+            for test in tests
+        ):
+            raise CliError(
+                f"case {case_id} open-ended code grader {grader['id']} needs a known invalid-output fixture",
+                2,
+            )
+        if not any(
+            other.get("kind") in {"model", "human"} and not other.get("advisory")
+            for other in graders
+        ):
+            raise CliError(
+                f"case {case_id} open-ended code grader {grader['id']} needs a load-bearing human or calibrated model grader",
+                2,
+            )
+
+
+def _validate_validity_review(data, mode):
+    review = data.get("validity_review")
+    if review is None and mode == "diagnostic":
+        return
+    if not isinstance(review, dict):
+        raise CliError(f"{mode} suites need validity_review", 2)
+    if review.get("status") not in {"pass", "fail", "unknown"}:
+        raise CliError("validity_review.status must be pass, fail, or unknown", 2)
+    if not isinstance(review.get("notes"), str) or not review["notes"].strip():
+        raise CliError("validity_review.notes must be a non-empty string", 2)
 
 
 def _validate_evaluation_design(data, cases):
@@ -222,9 +270,10 @@ def _validate_evaluation_design(data, cases):
     if mode not in EVALUATION_MODES:
         raise CliError(f"evaluation_mode must be one of {', '.join(sorted(EVALUATION_MODES))}", 2)
     defaults = data.get("defaults") or {}
-    metric = defaults.get("reliability_metric", "pass^k")
-    if metric not in RELIABILITY_METRICS:
-        raise CliError(f"defaults.reliability_metric must be one of {', '.join(sorted(RELIABILITY_METRICS))}", 2)
+    policy = defaults.get("repetition_policy", "all_trials")
+    if policy not in REPETITION_POLICIES:
+        raise CliError(f"defaults.repetition_policy must be one of {', '.join(sorted(REPETITION_POLICIES))}", 2)
+    _validate_validity_review(data, mode)
     requirements = data.get("coverage_requirements", [])
     if not isinstance(requirements, list) or not all(isinstance(item, str) and item.strip() for item in requirements):
         raise CliError("coverage_requirements must be non-empty strings", 2)
@@ -248,7 +297,7 @@ def _validate_evaluation_design(data, cases):
         benchmark = data.get("benchmark")
         if not isinstance(benchmark, dict):
             raise CliError("benchmark suites need benchmark provenance", 2)
-        for field in ("name", "source", "version", "held_out_split", "contamination_controls"):
+        for field in ("name", "source", "version", "held_out_split", "contamination_controls", "freshness"):
             if not isinstance(benchmark.get(field), str) or not benchmark[field].strip():
                 raise CliError(f"benchmark.{field} must be a non-empty string", 2)
         splits = {case.get("split") for case in cases}
@@ -274,7 +323,7 @@ def _validate_candidate(candidate, seen):
         raise CliError(f"candidate {candidate_id} source.kind none must not set ref", 2)
     if kind == "current_worktree" and ref not in (None, "."):
         raise CliError(f"candidate {candidate_id} current_worktree ref must be . when present", 2)
-    if kind in {"branch", "git_ref"} and (not ref or ref == "."):
+    if kind == "git_ref" and (not ref or ref == "."):
         raise CliError(f"candidate {candidate_id} source.kind {kind} must set a git ref", 2)
     if kind == "local_path" and not (source.get("path") or ref):
         raise CliError(f"candidate {candidate_id} source.kind local_path must set path", 2)
@@ -328,6 +377,13 @@ def load_manifest(path):
             not isinstance(case.get("split"), str) or not case["split"].strip()
         ):
             raise CliError(f"case {case_id} split must be a non-empty string", 2)
+        if case.get("created_at") is not None:
+            if not isinstance(case.get("created_at"), str):
+                raise CliError(f"case {case_id} created_at must be an ISO date", 2)
+            try:
+                date.fromisoformat(case["created_at"])
+            except ValueError as exc:
+                raise CliError(f"case {case_id} created_at must be an ISO date", 2) from exc
         coverage = case.get("coverage", [])
         if not isinstance(coverage, list) or not all(isinstance(item, str) and item.strip() for item in coverage):
             raise CliError(f"case {case_id} coverage must be non-empty strings", 2)

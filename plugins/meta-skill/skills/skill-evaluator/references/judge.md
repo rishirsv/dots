@@ -171,9 +171,9 @@ the chosen model and reasoning effort in the grader definition; the evaluator
 uses those pinned settings instead of the task-worker defaults.
 
 Compile reusable rubric guidance into `judge.md` before calibration. Do not add
-source-run annotations or later rubric notes to a load-bearing judge at grade
-time because that changes the calibrated prompt. Use those notes with an
-advisory judge, or revise `judge.md` and validate a new judge version.
+later rubric notes to a load-bearing judge at grade time because that changes
+the calibrated prompt. Use those notes with an advisory judge, or revise
+`judge.md` and validate a new judge version.
 
 ## Anti-Patterns
 

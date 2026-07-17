@@ -78,9 +78,12 @@ source correction.
 
 For discovery or frontmatter questions, apply
 [description-standard.md](../../references/description-standard.md). For a
-broad or packaging diagnosis, apply
-[payload-hygiene.md](../../references/payload-hygiene.md). Do not load either
-reference when it cannot affect the answer.
+broad or packaging diagnosis, derive task-local search terms from the source
+evidence and scan the effective payload, linked shared references, and visible
+or copyable strings. Classify each hit as a required runtime dependency or
+leakage. Audit each runtime section by asking whether a future agent needs it
+while handling a user's task; flag maintainer-only material. Do not load the
+description reference when it cannot affect the answer.
 
 ## Use Evidence Carefully
 

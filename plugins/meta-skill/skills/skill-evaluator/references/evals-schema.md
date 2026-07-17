@@ -14,7 +14,7 @@ Read this before creating or changing
   "defaults": {
     "runner": "codex_exec",
     "repetitions": 1,
-    "reliability_metric": "pass^k",
+    "repetition_policy": "all_trials",
     "timeout_seconds": 600
   },
   "candidates": [
@@ -62,22 +62,28 @@ only and make a durable suite fail `--check`.
 | `readiness` | General capability estimate. At least 20 selected cases, `coverage_requirements`, coverage tags on every case, and at least three repetitions. |
 | `benchmark` | Readiness contract plus `benchmark` provenance, development and held-out splits, contamination controls, and one selected split per run. |
 
-Readiness and benchmark suites use `defaults.reliability_metric`:
+Readiness and benchmark suites use `defaults.repetition_policy`:
 
-- `pass@k`: the case succeeds when any of its repeated trials passes;
-- `pass^k`: the case succeeds only when every repeated trial passes.
+- `any_trial`: the case succeeds when any repeated trial passes;
+- `all_trials`: the case succeeds only when every repeated trial passes.
 
 A readiness suite declares the dimensions it claims to cover:
 
 ```json
 {
   "evaluation_mode": "readiness",
+  "validity_review": {
+    "status": "pass",
+    "notes": "Cases are solvable, graders match the claim, the harness represents production, and no material shortcuts are known."
+  },
   "coverage_requirements": ["common-path", "boundary", "near-miss", "regression"],
-  "defaults": {"repetitions": 3, "reliability_metric": "pass^k"}
+  "defaults": {"repetitions": 3, "repetition_policy": "all_trials"}
 }
 ```
 
 Every case then sets one or more matching `coverage` tags.
+`validity_review.status` is `pass`, `fail`, or `unknown`. Only `pass` supports a
+readiness or comparative benchmark claim.
 
 A benchmark suite also declares:
 
@@ -89,13 +95,15 @@ A benchmark suite also declares:
     "source": "Repository, dataset, or immutable local snapshot",
     "version": "release or snapshot identifier",
     "held_out_split": "test",
-    "contamination_controls": "How held-out prompts remain unavailable during development."
+    "contamination_controls": "How held-out prompts remain unavailable during development.",
+    "freshness": "When and how relevance and possible training contamination were reviewed."
   }
 }
 ```
 
-Every benchmark case sets `split`. Run exactly one split with `--split`; a
-held-out run cannot inherit rubric context through `--source-run-id`.
+Every benchmark case sets `split` and may set an ISO `created_at` date. Run
+exactly one split with `--split`. Public benchmark cases without dates produce
+a freshness warning.
 
 ## Candidate Fields
 
@@ -106,8 +114,7 @@ Each candidate needs a unique `candidate`, optional `display`, and `source`:
 | `none` | No `ref` or `path`; reserved for candidate `no-skill`. |
 | `current_worktree` | Optional `ref: "."`; freezes the current skill tree. |
 | `local_path` | `path` or `ref` naming the local candidate directory. |
-| `branch` | `ref` naming a Git branch. |
-| `git_ref` | `ref` naming a commit, tag, or other Git revision. |
+| `git_ref` | `ref` naming a commit, tag, branch, or other Git revision. |
 
 For a revision comparison, declare both versions and run with `--baseline
 current --candidates proposed`. Candidate IDs select declared sources; they do
@@ -127,6 +134,7 @@ not define new sources.
 | `coverage` | Coverage tags required for readiness and benchmark cases. |
 | `repetitions` | Optional case-level repetition count. |
 | `split` | Selection label; required for benchmark cases. |
+| `created_at` | Optional ISO date used for benchmark freshness review. |
 | `fixtures` | Files or directories copied into the worker workspace. |
 | `graders` | Explicit deterministic, model, or human graders. |
 | `grader_tests` | Known-Pass and known-Fail outcome fixtures for deterministic graders. |
@@ -149,7 +157,7 @@ from the ID. `advisory: true` excludes a grader from a Pass verdict.
 }
 ```
 
-A load-bearing code grader needs one Pass and one Fail fixture:
+A load-bearing exact code grader needs one Pass and one Fail fixture:
 
 ```json
 "grader_tests": [
@@ -176,6 +184,11 @@ The validator receives `--output`, `--events`, `--artifacts`, optional
 `--expected`, optional `--before-state`, optional `--after-state`, and `--json`.
 It exits zero and returns positive `total` with `passed == total` only for a
 Pass. `eval run --check` executes every declared grader test.
+
+For an open-ended result, set `scope: "open_ended"` and `advisory: true`.
+Provide at least two materially different valid fixtures and one invalid
+fixture, then use a human or calibrated model grader for the verdict. This
+keeps a narrow validator from rejecting valid alternatives.
 
 ### Model grader
 

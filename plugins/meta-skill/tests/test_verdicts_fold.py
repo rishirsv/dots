@@ -22,7 +22,7 @@ class VerdictTests(unittest.TestCase):
 
     def test_required_and_advisory_policy(self):
         state = {"status": "completed"}
-        self.assertEqual(verdict_for_trial(state, [grade("pass"), grade("fail", True, grader_id="note", metric="note")]), "inconclusive")
+        self.assertEqual(verdict_for_trial(state, [grade("pass"), grade("fail", True, grader_id="note", metric="note")]), "passed")
         self.assertEqual(verdict_for_trial(state, [grade("fail"), grade("pass", True, grader_id="note", metric="note")]), "failed")
         self.assertEqual(verdict_for_trial(state, [grade("pass")]), "passed")
 

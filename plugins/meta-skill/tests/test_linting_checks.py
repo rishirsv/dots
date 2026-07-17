@@ -37,6 +37,43 @@ class LintTests(unittest.TestCase):
             kinds = {row["kind"] for row in lint_suite(str(path))["warnings"]}
             self.assertEqual(kinds, {"all_graders_advisory", "unbalanced_attached_suite"})
 
+    def test_public_benchmark_without_case_dates_warns(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "skill" / "evals" / "evals.json"
+            cases = [
+                {
+                    "id": f"case-{index}",
+                    "type": "capability",
+                    "prompt": f"Do {index}",
+                    "coverage": ["core"],
+                    "repetitions": 3,
+                    "split": "development" if index < 10 else "test",
+                    "graders": [{"kind": "human", "id": "review", "metric": "quality"}],
+                }
+                for index in range(20)
+            ]
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps({
+                "schema_version": 2,
+                "evaluation_mode": "benchmark",
+                "validity_review": {"status": "pass", "notes": "Validity factors reviewed."},
+                "coverage_requirements": ["core"],
+                "benchmark": {
+                    "name": "Public suite",
+                    "source": "https://example.com/benchmark",
+                    "version": "v1",
+                    "held_out_split": "test",
+                    "contamination_controls": "Held-out prompts remain hidden.",
+                    "freshness": "Reviewed in July 2026.",
+                },
+                "evals": cases,
+            }))
+            warnings = lint_suite(str(path))["warnings"]
+            self.assertEqual(
+                sum(row["kind"] == "benchmark_case_missing_created_at" for row in warnings),
+                20,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

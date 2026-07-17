@@ -9,7 +9,7 @@
   "defaults": {
     "runner": "codex_exec",
     "repetitions": 1,
-    "reliability_metric": "pass^k",
+    "repetition_policy": "all_trials",
     "timeout_seconds": 600
   },
   "evals": [

@@ -45,7 +45,7 @@ def command_doctor(args):
         checks.append({"name": name, "ok": bool(ok), "message": message, "detail": detail})
 
     add("python_version", sys.version_info >= (3, 10), sys.version.split()[0])
-    add("validators", all((Path(__file__).parent / name).exists() for name in ("validate_skill.py", "lint_authoring.py")), "bundled validators")
+    add("validator", (Path(__file__).parent / "validation.py").exists(), "bundled validator")
     codex = shutil.which("codex")
     add("codex_binary", bool(codex), codex or "codex not found on PATH")
     if codex:
@@ -305,9 +305,8 @@ def build_parser():
         command.add_argument("--timeout", type=positive_int)
         command.add_argument("--no-baseline", action="store_true")
         command.add_argument("--no-grade", action="store_true")
-        command.add_argument("--human-review-sample", type=int)
-        command.add_argument("--source-run-id")
         command.add_argument("--resume-run-id", help="Reuse exact completed trials from an interrupted run")
+        command.add_argument("--gate", action="store_true", help="Exit non-zero on candidate regressions or unknown outcomes")
         command.add_argument("--adhoc", action="store_true")
         command.add_argument("--task")
         command.add_argument("--skill")

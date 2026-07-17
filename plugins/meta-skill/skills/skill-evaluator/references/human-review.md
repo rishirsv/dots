@@ -6,16 +6,8 @@ evidence, or a human check on an important model judgment.
 Use the evaluation workbench to inspect responses, artifacts, grades, and to
 record annotations. Use `metaskill eval record` to submit a declared absolute
 human grade. Review high-priority, regressed, unknown, disagreed, and surprising
-cases before routine passes. Add a deterministic sample of apparent passes and
-report both reviewed and unreviewed coverage.
-
-Use candidate-blind pairwise review for comparative quality only when the
-available review surface supports blinded A/B recording. Randomize A/B order,
-record `A`, `B`, `tie`, `neither`, or `unknown`, and select one primary reason
-such as correctness, completeness, clarity, evidence, instruction following,
-safety, or style. Reveal candidate identity only after the annotation is
-recorded. Pairwise annotations remain separate from absolute trial grades. Do
-not simulate blindness in an interface that exposes candidate identity.
+cases before routine passes. Add a small deterministic sample of apparent
+passes when the decision warrants it, and report reviewed coverage.
 
 Use absolute review when a declared human grader must decide whether one trial
 meets a requirement. Keep the model label hidden until the reviewer records an
@@ -32,8 +24,8 @@ For each selected absolute trial:
 4. Give a short rationale tied to exact outcome or transcript evidence.
 5. Add a plain evidence note when the result needs explanation or follow-up.
 
-Human grades and pairwise judgments are revisable. Preserve their history and
-regenerate the derived report after revision. When a human and model disagree, inspect the task,
+Human grades are revisable. Preserve their history and regenerate the derived
+report after revision. When a human and model disagree, inspect the task,
 criteria, allowed evidence, and judge guidance; do not hide the disagreement or
 invent a confidence label.
 
@@ -56,8 +48,9 @@ preferences, proposed skill edits, and unreviewed diagnoses excluded.
 Regrading may use only annotations explicitly marked `rubric` or `evidence`.
 The resulting model-grade row records their annotation IDs and a digest of the
 assembled judge context. Changing an annotation's judge use does not rewrite an
-old grade; run grading again to append a new judgment. Pairwise annotations
-remain separate and never enter this context automatically.
+old grade; run grading again to append a new judgment. Notes from another run
+are never inherited automatically; promote accepted guidance into the authored
+case or grader before starting a new run.
 
 Use a deterministic validator instead when exact checks can decide fairly. Use
 `unknown` when evidence is insufficient or contradictory. One reviewer is

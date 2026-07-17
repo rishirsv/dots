@@ -456,19 +456,6 @@ def grade_run(raw_run, *, rebuild_report=True, parallel=1, model=None, reasoning
     from .report import judge_annotation_context
 
     annotations = judge_annotation_context(str(run_dir))
-    source_run_id = run.get("source_run_id")
-    if (
-        isinstance(source_run_id, str)
-        and Path(source_run_id).name == source_run_id
-        and source_run_id != run_dir.name
-    ):
-        source_run = run_dir.parent / source_run_id
-        if (source_run / "run.json").is_file():
-            annotations.extend(
-                row
-                for row in judge_annotation_context(str(source_run))
-                if row.get("judge_use") == "rubric"
-            )
     annotations = _dedupe_annotations(annotations)
 
     def grade(state):
