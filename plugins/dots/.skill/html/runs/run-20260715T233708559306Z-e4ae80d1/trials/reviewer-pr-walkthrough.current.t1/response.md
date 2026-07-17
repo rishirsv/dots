@@ -1,1 +1,0 @@
-Created the self-contained reviewer walkthrough: [health-permissions-review.html](artifacts/health-permissions-review.html)

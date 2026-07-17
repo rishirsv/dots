@@ -1,1 +1,0 @@
-One polished self-contained HTML walkthrough with a long title and readable status, a responsive linear five-step review path, a mobile-readable risk table or equivalent, clear ownership/source-of-truth explanation, and the unresolved simulator check labeled as such.
