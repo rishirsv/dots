@@ -80,11 +80,13 @@ changed-code review. It contains the full Correctness Review and three Simplify
 lane checklists. Run every lane; do not replace them with a generic cleanup
 pass.
 
-When subagents are available, launch all three Simplify lanes concurrently and
-pass each lane the complete diff, changed-file list, applicable repository
-guidance, allowed surrounding paths, and user focus. The parent performs
-Correctness Review while they run. If subagents are unavailable, the parent
-applies all three lane checklists directly; no lane may be skipped.
+For Direct review, the parent performs Correctness Review and all three Simplify
+lanes directly. For Deep review, launch the three Simplify lanes concurrently
+when subagents are available and pass each lane the complete diff, changed-file
+list, applicable repository guidance, allowed surrounding paths, and user focus.
+The parent performs Correctness Review while they run. If subagents are
+unavailable, the parent applies all three lane checklists directly; no lane may
+be skipped.
 
 Use review depth only to scale Correctness Review and candidate verification:
 
