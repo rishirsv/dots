@@ -49,6 +49,17 @@ Read this before finalizing documentation work.
 - Prescriptive wording distinguishes required actions, optional actions,
   expected outcomes, and possible outcomes. Avoid ambiguous `should`.
 
+## Preservation checks
+
+For revisions to documents with sections explicitly marked as manual,
+user-owned, immutable, or preserved:
+
+- Compare the marked section before and after the edit.
+- Confirm its heading, markers, body, formatting, and position are unchanged
+  unless the user explicitly requested an edit to that section.
+- Keep generated status, findings, checklists, and changelog entries outside
+  the protected section.
+
 ## Knowledge bundle checks
 
 For OKF-style or agent-readable knowledge docs:
@@ -87,6 +98,36 @@ designs:
   decision and rationale.
 - Alternatives considered answer the obvious "why not this?" questions without
   becoming an exhaustive diary.
+
+## Flow doc checks
+
+- The scope identifies the behavior and boundaries being traced.
+- Entry assumptions, consequential state changes, snapshot points, outputs,
+  and handoff contracts are explicit.
+- The execution trace is supported by current code, tests, configuration, or
+  runtime evidence and does not imply unverified branches.
+- Failure paths include useful observability or diagnostic pointers when they
+  exist.
+- Code and related-flow links are portable and actionable.
+
+## Investigation plan checks
+
+- Known facts, observations, and inferences are distinguishable.
+- Competing hypotheses can be rejected by the proposed checks.
+- Each check states the expected evidence for both a true and false hypothesis
+  when that distinction is knowable.
+- The plan defines what establishes a root cause and when to revise the
+  hypothesis set.
+
+## Validation plan checks
+
+- Every check traces to a requirement, risk, or plausible failure.
+- Expected results and acceptance criteria are concrete enough to reject a bad
+  outcome.
+- Planned, completed, passed, failed, and blocked checks are not conflated.
+- Environments, fixtures, permissions, migrations, rollback, and retained
+  evidence are covered when applicable.
+- Known gaps state what remains unproven and why it matters.
 
 ## Final report
 

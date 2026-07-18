@@ -15,7 +15,8 @@ is part of this skill; do not route prose cleanup elsewhere.
   before substantial rewrites or style-heavy edits.
 - [document-types.md](references/document-types.md) — after choosing the
   document type (README, tutorial, how-to, runbook, ADR, PRD, changelog,
-  release notes, concept doc, troubleshooting).
+  release notes, concept doc, flow doc, investigation plan, validation plan,
+  troubleshooting).
 - [design-docs.md](references/design-docs.md) — for a design doc,
   architecture proposal, or "how to build it" plan.
 - [validation.md](references/validation.md) — before finalizing or reporting
@@ -49,7 +50,10 @@ Markdown style guide.
 5. Preserve technical meaning: do not smooth over uncertainty, invent
    behavior, drop caveats, or polish examples beyond what the source
    supports. When a durable fact can't be verified from available sources,
-   ask for the source or write a clearly labeled proposal.
+   ask for the source or write a clearly labeled proposal. Treat sections
+   explicitly marked as manual, user-owned, or preserved as immutable unless
+   the user asks to edit them; verify after editing that their contents did not
+   change.
 6. Edit files directly when asked to write or update docs; return a draft,
    proposal, or findings-first review when the user asks for advice or
    review. Review findings carry severity, location, evidence, issue, and

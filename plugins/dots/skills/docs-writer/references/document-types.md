@@ -38,6 +38,31 @@ Recommended shape:
 Concept docs should not read like procedures. Include examples only when they
 clarify the model.
 
+## Flow doc
+
+Use when a developer needs to understand how a request, behavior, or state
+transition moves through existing code. A flow doc is a navigable explanation,
+not a line-by-line restatement of the implementation.
+
+Recommended shape:
+
+- Scope and the behavior being traced.
+- Entry points and required state at entry.
+- A high-level flow diagram when it clarifies control or ownership boundaries.
+- An execution trace through the consequential components, branches, and state
+  changes.
+- Snapshot or persistence points where state is copied, frozen, or committed.
+- Exit states, outputs, and handoff contracts with adjacent flows.
+- Failure paths and observable evidence such as logs, metrics, events, or
+  commands.
+- Code pointers and links to related flows.
+
+Keep separate lifecycle or domain flows separate when combining them would hide
+their boundaries. Each standalone flow doc must still state what it receives,
+what it produces, and which adjacent flow owns the next step. Use repo-relative
+code links, stable symbols, or searchable identifiers; do not depend on local
+checkout paths or fragile line numbers alone.
+
 ## How-to
 
 Use for a task with a concrete outcome and a flexible path.
@@ -184,6 +209,53 @@ Recommended shape:
 Do not treat this as mandatory boilerplate. Choose sections with the penalty
 filter: document the decisions that would be painful, risky, or costly to get
 wrong, and leave cheap implementation details to the implementation.
+
+## Investigation plan
+
+Use before or during debugging when several plausible causes remain and the
+work needs an evidence-driven path to a diagnosis. Do not present an unverified
+hypothesis as the root cause.
+
+Recommended shape:
+
+- Symptom and affected behavior.
+- Known facts, constraints, and evidence already collected.
+- Competing hypotheses, ordered by likelihood or cost to test when useful.
+- For each hypothesis: supporting and contradicting evidence, the smallest
+  discriminating check, and the expected result if it is true or false.
+- Reproduction or evidence-capture procedure.
+- Stop conditions, including what establishes the root cause and what evidence
+  would require a new hypothesis.
+- Findings and remaining uncertainty as the investigation progresses.
+
+Prefer checks that distinguish between hypotheses over broad data gathering.
+Keep observations separate from inferences, and update or reject hypotheses as
+evidence arrives.
+
+## Validation plan
+
+Use when a change, design, migration, or release needs durable agreement about
+what will be checked and what counts as acceptable. A validation plan defines
+coverage and evidence; it does not claim that validation has already passed.
+
+Recommended shape:
+
+- Subject, scope, and linked requirements or risks.
+- Environments, fixtures, data, and prerequisites.
+- Automated checks and the behavior each one proves.
+- Manual checks reserved for behavior that automation cannot establish
+  reasonably.
+- Important happy paths, boundaries, failures, permissions, migrations, and
+  rollback behavior.
+- Expected results and explicit acceptance criteria.
+- Evidence to retain, owners when coordination matters, and completion or stop
+  conditions.
+- Known coverage gaps and their consequences.
+
+Tie every check to a requirement, risk, or plausible failure. File existence,
+generic smoke checks, and ignored command output are not substantive evidence.
+Distinguish planned checks from completed checks and record actual results only
+after they have been observed.
 
 ## ADR or design note
 
