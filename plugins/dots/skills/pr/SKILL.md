@@ -27,6 +27,18 @@ the same scope, draft-default, and visual-evidence checks.
   run `gh --version` and `gh auth status`; a failure blocks that CLI operation,
   not local work or connector-backed work.
 
+## Ready shortcut
+
+When the user says `ready` while using this skill, treat it as explicit
+authorization to mark the pull request for the current branch ready for review:
+
+```bash
+gh pr ready
+```
+
+Re-query the PR afterward. This can trigger provider-configured automatic
+reviews, but do not post a manual review request unless the user asks.
+
 ## Naming
 
 - Branch: repo-native and human-readable. When starting from `main`, `master`,
