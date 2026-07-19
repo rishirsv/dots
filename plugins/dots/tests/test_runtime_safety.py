@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -150,6 +151,99 @@ class SkillInventoryTests(unittest.TestCase):
                 env={**os.environ, "CODEX_HOME": str(codex_home)},
             )
         self.assertIn("sample-plugin:sample-skill", result.stdout)
+
+
+class ChiefOfStaffThreadAccessTests(unittest.TestCase):
+    def test_skill_requires_explicit_invocation(self):
+        metadata = (
+            PLUGIN_ROOT / "skills" / "chief-of-staff" / "agents" / "openai.yaml"
+        ).read_text()
+
+        self.assertIn("default_prompt: \"Use $chief-of-staff", metadata)
+        self.assertIn("allow_implicit_invocation: false", metadata)
+        self.assertNotIn("allow_implicit_invocation: true", metadata)
+
+    def test_list_filters_by_repo_and_show_redacts_sensitive_lines(self):
+        script = PLUGIN_ROOT / "skills" / "chief-of-staff" / "scripts" / "threads.py"
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            codex_home = tmp_path / ".codex"
+            codex_home.mkdir()
+            rollout = tmp_path / "rollout.jsonl"
+            rollout.write_text(
+                "".join(
+                    json.dumps(record) + "\n"
+                    for record in (
+                        {
+                            "timestamp": "1",
+                            "type": "response_item",
+                            "payload": {
+                                "type": "message",
+                                "role": "user",
+                                "content": [{"type": "input_text", "text": "password=do-not-emit"}],
+                            },
+                        },
+                        {
+                            "timestamp": "2",
+                            "type": "event_msg",
+                            "payload": {"type": "agent_message", "message": "Recovered safely"},
+                        },
+                    )
+                )
+            )
+            with sqlite3.connect(codex_home / "state_5.sqlite") as connection:
+                connection.execute(
+                    """
+                    CREATE TABLE threads (
+                        id TEXT, title TEXT, source TEXT, cwd TEXT,
+                        created_at INTEGER, updated_at INTEGER, archived INTEGER,
+                        model TEXT, rollout_path TEXT, first_user_message TEXT
+                    )
+                    """
+                )
+                connection.execute(
+                    "INSERT INTO threads VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    ("thread-123", "Recovery", "app", "/repo", 1, 2, 0, "model", str(rollout), "recover"),
+                )
+                connection.execute(
+                    "INSERT INTO threads VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    ("thread-999", "Other", "app", "/other", 1, 3, 0, "model", str(rollout), "other"),
+                )
+
+            env = {**os.environ, "CODEX_HOME": str(codex_home)}
+            listed = subprocess.run(
+                [sys.executable, str(script), "list", "--cwd", "/repo", "--json"],
+                check=True,
+                capture_output=True,
+                text=True,
+                env=env,
+            )
+            shown = subprocess.run(
+                [sys.executable, str(script), "show", "thread-123", "--json"],
+                check=True,
+                capture_output=True,
+                text=True,
+                env=env,
+            )
+
+        listed_threads = json.loads(listed.stdout)
+        self.assertEqual([thread["id"] for thread in listed_threads], ["thread-123"])
+        rendered = shown.stdout
+        self.assertIn("[redacted sensitive line]", rendered)
+        self.assertIn("Recovered safely", rendered)
+        self.assertNotIn("do-not-emit", rendered)
+
+    def test_missing_thread_database_fails_closed(self):
+        script = PLUGIN_ROOT / "skills" / "chief-of-staff" / "scripts" / "threads.py"
+        with tempfile.TemporaryDirectory() as tmp:
+            result = subprocess.run(
+                [sys.executable, str(script), "list", "--json"],
+                capture_output=True,
+                text=True,
+                env={**os.environ, "CODEX_HOME": tmp},
+            )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Missing Codex state DB", result.stderr)
 
 
 class OracleContainmentTests(unittest.TestCase):
