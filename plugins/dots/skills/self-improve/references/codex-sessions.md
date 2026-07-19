@@ -41,7 +41,7 @@ python3 scripts/self_improve.py --platform codex inventory
 python3 scripts/self_improve.py --platform codex triage --days 30 --cwd "$PWD"
 python3 scripts/self_improve.py --platform codex show <thread-id>
 python3 scripts/self_improve.py --platform codex files <thread-id>
-python3 scripts/self_improve.py --platform codex review --target instructions --days 90
+python3 scripts/self_improve.py --platform codex deep --days 30
 ```
 
 The helper defaults to `CODEX_HOME` or `~/.codex`. Its transcript rendering is

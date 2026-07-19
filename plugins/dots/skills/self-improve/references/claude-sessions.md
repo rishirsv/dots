@@ -57,11 +57,11 @@ supporting context and propose changes for review; do not silently edit it.
 For a plugin install, the Claude invocation is `/dots:self-improve`.
 
 ```bash
-python3 "${CLAUDE_SKILL_DIR}/scripts/self_improve.py" --platform claude inventory
-python3 "${CLAUDE_SKILL_DIR}/scripts/self_improve.py" --platform claude triage --days 30
-python3 "${CLAUDE_SKILL_DIR}/scripts/self_improve.py" --platform claude show "${CLAUDE_SESSION_ID}"
-python3 "${CLAUDE_SKILL_DIR}/scripts/self_improve.py" --platform claude files "${CLAUDE_SESSION_ID}"
-python3 "${CLAUDE_SKILL_DIR}/scripts/self_improve.py" --platform claude review --days 30
+python3 scripts/self_improve.py --platform claude inventory
+python3 scripts/self_improve.py --platform claude triage --days 30
+python3 scripts/self_improve.py --platform claude show "${CLAUDE_SESSION_ID}"
+python3 scripts/self_improve.py --platform claude files "${CLAUDE_SESSION_ID}"
+python3 scripts/self_improve.py --platform claude deep --days 30
 ```
 
 Transcripts and history are plaintext and may contain file contents, command

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Mine Codex sessions, memories, goal state, and instruction state for durable,
+"""Mine Codex or Claude Code sessions for durable,
 evidence-backed improvement proposals.
 
 Division of labor (keep this honest):
@@ -31,12 +31,21 @@ from typing import Any, Iterable
 
 
 PLUGIN_SCRIPTS = Path(__file__).resolve().parents[3] / "scripts"
+SKILL_SCRIPTS = Path(__file__).resolve().parent
 sys.path.insert(0, str(PLUGIN_SCRIPTS))
+sys.path.insert(0, str(SKILL_SCRIPTS))
 
 from codex_sessions import iter_session_events  # noqa: E402
+from session_sources import (  # noqa: E402
+    ClaudeSource,
+    CodexSource,
+    SessionRecord as Thread,
+    SessionSource,
+)
 
 
 CODEX_HOME = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")).expanduser()
+CLAUDE_HOME = Path(os.environ.get("CLAUDE_CONFIG_DIR", Path.home() / ".claude")).expanduser()
 SOURCE_SKILLS_ROOT = Path(__file__).resolve().parents[2]
 STATE_DB = CODEX_HOME / "state_5.sqlite"
 SESSION_INDEX = CODEX_HOME / "session_index.jsonl"
@@ -47,12 +56,57 @@ MEMORIES_DB = CODEX_HOME / "memories_1.sqlite"
 GOALS_DB = CODEX_HOME / "goals_1.sqlite"
 # Durable record of proposal decisions so weekly runs don't resurface settled items.
 DECISIONS_FILE = CODEX_HOME / "self_improve_decisions.json"
-SKILL_ROOTS = (
-    CODEX_HOME / "skills",
-    Path.home() / ".agents" / "skills",
-    SOURCE_SKILLS_ROOT,
-    CODEX_HOME / "plugins" / "cache",
-)
+PLATFORM = "codex"
+SESSION_SOURCE: SessionSource = CodexSource(CODEX_HOME, iter_session_events)
+
+
+def platform_paths(platform: str) -> dict[str, Any]:
+    home = CODEX_HOME if platform == "codex" else CLAUDE_HOME
+    plugin_cache = home / "plugins" / "cache"
+    return {
+        "home": home,
+        "instructions": home / ("AGENTS.md" if platform == "codex" else "CLAUDE.md"),
+        "memories": home / ("memories" if platform == "codex" else "projects"),
+        "memory": (
+            home / "memories" / "MEMORY.md"
+            if platform == "codex"
+            else home / "projects" / "<project>" / "memory" / "MEMORY.md"
+        ),
+        "decisions": home / "self_improve_decisions.json",
+        "skill_roots": (home / "skills", Path.home() / ".agents" / "skills", SOURCE_SKILLS_ROOT, plugin_cache),
+        "plugin_cache": plugin_cache,
+    }
+
+
+def resolve_platform(requested: str) -> str:
+    if requested != "auto":
+        return requested
+    configured = os.environ.get("SELF_IMPROVE_PLATFORM")
+    if configured in {"codex", "claude"}:
+        return configured
+    if os.environ.get("CLAUDE_SESSION_ID") or os.environ.get("CLAUDECODE"):
+        return "claude"
+    if (CODEX_HOME / "state_5.sqlite").exists():
+        return "codex"
+    if (CLAUDE_HOME / "projects").exists():
+        return "claude"
+    raise SystemExit("No Codex or Claude Code session store found; pass --platform explicitly")
+
+
+def configure_platform(platform: str) -> None:
+    global PLATFORM, SESSION_SOURCE
+    global GLOBAL_AGENTS, MEMORIES_DIR, MEMORY_MD, DECISIONS_FILE, SKILL_ROOTS
+    PLATFORM = platform
+    paths = platform_paths(platform)
+    GLOBAL_AGENTS = paths["instructions"]
+    MEMORIES_DIR = paths["memories"]
+    MEMORY_MD = paths["memory"]
+    DECISIONS_FILE = paths["decisions"]
+    SKILL_ROOTS = paths["skill_roots"]
+    SESSION_SOURCE = CodexSource(CODEX_HOME, iter_session_events) if platform == "codex" else ClaudeSource(CLAUDE_HOME)
+
+
+configure_platform("codex")
 
 # Sentences that signal a durable preference (how the user wants work done).
 PREFERENCE_MARKERS = (
@@ -154,8 +208,8 @@ STRENGTH_ORDER = {"weak": 0, "medium": 1, "strong": 2}
 PROPOSAL_BUCKETS = (
     "Skills",
     "New Skills",
-    "Project AGENTS.md",
-    "Global AGENTS.md",
+    "Project Instructions",
+    "Personal Instructions",
     "Memory Notes",
     "Repo Docs",
     "Scripts Or Harnesses",
@@ -165,21 +219,9 @@ PROPOSAL_BUCKETS = (
 
 
 @dataclass(frozen=True)
-class Thread:
-    id: str
-    title: str
-    source: str
-    cwd: str
-    created_at: int
-    updated_at: int
-    archived: bool
-    model: str
-    rollout_path: str
-
-
-@dataclass(frozen=True)
 class Evidence:
     thread_id: str
+    platform: str
     title: str
     updated_at: int
     rollout_path: str
@@ -190,6 +232,8 @@ class Evidence:
 
 
 def require_db() -> None:
+    if PLATFORM != "codex":
+        raise SystemExit("This command requires the Codex state database")
     if not STATE_DB.exists():
         raise SystemExit(f"Missing Codex state DB: {STATE_DB}")
 
@@ -228,73 +272,18 @@ def threads(
     query: str | None = None,
     cwd: str | None = None,
 ) -> list[Thread]:
-    require_db()
-    where: list[str] = []
-    params: list[Any] = []
-
-    if archived == "active":
-        where.append("archived = 0")
-    elif archived == "archived":
-        where.append("archived = 1")
-    elif archived != "all":
-        raise SystemExit("--archived must be active, archived, or all")
-
-    if days:
-        cutoff = int((datetime.now(tz=timezone.utc) - timedelta(days=days)).timestamp())
-        where.append("updated_at >= ?")
-        params.append(cutoff)
-    if query:
-        needle = f"%{query.lower()}%"
-        where.append("(lower(title) LIKE ? OR lower(first_user_message) LIKE ?)")
-        params.extend([needle, needle])
-    if cwd:
-        where.append("cwd LIKE ?")
-        params.append(f"{cwd}%")
-
-    where_sql = "WHERE " + " AND ".join(where) if where else ""
-    sql = f"""
-        SELECT id, title, source, cwd, created_at, updated_at, archived,
-               coalesce(model, ''), rollout_path
-        FROM threads
-        {where_sql}
-        ORDER BY updated_at DESC, id DESC
-        LIMIT ?
-    """
-    params.append(limit)
-    with sqlite3.connect(STATE_DB) as conn:
-        rows = conn.execute(sql, params).fetchall()
-    return [_thread_from_row(row) for row in rows]
-
-
-def _thread_from_row(row: Any) -> Thread:
-    return Thread(
-        id=row[0],
-        title=row[1] or "",
-        source=row[2] or "",
-        cwd=row[3] or "",
-        created_at=int(row[4]),
-        updated_at=int(row[5]),
-        archived=bool(row[6]),
-        model=row[7] or "",
-        rollout_path=row[8] or "",
+    return SESSION_SOURCE.list_sessions(
+        limit=limit, archived=archived, days=days, query=query, cwd=cwd
     )
 
 
 def thread_by_id(thread_id: str) -> Thread | None:
-    require_db()
-    with sqlite3.connect(STATE_DB) as conn:
-        row = conn.execute(
-            """
-            SELECT id, title, source, cwd, created_at, updated_at, archived,
-                   coalesce(model, ''), rollout_path
-            FROM threads
-            WHERE id = ? OR id LIKE ?
-            ORDER BY updated_at DESC
-            LIMIT 1
-            """,
-            (thread_id, f"{thread_id}%"),
-        ).fetchone()
-    return _thread_from_row(row) if row else None
+    rows = threads(limit=10_000, archived="all")
+    exact = [thread for thread in rows if thread.id == thread_id]
+    if exact:
+        return exact[0]
+    matches = [thread for thread in rows if thread.id.startswith(thread_id)]
+    return matches[0] if matches else None
 
 
 def recent_thread() -> Thread | None:
@@ -304,11 +293,8 @@ def recent_thread() -> Thread | None:
 
 def _message_payloads(thread: Thread) -> Iterable[dict[str, Any]]:
     """Yield message-bearing payloads from current and legacy rollouts."""
-    path = Path(thread.rollout_path)
-    if not path.exists():
-        return
     try:
-        for event in iter_session_events(path, strict=True):
+        for event in SESSION_SOURCE.events(thread):
             if event.kind != "message" or event.role not in {"user", "assistant"}:
                 continue
             yield {
@@ -365,11 +351,8 @@ class ThreadSignals:
 def thread_signals(thread: Thread, known_skills: set[str]) -> ThreadSignals:
     """Scan the full rollout for skill usage, tool errors, and friction cues."""
     sig = ThreadSignals()
-    path = Path(thread.rollout_path)
-    if not path.exists():
-        return sig
     try:
-        for event in iter_session_events(path, strict=True):
+        for event in SESSION_SOURCE.events(thread, include_subagents=True):
             payload = event.payload or {}
             kind = event.kind
             if kind == "message":
@@ -389,6 +372,15 @@ def thread_signals(thread: Thread, known_skills: set[str]) -> ThreadSignals:
                 sig.tool_calls += 1
                 name = (payload.get("name") or "").lower()
                 namespace = (payload.get("namespace") or "").lower()
+                arguments = payload.get("arguments") or {}
+                if isinstance(arguments, str):
+                    try:
+                        arguments = json.loads(arguments)
+                    except json.JSONDecodeError:
+                        arguments = {}
+                invoked = str(arguments.get("skill") or "").lower() if isinstance(arguments, dict) else ""
+                if invoked in known_skills:
+                    sig.skills[invoked] += 1
                 for skill in known_skills:
                     if skill == name or skill == namespace or f"/{skill}/" in namespace:
                         sig.skills[skill] += 1
@@ -459,20 +451,21 @@ def token_key(value: str) -> str:
 def cluster_key(thread: Thread, target: str) -> str:
     day = datetime.fromtimestamp(thread.updated_at, tz=timezone.utc).strftime("%Y-%m-%d")
     title = token_key(thread.title) or token_key(thread.cwd) or thread.id
-    return f"{target}::{title}::{day}"
+    return f"{thread.platform}::{target}::{title}::{day}"
 
 
 def proposal_key(bucket: str, target: str, suggestion: str) -> str:
-    digest = hashlib.sha1(f"{bucket}|{target}|{suggestion}".encode("utf-8")).hexdigest()
+    digest = hashlib.sha1(f"{PLATFORM}|{bucket}|{target}|{suggestion}".encode("utf-8")).hexdigest()
     return digest[:12]
 
 
 def skill_paths() -> list[Path]:
     paths: list[Path] = []
+    plugin_cache = platform_paths(PLATFORM)["plugin_cache"]
     for root in SKILL_ROOTS:
         if not root.exists():
             continue
-        if root == CODEX_HOME / "plugins" / "cache":
+        if root == plugin_cache:
             paths.extend(sorted(root.glob("*/*/*/skills/*/SKILL.md")))
         else:
             paths.extend(sorted(root.glob("*/SKILL.md")))
@@ -481,8 +474,9 @@ def skill_paths() -> list[Path]:
 
 def skill_ids(path: Path) -> set[str]:
     ids = {path.parent.name.lower()}
+    plugin_cache = platform_paths(PLATFORM)["plugin_cache"]
     try:
-        relative = path.resolve().relative_to((CODEX_HOME / "plugins" / "cache").resolve())
+        relative = path.resolve().relative_to(plugin_cache.resolve())
     except ValueError:
         return ids
     try:
@@ -501,16 +495,18 @@ def known_skill_names() -> set[str]:
     return {skill_id for path in skill_paths() for skill_id in skill_ids(path)}
 
 
-def infer_project_agents(cwd: str) -> str:
+def infer_project_instructions(cwd: str) -> str:
     path = Path(cwd).expanduser()
+    names = ("AGENTS.override.md", "AGENTS.md") if PLATFORM == "codex" else ("CLAUDE.md",)
     for candidate in [path, *path.parents]:
         if candidate == Path.home():
             break
-        if (candidate / "AGENTS.md").exists():
-            return str(candidate / "AGENTS.md")
+        for name in names:
+            if (candidate / name).exists():
+                return str(candidate / name)
         if (candidate / ".git").exists():
-            return str(candidate / "AGENTS.md")
-    return str(path / "AGENTS.md")
+            return str(candidate / names[-1])
+    return str(path / names[-1])
 
 
 def infer_skill_target(sentence: str, cwd: str) -> str:
@@ -526,7 +522,7 @@ def infer_skill_target(sentence: str, cwd: str) -> str:
             return str(skill)
         except ValueError:
             pass
-    return str(CODEX_HOME / "skills" / "<new-skill>" / "SKILL.md")
+    return str(platform_paths(PLATFORM)["home"] / "skills" / "<new-skill>" / "SKILL.md")
 
 
 def classify(sentence: str, thread: Thread) -> tuple[str, str]:
@@ -535,7 +531,7 @@ def classify(sentence: str, thread: Thread) -> tuple[str, str]:
     the bucket by reading the cited thread."""
     lowered = sentence.lower()
     if "new skill" in lowered or "create skill" in lowered:
-        return "New Skills", str(CODEX_HOME / "skills" / "<new-skill>" / "SKILL.md")
+        return "New Skills", str(platform_paths(PLATFORM)["home"] / "skills" / "<new-skill>" / "SKILL.md")
     if "skill" in lowered or "skill.md" in lowered or "/skills/" in lowered:
         return "Skills", infer_skill_target(sentence, thread.cwd)
     if any(token in lowered for token in ("memory", "remember", "forget", "chronicle")):
@@ -549,10 +545,10 @@ def classify(sentence: str, thread: Thread) -> tuple[str, str]:
     if any(token in lowered for token in ("conflict", "contradict", "delete", "remove")):
         return "Conflicts Or Deletions", "<resolve-conflict-or-delete-stale-guidance>"
     if any(token in lowered for token in ("globally", "all repos", "across repos", "for any repo")):
-        return "Global AGENTS.md", str(GLOBAL_AGENTS)
+        return "Personal Instructions", str(GLOBAL_AGENTS)
     if thread.cwd and thread.cwd != str(Path.home()):
-        return "Project AGENTS.md", infer_project_agents(thread.cwd)
-    return "Global AGENTS.md", str(GLOBAL_AGENTS)
+        return "Project Instructions", infer_project_instructions(thread.cwd)
+    return "Personal Instructions", str(GLOBAL_AGENTS)
 
 
 def strength_label(evidence: list[Evidence]) -> str:
@@ -610,6 +606,7 @@ def collect(
                 grouped[(bucket, target, suggestion)].append(
                     Evidence(
                         thread_id=thread.id,
+                        platform=thread.platform,
                         title=thread.title,
                         updated_at=thread.updated_at,
                         rollout_path=thread.rollout_path,
@@ -735,7 +732,7 @@ def print_proposals(proposals: list[dict[str, Any]], *, emit_patch: bool) -> Non
             print("  Evidence:")
             for evidence in item["evidence"][:5]:
                 print(
-                    f"  - `{evidence.thread_id}` ({evidence.kind}) updated "
+                    f"  - `{evidence.platform}:{evidence.thread_id}` ({evidence.kind}) updated "
                     f"{utc(evidence.updated_at)} at `{evidence.rollout_path}`"
                 )
             if emit_patch:
@@ -746,22 +743,27 @@ def print_proposals(proposals: list[dict[str, Any]], *, emit_patch: bool) -> Non
 # --- commands ----------------------------------------------------------------
 
 def cmd_inventory(args: argparse.Namespace) -> None:
-    print("## Self-Improve Sources\n")
-    session_count = sqlite_count(STATE_DB, "threads")
-    print(f"- Codex state DB: `{STATE_DB}` ({session_count if session_count is not None else 'unreadable'} threads)")
-    print(f"- Sessions dir: `{CODEX_HOME / 'sessions'}` ({'present' if (CODEX_HOME / 'sessions').exists() else 'missing'})")
-    print(f"- Archived sessions dir: `{CODEX_HOME / 'archived_sessions'}` ({'present' if (CODEX_HOME / 'archived_sessions').exists() else 'missing'})")
-    print(f"- Session index: `{SESSION_INDEX}` ({'present' if SESSION_INDEX.exists() else 'missing'}; convenience only)")
-    print(f"- Global instructions: `{GLOBAL_AGENTS}` ({'present' if GLOBAL_AGENTS.exists() else 'missing'})")
-    print(f"- Memory file: `{MEMORY_MD}` ({'present' if MEMORY_MD.exists() else 'missing'})")
-    memory_count = sqlite_count(MEMORIES_DB, "stage1_outputs")
-    print(f"- Memory DB: `{MEMORIES_DB}` ({memory_count if memory_count is not None else 'unreadable or missing'} rollup rows)")
+    print(f"## Self-Improve Sources ({PLATFORM})\n")
+    if PLATFORM == "codex":
+        session_count = sqlite_count(STATE_DB, "threads")
+        print(f"- Codex state DB: `{STATE_DB}` ({session_count if session_count is not None else 'unreadable'} threads)")
+        print(f"- Sessions dir: `{CODEX_HOME / 'sessions'}` ({'present' if (CODEX_HOME / 'sessions').exists() else 'missing'})")
+        print(f"- Archived sessions dir: `{CODEX_HOME / 'archived_sessions'}` ({'present' if (CODEX_HOME / 'archived_sessions').exists() else 'missing'})")
+        print(f"- Session index: `{SESSION_INDEX}` ({'present' if SESSION_INDEX.exists() else 'missing'}; convenience only)")
+        memory_count = sqlite_count(MEMORIES_DB, "stage1_outputs")
+        print(f"- Memory DB: `{MEMORIES_DB}` ({memory_count if memory_count is not None else 'unreadable or missing'} rollup rows)")
+    else:
+        print(f"- Claude projects: `{CLAUDE_HOME / 'projects'}` ({'present' if (CLAUDE_HOME / 'projects').exists() else 'missing'})")
+        print(f"- Prompt history: `{CLAUDE_HOME / 'history.jsonl'}` ({'present' if (CLAUDE_HOME / 'history.jsonl').exists() else 'missing'}; discovery only)")
+        print("- Session retention: transcript absence is not evidence that older work never happened")
+    print(f"- Personal instructions: `{GLOBAL_AGENTS}` ({'present' if GLOBAL_AGENTS.exists() else 'missing'})")
+    print(f"- Memory root: `{MEMORIES_DIR}` ({'present' if MEMORIES_DIR.exists() else 'missing'})")
     print(f"- Decision log: `{DECISIONS_FILE}` ({len(load_decisions())} recorded decisions)")
     print("- Skill roots:")
     for root in SKILL_ROOTS:
         count = (
             len(list(root.glob("*/*/*/skills/*/SKILL.md")))
-            if root == CODEX_HOME / "plugins" / "cache" and root.exists()
+            if root == platform_paths(PLATFORM)["plugin_cache"] and root.exists()
             else len(list(root.glob("*/SKILL.md"))) if root.exists() else 0
         )
         print(f"  - `{root}` ({count} skills)")
@@ -821,6 +823,15 @@ def stage1_status(limit: int) -> tuple[int | None, int | None, list[sqlite3.Row]
 
 def cmd_memory_audit(args: argparse.Namespace) -> None:
     print("## Memory Audit\n")
+    if PLATFORM == "claude":
+        print(f"- Project memory root: `{MEMORIES_DIR}` ({'present' if MEMORIES_DIR.exists() else 'missing'})")
+        print("- Claude Code auto-memory is supporting context, not an instruction source.")
+        print("- Propose additions or deletions for review; never rewrite generated memory silently.\n")
+        print("## Recent Project Memory Files\n")
+        for path in memory_files(args.limit):
+            if "memory" in path.parts:
+                print(f"- `{path}`")
+        return
     print(f"- Memory file: `{MEMORY_MD}` ({'present' if MEMORY_MD.exists() else 'missing'})")
     print(f"- Memory DB: `{MEMORIES_DB}` ({'present' if MEMORIES_DB.exists() else 'missing'})")
     print(f"- Raw memories: `{MEMORIES_DIR / 'raw_memories.md'}` ({'present' if (MEMORIES_DIR / 'raw_memories.md').exists() else 'missing'})")
@@ -869,6 +880,8 @@ def goal_health_rows(stale_days: int) -> list[dict[str, Any]]:
 
 
 def cmd_goal_health(args: argparse.Namespace) -> None:
+    if PLATFORM != "codex":
+        raise SystemExit("goal-health is Codex-only: Claude Code has no equivalent durable goals database")
     print("## Goal Health\n")
     print(f"- Goals DB: `{GOALS_DB}` ({'present' if GOALS_DB.exists() else 'missing'})")
     if not GOALS_DB.exists():
@@ -921,6 +934,7 @@ def cmd_show(args: argparse.Namespace) -> None:
         raise SystemExit(f"No thread found for {args.thread_id}")
     path = Path(thread.rollout_path)
     print(f"# {thread.title or thread.id}\n")
+    print(f"- platform: `{thread.platform}`")
     print(f"- thread_id: `{thread.id}`")
     print(f"- updated_at: `{utc(thread.updated_at)}`")
     print(f"- cwd: `{thread.cwd}`")
@@ -943,6 +957,53 @@ def cmd_show(args: argparse.Namespace) -> None:
             if len(message) > args.max_chars:
                 print("\n... truncated ...")
             print()
+
+
+def _argument_paths(value: Any, key: str = "") -> Iterable[str]:
+    if isinstance(value, dict):
+        for child_key, child in value.items():
+            yield from _argument_paths(child, str(child_key))
+    elif isinstance(value, list):
+        for child in value:
+            yield from _argument_paths(child, key)
+    elif isinstance(value, str) and key.lower() in {
+        "file", "file_path", "filepath", "path", "paths", "notebook_path", "target",
+    }:
+        yield value
+
+
+def cmd_files(args: argparse.Namespace) -> None:
+    thread = recent_thread() if args.thread_id == "latest" else thread_by_id(args.thread_id)
+    if not thread:
+        raise SystemExit(f"No {PLATFORM} session found for {args.thread_id}")
+    found: dict[str, tuple[str, bool]] = {}
+    try:
+        for event in SESSION_SOURCE.events(thread, include_subagents=True):
+            if event.kind != "function_call":
+                continue
+            payload = event.payload or {}
+            arguments = payload.get("arguments") or {}
+            if isinstance(arguments, str):
+                try:
+                    arguments = json.loads(arguments)
+                except json.JSONDecodeError:
+                    continue
+            for original in _argument_paths(arguments):
+                path = Path(original).expanduser()
+                if not path.is_absolute():
+                    path = Path(thread.cwd or Path.cwd()) / path
+                resolved = str(path.resolve(strict=False))
+                found[resolved] = (original, path.exists())
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    print(f"# Files: {thread.title or thread.id}\n")
+    print(f"- platform: `{thread.platform}`")
+    print(f"- session_id: `{thread.id}`\n")
+    if not found:
+        print("No structured file references found.")
+        return
+    for resolved, (original, exists) in sorted(found.items()):
+        print(f"- `{resolved}` ({'present' if exists else 'missing'}; recorded as `{original}`)")
 
 
 def cmd_skill_usage(args: argparse.Namespace) -> None:
@@ -1021,6 +1082,8 @@ def _detect_stack(root: Path) -> dict[str, bool]:
         "swift": has("Package.swift") or glob_any("*.xcodeproj"),
         "agents_md": has("AGENTS.md"),
         "agents_override": has("AGENTS.override.md"),
+        "claude_md": has("CLAUDE.md"),
+        "claude_rules": (root / ".claude" / "rules").is_dir(),
         "readme": has("README.md", "README.rst", "readme.md"),
         "ci_github": (root / ".github" / "workflows").is_dir(),
         "ci_gitlab": has(".gitlab-ci.yml"),
@@ -1049,8 +1112,16 @@ def cmd_scaffold(args: argparse.Namespace) -> None:
     languages = [lang for lang in ("node", "python", "rust", "go", "swift") if stack[lang]]
     print(f"- Detected stack: {', '.join(languages) or 'unknown'}")
     print(f"- Git repo: {'yes' if stack['git'] else 'no'}")
-    print(f"- AGENTS.md: {'present' if stack['agents_md'] else 'MISSING'}"
-          f"{' (+ AGENTS.override.md)' if stack['agents_override'] else ''}")
+    if PLATFORM == "codex":
+        print(f"- AGENTS.md: {'present' if stack['agents_md'] else 'MISSING'}"
+              f"{' (+ AGENTS.override.md)' if stack['agents_override'] else ''}")
+        instructions_present = stack["agents_md"]
+        instruction_name = "AGENTS.md"
+    else:
+        print(f"- CLAUDE.md: {'present' if stack['claude_md'] else 'MISSING'}"
+              f"{' (+ .claude/rules)' if stack['claude_rules'] else ''}")
+        instructions_present = stack["claude_md"] or stack["claude_rules"]
+        instruction_name = "CLAUDE.md or .claude/rules"
     print(f"- README: {'present' if stack['readme'] else 'MISSING'}")
 
     ci = [name.split('_', 1)[1] for name in ("ci_github", "ci_gitlab", "ci_circle") if stack[name]]
@@ -1060,8 +1131,8 @@ def cmd_scaffold(args: argparse.Namespace) -> None:
     print(f"- Lint/format: {', '.join(linters) if linters else 'MISSING'}")
 
     gaps = []
-    if not stack["agents_md"]:
-        gaps.append("No AGENTS.md — agents have no checked-in guidance. See references/agents-md.md.")
+    if not instructions_present:
+        gaps.append(f"No {instruction_name} — the selected host has no checked-in guidance. See references/instructions.md.")
     if not (stack["ci_github"] or stack["ci_gitlab"] or stack["ci_circle"]):
         gaps.append("No CI/CD — no automated verification gate on changes.")
     if not stack["tests_dir"]:
@@ -1082,9 +1153,8 @@ def cmd_scaffold(args: argparse.Namespace) -> None:
           "(test command, lint, type-check, build) and how to wire them.")
     print("- Which installed skills fit this repo's stack and workflow "
           "(compare detected stack to the skill roots listed by `inventory`).")
-    print("- Which Codex automations to recommend (see references/scaffolding-and-automations.md): "
-          "a weekly self-improve automation, codex-action PR gating, or `@codex review`.")
-    print("- Whether an AGENTS.md should be created or tightened (see references/agents-md.md).")
+    print(f"- Which {PLATFORM} automation or review hooks are supported by the active host.")
+    print(f"- Whether {instruction_name} should be created or tightened (see references/instructions.md).")
     print("\nDo not invent recommendations from this scan alone; verify against the repo and current docs.")
 
 
@@ -1114,7 +1184,7 @@ def cmd_skill_audit(args: argparse.Namespace) -> None:
 
 def cmd_deep(args: argparse.Namespace) -> None:
     """The flagship everything pass: orchestrates the other modes into one report."""
-    print("# Your Codex Usage Review\n")
+    print(f"# Your Agent Usage Review ({PLATFORM})\n")
     print("Start with how the user works: recurring skills, successful patterns, and")
     print("friction worth understanding. Read representative threads, explain the")
     print("user-level pattern, and only then propose a durable change when justified.\n")
@@ -1160,7 +1230,10 @@ def cmd_deep(args: argparse.Namespace) -> None:
     cmd_memory_audit(argparse.Namespace(limit=args.memories or 12))
 
     print("\n---\n")
-    cmd_goal_health(argparse.Namespace(stale_days=7))
+    if PLATFORM == "codex":
+        cmd_goal_health(argparse.Namespace(stale_days=7))
+    else:
+        print("## Goal Health\n\nNot available: Claude Code has no equivalent durable goals database.")
 
 
 def cmd_decide(args: argparse.Namespace) -> None:
@@ -1200,14 +1273,15 @@ def _add_mining_args(parser: argparse.ArgumentParser) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Mine Codex sessions for durable improvement proposals.")
+    parser = argparse.ArgumentParser(description="Mine Codex or Claude Code sessions for durable improvement proposals.")
+    parser.add_argument("--platform", choices=("auto", "codex", "claude"), default="auto")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     inventory_p = sub.add_parser("inventory", help="List session, memory, instruction, skill, and decision sources")
     inventory_p.add_argument("--memories", type=int, default=0, help="also list this many recent memory files")
     inventory_p.set_defaults(func=cmd_inventory)
 
-    list_p = sub.add_parser("list", help="List Codex threads from state_5.sqlite")
+    list_p = sub.add_parser("list", help="List sessions from the selected platform")
     list_p.add_argument("--limit", type=int, default=25)
     list_p.add_argument("--archived", choices=("active", "archived", "all"), default="active")
     list_p.add_argument("--days", type=int)
@@ -1229,6 +1303,10 @@ def build_parser() -> argparse.ArgumentParser:
     show_p.add_argument("thread_id", help="exact thread id, id prefix, or 'latest'")
     show_p.add_argument("--max-chars", type=int, default=6000)
     show_p.set_defaults(func=cmd_show)
+
+    files_p = sub.add_parser("files", help="List structured file references from a session")
+    files_p.add_argument("thread_id", help="exact session id, id prefix, or 'latest'")
+    files_p.set_defaults(func=cmd_files)
 
     memory_p = sub.add_parser("memory-audit", help="List memory sources and flag unconsolidated summaries")
     memory_p.add_argument("--limit", type=int, default=20)
@@ -1276,6 +1354,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = build_parser().parse_args()
+    configure_platform(resolve_platform(args.platform))
     args.func(args)
 
 

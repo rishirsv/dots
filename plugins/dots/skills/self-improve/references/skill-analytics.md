@@ -66,7 +66,7 @@ threads per skill. These are your read list.
    Do not analyze only failures.
 3. **Separate skill failure from trigger failure.** Did the skill run and behave
    badly, or did the wrong skill (or no skill) run? They need different fixes —
-   guidance vs. the `description`/trigger. (See `references/agents-md.md` on
+   guidance vs. the `description`/trigger. (See `references/instructions.md` on
    testing the trigger separately from the guidance.)
 4. **Look for a pattern across threads**, not a single bad run. One screenshot is
    not a rule.
