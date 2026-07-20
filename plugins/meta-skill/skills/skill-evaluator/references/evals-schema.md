@@ -59,10 +59,10 @@ only and make a durable suite fail `--check`.
 | `evaluation_mode` | Contract |
 |---|---|
 | `diagnostic` | Focused observation. Usually one to three cases; one repetition is allowed. |
-| `readiness` | General capability estimate. At least 20 selected cases, `coverage_requirements`, coverage tags on every case, and at least three repetitions. |
+| `readiness` | General capability estimate. At least 20 selected cases, `coverage_requirements`, and coverage tags on every case. |
 | `benchmark` | Readiness contract plus `benchmark` provenance, development and held-out splits, contamination controls, and one selected split per run. |
 
-Readiness and benchmark suites use `defaults.repetition_policy`:
+Suites with explicitly repeated cases use `defaults.repetition_policy`:
 
 - `any_trial`: the case succeeds when any repeated trial passes;
 - `all_trials`: the case succeeds only when every repeated trial passes.
@@ -77,13 +77,17 @@ A readiness suite declares the dimensions it claims to cover:
     "notes": "Cases are solvable, graders match the claim, the harness represents production, and no material shortcuts are known."
   },
   "coverage_requirements": ["common-path", "boundary", "near-miss", "regression"],
-  "defaults": {"repetitions": 3, "repetition_policy": "all_trials"}
+  "defaults": {"repetitions": 1, "repetition_policy": "all_trials"}
 }
 ```
 
 Every case then sets one or more matching `coverage` tags.
 `validity_review.status` is `pass`, `fail`, or `unknown`. Only `pass` supports a
 readiness or comparative benchmark claim.
+
+One repetition is the default in every evaluation mode. Repetition is opt-in
+when the claim concerns reliability. A repeated CLI run must pass the exact
+expanded count with `--approve-trial-count` after the user approves the plan.
 
 A benchmark suite also declares:
 

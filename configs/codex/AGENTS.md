@@ -19,4 +19,4 @@ agent owns synthesis and verifies consequential claims.
 - Worker: Sol Low for scoped implementation with a defined completion target.
 - Explorer Mini: Luna Medium for narrow, read-only repository exploration.
 - Researcher: Luna High for bounded, read-only evidence gathering.
-- Adversarial Reviewer: Sol High for consequential independent review.
+- Adversarial Reviewer: Sol Medium for consequential independent review.

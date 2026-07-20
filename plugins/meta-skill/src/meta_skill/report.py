@@ -36,7 +36,7 @@ def _normalized_annotation(annotation, trial_id, index):
 def _normalized_review(review, trial_id):
     if not isinstance(review, dict):
         return review
-    return {
+    row = {
         **review,
         "annotations": [
             _normalized_annotation(annotation, trial_id, index)
@@ -44,6 +44,9 @@ def _normalized_review(review, trial_id):
             if isinstance(annotation, dict)
         ],
     }
+    if not row.get("decision") and row["annotations"]:
+        row["decision"] = "finding"
+    return row
 
 
 def _executor_model(run, key):
@@ -177,9 +180,34 @@ def _grading_complete(trials, cases, grading_enabled):
     return True
 
 
+def _run_lifecycle(run_dir, run, trials):
+    state = _safe_json(Path(run_dir) / "state.json", None)
+    if isinstance(state, dict):
+        return state
+    statuses = Counter(trial.get("status") for trial in trials)
+    terminal = {"completed", "failed", "timed_out", "skipped", "cancelled"}
+    if run.get("planning_error"):
+        status = "failed"
+    elif any(value not in terminal for value in statuses):
+        status = "running"
+    else:
+        status = "completed"
+    return {
+        "schema_version": 0,
+        "run_id": run.get("run_id") or Path(run_dir).name,
+        "status": status,
+        "phase": None,
+        "stop_reason": None,
+        "planned_trials": len(run.get("trials") or []),
+        "terminal_trials": sum(count for key, count in statuses.items() if key in terminal),
+        "trial_status_totals": dict(statuses),
+        "legacy": True,
+    }
+
+
 def _blind_pending_trial(trial, case, grading_enabled):
     if not _human_review_pending(case, trial.get("grades") or []):
-        return trial
+        return {**trial, "human_review_pending": False}
     visible_grades = [
         row for row in trial.get("grades") or []
         if (row.get("grader") or {}).get("kind") != "model"
@@ -192,6 +220,7 @@ def _blind_pending_trial(trial, case, grading_enabled):
         "grades": visible_grades,
         "failed_checks": _failed_checks(visible_grades),
         "disagreements": [],
+        "human_review_pending": True,
     }
 
 
@@ -287,6 +316,13 @@ def _case_versions(cases, candidates, trials, repetition_policy="all_trials"):
                             "trial_id": trial.get("trial_id"),
                             "repetition": trial.get("repetition"),
                             "verdict": trial.get("verdict"),
+                            "status": trial.get("status"),
+                            "human_review_pending": bool(
+                                trial.get("human_review_pending")
+                            ),
+                            "review_decision": (
+                                trial.get("review") or {}
+                            ).get("decision"),
                             "failed_checks": trial.get("failed_checks") or [],
                             "annotations": ((trial.get("review") or {}).get("annotations") or []),
                         }
@@ -463,10 +499,19 @@ def build_report(raw_run, *, blind_pending_human=False):
         case = cases.get(trial.get("eval_id"), {})
         trials.append({**trial, "eval_type": case.get("type"), "priority": case.get("priority") or "medium"})
     runtime_terminal = all(
-        trial["status"] in {"completed", "failed", "timed_out", "skipped"}
+        trial["status"] in {"completed", "failed", "timed_out", "skipped", "cancelled"}
         for trial in trials
     )
     grading_complete = _grading_complete(trials, cases, grading_enabled)
+    trials = [
+        {
+            **trial,
+            "human_review_pending": _human_review_pending(
+                cases.get(trial.get("eval_id"), {}), trial.get("grades") or []
+            ),
+        }
+        for trial in trials
+    ]
     if blind_pending_human:
         trials = [
             _blind_pending_trial(trial, cases.get(trial.get("eval_id"), {}), grading_enabled)
@@ -508,7 +553,6 @@ def build_report(raw_run, *, blind_pending_human=False):
         and isolated
         and run.get("baseline_candidate")
         and repetitions
-        and all(int(count) >= 3 for count in repetitions.values())
         and runtime_terminal
         and grading_complete
         and all(trial.get("verdict") in {"passed", "failed"} for trial in trials)
@@ -526,7 +570,8 @@ def build_report(raw_run, *, blind_pending_human=False):
     reviewed = sum(
         1
         for trial in trials
-        if trial.get("review") or any(is_recorded_human_grade(row) for row in trial.get("grades") or [])
+        if (trial.get("review") or {}).get("decision") in {"looks_good", "finding"}
+        or any(is_recorded_human_grade(row) for row in trial.get("grades") or [])
     )
     disagreement_count = sum(len(trial.get("disagreements") or []) for trial in trials)
     annotation_totals = Counter(
@@ -607,7 +652,8 @@ def build_report(raw_run, *, blind_pending_human=False):
         else evaluation_passed
     )
     runtime_failed = any(
-        trial.get("status") in {"failed", "timed_out", "skipped"} for trial in trials
+        trial.get("status") in {"failed", "timed_out", "skipped", "cancelled"}
+        for trial in trials
     )
     execution_ok = bool(
         not run.get("planning_error")
@@ -624,6 +670,7 @@ def build_report(raw_run, *, blind_pending_human=False):
         "objective": run.get("objective"),
         "evaluation_mode": evaluation_mode,
         "repetition_policy": repetition_policy,
+        "repetitions": repetitions,
         "validity_review": validity_review,
         "claim_supported": claim_supported,
         "conclusion_level": "comparative_estimate" if claim_supported else "diagnostic_observation",
@@ -644,6 +691,7 @@ def build_report(raw_run, *, blind_pending_human=False):
         "suite_digest": run.get("suite_digest"),
         "eval_digests": run.get("eval_digests") or [],
         "planning_error": run.get("planning_error"),
+        "lifecycle": _run_lifecycle(run_dir, run, trials),
         "candidates": run.get("candidates") or [],
         "cases": _case_versions(cases, run.get("candidates") or [], trials, repetition_policy),
         "trials": trials,
@@ -659,6 +707,9 @@ def build_report(raw_run, *, blind_pending_human=False):
             **{key: verdict_totals.get(key, 0) for key in ("passed", "failed", "inconclusive", "ungraded", "skipped")},
         },
         "review": {"reviewed": reviewed, "total": len(trials), "disagreements": disagreement_count},
+        "pending_human_review": sum(
+            bool(trial.get("human_review_pending")) for trial in trials
+        ),
         "annotation_totals": dict(annotation_totals),
         "token_usage": _token_usage(trials),
         "duration_ms": sum(int(trial.get("duration_ms") or 0) for trial in trials),
@@ -675,6 +726,136 @@ def build_report(raw_run, *, blind_pending_human=False):
     return report
 
 
+def build_run_row(raw_run, *, blind_pending_human=True):
+    """Build the run-list projection without reading responses, events, or artifacts."""
+    run_dir = resolve_run_dir(raw_run)
+    run = read_json(run_dir / "run.json")
+    if run.get("schema_version") != 2:
+        raise CliError("only run schema_version 2 is supported", 2)
+    grading_enabled = bool((run.get("runner") or {}).get("grading"))
+    suite = _safe_json(run_dir / "inputs" / "suite.json", {"evals": []})
+    cases = {case.get("id"): case for case in suite.get("evals") or []}
+    trials = [
+        _trial_model(run_dir, planned, grading_enabled)
+        for planned in run.get("trials") or []
+    ]
+    pending_human_review = sum(
+        _human_review_pending(cases.get(trial.get("eval_id"), {}), trial.get("grades") or [])
+        for trial in trials
+    )
+    if blind_pending_human:
+        trials = [
+            _blind_pending_trial(
+                trial, cases.get(trial.get("eval_id"), {}), grading_enabled
+            )
+            for trial in trials
+        ]
+    else:
+        trials = [{**trial, "human_review_pending": False} for trial in trials]
+    candidates = run.get("candidates") or []
+    repetition_policy = run.get("repetition_policy") or (
+        suite.get("defaults") or {}
+    ).get("repetition_policy", "all_trials")
+    comparisons = _comparisons(
+        candidates,
+        trials,
+        baseline_candidate=run.get("baseline_candidate"),
+        repetition_policy=repetition_policy,
+        claim_supported=False,
+    )
+    runtime_totals = Counter(trial.get("status") for trial in trials)
+    verdict_totals = Counter(trial.get("verdict") for trial in trials)
+    delta_totals = Counter(row.get("delta") for row in comparisons)
+    reviewed = sum(
+        (trial.get("review") or {}).get("decision") in {"looks_good", "finding"}
+        or any(is_recorded_human_grade(row) for row in trial.get("grades") or [])
+        for trial in trials
+    )
+    runtime_terminal = all(
+        trial.get("status")
+        in {"completed", "failed", "timed_out", "skipped", "cancelled"}
+        for trial in trials
+    )
+    grading_complete = _grading_complete(trials, cases, grading_enabled)
+    candidate_trials = [
+        trial
+        for trial in trials
+        if not run.get("baseline_candidate")
+        or trial.get("candidate") != run.get("baseline_candidate")
+    ]
+    groups = defaultdict(list)
+    for trial in candidate_trials:
+        groups[(trial.get("eval_id"), trial.get("candidate"))].append(trial)
+    case_states = [_behavior(group, repetition_policy) for group in groups.values()]
+    evaluation_passed = bool(case_states) and all(state == "pass" for state in case_states)
+    outcomes_known = bool(case_states) and all(state in {"pass", "fail"} for state in case_states)
+    regressions = any(
+        row.get("delta") in {"case_regression", "observed_regression"}
+        for row in comparisons
+    )
+    execution_ok = bool(
+        not run.get("planning_error")
+        and runtime_terminal
+        and grading_complete
+        and not any(
+            trial.get("status") in {"failed", "timed_out", "skipped", "cancelled"}
+            for trial in trials
+        )
+    )
+    lifecycle = _run_lifecycle(run_dir, run, trials)
+    total = len(trials)
+    needs_review = bool(
+        lifecycle.get("status") in {"running", "cancelled", "failed"}
+        or pending_human_review
+        or reviewed < total
+        or regressions
+        or verdict_totals.get("failed")
+        or verdict_totals.get("inconclusive")
+        or verdict_totals.get("ungraded")
+    )
+    return {
+        "run_id": run.get("run_id") or run_dir.name,
+        "created_at": run.get("created_at"),
+        "objective": run.get("objective"),
+        "baseline_candidate": run.get("baseline_candidate"),
+        "model": run.get("model"),
+        "reasoning_effort": run.get("reasoning_effort"),
+        "task_executor": run.get("task_executor"),
+        "judge_executor": run.get("judge_executor"),
+        "candidates": [row.get("candidate") for row in candidates],
+        "plan": {
+            "cases": len(run.get("eval_ids") or cases),
+            "candidates": len(candidates),
+            "trials": len(trials),
+            "executions_per_case": (
+                next(iter(set((run.get("repetitions") or {}).values())))
+                if len(set((run.get("repetitions") or {}).values())) == 1
+                else None
+            ),
+        },
+        "totals": {
+            "trials": total,
+            **{
+                key: verdict_totals.get(key, 0)
+                for key in ("passed", "failed", "inconclusive", "ungraded", "skipped")
+            },
+        },
+        "runtime_status_totals": dict(runtime_totals),
+        "verdict_totals": dict(verdict_totals),
+        "delta_totals": dict(delta_totals),
+        "review": {"reviewed": reviewed, "total": total},
+        "pending_human_review": pending_human_review,
+        "lifecycle": lifecycle,
+        "execution_ok": execution_ok,
+        "evaluation_passed": evaluation_passed,
+        "regression_gate_passed": outcomes_known and not regressions,
+        "duration_ms": sum(int(trial.get("duration_ms") or 0) for trial in trials),
+        "terminal": runtime_terminal and grading_complete,
+        "needs_review": needs_review,
+        "run_dir": str(run_dir),
+    }
+
+
 def list_runs(raw_suite, *, blind_pending_human=False, runs_root=None):
     runs_root = Path(runs_root) if runs_root is not None else runs_from_suite(suite_path(raw_suite))
     rows = []
@@ -682,30 +863,10 @@ def list_runs(raw_suite, *, blind_pending_human=False, runs_root=None):
         if not (run_dir / "run.json").exists():
             continue
         try:
-            report = build_report(str(run_dir), blind_pending_human=blind_pending_human)
             rows.append(
-                {
-                    "run_id": report["run_id"],
-                    "created_at": report.get("created_at"),
-                    "objective": report.get("objective"),
-                    "baseline_candidate": report.get("baseline_candidate"),
-                    "model": report.get("model"),
-                    "reasoning_effort": report.get("reasoning_effort"),
-                    "task_executor": report.get("task_executor"),
-                    "judge_executor": report.get("judge_executor"),
-                    "candidates": [row.get("candidate") for row in report.get("candidates") or []],
-                    "totals": report["totals"],
-                    "runtime_status_totals": report["runtime_status_totals"],
-                    "verdict_totals": report["verdict_totals"],
-                    "delta_totals": report["delta_totals"],
-                    "review": report["review"],
-                    "execution_ok": report["execution_ok"],
-                    "evaluation_passed": report["evaluation_passed"],
-                    "regression_gate_passed": report["regression_gate_passed"],
-                    "duration_ms": report.get("duration_ms"),
-                    "terminal": report["terminal"],
-                    "run_dir": str(run_dir),
-                }
+                build_run_row(
+                    str(run_dir), blind_pending_human=blind_pending_human
+                )
             )
         except CliError as exc:
             rows.append({"run_id": run_dir.name, "error": exc.message, "run_dir": str(run_dir)})
@@ -874,6 +1035,7 @@ def _criterion_rows(report):
 def render_markdown(report):
     delta = report.get("delta_totals") or {}
     totals = report.get("totals") or {}
+    lifecycle = report.get("lifecycle") or {}
     lines = [f"# Skill evaluation: {report.get('skill_id') or report['run_id']}", "", "## Summary", ""]
     if report.get("objective"):
         lines += [f"**Question:** {report['objective']}", ""]
@@ -884,6 +1046,10 @@ def render_markdown(report):
         else "Diagnostic observation; this run does not establish general skill effect"
     )
     lines += [
+        f"**Status:** `{lifecycle.get('status') or 'unknown'}`"
+        f" · phase `{lifecycle.get('phase') or 'unavailable'}`"
+        f" · {lifecycle.get('terminal_trials', 0)}/{lifecycle.get('planned_trials', totals.get('trials', 0))} executions resolved.",
+        "",
         f"**Conclusion level:** {level}.",
         "",
         f"**Version comparison:** {delta.get('case_improvement', 0)} case improvements, "
@@ -990,6 +1156,11 @@ def render_markdown(report):
         or (
             trial.get("verdict") in {"failed", "inconclusive"}
             and not trial.get("failed_checks")
+            and not any(
+                grade.get("grade_status") in {"pass", "partial", "fail"}
+                and grade.get("rationale")
+                for grade in trial.get("grades") or []
+            )
         )
     ]
     if unresolved:

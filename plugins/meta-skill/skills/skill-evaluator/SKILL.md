@@ -120,21 +120,26 @@ while the candidate changes. Freeze the selected cases, candidate payloads,
 baseline, graders, and execution settings. The runner expands them into one
 trial for every selected case × version × repetition.
 
-For a diagnostic, one trial may support a single-run observation. It does not
-establish skill effect. For readiness or benchmark comparisons, predeclare
-`any_trial` when one successful repetition satisfies the product requirement or
-`all_trials` when every repetition must succeed. Use at least three repetitions
-per selected case and retain every inconclusive or ungraded trial in the
-denominator.
+Use one trial per selected case and candidate by default. That is enough for a
+single-run comparison but does not establish variance or stochastic
+reliability. Repeat cases only when reliability is part of the declared claim.
+Before passing `--approve-trial-count`, show the user the exact expanded count,
+why repetition is needed, and the expected time and usage, then wait for
+approval. For repeated comparisons, predeclare `any_trial` when one successful
+attempt satisfies the product requirement or `all_trials` when every attempt
+must succeed. Retain every inconclusive or ungraded trial in the denominator.
 
 See [run-layout.md](../../references/run-layout.md) for the frozen run contents.
 
 ### 4. Run The Tasks And Capture Results
 
 For a one-candidate interactive observation, dispatch the worker packets
-returned by `eval prepare --no-baseline`. Give each worker only its visible
-task, declared fixtures, temporary workspace, and result location. Give the
-frozen skill payload to the selected candidate.
+returned by `eval prepare --no-baseline` concurrently, up to the returned
+`dispatch_parallelism`. Refill that bounded pool as workers finish and submit
+each result immediately. Use `--parallel 1` only when execution must be
+sequential. Give each worker only its visible task, declared fixtures,
+temporary workspace, and result location. Give the frozen skill payload to the
+selected candidate.
 
 Do not reveal the evaluation, comparison, hidden criteria, expected output,
 validators, judgment guidance, human labels, or durable run directory to a
@@ -148,6 +153,15 @@ run is interrupted. Use `eval unresolved` and `eval retry` for recovery.
 Use `eval run` when unattended execution is more appropriate. Follow the
 commands and recovery behavior in
 [running-evaluations.md](references/running-evaluations.md).
+
+Keep the user oriented during execution. Before starting, state the exact case
+count, candidates, executions per case, expanded trial count, maximum
+concurrent workers, grader path, and what will happen next. During a longer
+run, report terminal/planned progress, current failures, and the next phase at
+useful milestones. If stopped, say how
+many trials completed, failed, timed out, or were cancelled and confirm that no
+local worker or judge continues. Do not expose hidden criteria or judge results
+while a declared human review is pending.
 
 ### 5. Grade And Compare The Outputs
 
@@ -195,7 +209,9 @@ fail on a candidate regression or unknown candidate outcome.
 
 Open the workbench when side-by-side inspection or feedback is useful. The
 workbench reads the same filesystem evidence; it is not a separate source of
-truth and does not launch evaluations.
+truth and does not launch evaluations. Prefer
+`metaskill workbench open --run <run-directory>` so the reviewer lands on the
+exact evidence instead of reconstructing the run from the repository root.
 
 After the user approves the expected behavior, preserve a useful failure as a
 regression case when it should survive future changes. Do not convert an

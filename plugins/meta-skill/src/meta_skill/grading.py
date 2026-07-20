@@ -8,7 +8,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from .codex_exec import judge_output
+from .codex_exec import judge_output, terminate_active_processes
 from .eval_stats import calibration_metrics
 from .errors import CliError
 from .ids import run_id, utc_now
@@ -438,7 +438,7 @@ def _grade_trial(run_dir, run, state, case, generation_id, model, reasoning_effo
     return rows
 
 
-def grade_run(raw_run, *, rebuild_report=True, parallel=1, model=None, reasoning_effort=None):
+def grade_run(raw_run, *, rebuild_report=True, parallel=None, model=None, reasoning_effort=None):
     run_dir = resolve_run_dir(raw_run)
     run = read_json(run_dir / "run.json")
     suite = read_json(run_dir / "inputs" / "suite.json")
@@ -473,11 +473,27 @@ def grade_run(raw_run, *, rebuild_report=True, parallel=1, model=None, reasoning
             append_jsonl(trial_path(run_dir, state["trial_id"]) / "grades.jsonl", row)
         return len(rows)
 
-    if int(parallel or 1) <= 1:
+    from .runtime import resolve_parallelism
+
+    requested_parallel = parallel
+    if requested_parallel is None:
+        requested_parallel = (run.get("runner") or {}).get("parallel")
+    resolved_parallel = resolve_parallelism(requested_parallel, len(states))
+    if resolved_parallel <= 1:
         count = sum(grade(state) for state in states)
     else:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=int(parallel)) as executor:
-            count = sum(executor.map(grade, states))
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers=resolved_parallel)
+        futures = [executor.submit(grade, state) for state in states]
+        try:
+            count = sum(future.result() for future in futures)
+        except BaseException:
+            terminate_active_processes()
+            for future in futures:
+                future.cancel()
+            executor.shutdown(wait=True, cancel_futures=True)
+            raise
+        else:
+            executor.shutdown()
     report_path = None
     if rebuild_report:
         from .report import build_report, write_report

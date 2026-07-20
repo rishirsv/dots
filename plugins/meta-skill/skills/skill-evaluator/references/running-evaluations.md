@@ -45,13 +45,20 @@ natural skill discovery, and multi-turn behavior require an external harness
 that gives every candidate equivalent access.
 
 For a benchmark, select exactly one split with `--split`. Readiness and
-benchmark runs require at least 20 selected cases and three repetitions.
+benchmark runs require at least 20 selected cases. Every mode defaults to one
+trial per case and candidate. If any case repeats, first show the user the exact
+expanded trial count, purpose, expected time, and usage. After approval, pass
+that exact count with `--approve-trial-count`; the CLI rejects a missing or
+stale count before creating a run.
 
 ## Complete Native Trials
 
 `eval prepare` returns one packet for each unresolved trial. Give a worker only
 the packet's task, fixtures, workspace, artifact root, result path, and selected
-skill path. Do not reveal hidden grading material or the durable run path.
+skill path. Dispatch packets concurrently up to the returned
+`dispatch_parallelism`, submit each result as it finishes, and refill the pool
+until every packet is terminal. Pass `--parallel 1` for an intentionally
+sequential run. Do not reveal hidden grading material or the durable run path.
 
 The worker writes this result to the exact `result_path`:
 
@@ -97,8 +104,9 @@ failure, regression, disagreement, and unknown. The report distinguishes:
 - `regression_gate_passed`: no candidate regression or unknown blocked the
   optional `--gate`.
 
-A failing baseline does not fail execution. Open `metaskill workbench open`
-for side-by-side evidence and absolute human feedback. Use `eval report` only
+A failing baseline does not fail execution. Open
+`metaskill workbench open --run <run_dir>` for side-by-side evidence and
+absolute human feedback. Use `eval report` only
 to regenerate the report from the frozen run.
 
 For unexpected results, continue with [error-analysis.md](error-analysis.md)

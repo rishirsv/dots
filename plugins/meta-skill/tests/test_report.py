@@ -127,6 +127,7 @@ class ReportTests(unittest.TestCase):
             markdown = render_markdown(report)
             self.assertIn("Make this clearer", markdown)
             self.assertIn("a.current.t1", markdown)
+            self.assertNotIn("## Execution issues", markdown)
 
     def test_model_human_disagreement_is_counted(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -224,6 +225,17 @@ class ReportTests(unittest.TestCase):
             pending = build_report(str(run))
             self.assertFalse(pending["grading_complete"])
             self.assertFalse(pending["terminal"])
+            blind = build_report(str(run), blind_pending_human=True)
+            self.assertEqual(blind["pending_human_review"], 2)
+            self.assertEqual(blind["comparisons"][0]["delta"], "inconclusive")
+            self.assertEqual(blind["delta_totals"], {"inconclusive": 1})
+            self.assertFalse(
+                any(
+                    (grade.get("grader") or {}).get("kind") == "model"
+                    for trial in blind["trials"]
+                    for grade in trial["grades"]
+                )
+            )
             for candidate, label in (("no-skill", "fail"), ("current", "pass")):
                 path = run / "trials" / f"a.{candidate}.t1" / "grades.jsonl"
                 with path.open("a") as handle:
@@ -324,7 +336,7 @@ class ReportTests(unittest.TestCase):
             self.assertEqual(current["task_executor"]["kind"], "native_subagent")
             self.assertEqual(current["task_executor"]["provenance"], "observed")
 
-    def test_readiness_report_requires_broad_repeated_isolated_design_and_uses_paired_inference(self):
+    def test_readiness_report_requires_broad_isolated_design_and_uses_paired_inference(self):
         with tempfile.TemporaryDirectory() as tmp:
             run = Path(tmp) / "run"
             candidates = [
@@ -337,7 +349,7 @@ class ReportTests(unittest.TestCase):
             ]
             trials = []
             for case in cases:
-                for repetition in range(1, 4):
+                for repetition in range(1, 2):
                     for candidate, label in (("no-skill", "fail"), ("current", "pass")):
                         trial_id = f"{case['id']}.{candidate}.t{repetition}"
                         trials.append({"trial_id": trial_id, "eval_id": case["id"], "candidate": candidate, "repetition": repetition})
@@ -356,7 +368,7 @@ class ReportTests(unittest.TestCase):
                     "notes": "Solvability, grader fit, harness fidelity, and shortcuts were reviewed.",
                 },
                 "coverage_requirements": ["core", "boundary"],
-                "repetitions": {case["id"]: 3 for case in cases},
+                "repetitions": {case["id"]: 1 for case in cases},
                 "runner": {"grading": True},
                 "task_executor": {
                     "kind": "codex_exec",

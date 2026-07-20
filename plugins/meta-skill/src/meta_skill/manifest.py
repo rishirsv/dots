@@ -289,10 +289,6 @@ def _validate_evaluation_design(data, cases):
         missing = sorted(set(requirements) - covered)
         if missing:
             raise CliError(f"{mode} suite is missing required coverage: {', '.join(missing)}", 2)
-        for case in cases:
-            repetitions = case.get("repetitions") or defaults.get("repetitions") or 1
-            if not isinstance(repetitions, int) or repetitions < 3:
-                raise CliError(f"{mode} case {case['id']} needs at least three repetitions", 2)
     if mode == "benchmark":
         benchmark = data.get("benchmark")
         if not isinstance(benchmark, dict):

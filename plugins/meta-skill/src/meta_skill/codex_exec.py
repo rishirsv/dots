@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import json
+import os
+import signal
 import shutil
 import subprocess
 import tempfile
+import threading
 import time
 from pathlib import Path
 
@@ -13,6 +16,8 @@ from .errors import CliError
 
 
 SANDBOX = "workspace-write"
+_ACTIVE_PROCESSES = set()
+_ACTIVE_PROCESSES_LOCK = threading.Lock()
 GRADE_LABELS = {"pass", "partial", "fail", "unknown"}
 CHECK_LABELS = {"pass", "fail", "unknown"}
 CODEX_EXEC_ISOLATION = {
@@ -30,6 +35,39 @@ NATIVE_ISOLATION = {
     "candidate_skill": "attached_path_only",
     "supports_baseline_effect": False,
 }
+
+
+def _register_process(proc):
+    with _ACTIVE_PROCESSES_LOCK:
+        _ACTIVE_PROCESSES.add(proc)
+
+
+def _unregister_process(proc):
+    with _ACTIVE_PROCESSES_LOCK:
+        _ACTIVE_PROCESSES.discard(proc)
+
+
+def _terminate_process_group(proc):
+    if proc.poll() is not None:
+        return
+    try:
+        os.killpg(proc.pid, signal.SIGTERM)
+        proc.wait(timeout=2)
+    except (ProcessLookupError, subprocess.TimeoutExpired):
+        if proc.poll() is None:
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            proc.wait()
+
+
+def terminate_active_processes():
+    """Terminate every Codex process tree owned by this evaluator process."""
+    with _ACTIVE_PROCESSES_LOCK:
+        processes = list(_ACTIVE_PROCESSES)
+    for proc in processes:
+        _terminate_process_group(proc)
 
 
 def codex_binary():
@@ -111,11 +149,17 @@ def _usage_from_events(events):
         usage = event.get("usage") or (event.get("turn") or {}).get("usage")
         if not isinstance(usage, dict):
             continue
+        input_tokens = int(usage.get("input_tokens") or usage.get("inputTokens") or 0)
+        cached_input_tokens = int(
+            usage.get("cached_input_tokens") or usage.get("cachedInputTokens") or 0
+        )
+        output_tokens = int(usage.get("output_tokens") or usage.get("outputTokens") or 0)
+        total_tokens = int(usage.get("total_tokens") or usage.get("totalTokens") or 0)
         return {
-            "input_tokens": int(usage.get("input_tokens") or usage.get("inputTokens") or 0),
-            "cached_input_tokens": int(usage.get("cached_input_tokens") or usage.get("cachedInputTokens") or 0),
-            "output_tokens": int(usage.get("output_tokens") or usage.get("outputTokens") or 0),
-            "total_tokens": int(usage.get("total_tokens") or usage.get("totalTokens") or 0),
+            "input_tokens": input_tokens,
+            "cached_input_tokens": cached_input_tokens,
+            "output_tokens": output_tokens,
+            "total_tokens": total_tokens or input_tokens + output_tokens,
         }
     return None
 
@@ -126,6 +170,10 @@ def _observed_model(events):
         if isinstance(model, str) and model:
             return model
     return None
+
+
+def _turn_completed(events):
+    return any(event.get("type") == "turn.completed" for event in events)
 
 
 def _run(
@@ -141,18 +189,21 @@ def _run(
     )
     event_path.parent.mkdir(parents=True, exist_ok=True)
     started = time.monotonic()
+    proc = subprocess.Popen(
+        command,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        start_new_session=True,
+    )
+    _register_process(proc)
     try:
-        proc = subprocess.run(
-            command,
-            input=prompt,
-            capture_output=True,
-            text=True,
-            timeout=timeout_seconds,
-        )
-    except subprocess.TimeoutExpired as exc:
-        raw = exc.stdout or ""
-        if isinstance(raw, bytes):
-            raw = raw.decode(errors="replace")
+        stdout, stderr = proc.communicate(input=prompt, timeout=timeout_seconds)
+    except subprocess.TimeoutExpired:
+        _terminate_process_group(proc)
+        stdout, stderr = proc.communicate()
+        raw = stdout or ""
         event_path.write_text(raw)
         return {
             "status": "timed_out",
@@ -160,19 +211,34 @@ def _run(
             "error": f"trial exceeded {timeout_seconds}s deadline",
             "events": len(raw.splitlines()),
         }
-    event_path.write_text(proc.stdout or "")
+    except BaseException:
+        _terminate_process_group(proc)
+        raise
+    finally:
+        _unregister_process(proc)
+    event_path.write_text(stdout or "")
     events = []
-    for line in (proc.stdout or "").splitlines():
+    for line in (stdout or "").splitlines():
         try:
             row = json.loads(line)
         except json.JSONDecodeError:
             continue
         if isinstance(row, dict):
             events.append(row)
+    turn_completed = _turn_completed(events)
+    completed = proc.returncode == 0 and turn_completed
     detail = {
-        "status": "completed" if proc.returncode == 0 else "failed",
+        "status": "completed" if completed else "failed",
         "duration_ms": int((time.monotonic() - started) * 1000),
-        "error": None if proc.returncode == 0 else (proc.stderr or "codex exec failed").strip(),
+        "error": (
+            None
+            if completed
+            else (
+                (stderr or "codex exec failed").strip()
+                if proc.returncode != 0
+                else "codex exec exited without a turn.completed event"
+            )
+        ),
         "events": len(events),
         "usage": _usage_from_events(events),
         "observed_model": _observed_model(events),

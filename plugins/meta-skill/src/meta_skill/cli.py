@@ -11,7 +11,7 @@ from pathlib import Path
 from .codex_exec import codex_readiness
 from .errors import CliError
 from .grading import grade_run, record_human_grade
-from .io import emit, fail
+from .io import emit, fail, read_json, resolve_run_dir
 from .linting import FATAL_SUITE_WARNINGS, lint_suite
 from .manifest import (
     load_manifest,
@@ -233,9 +233,23 @@ def command_eval_report(args):
 
 
 def command_workbench_open(args):
-    from .workbench_server.server import run_workbench_server
+    from .workbench_server.server import ROOT_SKILL_ID, run_workbench_server
 
-    run_workbench_server(Path(args.root).expanduser().resolve(), port=args.port, open_browser=args.open)
+    root = Path(args.root).expanduser().resolve()
+    initial = {}
+    if args.run:
+        run_dir = resolve_run_dir(args.run)
+        run = read_json(run_dir / "run.json")
+        root = Path(run["project"]).expanduser().resolve()
+        initial = {"skill": ROOT_SKILL_ID, "tab": "runs", "run": run["run_id"]}
+        if args.case:
+            initial["case"] = args.case
+    run_workbench_server(
+        root,
+        port=args.port,
+        open_browser=args.open,
+        initial=initial,
+    )
     return 0
 
 
@@ -299,9 +313,18 @@ def build_parser():
         command.add_argument("--case", action="append")
         command.add_argument("--type", action="append")
         command.add_argument("--repetitions", type=positive_int)
+        command.add_argument(
+            "--approve-trial-count",
+            type=positive_int,
+            help="Approve the exact expanded trial count when any case repeats",
+        )
         command.add_argument("--model")
         command.add_argument("--reasoning-effort", choices=["none", "minimal", "low", "medium", "high", "xhigh"])
-        command.add_argument("--parallel", type=positive_int, default=1)
+        command.add_argument(
+            "--parallel",
+            type=positive_int,
+            help="Maximum concurrent workers; defaults to automatic parallelism up to 4",
+        )
         command.add_argument("--timeout", type=positive_int)
         command.add_argument("--no-baseline", action="store_true")
         command.add_argument("--no-grade", action="store_true")
@@ -361,7 +384,11 @@ def build_parser():
         "--reasoning-effort",
         choices=["none", "minimal", "low", "medium", "high", "xhigh"],
     )
-    grade.add_argument("--parallel", type=positive_int, default=1)
+    grade.add_argument(
+        "--parallel",
+        type=positive_int,
+        help="Maximum concurrent graders; defaults to the run's recorded limit",
+    )
     grade.add_argument("--json", action="store_true")
     grade.set_defaults(func=command_eval_grade)
 
@@ -390,6 +417,8 @@ def build_parser():
     workbench_sub = workbench.add_subparsers(dest="workbench_command", required=True)
     open_command = workbench_sub.add_parser("open", help="Serve the workbench UI")
     open_command.add_argument("--root", default=".")
+    open_command.add_argument("--run", help="Open a specific run directory")
+    open_command.add_argument("--case", help="Open a case within --run")
     open_command.add_argument("--port", type=int, default=7333)
     open_command.add_argument("--open", action=argparse.BooleanOptionalAction, default=True)
     open_command.set_defaults(func=command_workbench_open)

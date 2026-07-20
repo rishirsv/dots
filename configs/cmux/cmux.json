@@ -5,7 +5,7 @@
   "app": {
     "appearance": "system",
     "minimalMode": true,
-    "focusPaneOnFirstClick": false,
+    "focusPaneOnFirstClick": true,
     "warnBeforeClosingTab": true,
     "warnBeforeClosingTabXButton": false,
     "confirmQuit": "always",
@@ -14,10 +14,10 @@
     "keepWorkspaceOpenWhenClosingLastSurface": false,
     "openMarkdownInCmuxViewer": true,
     "openSupportedFilesInCmux": true,
-    "commandPaletteSearchesAllSurfaces": false,
+    "commandPaletteSearchesAllSurfaces": true,
     "renameSelectsExistingName": true,
     "forkConversationDefaultDestination": "right",
-    "reorderOnNotification": true,
+    "reorderOnNotification": false,
     "sendAnonymousTelemetry": false
   },
 
@@ -48,6 +48,7 @@
     "sound": "none",
     "unreadPaneRing": true,
     "paneFlash": false,
+    "suppressOnlyFocusedSurface": true,
     "dockBadge": true,
     "showInMenuBar": false,
     "hooksMode": "append"

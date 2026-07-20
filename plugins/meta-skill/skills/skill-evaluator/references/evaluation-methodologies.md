@@ -7,7 +7,7 @@ Read this when selecting prompts, comparisons, or graders.
 | Mode | Use | Required design |
 |---|---|---|
 | `diagnostic` | A focused question or immediate failure investigation | One to three distinct cases; one trial may support only a single-run observation. |
-| `readiness` | A general claim that the skill reliably handles its recurring job | At least 20 selected cases, declared coverage requirements, coverage tags on every case, and at least three repetitions. |
+| `readiness` | A general claim that the skill handles its recurring job across broad coverage | At least 20 selected cases, declared coverage requirements, and coverage tags on every case. |
 | `benchmark` | A comparison against a named benchmark | Readiness-level breadth plus versioned provenance, one selected split per run, a held-out split, and contamination controls. |
 
 Do not generalize a diagnostic result into readiness. For readiness, map the
@@ -72,11 +72,15 @@ Predeclare what reliability means:
 - use one trial only for a diagnostic observation when consistency is not the
   claim.
 
-Readiness and benchmark comparisons require at least three repetitions for
-every selected case. Preserve passed, failed, inconclusive, ungraded, skipped,
-and runtime-failed trials. Report successes over all planned trials with a
-binomial confidence interval. Use paired trials and the exact McNemar test for
-the candidate-vs-baseline inference; raw rate deltas remain descriptive.
+Use one trial per selected case and candidate by default. Repetition is an
+explicit reliability study, not a benchmark prerequisite. When reliability is
+part of the claim, explain why repeated attempts are needed, show the user the
+exact expanded trial count plus expected time and usage, and wait for approval
+before passing `--approve-trial-count`. Preserve passed, failed, inconclusive,
+ungraded, skipped, and runtime-failed trials. Report successes over all planned
+trials with a binomial confidence interval. Use paired trials and the exact
+McNemar test for the candidate-vs-baseline inference; raw rate deltas remain
+descriptive.
 
 ## Choose The Grader
 

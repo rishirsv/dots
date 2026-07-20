@@ -2,7 +2,10 @@
 
 from .errors import CliError
 
-RUNTIME_STATUSES = {"queued", "running", "completed", "failed", "timed_out", "skipped", "no_result"}
+RUNTIME_STATUSES = {
+    "queued", "running", "completed", "failed", "timed_out", "skipped",
+    "cancelled", "no_result",
+}
 GRADE_STATUSES = {"pass", "fail", "partial", "unknown", "ungraded"}
 
 
@@ -38,7 +41,7 @@ def verdict_for_trial(state, grades, *, grading_enabled=True):
     runtime = normalize_runtime_status(state.get("status") or state.get("runtime_status") or "no_result")
     if runtime == "skipped":
         return "skipped"
-    if runtime in {"queued", "running", "no_result"}:
+    if runtime in {"queued", "running", "cancelled", "no_result"}:
         return "inconclusive"
     if runtime in {"failed", "timed_out"}:
         return "failed"

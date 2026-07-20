@@ -19,7 +19,11 @@ def load_module(name: str, path: Path):
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     sys.modules[name] = module
-    spec.loader.exec_module(module)
+    sys.path.insert(0, str(path.parent))
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.path.pop(0)
     return module
 
 
@@ -138,8 +142,10 @@ class SkillInventoryTests(unittest.TestCase):
                 sys.executable,
                 "-c",
                 (
-                    "import importlib.util; p=r'%s'; s=importlib.util.spec_from_file_location('si', p); "
-                    "m=importlib.util.module_from_spec(s); import sys; sys.modules['si']=m; s.loader.exec_module(m); "
+                    "import importlib.util, pathlib, sys; p=r'%s'; "
+                    "sys.path.insert(0, str(pathlib.Path(p).parent)); "
+                    "s=importlib.util.spec_from_file_location('si', p); "
+                    "m=importlib.util.module_from_spec(s); sys.modules['si']=m; s.loader.exec_module(m); "
                     "print(sorted(x for x in m.known_skill_names() if 'sample' in x))"
                 ) % script,
             ]

@@ -164,13 +164,13 @@ class ManifestTests(unittest.TestCase):
             write(path, {"schema_version": 2, "evals": [case]})
             self.assertEqual(len(load_manifest(path)["evals"][0]["grader_tests"]), 2)
 
-    def test_readiness_and_benchmark_claims_require_broad_covered_repeated_designs(self):
+    def test_readiness_and_benchmark_claims_require_broad_covered_designs(self):
         cases = [
             {
                 "id": f"case-{index}",
                 "prompt": f"Do {index}",
                 "coverage": ["core" if index < 10 else "boundary"],
-                "repetitions": 3,
+                "repetitions": 1,
                 "graders": [{"kind": "human", "id": "review", "metric": "correctness"}],
             }
             for index in range(20)

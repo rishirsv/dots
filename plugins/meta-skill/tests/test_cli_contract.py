@@ -30,6 +30,11 @@ class CliTests(unittest.TestCase):
     def test_command_surface_is_compact_and_removed_commands_are_absent(self):
         parser = build_parser()
         self.assertEqual(parser.parse_args(["workbench", "open", "--no-open"]).open, False)
+        direct = parser.parse_args([
+            "workbench", "open", "--run", "/tmp/run-1", "--case", "case-a"
+        ])
+        self.assertEqual(direct.run, "/tmp/run-1")
+        self.assertEqual(direct.case, "case-a")
         self.assertEqual(parser.parse_args(["eval", "record", "--run", "r", "--trial", "t", "--label", "pass", "--rationale", "ok"]).eval_command, "record")
         text = parser.format_help()
         for kept in ("doctor", "init", "status", "sessions", "eval", "workbench", "validate", "package"):
@@ -80,9 +85,34 @@ class CliTests(unittest.TestCase):
 
     def test_eval_rejects_nonpositive_execution_settings(self):
         parser = build_parser()
-        for flag in ("--repetitions", "--parallel", "--timeout"):
+        for flag in ("--repetitions", "--approve-trial-count", "--parallel", "--timeout"):
             with self.subTest(flag=flag), self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
                 parser.parse_args(["eval", "run", flag, "0"])
+
+    def test_workbench_can_open_a_frozen_run_and_case_directly(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "skill"
+            skill(root)
+            run = root / ".demo" / "runs" / "run-1"
+            run.mkdir(parents=True)
+            (run / "run.json").write_text(json.dumps({
+                "schema_version": 2,
+                "run_id": "run-1",
+                "project": str(root),
+            }))
+            with patch(
+                "meta_skill.workbench_server.server.run_workbench_server"
+            ) as serve:
+                code = main([
+                    "workbench", "open", "--run", str(run), "--case", "case-a", "--no-open"
+                ])
+            self.assertEqual(code, 0)
+            serve.assert_called_once_with(
+                root.resolve(),
+                port=7333,
+                open_browser=False,
+                initial={"skill": "_root", "tab": "runs", "run": "run-1", "case": "case-a"},
+            )
 
     def test_eval_check_rejects_expectations_only_as_advisory(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -99,10 +129,10 @@ class CliTests(unittest.TestCase):
             self.assertIn("implicit_advisory_model", {row["kind"] for row in result["lint"]["warnings"]})
 
     def test_professional_eval_vocabulary_is_exposed_without_branded_aliases(self):
-        app = (ROOT / "plugins" / "meta-skill" / "src" / "meta_skill" / "workbench_server" / "app.html").read_text()
+        app = (ROOT / "plugins" / "meta-skill" / "workbench-ui" / "src" / "App.tsx").read_text()
         for term in (
-            "Cases", "Runs", "Versions", "Feedback", "Produced files",
-            "Open local file", "Feedback about", "Judge results",
+            "Case", "Runs", "Outcome", "Review", "Artifact evidence",
+            "Feedback about", "Grades",
         ):
             self.assertIn(term, app)
         for term in ("Explore", "Substantiate", "Improve", "Rerun selected"):

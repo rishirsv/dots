@@ -82,6 +82,10 @@ for skill in "${META_SKILLS[@]}"; do
   "$METASKILL" validate "$skill" --json >/dev/null
 done
 
+echo "==> Meta-Skill workbench frontend"
+npm --prefix plugins/meta-skill/workbench-ui ci --ignore-scripts >/dev/null
+npm --prefix plugins/meta-skill/workbench-ui run verify
+
 echo "==> Dots skill validation"
 python3 plugins/dots/scripts/validate_plugin.py
 for skill in plugins/dots/skills/*(/); do

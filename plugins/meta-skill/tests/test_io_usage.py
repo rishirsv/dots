@@ -37,6 +37,17 @@ class NormalizeUsageTests(unittest.TestCase):
         self.assertIsNone(normalize_usage("junk"))
         self.assertIsNone(normalize_usage({"last": {"inputTokens": 1}}))
 
+    def test_derives_total_when_runtime_reports_zero(self):
+        self.assertEqual(
+            normalize_usage({"total": {"inputTokens": 80, "outputTokens": 7, "totalTokens": 0}}),
+            {
+                "input_tokens": 80,
+                "cached_input_tokens": 0,
+                "output_tokens": 7,
+                "total_tokens": 87,
+            },
+        )
+
 
 class ResolveRunDirTests(unittest.TestCase):
     def test_resolves_nested_companion_run_by_id(self):

@@ -44,9 +44,9 @@ instead of publishing evidence from a different source state.
 
 Upload each required local image or clip through an authenticated GitHub path:
 
-- Prefer a GitHub connector or API only when it supports PR-body attachments.
-- Otherwise use the authenticated GitHub PR-description editor in a browser to
-  attach the file, then copy the resulting GitHub-hosted URL into the body.
+- Use a GitHub connector only when the user explicitly requests it and it
+  supports PR-body attachments. Otherwise use the authenticated GitHub
+  PR-description editor in a browser, then copy its hosted URL into the body.
 - Embed images with useful alt text and place the caption beside the embed.
   Link or embed clips using the GitHub-hosted attachment URL in the form GitHub
   renders for that media type.
@@ -64,25 +64,32 @@ first, adding implementation detail only when it helps review.
 Prefer durable GitHub uploads or stable committed assets. Remove secrets,
 personal data, notifications, unrelated browser chrome, and private workspace
 details. Do not use generated or placeholder imagery as proof of implemented
-behavior.
+behavior. Query repository visibility before constructing image URLs.
 
-For an image committed to a GitHub repository, embed the immutable raw asset:
+For an image committed to the same repository, use GitHub's relative PR-body
+form with an immutable commit:
 
-```markdown
-![Useful alt text](https://github.com/OWNER/REPOSITORY/blob/FULL_COMMIT_SHA/path/to/capture.png?raw=1)
-```
+Write `![Useful alt text]` immediately followed by
+`(../blob/FULL_COMMIT_SHA/path/to/capture.png?raw=true)`.
 
 Use the full 40-character commit SHA, not a branch name, so later pushes cannot
-change the evidence. Keep `?raw=1`; without it, a GitHub `blob` URL returns the
-HTML file-view page and the Markdown image may not render. URL-encode spaces and
-other reserved path characters. A durable GitHub-uploaded attachment URL is
-also acceptable when the image should not live in the repository. Never embed
-a local filesystem path.
+change the evidence. Keep `?raw=true`; without it, a GitHub `blob` URL returns
+the HTML file-view page and the Markdown image may not render. This relative
+form preserves GitHub's repository authorization for private repositories.
+Never use an unsigned `raw.githubusercontent.com` URL for a private or internal
+repository: it returns 404 even when the asset exists. Never copy a tokenized
+API `download_url` into a PR body because the token expires. URL-encode spaces
+and other reserved path characters.
 
-Before handoff, re-query the live PR body and inspect its rendered form. Confirm
-that every required asset visibly loads as an image or playable clip—not merely
-as Markdown text or a link—and that comparisons are understandable, captions
-match the captures, and the evidence supports the claims made in the text. If a
-committed image does not render, first check for a missing `?raw=1`, a mutable
-branch reference, an incorrect or unencoded path, or a commit that does not
-contain the asset.
+Use a GitHub-hosted attachment when the evidence is not committed to the same
+repository. In private and internal repositories, viewers still need repository
+access. Never embed a local filesystem path.
+
+Before handoff, inspect the rendered live PR once. Re-querying Markdown alone is
+not proof that the underlying asset loaded. Confirm that every required asset
+visibly loads as an image or playable clip—not merely as Markdown text or a
+link—and that comparisons are understandable, captions match the captures,
+and the evidence supports the claims made in the text. If a committed image
+does not render, first check for an unsigned private-repository raw URL, a
+missing `?raw=true`, a mutable branch reference, an incorrect or unencoded
+path, or a commit that does not contain the asset.

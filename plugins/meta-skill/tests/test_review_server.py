@@ -1,20 +1,22 @@
 """Repository workbench API tests."""
 
+import hashlib
 import http.client
 import json
-import subprocess
+import re
 import sys
 import tempfile
 import threading
 import time
 import unittest
 from pathlib import Path
+from urllib.parse import urlparse
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "plugins" / "meta-skill" / "src"))
 
-from meta_skill.workbench_server.server import APP_PATH, build_case_packet, build_trial_packet, create_server, discover_skills
+from meta_skill.workbench_server.server import APP_PATH, STATIC_ROOT, build_case_packet, build_trial_packet, create_server, discover_skills
 from meta_skill.report import build_report
 
 
@@ -85,7 +87,8 @@ class WorkbenchServerTests(unittest.TestCase):
             request_headers.setdefault("Content-Type", "application/json")
         connection.request(method, path, payload, request_headers)
         response = connection.getresponse()
-        data = json.loads(response.read()) if response.getheader("Content-Type", "").startswith("application/json") else None
+        response_body = response.read()
+        data = json.loads(response_body) if response.getheader("Content-Type", "").startswith("application/json") else None
         connection.close()
         return response.status, data
 
@@ -119,7 +122,8 @@ class WorkbenchServerTests(unittest.TestCase):
         path = "/api/trials/a.current.t1?skill=skill&run=run-1"
         status, packet = self.request("GET", path)
         self.assertEqual(packet["human_grader"]["id"], "taste")
-        self.assertEqual(packet["trial"]["verdict"], "inconclusive")
+        self.assertTrue(packet["review_blind_pending"])
+        self.assertEqual(packet["trial"]["verdict"], "hidden")
         self.assertEqual(packet["trial"]["failed_checks"], [])
         self.assertFalse(any((row.get("grader") or {}).get("kind") == "model" for row in packet["grades"]))
         status, error = self.request("GET", "/api/trials/a.current.t1/judge?skill=skill&run=run-1")
@@ -128,6 +132,16 @@ class WorkbenchServerTests(unittest.TestCase):
         self.assertEqual(self.request("POST", "/api/grades", body)[0], 200)
         body["label"], body["rationale"] = "pass", "Revised evidence"
         self.assertEqual(self.request("POST", "/api/grades", body)[0], 200)
+        status, still_blind = self.request("GET", path)
+        self.assertEqual(status, 200)
+        self.assertEqual(still_blind["trial"]["verdict"], "passed")
+        self.assertEqual(still_blind["trial"]["failed_checks"], [])
+        self.assertFalse(
+            any(
+                (row.get("grader") or {}).get("kind") == "model"
+                for row in still_blind["grades"]
+            )
+        )
         status, reveal = self.request("GET", "/api/trials/a.current.t1/judge?skill=skill&run=run-1")
         self.assertEqual(status, 200)
         self.assertEqual(reveal["grades"][0]["rationale"], "model says fail")
@@ -167,7 +181,9 @@ class WorkbenchServerTests(unittest.TestCase):
         artifact.write_text("artifact result")
         packet = build_trial_packet(self.run, "a.current.t1")
         self.assertEqual(packet["artifacts"][0]["path"], "result.txt")
-        self.assertEqual(packet["artifacts"][0]["local_path"], str(artifact.resolve()))
+        self.assertEqual(packet["artifacts"][0]["preview_kind"], "text")
+        self.assertEqual(packet["artifacts"][0]["preview"], "artifact result")
+        self.assertNotIn("local_path", packet["artifacts"][0])
         body = {
             "skill": "skill",
             "run": "run-1",
@@ -210,23 +226,165 @@ class WorkbenchServerTests(unittest.TestCase):
         suite = json.loads((self.skill / ".demo" / "evals" / "evals.json").read_text())
         self.assertEqual(suite["evals"][-1]["id"], "promoted-a")
 
-    def test_workbench_ui_keeps_the_review_loop_and_valid_javascript(self):
-        html = APP_PATH.read_text()
-        script = html.split("<script>", 1)[1].split("</script>", 1)[0]
-        result = subprocess.run(
-            ["node", "--check", "-"], input=script, text=True, capture_output=True
+    def test_large_and_active_artifacts_are_download_only(self):
+        root = self.run / "trials" / "a.current.t1" / "artifacts"
+        root.mkdir()
+        (root / "large.txt").write_text("x" * 60001)
+        (root / "active.html").write_text("<script>alert('no')</script>")
+        packet = build_trial_packet(self.run, "a.current.t1")
+        by_name = {row["path"]: row for row in packet["artifacts"]}
+        self.assertIsNone(by_name["large.txt"]["preview_kind"])
+        self.assertNotIn("preview", by_name["large.txt"])
+        self.assertEqual(by_name["active.html"]["preview_kind"], "text")
+
+        connection = http.client.HTTPConnection(
+            "127.0.0.1", self.server.server_address[1]
         )
-        self.assertEqual(result.returncode, 0, result.stderr)
+        connection.request(
+            "GET",
+            "/api/artifacts/a.current.t1/active.html?skill=skill&run=run-1",
+        )
+        response = connection.getresponse()
+        self.assertEqual(response.status, 200)
+        self.assertTrue(response.getheader("Content-Disposition").startswith("attachment;"))
+        response.read()
+        connection.close()
+
+        connection = http.client.HTTPConnection("127.0.0.1", self.server.server_address[1])
+        connection.request(
+            "GET",
+            "/api/interactive/a.current.t1/active.html?skill=skill&run=run-1",
+        )
+        response = connection.getresponse()
+        self.assertEqual(response.status, 302)
+        location = urlparse(response.getheader("Location"))
+        response.read()
+        connection.close()
+        self.assertNotEqual(location.port, self.server.server_address[1])
+        interactive = http.client.HTTPConnection(location.hostname, location.port)
+        interactive.request("GET", location.path)
+        response = interactive.getresponse()
+        self.assertEqual(response.status, 200)
+        self.assertIn("connect-src 'none'", response.getheader("Content-Security-Policy"))
+        self.assertIn(b"alert('no')", response.read())
+        interactive.close()
+
+    def test_harness_preview_is_distinct_and_existing_cache_is_discoverable(self):
+        trial = self.run / "trials" / "a.current.t1"
+        artifacts = trial / "artifacts"
+        artifacts.mkdir()
+        (artifacts / "active.html").write_text("<script>alert('never execute')</script>")
+        previews = trial / "previews"
+        previews.mkdir()
+        (previews / "preview-001.png").write_bytes(b"\x89PNG\r\n\x1a\n")
+        (previews / "preview-002.png").write_bytes(b"\x89PNG\r\n\x1a\n")
+        write(previews / "index.json", {
+            "schema_version": 2,
+            "entries": {"active.html": {
+                "generated_by": "harness",
+                "frames": [
+                    {"file": "preview-001.png", "index": 1, "label": "Opening", "width": 1440, "height": 900},
+                    {"file": "preview-002.png", "index": 2, "label": "Detail", "width": 1440, "height": 900},
+                ],
+                "source_sha256": hashlib.sha256((artifacts / "active.html").read_bytes()).hexdigest(),
+                "environment": {"node": "v24.0.0", "browser": "Chrome/140.0.0.0"},
+            }},
+        })
+        status, packet = self.request("GET", "/api/trials/a.current.t1?skill=skill&run=run-1")
+        self.assertEqual(status, 200)
+        artifact = packet["artifacts"][0]
+        self.assertEqual(artifact["preview_kind"], "text")
+        self.assertEqual(len(artifact["rendered_previews"]), 2)
+        self.assertEqual(artifact["rendered_previews"][0]["generated_by"], "harness")
+        self.assertEqual(artifact["rendered_previews"][0]["label"], "Opening")
+        preview_url = artifact["rendered_previews"][1]["url"]
+        self.assertEqual(self.request("GET", preview_url)[0], 200)
+
+    def test_run_listing_does_not_build_full_reports(self):
+        with patch("meta_skill.report.build_report", side_effect=AssertionError("full report")):
+            status, runs = self.request("GET", "/api/skills/skill/runs")
+        self.assertEqual(status, 200)
+        self.assertEqual(runs["runs"][0]["run_id"], "run-1")
+
+    def test_workbench_ui_keeps_the_review_loop_and_compiled_boundary(self):
+        html = APP_PATH.read_text()
+        source_root = ROOT / "plugins" / "meta-skill" / "workbench-ui" / "src"
+        source = (source_root / "App.tsx").read_text() + (source_root / "styles.css").read_text()
+        self.assertRegex(html, r'<script type="module" crossorigin src="/assets/[^"/]+\.js"></script>')
+        self.assertRegex(html, r'<link rel="stylesheet" crossorigin href="/assets/[^"/]+\.css">')
         for contract in (
             "syncUrl", "routing-failure", "model-variance", "Add regression case",
-            "Needs attention", "unstable", "Feedback about", "responseHtml(p)",
-            "artifactUrl(p,artifact)", "Open local file", "review note only",
-            "reusable rubric guidance", "Task executor", "Judge executor",
+            "Needs attention", "Feedback about", "artifactUrl", "review note only",
+            "reusable guidance", "Task executor", "Judge executor",
+            "Blind human grade required", "Reveal model judge", "Looks good",
+            "Needs review", "one execution",
+            "Runtime:", "duration unknown", "tokens unknown",
+            "Promote finding to regression case", "max-height: 320px",
+            "View escaped source", "Compare rendered previews", "Could not load this view",
         ):
-            self.assertIn(contract, html)
+            self.assertIn(contract, source)
         for removed in ("Run cases", "Start run", "launchRun", "rerunSelected"):
-            self.assertNotIn(removed, html)
-        self.assertNotIn("<iframe", html)
+            self.assertNotIn(removed, source)
+        self.assertNotIn("<iframe", source)
+        self.assertNotIn("file://", source)
+
+        asset = re.search(r'src="(/assets/[^"]+\.js)"', html).group(1)
+        status, _ = self.request("GET", asset)
+        self.assertEqual(status, 200)
+        self.assertTrue(any(path.suffix == ".js" for path in (STATIC_ROOT / "assets").iterdir()))
+        self.assertEqual(self.request("GET", "/assets/../server.py")[0], 404)
+        connection = http.client.HTTPConnection("127.0.0.1", self.server.server_address[1])
+        connection.request("GET", "/")
+        response = connection.getresponse()
+        self.assertIn("object-src 'none'", response.getheader("Content-Security-Policy"))
+        response.read()
+        connection.close()
+
+    def test_root_skill_uses_a_path_safe_id_and_opens_directly(self):
+        server = create_server(self.skill, 0)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            connection = http.client.HTTPConnection("127.0.0.1", server.server_address[1])
+            connection.request("GET", "/api/skills")
+            response = connection.getresponse()
+            skills = json.loads(response.read())
+            self.assertEqual(response.status, 200)
+            self.assertEqual(skills["skills"][0]["id"], "_root")
+            connection.request("GET", "/api/skills/_root/runs")
+            response = connection.getresponse()
+            runs = json.loads(response.read())
+            self.assertEqual(response.status, 200)
+            self.assertEqual(runs["runs"][0]["run_id"], "run-1")
+            connection.close()
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join()
+
+    def test_review_decision_is_explicit_and_findings_are_authoritative(self):
+        body = {
+            "skill": "skill",
+            "run": "run-1",
+            "trial_id": "a.current.t1",
+            "decision": "looks_good",
+        }
+        status, result = self.request("POST", "/api/reviews", body)
+        self.assertEqual(status, 200)
+        self.assertEqual(result["review"]["decision"], "looks_good")
+        self.assertIn("reviewed_at", result["review"])
+
+        review_path = self.run / "trials" / "a.current.t1" / "review.json"
+        review_path.unlink()
+        body["decision"] = "finding"
+        self.assertEqual(self.request("POST", "/api/reviews", body)[0], 400)
+        annotation = {**body, "note": "Evidence-backed defect"}
+        annotation.pop("decision")
+        self.assertEqual(self.request("POST", "/api/annotations", annotation)[0], 200)
+        review = json.loads(review_path.read_text())
+        self.assertEqual(review["decision"], "finding")
+        body["decision"] = "looks_good"
+        self.assertEqual(self.request("POST", "/api/reviews", body)[0], 400)
 
     def test_concurrent_regression_promotions_do_not_overwrite_each_other(self):
         from meta_skill.workbench_server import server as server_module
@@ -270,13 +428,22 @@ class WorkbenchServerTests(unittest.TestCase):
         ids = {row["id"] for row in suite["evals"]}
         self.assertTrue({f"concurrent-{index}" for index in range(4)}.issubset(ids))
 
-    def test_model_grade_is_visible_when_no_human_review_is_declared(self):
+    def test_model_grade_is_hidden_until_inspector_review_is_recorded(self):
         suite_path = self.run / "inputs" / "suite.json"
         suite = json.loads(suite_path.read_text())
         suite["evals"][0]["graders"] = [{"kind": "model", "id": "judge", "metric": "quality"}]
         write(suite_path, suite)
         packet = build_trial_packet(self.run, "a.current.t1")
         self.assertIsNone(packet["human_grader"])
+        self.assertTrue(packet["review_blind_pending"])
+        self.assertEqual(packet["trial"]["verdict"], "hidden")
+        self.assertEqual(packet["grades"], [])
+        write(
+            self.run / "trials" / "a.current.t1" / "review.json",
+            {"decision": "looks_good"},
+        )
+        packet = build_trial_packet(self.run, "a.current.t1")
+        self.assertFalse(packet["review_blind_pending"])
         self.assertEqual(packet["grades"][0]["grader"]["kind"], "model")
 
     def test_multiple_human_graders_keep_model_hidden_until_all_are_recorded(self):

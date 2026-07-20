@@ -20,6 +20,7 @@ metadata index.
 
     runs/<run-id>/
       run.json
+      state.json               # run lifecycle, phase, counts, and stop reason
       <skill-name>-evaluation.md
       inputs/
         suite.json
@@ -52,6 +53,7 @@ cases, candidates, and trials changes:
 
 - request: `inputs/cases/<eval-id>/task.md`
 - status: `trials/<trial-id>/state.json`
+- run progress: `state.json`
 - response: `trials/<trial-id>/response.md`
 - produced files: `trials/<trial-id>/artifacts/`
 - provenance: `run.json`, `inputs/suite.json`, and candidate snapshots
@@ -60,20 +62,31 @@ cases, candidates, and trials changes:
 `run.json` is immutable experiment planning and provenance: objective,
 evaluation mode, repetition policy, validity review, coverage requirements,
 benchmark split, baseline, candidates, case digests, repetitions, planned
-trials, and separate task-executor and judge-executor records. Native task
+trials, the exact approved trial count when cases repeat, and separate
+task-executor and judge-executor records. Native task
 workers record the requested inherited model context; Codex Exec task workers
 and judges record their explicitly resolved model and reasoning effort.
 `inputs/` is the immutable snapshot used for execution and later regrading.
 Candidate payloads are stored once per run, not copied into each trial.
 
+Top-level `state.json` is the mutable run lifecycle authority. Its status is
+`planned`, `running`, `completed`, `cancelled`, or `failed`; `phase` identifies
+`planning`, `executing`, `grading`, `finalizing`, `finished`, or `stopped`.
+Only `completed/finished` is a successful terminal pair. Cancelled and failed
+runs use `stopped` and preserve the interrupted phase in `stop_phase`. The file
+also records planned and terminal trial counts, per-status totals, timestamps,
+and a stop reason. Older runs without this file remain readable by deriving a
+terminal lifecycle from their trial states.
+
 Each trial owns one mutable state authority. `state.json` moves from `queued`
-to `running` to `completed`, `failed`, or `timed_out`. `grades.jsonl` is
+to `running` to `completed`, `failed`, `timed_out`, or `cancelled`. `grades.jsonl` is
 append-only; the latest row with the same trial, grader identity, kind, and
 metric supersedes earlier rows. Grade evidence references are relative to the
 run folder. A model-grade row also records any judge-context annotation IDs and
 its context digest. `review.json` holds trial annotations, including
 `judge_use` as `rubric`, `evidence`, or `exclude`; absence means `exclude` for
-older runs.
+older runs. A saved finding sets the review decision to `finding`; an explicit
+approval sets it to `looks_good`. Both record `reviewed_at`.
 
 Trial state stores identity and lifecycle data, not absolute paths. Readers
 derive response, event, and artifact locations from the fixed trial layout so a

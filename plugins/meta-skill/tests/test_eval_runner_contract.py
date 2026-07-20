@@ -3,6 +3,8 @@
 import json
 import sys
 import tempfile
+import threading
+import time
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -31,14 +33,17 @@ def args(path, **values):
     defaults = dict(
         suite=str(path), candidates=None, split=None, case=None, type=None,
         repetitions=None, repetitions_by_type={}, model=None, reasoning_effort=None,
-        parallel=1, timeout=5, no_baseline=False, no_grade=True, adhoc=False,
+        approve_trial_count=None,
+        parallel=None, timeout=5, no_baseline=False, no_grade=True, adhoc=False,
         task=None, skill=None, resume_run_id=None,
     )
     defaults.update(values)
     return SimpleNamespace(**defaults)
 
 
-def write_result(packet, *, status="completed", response="done", artifact=True, executor=None):
+def write_result(
+    packet, *, status="completed", response="done", artifact=True, executor=None, events=None
+):
     artifact_paths = []
     if artifact:
         target = Path(packet["artifact_root"]) / "made.txt"
@@ -58,6 +63,10 @@ def write_result(packet, *, status="completed", response="done", artifact=True, 
             "runtime_version": None, "provenance": "inherited",
         },
     }
+    if events is not None:
+        events_path = Path(packet["workspace_path"]) / "events.jsonl"
+        events_path.write_text("".join(json.dumps(event) + "\n" for event in events))
+        result["events_path"] = str(events_path)
     Path(packet["result_path"]).write_text(json.dumps(result))
     return result
 
@@ -69,6 +78,68 @@ class RunnerTests(unittest.TestCase):
         self.assertIn("--ignore-rules", command)
         disabled = [command[index + 1] for index, value in enumerate(command[:-1]) if value == "--disable"]
         self.assertEqual(disabled, ["plugins", "apps", "memories"])
+
+    def test_parallelism_defaults_to_four_and_one_is_explicit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "skill"
+            skill(target)
+            manifest = target / ".demo" / "evals" / "evals.json"
+            suite(manifest, [
+                {"id": f"case-{index}", "type": "capability", "prompt": f"Do {index}"}
+                for index in range(5)
+            ])
+            automatic = prepare_eval(
+                args(manifest, no_baseline=True), task_executor_kind="codex_exec"
+            )
+            automatic_run = json.loads(
+                (Path(automatic["run_dir"]) / "run.json").read_text()
+            )
+            self.assertEqual(automatic["dispatch_parallelism"], 4)
+            self.assertEqual(automatic_run["runner"]["parallel_mode"], "auto")
+
+            sequential = prepare_eval(
+                args(manifest, no_baseline=True, parallel=1),
+                task_executor_kind="codex_exec",
+            )
+            sequential_run = json.loads(
+                (Path(sequential["run_dir"]) / "run.json").read_text()
+            )
+            self.assertEqual(sequential["dispatch_parallelism"], 1)
+            self.assertEqual(sequential_run["runner"]["parallel_mode"], "explicit")
+
+    def test_unattended_run_uses_parallel_default(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "skill"
+            skill(target)
+            manifest = target / ".demo" / "evals" / "evals.json"
+            suite(manifest, [
+                {"id": f"case-{index}", "type": "capability", "prompt": f"Do {index}"}
+                for index in range(5)
+            ])
+            lock = threading.Lock()
+            active = 0
+            peak = 0
+
+            def fake_task(packet, **_kwargs):
+                nonlocal active, peak
+                with lock:
+                    active += 1
+                    peak = max(peak, active)
+                try:
+                    time.sleep(0.05)
+                    return write_result(packet)
+                finally:
+                    with lock:
+                        active -= 1
+
+            with patch("meta_skill.runner.codex_readiness", return_value=(True, "ready", {})), patch(
+                "meta_skill.runner.run_task", side_effect=fake_task
+            ):
+                result = run_eval(args(manifest, no_baseline=True))
+
+            self.assertTrue(result["ok"])
+            self.assertGreater(peak, 1)
+            self.assertLessEqual(peak, 4)
 
     def test_native_candidate_comparison_is_rejected_as_unisolated(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -90,7 +161,7 @@ class RunnerTests(unittest.TestCase):
                     "prompt": f"Do {index}",
                     "coverage": ["core" if index % 2 == 0 else "boundary"],
                     "split": "development" if index < 20 else "test",
-                    "repetitions": 3,
+                    "repetitions": 1,
                     "graders": [{"kind": "human", "id": "review", "metric": "correctness"}],
                 }
                 for index in range(40)
@@ -121,6 +192,29 @@ class RunnerTests(unittest.TestCase):
             )
             run = json.loads((Path(prepared["run_dir"]) / "run.json").read_text())
             self.assertEqual(run["benchmark_split"], "test")
+            self.assertTrue(all(count == 1 for count in run["repetitions"].values()))
+
+    def test_repeated_run_requires_exact_user_approved_trial_count(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "skill"
+            skill(target)
+            manifest = target / ".demo" / "evals" / "evals.json"
+            suite(manifest, [{"id": "a", "type": "capability", "prompt": "Do A"}])
+            with self.assertRaisesRegex(CliError, "expand this evaluation to 4 trials"):
+                prepare_eval(args(manifest, repetitions=2), task_executor_kind="codex_exec")
+            with self.assertRaisesRegex(CliError, "--approve-trial-count 4"):
+                prepare_eval(
+                    args(manifest, repetitions=2, approve_trial_count=6),
+                    task_executor_kind="codex_exec",
+                )
+            self.assertFalse((target / ".demo" / "runs").exists())
+            prepared = prepare_eval(
+                args(manifest, repetitions=2, approve_trial_count=4),
+                task_executor_kind="codex_exec",
+            )
+            run = json.loads((Path(prepared["run_dir"]) / "run.json").read_text())
+            self.assertEqual(run["approved_trial_count"], 4)
+            self.assertEqual(len(run["trials"]), 4)
 
     def test_planning_error_records_canonical_executor_provenance(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -142,6 +236,12 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(run["task_executor"]["kind"], "native_subagent")
             self.assertEqual(run["task_executor"]["provenance"], "inherited")
             self.assertIsNone(run["judge_executor"])
+            lifecycle = json.loads(
+                (target / ".demo" / "runs" / "run-plan-error" / "state.json").read_text()
+            )
+            self.assertEqual(lifecycle["status"], "failed")
+            self.assertEqual(lifecycle["phase"], "stopped")
+            self.assertEqual(lifecycle["stop_phase"], "planning")
 
     def test_prepare_hides_judging_data_and_submit_preserves_run_contract(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -156,6 +256,9 @@ class RunnerTests(unittest.TestCase):
             prepared = prepare_eval(args(manifest, no_grade=True), task_executor_kind="codex_exec")
             self.assertEqual(prepared["trials"], 2)
             packets = prepared["packets"]
+            lifecycle = json.loads((Path(prepared["run_dir"]) / "state.json").read_text())
+            self.assertEqual(lifecycle["status"], "planned")
+            self.assertEqual(lifecycle["planned_trials"], 2)
             baseline = next(packet for packet in packets if ".no-skill." in packet["trial_id"])
             current = next(packet for packet in packets if ".current." in packet["trial_id"])
             self.assertNotIn("skill_path", baseline)
@@ -184,6 +287,11 @@ class RunnerTests(unittest.TestCase):
             self.assertFalse(result["regression_gate_enabled"])
             run = Path(result["run_dir"])
             self.assertTrue((run / "demo-evaluation.md").is_file())
+            lifecycle = json.loads((run / "state.json").read_text())
+            self.assertEqual(lifecycle["status"], "completed")
+            self.assertEqual(lifecycle["phase"], "finished")
+            self.assertEqual(lifecycle["terminal_trials"], 2)
+            self.assertIn('**Status:** `completed`', (run / "demo-evaluation.md").read_text())
             self.assertTrue((run / "trials" / current["trial_id"] / "artifacts" / "made.txt").is_file())
             self.assertFalse((target / ".demo" / "tmp" / result["run_id"]).exists())
             self.assertFalse((worktrees_path(target) / result["run_id"]).exists())
@@ -301,6 +409,71 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(state["task_executor"]["kind"], "codex_exec")
             self.assertFalse(result["ok"])
 
+    def test_interrupt_cancels_unresolved_trials_and_stops_workers(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "skill"
+            skill(target)
+            manifest = target / ".demo" / "evals" / "evals.json"
+            suite(manifest, [{"id": "a", "type": "capability", "prompt": "Wait"}])
+            with patch("meta_skill.runner.codex_readiness", return_value=(True, "ready", {})), patch(
+                "meta_skill.runner.run_task", side_effect=KeyboardInterrupt
+            ), patch("meta_skill.runner.terminate_active_processes") as terminate:
+                with self.assertRaises(KeyboardInterrupt):
+                    run_eval(args(manifest, no_baseline=True), run_id_value="run-interrupt")
+            run = target / ".demo" / "runs" / "run-interrupt"
+            lifecycle = json.loads((run / "state.json").read_text())
+            trial = json.loads((run / "trials" / "a.current.t1" / "state.json").read_text())
+            self.assertEqual(lifecycle["status"], "cancelled")
+            self.assertEqual(lifecycle["phase"], "stopped")
+            self.assertEqual(lifecycle["stop_phase"], "executing")
+            self.assertEqual(trial["status"], "cancelled")
+            self.assertFalse((target / ".demo" / "tmp" / "run-interrupt").exists())
+            self.assertTrue(terminate.called)
+
+    def test_interrupt_during_grading_records_cancelled_lifecycle(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "skill"
+            skill(target)
+            manifest = target / ".demo" / "evals" / "evals.json"
+            suite(manifest, [{"id": "a", "type": "capability", "prompt": "Do A"}])
+            prepared = prepare_eval(args(manifest, no_baseline=True, no_grade=True))
+            packet = prepared["packets"][0]
+            write_result(packet)
+            submit_trial(
+                prepared["run_dir"], packet["trial_id"], packet["attempt_id"], packet["result_path"]
+            )
+            with patch("meta_skill.grading.grade_run", side_effect=KeyboardInterrupt), patch(
+                "meta_skill.runner.terminate_active_processes"
+            ) as terminate:
+                with self.assertRaises(KeyboardInterrupt):
+                    finalize_eval(prepared["run_dir"], grade=True)
+            lifecycle = json.loads((Path(prepared["run_dir"]) / "state.json").read_text())
+            self.assertEqual(lifecycle["status"], "cancelled")
+            self.assertEqual(lifecycle["phase"], "stopped")
+            self.assertEqual(lifecycle["stop_phase"], "grading")
+            self.assertTrue(terminate.called)
+
+    def test_submit_derives_duration_when_worker_does_not_report_it(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "skill"
+            skill(target)
+            manifest = target / ".demo" / "evals" / "evals.json"
+            suite(manifest, [{"id": "a", "type": "capability", "prompt": "Do A"}])
+            prepared = prepare_eval(args(manifest, no_baseline=True, no_grade=True))
+            packet = prepared["packets"][0]
+            result = write_result(packet)
+            result["duration_ms"] = 0
+            Path(packet["result_path"]).write_text(json.dumps(result))
+            state_path = Path(prepared["run_dir"]) / "trials" / packet["trial_id"] / "state.json"
+            state = json.loads(state_path.read_text())
+            state["prepared_at"] = "2026-01-01T00:00:00+00:00"
+            state_path.write_text(json.dumps(state))
+            submitted = submit_trial(
+                prepared["run_dir"], packet["trial_id"], packet["attempt_id"], packet["result_path"]
+            )
+            self.assertGreater(submitted["duration_ms"], 0)
+            self.assertEqual(submitted["duration_source"], "prepared_to_submit")
+
     def test_stateful_trials_capture_hidden_before_and_after_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:
             project = Path(tmp)
@@ -368,7 +541,7 @@ class RunnerTests(unittest.TestCase):
             ])
             first = prepare_eval(args(manifest, no_baseline=True), task_executor_kind="codex_exec")
             for packet in first["packets"]:
-                write_result(packet)
+                write_result(packet, events=[{"type": "turn.completed"}])
                 submit_trial(first["run_dir"], packet["trial_id"], packet["attempt_id"], packet["result_path"])
             failed_path = Path(first["run_dir"]) / "trials" / "b.current.t1" / "state.json"
             failed = json.loads(failed_path.read_text())
@@ -390,6 +563,32 @@ class RunnerTests(unittest.TestCase):
             native_resumed = prepare_eval(args(manifest, no_baseline=True, resume_run_id=native["run_id"]))
             self.assertEqual(native_resumed["reused_trials"], 0)
             self.assertEqual(len(native_resumed["packets"]), 2)
+
+    def test_resume_rejects_incomplete_artifact_and_event_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            target = project / "skill"
+            skill(target)
+            manifest = target / ".demo" / "evals" / "evals.json"
+            suite(manifest, [{"id": "a", "type": "capability", "outcome": "artifact", "prompt": "Do A"}])
+            first = prepare_eval(args(manifest, no_baseline=True), task_executor_kind="codex_exec")
+            packet = first["packets"][0]
+            write_result(packet)
+            submit_trial(first["run_dir"], packet["trial_id"], packet["attempt_id"], packet["result_path"])
+
+            trial = Path(first["run_dir"]) / "trials" / packet["trial_id"]
+            state_path = trial / "state.json"
+            state = json.loads(state_path.read_text())
+            state["produced_artifacts"] = []
+            state_path.write_text(json.dumps(state))
+            (trial / "events.jsonl").write_text('{"type":"turn.started"}\n')
+
+            resumed = prepare_eval(
+                args(manifest, no_baseline=True, resume_run_id=first["run_id"]),
+                task_executor_kind="codex_exec",
+            )
+            self.assertEqual(resumed["reused_trials"], 0)
+            self.assertEqual([item["trial_id"] for item in resumed["packets"]], ["a.current.t1"])
 
 
 if __name__ == "__main__":

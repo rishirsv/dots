@@ -7,14 +7,21 @@ import os
 import shutil
 import sys
 import tempfile
+import threading
 import uuid
+from datetime import datetime
 from pathlib import Path
 
 from .candidates import candidate_source, cleanup_candidate_source, resolve_candidate, snapshot_candidate
-from .codex_exec import codex_readiness, executor_provenance, run_task
+from .codex_exec import (
+    codex_readiness,
+    executor_provenance,
+    run_task,
+    terminate_active_processes,
+)
 from .errors import CliError
 from .ids import run_id, utc_now
-from .io import read_json, resolve_run_dir, write_json
+from .io import read_json, read_jsonl, resolve_run_dir, write_json
 from .manifest import (
     load_manifest,
     project_from_suite,
@@ -28,14 +35,22 @@ from .manifest import (
     worktrees_from_suite,
 )
 from .run_inputs import freeze_run_inputs, validate_grading_inputs
-from .runtime import DEFAULT_EVAL_MODEL, DEFAULT_EVAL_REASONING_EFFORT
+from .runtime import DEFAULT_EVAL_MODEL, DEFAULT_EVAL_REASONING_EFFORT, resolve_parallelism
 from .staging import capture_artifacts, capture_state_snapshot, relocate_workspace_links, stage_workspace
 from .suite_checks import check_suite
 from .workbench_paths import evals_path, runs_path, skill_dir_for_target, skill_id_for_target, skill_name_for_target, state_root, worktrees_path
 
 
-TERMINAL_STATUSES = {"completed", "failed", "timed_out", "skipped"}
+TERMINAL_STATUSES = {"completed", "failed", "timed_out", "skipped", "cancelled"}
 REASONING_EFFORTS = {"none", "minimal", "low", "medium", "high", "xhigh"}
+RUN_PHASES_BY_STATUS = {
+    "planned": {"planning"},
+    "running": {"executing", "grading", "finalizing"},
+    "completed": {"finished"},
+    "cancelled": {"stopped"},
+    "failed": {"stopped"},
+}
+_RUN_STATE_LOCK = threading.Lock()
 
 
 def plan_trials(cases, candidates, repetitions):
@@ -69,6 +84,96 @@ def trial_dir(run_dir, trial_id):
 
 def state_path(run_dir, trial_id):
     return trial_dir(run_dir, trial_id) / "state.json"
+
+
+def run_state_path(run_dir):
+    return Path(run_dir) / "state.json"
+
+
+def _trial_status_counts(run_dir):
+    counts = {}
+    for path in sorted((Path(run_dir) / "trials").glob("*/state.json")):
+        status = read_json(path).get("status", "unknown")
+        counts[status] = counts.get(status, 0) + 1
+    return counts
+
+
+def update_run_state(run_dir, *, status=None, phase=None, stop_reason=None, **extra):
+    """Atomically write the parent-owned lifecycle projection for a run."""
+    with _RUN_STATE_LOCK:
+        return _update_run_state(
+            run_dir,
+            status=status,
+            phase=phase,
+            stop_reason=stop_reason,
+            **extra,
+        )
+
+
+def _update_run_state(run_dir, *, status=None, phase=None, stop_reason=None, **extra):
+    path = run_state_path(run_dir)
+    current = read_json(path) if path.is_file() else {}
+    run_path = Path(run_dir) / "run.json"
+    run = read_json(run_path) if run_path.is_file() else {}
+    counts = _trial_status_counts(run_dir)
+    now = utc_now()
+    next_status = status or current.get("status") or "planned"
+    next_phase = phase or current.get("phase") or "planning"
+    if next_status not in RUN_PHASES_BY_STATUS or next_phase not in RUN_PHASES_BY_STATUS[next_status]:
+        raise CliError(f"invalid run lifecycle state: {next_status}/{next_phase}", 2)
+    row = {
+        **current,
+        "schema_version": 1,
+        "run_id": run.get("run_id") or Path(run_dir).name,
+        "status": next_status,
+        "phase": next_phase,
+        "planned_trials": len(run.get("trials") or []) or sum(counts.values()),
+        "terminal_trials": sum(counts.get(item, 0) for item in TERMINAL_STATUSES),
+        "trial_status_totals": counts,
+        "updated_at": now,
+        **extra,
+    }
+    if next_status == "running" and not row.get("started_at"):
+        row["started_at"] = now
+    if next_status in {"completed", "cancelled", "failed"}:
+        row["completed_at"] = now
+    if stop_reason is not None:
+        row["stop_reason"] = str(stop_reason)
+    write_json(path, row)
+    return row
+
+
+def _duration(result, current, completed_at):
+    reported = result.get("duration_ms")
+    if isinstance(reported, (int, float)) and reported > 0:
+        return int(reported), "worker"
+    started_at = current.get("started_at") or current.get("prepared_at")
+    if not started_at:
+        return None, None
+    try:
+        elapsed = datetime.fromisoformat(completed_at) - datetime.fromisoformat(started_at)
+    except (TypeError, ValueError):
+        return None, None
+    milliseconds = round(elapsed.total_seconds() * 1000)
+    return (milliseconds, "prepared_to_submit") if milliseconds > 0 else (None, None)
+
+
+def cancel_unresolved_trials(run_dir, reason):
+    now = utc_now()
+    for path in sorted((Path(run_dir) / "trials").glob("*/state.json")):
+        state = read_json(path)
+        if state.get("status") in TERMINAL_STATUSES:
+            continue
+        state.pop("workspace_path", None)
+        write_json(
+            path,
+            {
+                **state,
+                "status": "cancelled",
+                "completed_at": now,
+                "error": str(reason),
+            },
+        )
 
 
 def _state(row, run_dir, status, **extra):
@@ -222,11 +327,13 @@ def submit_trial(raw_run, trial_id, attempt_id, raw_result):
         shutil.rmtree(import_root, ignore_errors=True)
 
     now = utc_now()
+    duration_ms, duration_source = _duration(result, current, now)
     final = {
         **{key: value for key, value in current.items() if key != "workspace_path"},
         "status": status,
         "completed_at": now,
-        "duration_ms": int(result.get("duration_ms") or 0),
+        "duration_ms": duration_ms,
+        "duration_source": duration_source,
         "usage": result.get("usage"),
         "produced_artifacts": produced,
         "error": result.get("error"),
@@ -238,6 +345,7 @@ def submit_trial(raw_run, trial_id, attempt_id, raw_result):
         },
     }
     write_json(state_path(run_dir, trial_id), final)
+    update_run_state(run_dir, status="running", phase="executing")
     return final
 
 
@@ -277,7 +385,12 @@ def retry_trial(raw_run, trial_id):
     if artifact_root.exists():
         shutil.rmtree(artifact_root)
     artifact_root.mkdir()
-    state = {**current, "status": "queued", "attempt_id": packet["attempt_id"]}
+    state = {
+        **current,
+        "status": "queued",
+        "attempt_id": packet["attempt_id"],
+        "prepared_at": utc_now(),
+    }
     state.pop("started_at", None)
     write_json(state_path(run_dir, trial_id), state)
     return {"ok": True, "run_id": run_dir.name, "packet": packet}
@@ -383,9 +496,32 @@ def _reuse_completed_trials(run_dir, runs_root, resume_run_id, run_model, plan):
             continue
         source_trial = source_dir / "trials" / trial_id
         source_state_path = source_trial / "state.json"
-        if not source_state_path.is_file() or read_json(source_state_path).get("status") != "completed":
+        if not source_state_path.is_file():
             continue
-        source_trial_executor = read_json(source_state_path).get("task_executor") or {}
+        source_state = read_json(source_state_path)
+        if source_state.get("status") != "completed":
+            continue
+        if not (source_trial / "response.md").is_file():
+            continue
+        if source_executor.get("kind") == "codex_exec":
+            events_path = source_trial / "events.jsonl"
+            if not events_path.is_file() or not any(
+                event.get("type") == "turn.completed"
+                for event in read_jsonl(events_path)
+            ):
+                continue
+        if row["eval"].get("outcome", "response") == "artifact":
+            produced = source_state.get("produced_artifacts") or []
+            if not produced:
+                continue
+            artifact_root = (source_trial / "artifacts").resolve()
+            if any(
+                not (artifact_root / artifact).resolve().is_relative_to(artifact_root)
+                or not (artifact_root / artifact).is_file()
+                for artifact in produced
+            ):
+                continue
+        source_trial_executor = source_state.get("task_executor") or {}
         if any(source_trial_executor.get(key) != current_executor.get(key) for key in executor_identity):
             continue
         destination = trial_dir(run_dir, trial_id)
@@ -469,10 +605,15 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
     if evaluation_mode in {"readiness", "benchmark"}:
         if len(cases) < 20:
             raise CliError(f"{evaluation_mode} runs need at least 20 selected cases", 2)
-        too_small = [case_id for case_id, count in repetitions.items() if count < 3]
-        if too_small:
+    planned_trial_count = sum(int(count) for count in repetitions.values()) * len(candidate_defs)
+    if any(int(count) > 1 for count in repetitions.values()):
+        approved_trial_count = getattr(args, "approve_trial_count", None)
+        if approved_trial_count != planned_trial_count:
             raise CliError(
-                f"{evaluation_mode} comparisons need at least three repetitions: {', '.join(too_small)}",
+                "repetitions expand this evaluation to "
+                f"{planned_trial_count} trials across {len(cases)} cases and "
+                f"{len(candidate_defs)} candidates; re-run with "
+                f"--approve-trial-count {planned_trial_count} only after the user approves this exact plan",
                 2,
             )
     rid = run_id_value or run_id()
@@ -509,6 +650,8 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
         }
         plan = plan_trials(cases, candidates, lambda case: repetition_count(case, args, defaults))
         timeout_seconds = int(getattr(args, "timeout", None) or defaults.get("timeout_seconds") or 600)
+        requested_parallel = getattr(args, "parallel", None)
+        resolved_parallel = resolve_parallelism(requested_parallel, planned_trial_count)
         run_model = {
             "schema_version": 2,
             "run_id": rid,
@@ -532,7 +675,8 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
             "runner": {
                 "kind": "runner_neutral",
                 "grading": grading_enabled,
-                "parallel": max(1, int(getattr(args, "parallel", 1) or 1)),
+                "parallel": resolved_parallel,
+                "parallel_mode": "auto" if requested_parallel is None else "explicit",
                 "timeout_seconds": timeout_seconds,
                 "regression_gate": bool(getattr(args, "gate", False)),
             },
@@ -567,6 +711,11 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
             "eval_ids": [case["id"] for case in cases],
             "candidates": [candidate_source(candidate) for candidate in candidates],
             "repetitions": repetitions,
+            "approved_trial_count": (
+                planned_trial_count
+                if any(int(count) > 1 for count in repetitions.values())
+                else None
+            ),
             "trials": [
                 {
                     "trial_id": row["trial_id"],
@@ -586,6 +735,7 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
         )
         run_model["reused_trials"] = len(reused_trial_ids)
         write_json(run_dir / "run.json", run_model)
+        update_run_state(run_dir, status="planned", phase="planning")
         packets = []
         for row in plan:
             if row["trial_id"] in reused_trial_ids:
@@ -606,10 +756,12 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
                     **state,
                     "attempt_id": packet["attempt_id"],
                     "workspace_path": packet["workspace_path"],
+                    "prepared_at": utc_now(),
                     "state_evidence": {"before": before_state} if before_state else {},
                 },
             )
             packets.append(packet)
+        update_run_state(run_dir, status="planned", phase="planning")
     except Exception as exc:
         shutil.rmtree(workspace_root, ignore_errors=True)
         if not (run_dir / "run.json").exists():
@@ -638,6 +790,13 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
                     "trials": [],
                 },
             )
+        update_run_state(
+            run_dir,
+            status="failed",
+            phase="stopped",
+            stop_reason=str(exc),
+            stop_phase="planning",
+        )
         raise
 
     return {
@@ -647,6 +806,9 @@ def prepare_eval(args, context=None, run_id_value=None, *, task_executor_kind="n
         "adhoc": adhoc,
         "trials": len(plan),
         "reused_trials": len(reused_trial_ids),
+        "dispatch_parallelism": (
+            min(run_model["runner"]["parallel"], len(packets)) if packets else 0
+        ),
         "packets": packets,
     }
 
@@ -659,40 +821,83 @@ def finalize_eval(raw_run, *, grade=None, parallel=None, model=None, reasoning_e
     if unresolved:
         raise CliError(f"run still has unresolved trials: {', '.join(unresolved)}", 2)
     grading_enabled = run.get("runner", {}).get("grading", False) if grade is None else bool(grade)
-    if grading_enabled:
-        from .grading import grade_run
+    active_phase = "grading" if grading_enabled else "finalizing"
+    try:
+        if grading_enabled:
+            update_run_state(run_dir, status="running", phase="grading")
+            from .grading import grade_run
 
-        grade_run(
-            str(run_dir),
-            rebuild_report=False,
-            parallel=parallel or run.get("runner", {}).get("parallel", 1),
-            model=model or run.get("model"),
-            reasoning_effort=reasoning_effort or run.get("reasoning_effort"),
+            grade_run(
+                str(run_dir),
+                rebuild_report=False,
+                parallel=parallel or run.get("runner", {}).get("parallel", 1),
+                model=model or run.get("model"),
+                reasoning_effort=reasoning_effort or run.get("reasoning_effort"),
+            )
+        active_phase = "finalizing"
+        update_run_state(run_dir, status="running", phase=active_phase)
+        try:
+            from .html_preview import generate_html_previews
+
+            generate_html_previews(run_dir)
+        except Exception:
+            # Preview generation is an optional review aid, never run evidence.
+            pass
+        from .report import build_report, write_report
+
+        report = build_report(str(run_dir))
+        execution_ok = bool(report.get("execution_ok"))
+        gate_enabled = bool((run.get("runner") or {}).get("regression_gate"))
+        gate_passed = bool(report.get("regression_gate_passed"))
+        ok = execution_ok and (gate_passed if gate_enabled else True)
+        update_run_state(
+            run_dir,
+            status="completed",
+            phase="finished",
+            execution_ok=execution_ok,
+            evaluation_passed=bool(report.get("evaluation_passed")),
+            regression_gate_passed=gate_passed,
         )
-    from .report import build_report, write_report
-
-    report = build_report(str(run_dir))
-    report_path = write_report(report)
-    execution_ok = bool(report.get("execution_ok"))
-    gate_enabled = bool((run.get("runner") or {}).get("regression_gate"))
-    gate_passed = bool(report.get("regression_gate_passed"))
-    ok = execution_ok and (gate_passed if gate_enabled else True)
-    project = Path(run["project"])
-    shutil.rmtree(state_root(project) / "tmp" / run_dir.name, ignore_errors=True)
-    return {
-        "ok": ok,
-        "execution_ok": execution_ok,
-        "evaluation_passed": bool(report.get("evaluation_passed")),
-        "regression_gate_enabled": gate_enabled,
-        "regression_gate_passed": gate_passed,
-        "run_id": run.get("run_id") or run_dir.name,
-        "run_dir": str(run_dir),
-        "adhoc": bool(run.get("adhoc")),
-        "trials": len(run.get("trials", [])),
-        "reused_trials": int(run.get("reused_trials") or 0),
-        "totals": report.get("totals"),
-        "report_path": str(report_path),
-    }
+        report = build_report(str(run_dir))
+        report_path = write_report(report)
+        project = Path(run["project"])
+        shutil.rmtree(state_root(project) / "tmp" / run_dir.name, ignore_errors=True)
+        return {
+            "ok": ok,
+            "execution_ok": execution_ok,
+            "evaluation_passed": bool(report.get("evaluation_passed")),
+            "regression_gate_enabled": gate_enabled,
+            "regression_gate_passed": gate_passed,
+            "run_id": run.get("run_id") or run_dir.name,
+            "run_dir": str(run_dir),
+            "adhoc": bool(run.get("adhoc")),
+            "trials": len(run.get("trials", [])),
+            "reused_trials": int(run.get("reused_trials") or 0),
+            "totals": report.get("totals"),
+            "report_path": str(report_path),
+        }
+    except KeyboardInterrupt:
+        terminate_active_processes()
+        cancel_unresolved_trials(run_dir, "interrupted during finalization")
+        update_run_state(
+            run_dir,
+            status="cancelled",
+            phase="stopped",
+            stop_reason="interrupted by user",
+            stop_phase=active_phase,
+        )
+        raise
+    except Exception as exc:
+        terminate_active_processes()
+        cancel_unresolved_trials(run_dir, f"finalization failed: {exc}")
+        update_run_state(
+            run_dir,
+            status="failed",
+            phase="stopped",
+            stop_reason=str(exc),
+            stop_phase=active_phase,
+        )
+        raise
 
 
 def run_eval(args, context=None, run_id_value=None):
@@ -710,9 +915,14 @@ def run_eval(args, context=None, run_id_value=None):
     packets = prepared["packets"]
     total = len(packets)
     parallel = run["runner"]["parallel"]
+    progress_lock = threading.Lock()
+    completed = 0
+    update_run_state(run_dir, status="running", phase="executing")
 
-    def execute(position, packet):
-        print(f"[{position}/{total}] {packet['trial_id']} running", file=sys.stderr)
+    def execute(_position, packet):
+        nonlocal completed
+        with progress_lock:
+            print(f"[start] {packet['trial_id']}", file=sys.stderr)
         state = read_json(state_path(run_dir, packet["trial_id"]))
         write_json(state_path(run_dir, packet["trial_id"]), {**state, "status": "running", "started_at": utc_now()})
         try:
@@ -735,21 +945,64 @@ def run_eval(args, context=None, run_id_value=None):
             }
             write_json(packet["result_path"], result)
         submitted = submit_trial(run_dir, packet["trial_id"], packet["attempt_id"], packet["result_path"])
-        seconds = round((submitted.get("duration_ms") or 0) / 1000, 1)
-        print(f"[{position}/{total}] {packet['trial_id']} {submitted['status']} ({seconds}s)", file=sys.stderr)
+        update_run_state(run_dir, status="running", phase="executing")
+        duration_ms = submitted.get("duration_ms")
+        elapsed = f"{round(duration_ms / 1000, 1)}s" if duration_ms else "duration unknown"
+        with progress_lock:
+            completed += 1
+            print(
+                f"[{completed}/{total} complete] {packet['trial_id']} "
+                f"{submitted['status']} ({elapsed})",
+                file=sys.stderr,
+            )
         return submitted
 
-    if parallel == 1:
-        for position, packet in enumerate(packets, 1):
-            execute(position, packet)
-    else:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=parallel) as executor:
-            futures = [
-                executor.submit(execute, position, packet)
-                for position, packet in enumerate(packets, 1)
-            ]
-            for future in concurrent.futures.as_completed(futures):
-                future.result()
+    try:
+        if parallel == 1:
+            for position, packet in enumerate(packets, 1):
+                execute(position, packet)
+        else:
+            executor = concurrent.futures.ThreadPoolExecutor(max_workers=parallel)
+            futures = []
+            try:
+                futures = [
+                    executor.submit(execute, position, packet)
+                    for position, packet in enumerate(packets, 1)
+                ]
+                for future in concurrent.futures.as_completed(futures):
+                    future.result()
+            except BaseException:
+                terminate_active_processes()
+                for future in futures:
+                    future.cancel()
+                executor.shutdown(wait=True, cancel_futures=True)
+                raise
+            else:
+                executor.shutdown(wait=True)
+    except KeyboardInterrupt:
+        terminate_active_processes()
+        cancel_unresolved_trials(run_dir, "interrupted by user")
+        update_run_state(
+            run_dir,
+            status="cancelled",
+            phase="stopped",
+            stop_reason="interrupted by user",
+            stop_phase="executing",
+        )
+        shutil.rmtree(state_root(Path(run["project"])) / "tmp" / run_dir.name, ignore_errors=True)
+        raise
+    except Exception as exc:
+        terminate_active_processes()
+        cancel_unresolved_trials(run_dir, f"execution failed: {exc}")
+        update_run_state(
+            run_dir,
+            status="failed",
+            phase="stopped",
+            stop_reason=str(exc),
+            stop_phase="executing",
+        )
+        shutil.rmtree(state_root(Path(run["project"])) / "tmp" / run_dir.name, ignore_errors=True)
+        raise
     return finalize_eval(run_dir)
 
 
@@ -767,4 +1020,9 @@ def run_snapshot(raw_run):
         "statuses": counts,
         "trials": len(run.get("trials", [])),
         "terminal": sum(counts.get(status, 0) for status in TERMINAL_STATUSES),
+        "lifecycle": (
+            read_json(run_state_path(run_dir))
+            if run_state_path(run_dir).is_file()
+            else None
+        ),
     }

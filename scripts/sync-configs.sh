@@ -249,6 +249,15 @@ sync_ghostty() {
 
 sync_cmux() {
   install_file "$ROOT/configs/cmux/cmux.json" "$HOME/.config/cmux/cmux.json"
+  if (( DRY_RUN )); then
+    log "Would set cmux sidebarState to inactive"
+    log "Would enable cmux Codex integration"
+  else
+    defaults write com.cmuxterm.app sidebarState -string inactive
+    defaults write com.cmuxterm.app codexHooksEnabled -bool true
+    log "Set cmux sidebarState to inactive"
+    log "Enabled cmux Codex integration"
+  fi
 }
 
 sync_starship() {

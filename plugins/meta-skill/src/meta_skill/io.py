@@ -136,9 +136,12 @@ def normalize_usage(usage):
     total = raw.get("total")
     if not isinstance(total, dict):
         return None
+    input_tokens = int(total.get("inputTokens") or 0)
+    output_tokens = int(total.get("outputTokens") or 0)
+    total_tokens = int(total.get("totalTokens") or 0)
     return {
-        "input_tokens": int(total.get("inputTokens") or 0),
+        "input_tokens": input_tokens,
         "cached_input_tokens": int(total.get("cachedInputTokens") or 0),
-        "output_tokens": int(total.get("outputTokens") or 0),
-        "total_tokens": int(total.get("totalTokens") or 0),
+        "output_tokens": output_tokens,
+        "total_tokens": total_tokens or input_tokens + output_tokens,
     }

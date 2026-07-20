@@ -1,13 +1,16 @@
 """Filesystem-backed local workbench server."""
 
 import json
+import hashlib
 import mimetypes
+import shutil
 import threading
 import uuid
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import parse_qs, unquote, urlparse
+from urllib.parse import parse_qs, quote, urlencode, unquote, urlparse
 
 from ..errors import CliError
 from ..grading import is_recorded_human_grade, record_human_grade
@@ -15,10 +18,13 @@ from ..ids import require_id, utc_now
 from ..io import read_json, write_json
 from ..manifest import DEFAULT_EVALS, load_manifest
 from ..report import build_report, build_suite_report, list_runs, write_report
+from ..verdicts import verdict_for_trial
 from .queue import build_queue
 from ..workbench_paths import evals_path, parse_frontmatter, runs_path, skill_id_for_target, state_root
 
-APP_PATH = Path(__file__).with_name("app.html")
+STATIC_ROOT = Path(__file__).with_name("static")
+APP_PATH = STATIC_ROOT / "index.html"
+ROOT_SKILL_ID = "_root"
 ANNOTATION_TAGS = {
     "taste-rule", "one-off", "task-defect", "grader-defect", "harness-error",
     "environment-failure", "candidate-failure", "routing-failure", "model-variance",
@@ -27,6 +33,14 @@ ANNOTATION_TAGS = {
 ANNOTATION_ARTIFACTS = {"response", "transcript", "task", "artifact"}
 ANNOTATION_JUDGE_USES = {"rubric", "evidence", "exclude"}
 FILE_LIMIT = 60000
+IMAGE_PREVIEW_LIMIT = 10 * 1024 * 1024
+TEXT_PREVIEW_MIMES = {
+    "application/json",
+    "image/svg+xml",
+    "text/html",
+    "text/markdown",
+    "text/plain",
+}
 LOCAL_HOSTS = {"127.0.0.1", "localhost", "::1"}
 
 
@@ -48,9 +62,49 @@ def _text(path, limit=FILE_LIMIT):
     return path.read_text(errors="replace")[:limit] if path.is_file() else None
 
 
-def artifact_entries(path):
+class _VisibleHTMLText(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.hidden = 0
+        self.parts = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in {"script", "style", "template"}:
+            self.hidden += 1
+        elif tag in {"h1", "h2", "h3", "p", "li", "tr", "th", "td", "br"}:
+            self.parts.append("\n")
+
+    def handle_endtag(self, tag):
+        if tag in {"script", "style", "template"} and self.hidden:
+            self.hidden -= 1
+        elif tag in {"h1", "h2", "h3", "p", "li", "tr"}:
+            self.parts.append("\n")
+
+    def handle_data(self, data):
+        if not self.hidden and data.strip():
+            self.parts.append(data.strip())
+
+    def text(self):
+        lines = [" ".join(line.split()) for line in " ".join(self.parts).splitlines()]
+        return "\n".join(line for line in lines if line)[:12000]
+
+
+def _html_text(source):
+    parser = _VisibleHTMLText()
+    parser.feed(source)
+    return parser.text()
+
+
+def artifact_entries(path, *, preview_root=None, preview_url=None):
     root = Path(path)
     rows = []
+    preview_index = {}
+    index_path = Path(preview_root) / "index.json" if preview_root else None
+    if index_path and index_path.is_file():
+        try:
+            preview_index = (read_json(index_path).get("entries") or {})
+        except (OSError, ValueError):
+            preview_index = {}
     if not root.is_dir():
         return rows
     for item in sorted(root.rglob("*")):
@@ -58,20 +112,40 @@ def artifact_entries(path):
             continue
         rel = item.relative_to(root).as_posix()
         mime = mimetypes.guess_type(item.name)[0] or "application/octet-stream"
-        inline = mime.startswith("text/") or mime in {
-            "application/json", "application/pdf", "image/png", "image/jpeg", "image/webp"
+        size = item.stat().st_size
+        image_preview = mime in {"image/png", "image/jpeg", "image/webp"} and size <= IMAGE_PREVIEW_LIMIT
+        text_preview = (mime.startswith("text/") or mime in TEXT_PREVIEW_MIMES) and size <= FILE_LIMIT
+        row = {
+            "path": rel,
+            "mime": mime,
+            "bytes": size,
+            "preview_kind": "image" if image_preview else "text" if text_preview else None,
         }
-        if mime in {"text/html", "image/svg+xml"}:
-            inline = False
-        rows.append(
-            {
-                "path": rel,
-                "local_path": str(item.resolve()),
-                "mime": mime,
-                "bytes": item.stat().st_size,
-                "inline": inline,
-            }
-        )
+        if text_preview:
+            row["preview"] = item.read_text(errors="replace")
+            if mime == "text/html":
+                row["accessible_text"] = _html_text(row["preview"])
+        rendered = preview_index.get(rel)
+        if isinstance(rendered, dict) and preview_url:
+            source_digest = hashlib.sha256(item.read_bytes()).hexdigest()
+            frames = []
+            if rendered.get("source_sha256") == source_digest:
+                for frame in rendered.get("frames") or []:
+                    preview_file = Path(str(frame.get("file") or ""))
+                    if (
+                        preview_file.name == str(preview_file)
+                        and preview_file.suffix == ".png"
+                        and (Path(preview_root) / preview_file).is_file()
+                    ):
+                        frames.append({
+                            "url": preview_url(preview_file.name),
+                            "generated_by": "harness",
+                            **{key: frame[key] for key in ("index", "label", "width", "height") if key in frame},
+                            **({"environment": rendered["environment"]} if "environment" in rendered else {}),
+                        })
+            if frames:
+                row["rendered_previews"] = frames
+        rows.append(row)
     return rows
 
 
@@ -131,7 +205,9 @@ def discover_skills(root):
     rows = []
     for skill_md in sorted(skill_files):
         skill_dir = skill_md.parent
-        relative = skill_dir.relative_to(root).as_posix() or "."
+        relative = skill_dir.relative_to(root).as_posix()
+        if relative == ".":
+            relative = ROOT_SKILL_ID
         metadata = parse_frontmatter(skill_md)
         suite = evals_path(skill_dir)
         manifest = None
@@ -142,14 +218,15 @@ def discover_skills(root):
             except CliError as exc:
                 suite_error = exc.message
         skill_runs_root = runs_path(skill_dir)
-        runs = (
-            list_runs(
-                str(suite), blind_pending_human=True, runs_root=skill_runs_root
-            )["runs"]
-            if suite_error is None
+        run_dirs = (
+            [
+                path
+                for path in skill_runs_root.iterdir()
+                if path.is_dir() and (path / "run.json").is_file()
+            ]
+            if skill_runs_root.is_dir()
             else []
         )
-        latest = runs[0] if runs else None
         rows.append(
             {
                 "id": relative,
@@ -162,10 +239,7 @@ def discover_skills(root):
                 "suite_ready": manifest is not None,
                 "suite_error": suite_error,
                 "eval_count": len((manifest or {}).get("evals") or []),
-                "run_count": len(runs),
-                "latest_run": latest,
-                "attention": (latest or {}).get("totals", {}).get("failed", 0)
-                + (latest or {}).get("totals", {}).get("inconclusive", 0),
+                "run_count": len(run_dirs),
             }
         )
     return rows
@@ -181,7 +255,7 @@ def _human_graders(case):
     return rows
 
 
-def build_trial_packet(run_dir, trial_id):
+def build_trial_packet(run_dir, trial_id, *, skill_id=None):
     report = build_report(str(run_dir), blind_pending_human=True)
     trial = next((row for row in report["trials"] if row["trial_id"] == trial_id), None)
     if trial is None:
@@ -189,6 +263,7 @@ def build_trial_packet(run_dir, trial_id):
     suite = read_json(Path(run_dir) / "inputs" / "suite.json")
     case = next((row for row in suite.get("evals", []) if row.get("id") == trial.get("eval_id")), {})
     case_root = Path(run_dir) / "inputs" / "cases" / str(trial.get("eval_id"))
+    review = trial.get("review") or {}
     recorded = [row for row in trial["grades"] if is_recorded_human_grade(row)]
     recorded_keys = {((row.get("grader") or {}).get("id"), row.get("metric")) for row in recorded}
     declared = _human_graders(case)
@@ -198,19 +273,49 @@ def build_trial_packet(run_dir, trial_id):
         (row for row in recorded if grader and (row.get("grader") or {}).get("id") == grader["id"] and row.get("metric") == grader["metric"]),
         None,
     )
+    review_blind_pending = (
+        selected_grade is None if declared else not bool(review.get("decision"))
+    )
     visible_grades = (
         [row for row in trial["grades"] if (row.get("grader") or {}).get("kind") != "model"]
-        if declared
+        if declared or review_blind_pending
         else trial["grades"]
     )
+    visible_trial = {
+        key: value
+        for key, value in trial.items()
+        if key not in {"grades", "disagreements"}
+    }
+    if declared or review_blind_pending:
+        visible_trial["verdict"] = "hidden" if review_blind_pending else verdict_for_trial(
+            {"status": trial.get("status")}, visible_grades, grading_enabled=True
+        )
+        visible_trial["failed_checks"] = [
+            {
+                "grader": (grade.get("grader") or {}).get("id"),
+                "metric": grade.get("metric"),
+                "name": check.get("name"),
+                "label": check.get("label"),
+                "evidence": check.get("evidence") or check.get("note") or "",
+            }
+            for grade in visible_grades
+            for check in grade.get("checks") or []
+            if check.get("label") in {"fail", "unknown"}
+        ]
     expected = case_root / "expected.md"
     judge_paths = [case_root / grader.get("path") for grader in case.get("graders") or [] if grader.get("kind") == "model" and grader.get("path")]
     return {
         "run_id": report["run_id"],
-        "trial": {key: value for key, value in trial.items() if key not in {"grades", "disagreements"}},
+        "trial": visible_trial,
         "task": _text(case_root / "task.md"),
         "response": _text(trial["response_path"]),
-        "artifacts": artifact_entries(trial["artifacts_path"]),
+        "artifacts": artifact_entries(
+            trial["artifacts_path"],
+            preview_root=Path(run_dir) / "trials" / trial_id / "previews",
+            preview_url=lambda name: (
+                f"/api/previews/{trial_id}/{name}?skill={skill_id}&run={report['run_id']}"
+            ),
+        ),
         "transcript": transcript_digest(trial["events_path"]),
         "expected": _text(expected),
         "judge_guidance": _text(judge_paths[0]) if judge_paths else None,
@@ -219,11 +324,13 @@ def build_trial_packet(run_dir, trial_id):
         "human_grader": grader,
         "human_grade": selected_grade,
         "human_recorded": selected_grade is not None,
+        "review_blind_pending": review_blind_pending,
         "annotations": (trial.get("review") or {}).get("annotations") or [],
+        "review": review,
     }
 
 
-def build_case_packet(run_dir, eval_id):
+def build_case_packet(run_dir, eval_id, *, skill_id=None):
     report = build_report(str(run_dir), blind_pending_human=True)
     trials = [row for row in report["trials"] if row.get("eval_id") == eval_id]
     if not trials:
@@ -234,7 +341,7 @@ def build_case_packet(run_dir, eval_id):
     }
     packets = []
     for trial in trials:
-        packet = build_trial_packet(run_dir, trial["trial_id"])
+        packet = build_trial_packet(run_dir, trial["trial_id"], skill_id=skill_id)
         packet["candidate_display"] = candidates.get(
             trial.get("candidate"), trial.get("candidate")
         )
@@ -264,6 +371,57 @@ def build_judge_reveal(run_dir, trial_id):
     }
 
 
+class InteractiveArtifactHandler(BaseHTTPRequestHandler):
+    server_version = "metaskill-artifact-preview"
+
+    def log_message(self, *_args):
+        pass
+
+    def do_GET(self):
+        port = self.server.server_address[1]
+        if not _local_authority(self.headers.get("Host"), port):
+            self.send_error(403)
+            return
+        parts = [unquote(part) for part in urlparse(self.path).path.split("/") if part]
+        if len(parts) < 2 or parts[0] not in self.server.artifacts:
+            self.send_error(404)
+            return
+        root = self.server.artifacts[parts[0]]
+        artifact = (root / Path(*parts[1:])).resolve()
+        if not artifact.is_relative_to(root) or not artifact.is_file():
+            self.send_error(404)
+            return
+        mime = mimetypes.guess_type(artifact.name)[0] or "application/octet-stream"
+        self.send_response(200)
+        self.send_header("Content-Type", mime)
+        self.send_header("Content-Length", str(artifact.stat().st_size))
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Referrer-Policy", "no-referrer")
+        self.send_header("Cross-Origin-Opener-Policy", "same-origin")
+        self.send_header(
+            "Content-Security-Policy",
+            "default-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; "
+            "style-src 'self' 'unsafe-inline'; connect-src 'none'; object-src 'none'; "
+            "base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        )
+        self.end_headers()
+        with artifact.open("rb") as source:
+            shutil.copyfileobj(source, self.wfile)
+
+
+class WorkbenchServer(ThreadingHTTPServer):
+    def server_close(self):
+        interactive = getattr(self, "interactive_server", None)
+        if interactive is not None:
+            interactive.shutdown()
+            interactive.server_close()
+            thread = getattr(self, "interactive_thread", None)
+            if thread is not None:
+                thread.join()
+            self.interactive_server = None
+        super().server_close()
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "metaskill-workbench"
 
@@ -283,15 +441,22 @@ class Handler(BaseHTTPRequestHandler):
         self._json({"ok": False, "error": message}, status)
 
     def _send_file(self, path, mime, inline):
-        body = Path(path).read_bytes()
+        size = Path(path).stat().st_size
         self.send_response(200)
         self.send_header("Content-Type", mime)
         disposition = "inline" if inline else "attachment"
         self.send_header("Content-Disposition", f'{disposition}; filename="{Path(path).name}"')
-        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Content-Length", str(size))
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
-        self.wfile.write(body)
+        with Path(path).open("rb") as source:
+            shutil.copyfileobj(source, self.wfile)
+
+    def _redirect(self, location):
+        self.send_response(302)
+        self.send_header("Location", location)
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
 
     def _body(self):
         try:
@@ -342,8 +507,20 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.send_header("Content-Length", str(len(body)))
                 self.send_header("Cache-Control", "no-store")
+                self.send_header(
+                    "Content-Security-Policy",
+                    "default-src 'self'; script-src 'self'; style-src 'self'; "
+                    "img-src 'self' data:; connect-src 'self'; object-src 'none'; "
+                    "base-uri 'none'; frame-ancestors 'none'",
+                )
                 self.end_headers()
                 return self.wfile.write(body)
+            if parts[0] == "assets":
+                asset = (STATIC_ROOT / Path(*parts)).resolve()
+                if not asset.is_relative_to(STATIC_ROOT.resolve()) or not asset.is_file():
+                    return self._error("not found", 404)
+                mime = mimetypes.guess_type(asset.name)[0] or "application/octet-stream"
+                return self._send_file(asset, mime, inline=True)
             if parts == ["api", "skills"]:
                 return self._json({"ok": True, "root": str(self.server.root), "skills": self._skills()})
             if len(parts) == 4 and parts[:2] == ["api", "skills"] and parts[3] == "suite":
@@ -374,14 +551,44 @@ class Handler(BaseHTTPRequestHandler):
                 run_dir = self._run_dir(self._query(query, "skill"), parts[2])
                 return self._json({"ok": True, "run_id": parts[2], "queue": build_queue(run_dir)})
             if len(parts) == 5 and parts[:2] == ["api", "runs"] and parts[3] == "cases":
-                run_dir = self._run_dir(self._query(query, "skill"), parts[2])
-                return self._json(build_case_packet(run_dir, parts[4]))
+                skill_id = self._query(query, "skill")
+                run_dir = self._run_dir(skill_id, parts[2])
+                return self._json(build_case_packet(run_dir, parts[4], skill_id=skill_id))
             if len(parts) == 3 and parts[:2] == ["api", "trials"]:
-                run_dir = self._run_dir(self._query(query, "skill"), self._query(query, "run"))
-                return self._json(build_trial_packet(run_dir, parts[2]))
+                skill_id = self._query(query, "skill")
+                run_dir = self._run_dir(skill_id, self._query(query, "run"))
+                return self._json(build_trial_packet(run_dir, parts[2], skill_id=skill_id))
             if len(parts) == 4 and parts[:2] == ["api", "trials"] and parts[3] == "judge":
                 run_dir = self._run_dir(self._query(query, "skill"), self._query(query, "run"))
                 return self._json(build_judge_reveal(run_dir, parts[2]))
+            if len(parts) == 4 and parts[:2] == ["api", "previews"]:
+                run_dir = self._run_dir(self._query(query, "skill"), self._query(query, "run"))
+                trials_root = (Path(run_dir) / "trials").resolve()
+                selected_trial = (trials_root / parts[2]).resolve()
+                if selected_trial.parent != trials_root:
+                    raise CliError("preview not found", 2)
+                preview_root = selected_trial / "previews"
+                preview = (preview_root / parts[3]).resolve()
+                if preview.parent != preview_root or preview.suffix != ".png" or not preview.is_file():
+                    raise CliError("preview not found", 2)
+                return self._send_file(preview, "image/png", inline=True)
+            if len(parts) >= 4 and parts[:2] == ["api", "interactive"]:
+                run_dir = self._run_dir(self._query(query, "skill"), self._query(query, "run"))
+                trial_id_value = parts[2]
+                artifact_root = (Path(run_dir) / "trials" / trial_id_value / "artifacts").resolve()
+                relative = Path(*parts[3:])
+                artifact = (artifact_root / relative).resolve()
+                if (
+                    not artifact.is_relative_to(artifact_root)
+                    or not artifact.is_file()
+                    or mimetypes.guess_type(artifact.name)[0] != "text/html"
+                ):
+                    raise CliError("interactive artifact not found", 2)
+                token = uuid.uuid4().hex
+                self.server.interactive_server.artifacts[token] = artifact_root
+                encoded = "/".join(quote(part) for part in relative.parts)
+                port = self.server.interactive_server.server_address[1]
+                return self._redirect(f"http://127.0.0.1:{port}/{token}/{encoded}")
             if len(parts) >= 4 and parts[:2] == ["api", "artifacts"]:
                 run_dir = self._run_dir(self._query(query, "skill"), self._query(query, "run"))
                 trial_id_value = parts[2]
@@ -391,11 +598,15 @@ class Handler(BaseHTTPRequestHandler):
                 if not artifact.is_relative_to(artifact_root) or not artifact.is_file():
                     raise CliError("artifact not found", 2)
                 mime = mimetypes.guess_type(artifact.name)[0] or "application/octet-stream"
-                inline = mime.startswith("text/") or mime in {
-                    "application/json", "application/pdf", "image/png", "image/jpeg", "image/webp"
-                }
-                if mime in {"text/html", "image/svg+xml"}:
-                    inline = False
+                size = artifact.stat().st_size
+                inline = (
+                    (mime.startswith("text/") or mime == "application/json")
+                    and mime not in {"text/html", "image/svg+xml"}
+                    and size <= FILE_LIMIT
+                ) or (
+                    mime in {"image/png", "image/jpeg", "image/webp"}
+                    and size <= IMAGE_PREVIEW_LIMIT
+                )
                 return self._send_file(artifact, mime, inline)
             return self._error("not found", 404)
         except CliError as exc:
@@ -411,6 +622,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._post_grade(body)
             if parts == ["api", "annotations"]:
                 return self._post_annotation(body)
+            if parts == ["api", "reviews"]:
+                return self._post_review(body)
             if parts == ["api", "evals"]:
                 return self._post_eval(body)
             return self._error("not found", 404)
@@ -461,9 +674,33 @@ class Handler(BaseHTTPRequestHandler):
         with self.server.write_lock:
             review = read_json(review_path) if review_path.exists() else {"annotations": []}
             review.setdefault("annotations", []).append(row)
+            review["decision"] = "finding"
+            review["reviewed_at"] = row["timestamp"]
             write_json(review_path, review)
             write_report(build_report(str(run_dir)))
         return self._json({"ok": True, "annotation": row})
+
+    def _post_review(self, body):
+        run_dir = self._run_dir(str(body.get("skill") or ""), str(body.get("run") or ""))
+        trial_id = str(body.get("trial_id") or "")
+        packet = build_trial_packet(run_dir, trial_id)
+        decision = str(body.get("decision") or "")
+        if decision not in {"looks_good", "finding"}:
+            raise CliError("review decision must be looks_good or finding", 2)
+        trial_dir = Path(run_dir) / "trials" / packet["trial"]["trial_id"]
+        review_path = trial_dir / "review.json"
+        with self.server.write_lock:
+            review = read_json(review_path) if review_path.exists() else {"annotations": []}
+            annotations = review.get("annotations") or []
+            if decision == "finding" and not annotations:
+                raise CliError("save a finding before marking this review", 2)
+            if decision == "looks_good" and annotations:
+                raise CliError("a review with findings cannot be marked looks good", 2)
+            review["decision"] = decision
+            review["reviewed_at"] = utc_now()
+            write_json(review_path, review)
+            write_report(build_report(str(run_dir)))
+        return self._json({"ok": True, "review": review})
 
     def _post_eval(self, body):
         if body.get("approved") is not True:
@@ -520,16 +757,25 @@ def create_server(root, port=7333):
     root = Path(root).resolve()
     if not root.is_dir():
         raise CliError(f"workbench root not found: {root}", 2)
-    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    server = WorkbenchServer(("127.0.0.1", port), Handler)
     server.root = root
     server.write_lock = threading.Lock()
+    interactive = ThreadingHTTPServer(("127.0.0.1", 0), InteractiveArtifactHandler)
+    interactive.artifacts = {}
+    interactive_thread = threading.Thread(target=interactive.serve_forever, daemon=True)
+    interactive_thread.start()
+    server.interactive_server = interactive
+    server.interactive_thread = interactive_thread
 
     return server
 
 
-def run_workbench_server(root, port=7333, open_browser=True):
+def run_workbench_server(root, port=7333, open_browser=True, initial=None):
     server = create_server(root, port)
+    query = urlencode(initial or {})
     url = f"http://127.0.0.1:{server.server_address[1]}/"
+    if query:
+        url = f"{url}?{query}"
     print(f"MetaSkill workbench listening at {url} (ctrl-c to stop)")
     if open_browser:
         webbrowser.open(url)
