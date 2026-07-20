@@ -43,7 +43,7 @@ class HtmlPreviewTests(unittest.TestCase):
 
             self.assertEqual(invoked.call_count, 1)
             index = json.loads((run / "trials" / "a.current.t1" / "previews" / "index.json").read_text())
-            self.assertEqual(index["schema_version"], 2)
+            self.assertEqual(index["schema_version"], 3)
             self.assertEqual(list(index["entries"]), ["page.html"])
             self.assertEqual(index["entries"]["page.html"]["generated_by"], "harness")
             self.assertEqual(index["entries"]["page.html"]["frames"][0]["label"], "Safe")
@@ -57,4 +57,5 @@ class HtmlPreviewTests(unittest.TestCase):
             artifact.write_text("<p>Page</p>")
             with patch("meta_skill.html_preview.subprocess.run", side_effect=subprocess.TimeoutExpired("node", 20)):
                 generate_html_previews(run)
-            self.assertFalse((artifact.parent.parent / "previews" / "index.json").exists())
+            index = json.loads((artifact.parent.parent / "previews" / "index.json").read_text())
+            self.assertEqual(index["errors"], {"page.html": "Harness rendering did not complete."})

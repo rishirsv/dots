@@ -279,7 +279,7 @@ class WorkbenchServerTests(unittest.TestCase):
         (previews / "preview-001.png").write_bytes(b"\x89PNG\r\n\x1a\n")
         (previews / "preview-002.png").write_bytes(b"\x89PNG\r\n\x1a\n")
         write(previews / "index.json", {
-            "schema_version": 2,
+            "schema_version": 3,
             "entries": {"active.html": {
                 "generated_by": "harness",
                 "frames": [

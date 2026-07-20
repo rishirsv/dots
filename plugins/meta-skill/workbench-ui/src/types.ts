@@ -31,6 +31,7 @@ export interface Artifact {
   preview_kind?: "image" | "text" | null;
   preview?: string;
   accessible_text?: string;
+  render_error?: string;
   rendered_previews?: Array<{
     url: string;
     generated_by: "harness";

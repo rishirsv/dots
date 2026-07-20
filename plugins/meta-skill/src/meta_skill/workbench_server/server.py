@@ -99,12 +99,16 @@ def artifact_entries(path, *, preview_root=None, preview_url=None):
     root = Path(path)
     rows = []
     preview_index = {}
+    preview_errors = {}
     index_path = Path(preview_root) / "index.json" if preview_root else None
     if index_path and index_path.is_file():
         try:
-            preview_index = (read_json(index_path).get("entries") or {})
+            preview_manifest = read_json(index_path)
+            preview_index = preview_manifest.get("entries") or {}
+            preview_errors = preview_manifest.get("errors") or {}
         except (OSError, ValueError):
             preview_index = {}
+            preview_errors = {}
     if not root.is_dir():
         return rows
     for item in sorted(root.rglob("*")):
@@ -125,6 +129,8 @@ def artifact_entries(path, *, preview_root=None, preview_url=None):
             row["preview"] = item.read_text(errors="replace")
             if mime == "text/html":
                 row["accessible_text"] = _html_text(row["preview"])
+        if isinstance(preview_errors.get(rel), str):
+            row["render_error"] = preview_errors[rel]
         rendered = preview_index.get(rel)
         if isinstance(rendered, dict) and preview_url:
             source_digest = hashlib.sha256(item.read_bytes()).hexdigest()

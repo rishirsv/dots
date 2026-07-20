@@ -12,6 +12,7 @@ const SCALE = 1;
 const SOURCE_BYTE_LIMIT = 1024 * 1024;
 const OUTPUT_BYTE_LIMIT = 10 * 1024 * 1024;
 const FRAME_LIMIT = 100;
+const FRAME_DIMENSION_LIMIT = 20000;
 const chromeCandidates = [
   process.env.CHROME_BIN,
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
@@ -99,14 +100,53 @@ async function main() {
     // this harness can expose one static artifact page at a time without running the
     // artifact's own scripts.
     await pageCall("Emulation.setScriptExecutionDisabled", { value: false });
+    const { result: viewportResult } = await pageCall("Runtime.evaluate", {
+      expression: `(() => {
+        const root = document.querySelector('[data-artifact-root]');
+        if (!root) return null;
+        const toPixels = value => {
+          if (!value) return null;
+          const probe = document.createElement('div');
+          probe.style.position = 'absolute';
+          probe.style.visibility = 'hidden';
+          probe.style.width = value;
+          probe.style.height = value;
+          document.body.appendChild(probe);
+          const pixels = parseFloat(getComputedStyle(probe).width);
+          probe.remove();
+          return Number.isFinite(pixels) ? pixels : null;
+        };
+        return {
+          width: toPixels(root.getAttribute('data-artifact-width')),
+          height: toPixels(root.getAttribute('data-artifact-height')),
+        };
+      })()`,
+      returnByValue: true,
+    });
+    const declaredViewport = viewportResult.value;
+    const captureWidth = Number(declaredViewport?.width);
+    const captureHeight = Number(declaredViewport?.height);
+    if (
+      captureWidth >= 320 && captureHeight >= 240
+      && captureWidth <= FRAME_DIMENSION_LIMIT && captureHeight <= FRAME_DIMENSION_LIMIT
+    ) {
+      await pageCall("Emulation.setDeviceMetricsOverride", {
+        width: Math.round(captureWidth), height: Math.round(captureHeight), deviceScaleFactor: SCALE,
+        mobile: false, screenWidth: Math.round(captureWidth), screenHeight: Math.round(captureHeight),
+      });
+      await pageCall("Runtime.evaluate", {
+        expression: "new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))",
+        awaitPromise: true,
+      });
+    }
+    const extension = extname(output) || ".png";
+    const stem = basename(output, extension);
     const { result: pageCountResult } = await pageCall("Runtime.evaluate", {
       expression: "Math.max(1, document.querySelectorAll('[data-artifact-page], [data-stage]').length || 1)",
       returnByValue: true,
     });
     const frameCount = Number(pageCountResult.value) || 1;
     if (frameCount > FRAME_LIMIT) throw new Error(`HTML artifact has more than ${FRAME_LIMIT} preview frames`);
-    const extension = extname(output) || ".png";
-    const stem = basename(output, extension);
     const frames = [];
     for (let index = 0; index < frameCount; index += 1) {
       const { result } = await pageCall("Runtime.evaluate", {
@@ -126,8 +166,14 @@ async function main() {
           document.body.scrollTop = 0;
           page.scrollIntoView({ block: 'start', inline: 'start' });
           const heading = page.querySelector('h1, h2, [aria-label]');
+          const rect = page.getBoundingClientRect();
+          const boundedPage = pages.length > 0;
           return {
             label: ((heading && (heading.innerText || heading.textContent || heading.getAttribute('aria-label'))) || page.getAttribute('aria-label') || 'Page ${index + 1}').trim().replace(/\\s+/g, ' ').slice(0, 100),
+            x: boundedPage ? rect.left + window.scrollX : window.scrollX,
+            y: boundedPage ? rect.top + window.scrollY : window.scrollY,
+            width: boundedPage ? rect.width : window.innerWidth,
+            height: boundedPage ? rect.height : window.innerHeight,
           };
         })()`,
         returnByValue: true,
@@ -136,12 +182,30 @@ async function main() {
         expression: "new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))",
         awaitPromise: true,
       });
-      const { data } = await pageCall("Page.captureScreenshot", { format: "png", captureBeyondViewport: false, fromSurface: true });
+      const frame = result.value || {};
+      const width = Math.ceil(Number(frame.width));
+      const height = Math.ceil(Number(frame.height));
+      if (
+        !Number.isFinite(width) || !Number.isFinite(height) || width < 1 || height < 1
+        || width > FRAME_DIMENSION_LIMIT || height > FRAME_DIMENSION_LIMIT
+      ) throw new Error(`Preview frame ${index + 1} has invalid geometry`);
+      const { data } = await pageCall("Page.captureScreenshot", {
+        format: "png",
+        captureBeyondViewport: true,
+        fromSurface: true,
+        clip: {
+          x: Math.max(0, Number(frame.x) || 0),
+          y: Math.max(0, Number(frame.y) || 0),
+          width,
+          height,
+          scale: 1,
+        },
+      });
       const png = Buffer.from(data, "base64");
       if (png.byteLength > OUTPUT_BYTE_LIMIT) throw new Error("PNG preview is too large");
       const frameName = `${stem}-${String(index + 1).padStart(3, "0")}${extension}`;
       writeFileSync(join(dirname(output), frameName), png);
-      frames.push({ file: frameName, index: index + 1, label: result.value?.label || `Page ${index + 1}`, width: WIDTH, height: HEIGHT });
+      frames.push({ file: frameName, index: index + 1, label: frame.label || `Page ${index + 1}`, width, height });
     }
     process.stdout.write(JSON.stringify({
       generated_by: "harness",

@@ -1,4 +1,4 @@
-"""Best-effort inert HTML previews owned by the evaluation harness."""
+"""Best-effort inert HTML page previews owned by the evaluation harness."""
 
 import hashlib
 import json
@@ -15,7 +15,7 @@ CAPTURE_SCRIPT = Path(__file__).with_name("capture_html_preview.mjs")
 
 
 def generate_html_previews(run_dir):
-    """Generate bounded PNG caches for HTML artifacts without affecting run success."""
+    """Generate bounded page previews without affecting run success."""
     run_dir = Path(run_dir)
     attempted = 0
     for trial in sorted((run_dir / "trials").glob("*")):
@@ -24,6 +24,7 @@ def generate_html_previews(run_dir):
             continue
         preview_root = trial / "previews"
         entries = {}
+        errors = {}
         for source in sorted(artifact_root.rglob("*.html")):
             if attempted >= MAX_PREVIEWS_PER_RUN:
                 break
@@ -66,5 +67,10 @@ def generate_html_previews(run_dir):
             except (OSError, ValueError, subprocess.SubprocessError):
                 for generated in preview_root.glob(f"{output.stem}-*.png"):
                     generated.unlink(missing_ok=True)
-        if entries:
-            write_json(preview_root / "index.json", {"schema_version": 2, "entries": entries})
+                errors[relative] = "Harness rendering did not complete."
+        if entries or errors:
+            write_json(preview_root / "index.json", {
+                "schema_version": 3,
+                "entries": entries,
+                "errors": errors,
+            })

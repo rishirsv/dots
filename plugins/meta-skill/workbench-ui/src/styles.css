@@ -166,6 +166,7 @@ td { font-size: 13px; }
 .artifact-card small { margin-top: 2px; color: var(--muted); font-size: 11px; }
 .artifact-card a { color: #255f9f; font-size: 11px; font-weight: 700; text-decoration: none; white-space: nowrap; }
 .artifact-card > header > .artifact-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px 12px; }
+.preview-error { margin: 0; padding: 9px 10px; border-bottom: 1px solid #e2aaa4; background: #fff1ef; color: #742d27; font-size: 11px; }
 .artifact-card img { display: block; max-width: 100%; max-height: 520px; margin: auto; object-fit: contain; }
 .rendered-preview { margin: 0; background: #eceae4; }
 .rendered-preview img { width: 100%; max-height: 560px; background: white; }
