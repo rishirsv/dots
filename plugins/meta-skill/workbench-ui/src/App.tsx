@@ -430,9 +430,10 @@ type PreviewFrame = NonNullable<Artifact["rendered_previews"]>[number];
 function PreviewCompare({ items, selectedTrialId, onSelect, onClose }: { items: Array<{ trialId: string; candidate: string; artifact: Artifact; previews: PreviewFrame[] }>; selectedTrialId: string; onSelect: (trialId: string) => void; onClose: (focusInspector: boolean) => void }) {
   const [zoom, setZoom] = useState(.35);
   const [pageIndex, setPageIndex] = useState(0);
-  const frames = items.map((item) => item.previews[Math.min(pageIndex, item.previews.length - 1)]);
+  const frames = items.map((item) => item.previews[pageIndex]);
+  const availableFrames = frames.filter((frame): frame is PreviewFrame => Boolean(frame));
   const frameCount = Math.max(...items.map((item) => item.previews.length));
-  const sameDimensions = frames.every((frame) => frame.width === frames[0]?.width && frame.height === frames[0]?.height);
+  const sameDimensions = availableFrames.every((frame) => frame.width === availableFrames[0]?.width && frame.height === availableFrames[0]?.height);
   const [linked, setLinked] = useState(sameDimensions);
   const [targetChanged, setTargetChanged] = useState(false);
   const dialog = useRef<HTMLDialogElement | null>(null);
@@ -442,7 +443,7 @@ function PreviewCompare({ items, selectedTrialId, onSelect, onClose }: { items: 
   const fitWidth = () => {
     const ratios = frames.flatMap((frame, index) => {
       const pane = panes.current[index];
-      return pane ? [pane.clientWidth / (frame.width || 1440)] : [];
+      return pane && frame ? [pane.clientWidth / (frame.width || 1440)] : [];
     });
     if (ratios.length) setZoom(Math.max(.25, Math.min(1.25, Math.floor(Math.min(...ratios) * 20) / 20)));
   };
@@ -467,7 +468,7 @@ function PreviewCompare({ items, selectedTrialId, onSelect, onClose }: { items: 
   const close = () => onClose(targetChanged);
   return <dialog ref={dialog} className="compare-overlay" aria-labelledby="compare-title" onCancel={(event) => { event.preventDefault(); close(); }}>
     <header><div><h2 id="compare-title">Compare rendered previews</h2><p>Inert harness captures · matching page {pageIndex + 1} · {linked ? "scroll linked" : "independent scrolling"}{!sameDimensions && " · dimensions differ"}</p></div><div className="compare-pages"><Button size="1" variant="surface" disabled={pageIndex === 0} onClick={() => setPageIndex((value) => value - 1)}>Previous page</Button><strong>{pageIndex + 1} / {frameCount}</strong><Button size="1" variant="surface" disabled={pageIndex >= frameCount - 1} onClick={() => setPageIndex((value) => value + 1)}>Next page</Button></div><Button className="link-toggle" size="1" variant="surface" aria-pressed={linked} onClick={() => setLinked((value) => !value)}>{linked ? "Unlink scroll" : "Link scroll"}</Button><Button className="fit-width" size="1" variant="surface" onClick={fitWidth}>Fit width</Button><label>Zoom <input type="range" min="0.25" max="1.25" step="0.05" value={zoom} onChange={(event) => setZoom(Number(event.target.value))} /><output>{Math.round(zoom * 100)}%</output></label><Button ref={closeButton} size="2" variant="surface" onClick={close}>Close</Button></header>
-    <div className="compare-grid">{items.map((item, index) => { const frame = frames[index]; return <section key={`${item.candidate}-${item.artifact.path}`}><h3><span><strong>{item.candidate}</strong><code>{frame.label || item.artifact.path}</code></span><Button className="compare-select" size="1" variant={item.trialId === selectedTrialId ? "solid" : "surface"} aria-pressed={item.trialId === selectedTrialId} onClick={() => { onSelect(item.trialId); setTargetChanged(true); }}>{item.trialId === selectedTrialId ? "Selected for review" : "Select for review"}</Button></h3><div className="compare-pane" ref={(node) => { panes.current[index] = node; }} onScroll={(event) => syncScroll(event.currentTarget, index)}><img src={frame.url} alt={`Page ${pageIndex + 1} inert preview for ${item.candidate}`} style={{ width: `${(frame.width || 1440) * zoom}px` }} /></div>{item.artifact.accessible_text && <details className="compare-text"><summary>Accessible text</summary><pre>{item.artifact.accessible_text}</pre></details>}</section>; })}</div>
+    <div className="compare-grid">{items.map((item, index) => { const frame = frames[index]; return <section key={`${item.candidate}-${item.artifact.path}`}><h3><span><strong>{item.candidate}</strong><code>{frame?.label || item.artifact.path}</code></span><Button className="compare-select" size="1" variant={item.trialId === selectedTrialId ? "solid" : "surface"} aria-pressed={item.trialId === selectedTrialId} onClick={() => { onSelect(item.trialId); setTargetChanged(true); }}>{item.trialId === selectedTrialId ? "Selected for review" : "Select for review"}</Button></h3><div className={`compare-pane ${frame ? "" : "missing-page"}`} ref={(node) => { panes.current[index] = node; }} onScroll={(event) => syncScroll(event.currentTarget, index)}>{frame ? <img src={frame.url} alt={`Page ${pageIndex + 1} inert preview for ${item.candidate}`} style={{ width: `${(frame.width || 1440) * zoom}px` }} /> : <p>This candidate has {item.previews.length} pages; page {pageIndex + 1} is absent.</p>}</div>{item.artifact.accessible_text && <details className="compare-text"><summary>Accessible text</summary><pre>{item.artifact.accessible_text}</pre></details>}</section>; })}</div>
   </dialog>;
 }
 

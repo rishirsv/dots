@@ -252,6 +252,7 @@ td { font-size: 13px; }
 .compare-select[aria-pressed="true"] { border-color: #9db8de; background: #edf4ff; color: #194f8a; }
 .compare-pane { min-height: 0; overflow: auto; overscroll-behavior: contain; background: #e5e2dc; }
 .compare-pane img { display: block; max-width: none; height: auto; background: white; }
+.compare-pane.missing-page { display: grid; place-items: center; padding: 24px; color: var(--muted); font-size: 12px; text-align: center; }
 .compare-text { border-top: 1px solid var(--line); background: white; }
 .compare-text summary { padding: 7px 12px; color: #255f9f; cursor: pointer; font-size: 11px; font-weight: 700; }
 .compare-text pre { max-height: 160px; margin: 0; padding: 10px 12px; overflow: auto; border-top: 1px solid var(--line); font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; }
@@ -272,7 +273,7 @@ td { font-size: 13px; }
   .skill-row { min-width: 170px; }
   .workspace { grid-column: 1; grid-row: 3; padding: 20px 16px 44px; }
   .case-workspace { padding: 0; }
-  .case-layout { display: block; }
+  .case-layout { display: block; padding-bottom: 86px; }
   .case-masthead { top: 54px; grid-template-columns: minmax(0, 1fr); }
   .case-masthead > span, .case-nav { display: none; }
   .case-state { display: flex; }
@@ -283,7 +284,7 @@ td { font-size: 13px; }
   .review-inspector.is-open { transform: translateY(0); }
   .review-inspector .inspector-close { display: inline-flex; margin-left: auto; padding: 6px 8px; border: 0; background: transparent; color: #315f99; font-size: 12px; }
   .review-inspector > header .icon { display: none; }
-  .review-dock { position: sticky; z-index: 20; bottom: 10px; display: flex; align-items: center; justify-content: space-between; width: calc(100% - 20px); margin: 0 10px 10px; padding: 12px 14px; border-color: #22211e; background: #22211e; color: white; box-shadow: 0 8px 24px rgb(23 22 19 / 22%); text-align: left; }
+  .review-dock { position: fixed; z-index: 20; inset: auto 10px 10px; display: flex; align-items: center; justify-content: space-between; width: auto; margin: 0; padding: 12px 14px; border-color: #22211e; background: #22211e; color: white; box-shadow: 0 8px 24px rgb(23 22 19 / 22%); text-align: left; }
   .review-dock strong, .review-dock small { display: block; }
   .review-dock strong { font-size: 12px; }
   .review-dock small { margin-top: 2px; color: #c9c6be; font-size: 11px; }

@@ -100,10 +100,11 @@ async function main() {
     // artifact's own scripts.
     await pageCall("Emulation.setScriptExecutionDisabled", { value: false });
     const { result: pageCountResult } = await pageCall("Runtime.evaluate", {
-      expression: `Math.max(1, Math.min(${FRAME_LIMIT}, document.querySelectorAll('[data-artifact-page], [data-stage]').length || 1))`,
+      expression: "Math.max(1, document.querySelectorAll('[data-artifact-page], [data-stage]').length || 1)",
       returnByValue: true,
     });
     const frameCount = Number(pageCountResult.value) || 1;
+    if (frameCount > FRAME_LIMIT) throw new Error(`HTML artifact has more than ${FRAME_LIMIT} preview frames`);
     const extension = extname(output) || ".png";
     const stem = basename(output, extension);
     const frames = [];
@@ -113,7 +114,10 @@ async function main() {
           const pages = [...document.querySelectorAll('[data-artifact-page], [data-stage]')];
           const page = pages[${index}] || document.documentElement;
           if (pages.length) pages.forEach((candidate, position) => {
-            candidate.style.setProperty('display', position === ${index} ? '' : 'none', 'important');
+            if (position === ${index}) {
+              if (candidate.hasAttribute('data-stage')) candidate.style.setProperty('display', 'block', 'important');
+              else candidate.style.removeProperty('display');
+            } else candidate.style.setProperty('display', 'none', 'important');
             candidate.toggleAttribute('hidden', position !== ${index});
             candidate.setAttribute('aria-hidden', String(position !== ${index}));
           });
