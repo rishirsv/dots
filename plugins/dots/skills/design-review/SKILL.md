@@ -1,6 +1,6 @@
 ---
 name: design-review
-description: "Independently reviews product UI, UX, accessibility, motion, and animation code. Use for design critique, experience audits, motion interaction review, animation diff review, or a codebase motion audit; not for general code review, redesign, implementation, or routine build self-checks."
+description: "Independently reviews product UI, UX, accessibility, design-system conformance, motion, and animation code. Use for design critique, experience audits, design-system audits, or motion review; not for general code review, redesign, implementation, or routine build self-checks."
 ---
 
 # Design Review
@@ -50,7 +50,7 @@ Use these native-feel questions as evidence prompts behind the score:
 - Is it internally consistent?
 - Does the visual treatment fit the product?
 
-Two paths share this skill's evidence rules, severity scale, finding anatomy,
+These paths share this skill's evidence rules, severity scale, finding anatomy,
 and reviewer protocol:
 
 - **Surface critique**: one rendered artifact, screen, component, or surface,
@@ -60,6 +60,10 @@ and reviewer protocol:
 - **Experience audit**: a multi-step journey, funnel, onboarding path, checkout path,
   settings path, workflow, or product area. Ends in a numbered step list with
   health labels plus UX, design, and accessibility findings.
+- **Design-system audit**: one coherent product surface traced through its
+  governing design sources, runtime owners, tokens, primitives, variants, and
+  compositions. Source can prove conformance; experiential claims still need
+  rendered or user evidence.
 - **Motion interaction review**: live UI or a recording, judged for purpose,
   timing, easing, physicality, interruption, continuity, gesture response,
   performance, accessibility, and cohesion.
@@ -96,6 +100,8 @@ severity, and pass/block decision.
   the subject → motion diff review.
 - A repository or product area whose motion system should be surveyed and
   prioritized → motion codebase audit.
+- Source-level design-system drift, token or primitive conformance, or a UI
+  cleanup audit without rendered evidence → design-system audit.
 
 When motion, gesture behavior, haptic feedback, or animation code is in scope,
 read [references/motion-audit.md](references/motion-audit.md). Require dynamic
@@ -127,9 +133,10 @@ Capture evidence per the shared
   the current run. Do not use memory, prior chats, old traces, cached
   screenshots, or prior generated artifacts unless the user explicitly provides
   them.
-- Do not write the review from memory, code, or file paths alone. Open or
-  capture the rendered implementation first; open or capture the source design
-  when one exists. Judge what is actually visible.
+- Outside the design-system audit path, do not write the review from memory,
+  code, or file paths alone. Open or capture the rendered implementation first;
+  open or capture the source design when one exists. Judge what is actually
+  visible.
 - Inspect every screenshot before accepting it as evidence. If a saved file
   shows the wrong window, wrong state, blank page, crop, or loading screen,
   reject it and capture again.
@@ -142,6 +149,9 @@ Capture evidence per the shared
   practice, or whether a gesture remains continuous under interruption.
 
 ## Capture
+
+Design-system audits skip this section and follow the source-evidence method in
+[references/design-system-audit.md](references/design-system-audit.md).
 
 Tool choice:
 
@@ -250,6 +260,13 @@ established workflow explicitly requires a durable artifact. When saving,
 follow the named destination or repository convention; otherwise use
 `.agents/outputs/`, never the project root. Save screenshots only when they are
 needed as durable evidence, using numbered names for flow steps.
+
+## Design-System Audit
+
+Read [references/design-system-audit.md](references/design-system-audit.md).
+Use source evidence only for the claims that reference permits. Use the parent
+severity and finding anatomy for findings, and return a positive-null result
+when no candidate survives the proof and falsification gates.
 
 ## Surface Critique
 
@@ -434,6 +451,9 @@ Lead with the outcome, then support it:
   findings, top ship-now fixes, the strongest system-quality themes, the most
   important evidence limits, and where output was saved — or that the audit was
   chat-only because no saved output was requested.
+- Design-system audit: the governing design language, strongest findings that
+  survived the contract/runtime/correction and falsification gates, the first
+  improvement to make, and any claims that still require rendered evidence.
 - Motion interaction review: verdict, strongest evidenced findings, concrete
   corrections, and the dynamic states or devices still needing verification.
 - Motion diff review: findings table followed by an explicit `Approve` or

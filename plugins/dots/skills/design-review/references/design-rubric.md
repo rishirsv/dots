@@ -50,6 +50,7 @@ report on these areas:
 
 - Fonts and typography: identify mismatched font family/fallback, weight, scale, line height, letter spacing, antialiasing, text hierarchy, wrapping, truncation, display-vs-body optical treatment, cramped text, and places where text spacing makes the UI feel broken or harder to scan. Audit typography everywhere, including UI chrome — toolbars, sidebars, tabs, inputs, table cells, chart labels, status bars, and command palettes — not just headings and hero. Watch for browser-default or inherited control typography.
 - Spacing and layout: compare frame/crop, alignment, margins, padding, gaps, component sizes, radii, elevation, borders, and vertical rhythm. Cite where spacing drift changes hierarchy, density, readability, or causes elements to collide.
+- Apply the exact density, spatial-rhythm, proportions, spacing-system, optical-alignment, and hit-area guidance in [spacing.md](../../design/references/spacing.md).
 - Viewport resilience: check desktop, tablet, and mobile widths for overlapping elements, clipped content, collapsing sections, broken grids, awkward wrapping, and controls that become unusable.
 - Colors and tokens: compare palette, gradients, opacity, shadows, contrast, semantic status colors, disabled/active states, and whether implementation tokens map to design intent.
 - Image quality and asset fidelity: check subject match, crop, scale, aspect ratio, sharpness, compression, transparency/masking artifacts, halos, background integration, and raster-vs-vector suitability. Div/CSS art or custom SVG art that replace images in the target design are banned.
@@ -66,6 +67,7 @@ report on these areas:
 ### Accessibility
 
 - Contrast, focus indicators, keyboard reachability, semantic controls, labels, alt text, reduced motion.
+- Apply the exact interactive-state, focus-ring, form, loading, destructive-action, keyboard-navigation, and gesture-discoverability guidance in [interaction-design.md](../../design/references/interaction-design.md).
 - Text scaling and zoom resilience.
 - Tap targets at practical mobile sizes.
 - Layout stability when text wraps, scales, or appears in longer real-world strings.

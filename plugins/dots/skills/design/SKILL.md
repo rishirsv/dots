@@ -17,6 +17,11 @@ changes what a user sees or the user needs precise interaction terminology.
   forming a new-surface brief or UI-generation prompt from sparse direction.
 - Read [visual-principles.md](references/visual-principles.md) before choosing
   the visual direction, typography, layout language, or polish pass.
+- Read [spacing.md](references/spacing.md) when choosing or auditing density,
+  spatial rhythm, proportions, spacing systems, optical alignment, or hit areas.
+- Read [interaction-design.md](references/interaction-design.md) when designing
+  interactive states, focus, forms, loading, destructive actions, keyboard
+  navigation, or gesture discoverability for web UI.
 - Read [animation-vocabulary.md](references/animation-vocabulary.md) on demand
   for terminology-only naming requests or when motion and interaction design
   needs precise language.

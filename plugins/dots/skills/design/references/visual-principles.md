@@ -84,6 +84,9 @@ palettes, and mobile line breaks all need deliberate type choices.
 
 ## Structure
 
+Read [spacing.md](spacing.md) when choosing or auditing density, spatial rhythm,
+proportions, spacing systems, optical alignment, or hit areas.
+
 Structure is information. Numbering, eyebrows, dividers, labels, rails, bands,
 and containers should encode something true about the content rather than
 decorate it.
