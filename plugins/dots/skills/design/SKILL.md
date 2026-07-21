@@ -18,7 +18,8 @@ changes what a user sees or the user needs precise interaction terminology.
 - Read [visual-principles.md](references/visual-principles.md) before choosing
   the visual direction, typography, layout language, or polish pass.
 - Read [spacing.md](references/spacing.md) when choosing or auditing density,
-  spatial rhythm, proportions, spacing systems, optical alignment, or hit areas.
+  spatial rhythm, proportions, symmetry, component sizing, spacing systems,
+  optical alignment, or hit areas.
 - Read [interaction-design.md](references/interaction-design.md) when designing
   interactive states, focus, forms, loading, destructive actions, keyboard
   navigation, or gesture discoverability for web UI.

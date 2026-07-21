@@ -1,0 +1,80 @@
+{
+  "schema_version": 2,
+  "skill_name": "code-review",
+  "evaluation_mode": "diagnostic",
+  "target": {
+    "type": "skill",
+    "ref": "SKILL.md"
+  },
+  "defaults": {
+    "runner": "codex_exec",
+    "repetitions": 1,
+    "repetition_policy": "all_trials",
+    "timeout_seconds": 900
+  },
+  "evals": [
+    {
+      "id": "plan-over-engineering",
+      "type": "capability",
+      "outcome": "response",
+      "priority": "high",
+      "prompt": "Use $code-review to review this implementation plan, report-only. Requirement: add `--sort newest|oldest` to one internal export command, defaulting to newest. Plan: first build a provider-neutral query AST, plugin registry, versioned configuration schema, two adapters, a feature flag, a legacy adapter for an unreleased prototype, and a four-phase rollout; then wire the one caller. No external compatibility boundary or second use case exists.",
+      "expected_output": "A concise finding that identifies unsupported machinery as over-engineering, explains its concrete cost, and recommends the direct current solution without rewriting or implementing the plan.",
+      "expectations": [
+        "The response remains report-only and evaluates the supplied plan rather than replacing it.",
+        "The finding identifies unsupported indirection, generality, configuration, compatibility, and ceremony instead of merely calling the plan too complex.",
+        "The finding ties the extra machinery to the absence of a current requirement, second use case, or real compatibility boundary and explains concrete maintenance or review cost.",
+        "The smallest safe fix is a direct implementation of the two-value option in the existing owner."
+      ],
+      "graders": [
+        {
+          "kind": "human",
+          "id": "over-engineering-review",
+          "metric": "over-engineering-detection"
+        }
+      ]
+    },
+    {
+      "id": "intent-and-standards",
+      "type": "capability",
+      "outcome": "response",
+      "priority": "high",
+      "prompt": "Use $code-review in report-only mode. The product requirement says, 'Saving a draft must preserve the published record until the user explicitly publishes the replacement.' The repository guide says, 'Repository methods own persistence; views must not write the database directly.' The patch makes the view save a draft by overwriting the published database record. Review this change without implementing it.",
+      "expected_output": "A high-confidence finding that cites both the product requirement and repository rule, explains the destructive mismatch, and proposes the smallest safe correction without editing.",
+      "expectations": [
+        "The response treats the quoted product requirement and repository rule as separate governing authorities.",
+        "The finding cites both authorities and identifies the requirement breach, ownership violation, and resulting failure scenario.",
+        "The response proposes moving draft persistence through the repository while preserving the published record until explicit publication.",
+        "The response remains report-only."
+      ],
+      "graders": [
+        {
+          "kind": "human",
+          "id": "authority-review",
+          "metric": "intent-and-standards-conformance"
+        }
+      ]
+    },
+    {
+      "id": "missing-intent-limit",
+      "type": "regression",
+      "outcome": "response",
+      "priority": "high",
+      "prompt": "Use $code-review to review this patch, report-only. There is no issue, PR description, plan, or spec. The only repository rule says, 'Replace output files atomically.' The patch opens the destination file, truncates it, writes the new contents, and leaves the old file destroyed if the write fails.",
+      "expected_output": "A review that states the intent evidence limit, still confirms the repository-rule and correctness defect, and does not invent product requirements or scope-creep claims.",
+      "expectations": [
+        "The response explicitly limits requirement-completeness and scope-creep conclusions because no authoritative intent exists.",
+        "The response still cites the atomic-write repository rule and explains the reachable partial-write or data-loss failure.",
+        "The response does not infer requirements from unspecified or loosely related documentation.",
+        "The response stays report-only and proposes the smallest atomic-write correction."
+      ],
+      "graders": [
+        {
+          "kind": "human",
+          "id": "evidence-limit-review",
+          "metric": "evidence-honesty"
+        }
+      ]
+    }
+  ]
+}

@@ -5,7 +5,7 @@ approval_policy = "never"
 sandbox_mode = "danger-full-access"
 service_tier = "default"
 model = "gpt-5.6-sol"
-model_reasoning_effort = "medium"
+model_reasoning_effort = "low"
 
 approvals_reviewer = "user"
 
@@ -230,8 +230,23 @@ trust_level = "trusted"
 [projects."/Users/rishi/Documents/Codex/2026-07-20/us"]
 trust_level = "trusted"
 
+[projects."/Users/rishi/Documents/Codex/2026-07-20/go"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-20/get"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-20/ca"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-20/is"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-20/dr"]
+trust_level = "trusted"
+
 [marketplaces.openai-bundled]
-last_updated = "2026-07-20T22:41:43Z"
+last_updated = "2026-07-21T01:50:03Z"
 source_type = "local"
 source = "/Users/rishi/.codex/.tmp/bundled-marketplaces/openai-bundled"
 

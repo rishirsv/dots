@@ -1,8 +1,0 @@
-interface:
-  display_name: "Compose"
-  short_description: "Draft or revise writing with an editor"
-  brand_color: "#2563EB"
-  default_prompt: "Draft new prose, rewrite existing text, continue a piece, or adapt writing for a channel after Drafts has enough context. For ordinary writing requests, start with Drafts."
-
-policy:
-  allow_implicit_invocation: false

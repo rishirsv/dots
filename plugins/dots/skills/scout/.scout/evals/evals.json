@@ -56,6 +56,50 @@
           "metric": "transition-quality"
         }
       ]
+    },
+    {
+      "id": "resolved-transition-snapshot",
+      "type": "regression",
+      "outcome": "response",
+      "priority": "high",
+      "prompt": "Continue using Scout. We have confirmed the audience, success criteria, product boundary, terminology, and the only rejected branch. No direction-changing decisions remain. Go ahead and implement the first version now.",
+      "expected_output": "Scout closes discovery with a complete decision snapshot, explicitly marks Scout complete, names implementation as the next mode, and does not plan or implement in the Scout response.",
+      "expectations": [
+        "The response includes the compact Decision Snapshot with settled direction, success, trade-off, rejected branch, assumption, non-goal, open-decision status, and next mode.",
+        "The response explicitly states `Scout complete; next mode: build` or an equivalent implementation-mode label.",
+        "The response preserves the settled decisions without reopening them or asking another discovery question.",
+        "The response does not create an implementation plan, task sequence, source edit, or build artifact.",
+        "The handoff is sufficient for a separate implementation mode to continue without replaying the Scout conversation."
+      ],
+      "graders": [
+        {
+          "kind": "human",
+          "id": "resolved-transition-review",
+          "metric": "transition-quality"
+        }
+      ]
+    },
+    {
+      "id": "rejected-prototype-foundation",
+      "type": "regression",
+      "outcome": "response",
+      "priority": "high",
+      "prompt": "Continue using Scout. I rejected all three interface concepts because none of them looked or felt like our existing product. Generate fifteen completely different mockups now so I can choose one.",
+      "expected_output": "Scout treats the shared rejection as a failed visual foundation, pauses broad generation, returns to the controlling product reference, and proposes a small grounded next probe.",
+      "expectations": [
+        "The response translates the rejection into a reusable criterion about preserving the existing product foundation.",
+        "The response does not generate or promise fifteen more variants immediately.",
+        "The response returns to inspecting or confirming the controlling product surface or reference before another probe.",
+        "The response recommends a next probe containing one conservative control and no more than two frontier alternatives.",
+        "The response keeps the work in taste discovery rather than treating any prototype as implementation-ready."
+      ],
+      "graders": [
+        {
+          "kind": "human",
+          "id": "prototype-foundation-review",
+          "metric": "prototype-quality"
+        }
+      ]
     }
   ]
 }

@@ -120,6 +120,80 @@ class SessionAdapterTests(unittest.TestCase):
         self.assertEqual(messages, ["Use $dots:oracle", "legacy user"])
         self.assertEqual(signals.skills["dots:oracle"], 1)
 
+    def test_self_improve_deduplicates_transport_markers_and_tracks_primary_use(self):
+        message = "Use $dots:oracle for this review"
+        records = [
+            {
+                "timestamp": "1",
+                "type": "response_item",
+                "payload": {
+                    "type": "message",
+                    "role": "user",
+                    "content": [{"type": "input_text", "text": message}],
+                },
+            },
+            {
+                "timestamp": "2",
+                "type": "event_msg",
+                "payload": {"type": "user_message", "message": message},
+            },
+            {
+                "timestamp": "3",
+                "type": "event_msg",
+                "payload": {
+                    "type": "agent_message",
+                    "message": "The earlier $dots:oracle output is relevant.",
+                },
+            },
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "rollout.jsonl"
+            path.write_text("".join(json.dumps(record) + "\n" for record in records))
+            thread = self_improve.Thread("id", "title", "", tmp, 0, 0, False, "", str(path))
+            signals = self_improve.thread_signals(thread, {"dots:oracle"})
+
+        self.assertEqual(signals.skills["dots:oracle"], 2)
+        self.assertEqual(signals.primary_skills["dots:oracle"], 1)
+
+    def test_self_improve_collapses_retries_and_delegated_children(self):
+        root = self_improve.Thread(
+            "root", "Review the product", "vscode", "/repo", 0, 3, False, "", "/root.jsonl"
+        )
+        retry = self_improve.Thread(
+            "retry", "Review the product", "vscode", "/repo", 0, 2, False, "", "/retry.jsonl"
+        )
+        child = self_improve.Thread(
+            "child",
+            "Delegated review",
+            json.dumps({"subagent": {"thread_spawn": {"parent_thread_id": "root"}}}),
+            "/repo",
+            0,
+            1,
+            False,
+            "",
+            "/child.jsonl",
+        )
+        external = self_improve.Thread(
+            "external",
+            "<source_thread_id>outside</source_thread_id>",
+            "vscode",
+            "/repo",
+            0,
+            1,
+            False,
+            "",
+            "/external.jsonl",
+        )
+        threads = {thread.id: thread for thread in (root, retry, child, external)}
+
+        root_key = self_improve.session_cluster_key(root, threads)
+        self.assertEqual(root_key, self_improve.session_cluster_key(retry, threads))
+        self.assertEqual(root_key, self_improve.session_cluster_key(child, threads))
+        self.assertEqual(
+            self_improve.session_cluster_key(external, threads),
+            "codex:parent:outside",
+        )
+
 
 class SkillInventoryTests(unittest.TestCase):
     def test_plugin_cache_skill_gets_namespaced_id(self):

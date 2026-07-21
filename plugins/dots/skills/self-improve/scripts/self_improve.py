@@ -343,6 +343,7 @@ class ThreadSignals:
     """Heuristic per-thread signals. Candidate detection, not conclusions."""
 
     skills: Counter = field(default_factory=Counter)
+    primary_skills: Counter = field(default_factory=Counter)
     error_outputs: int = 0
     friction_cues: int = 0
     tool_calls: int = 0
@@ -351,6 +352,7 @@ class ThreadSignals:
 def thread_signals(thread: Thread, known_skills: set[str]) -> ThreadSignals:
     """Scan the full rollout for skill usage, tool errors, and friction cues."""
     sig = ThreadSignals()
+    seen_messages: set[tuple[str, str]] = set()
     try:
         for event in SESSION_SOURCE.events(thread, include_subagents=True):
             payload = event.payload or {}
@@ -359,12 +361,24 @@ def thread_signals(thread: Thread, known_skills: set[str]) -> ThreadSignals:
                 if event.role not in {"user", "assistant"}:
                     continue
                 text = event.text
+                message_key = (event.role, text)
+                if message_key in seen_messages:
+                    continue
+                seen_messages.add(message_key)
                 lowered = text.lower()
                 for token in SKILL_TOKEN_RE.findall(text):
-                    if token.lower() in known_skills:
-                        sig.skills[token.lower()] += 1
+                    skill = token.lower()
+                    if skill not in known_skills:
+                        continue
+                    sig.skills[skill] += 1
+                    if event.role == "user":
+                        sig.primary_skills[skill] += 1
                 for match in SKILL_INVOKE_RE.findall(text):
-                    sig.skills[match.lower()] += 1
+                    skill = match.lower()
+                    if skill not in known_skills:
+                        continue
+                    sig.skills[skill] += 1
+                    sig.primary_skills[skill] += 1
                 for cue in FRICTION_CUES:
                     if cue in lowered:
                         sig.friction_cues += 1
@@ -381,9 +395,11 @@ def thread_signals(thread: Thread, known_skills: set[str]) -> ThreadSignals:
                 invoked = str(arguments.get("skill") or "").lower() if isinstance(arguments, dict) else ""
                 if invoked in known_skills:
                     sig.skills[invoked] += 1
+                    sig.primary_skills[invoked] += 1
                 for skill in known_skills:
                     if skill == name or skill == namespace or f"/{skill}/" in namespace:
                         sig.skills[skill] += 1
+                        sig.primary_skills[skill] += 1
             elif kind == "function_call_output":
                 text = _output_text(payload.get("output"))[:2000].lower()
                 if any(marker in text for marker in ERROR_MARKERS):
@@ -391,6 +407,45 @@ def thread_signals(thread: Thread, known_skills: set[str]) -> ThreadSignals:
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
     return sig
+
+
+SOURCE_THREAD_RE = re.compile(r"<source_thread_id>([^<]+)</source_thread_id>", re.IGNORECASE)
+
+
+def parent_thread_id(thread: Thread) -> str | None:
+    """Return a declared parent without inferring one from incidental prose."""
+    try:
+        source = json.loads(thread.source)
+    except (json.JSONDecodeError, TypeError):
+        source = None
+    if isinstance(source, dict):
+        subagent = source.get("subagent")
+        if isinstance(subagent, dict):
+            thread_spawn = subagent.get("thread_spawn")
+            if isinstance(thread_spawn, dict) and thread_spawn.get("parent_thread_id"):
+                return str(thread_spawn["parent_thread_id"])
+    match = SOURCE_THREAD_RE.search(thread.title)
+    return match.group(1).strip() if match else None
+
+
+def session_cluster_key(thread: Thread, threads_by_id: dict[str, Thread]) -> str:
+    """Collapse delegated children and exact retry threads into one support unit."""
+    current = thread
+    visited: set[str] = set()
+    while current.id not in visited:
+        visited.add(current.id)
+        parent = parent_thread_id(current)
+        if not parent:
+            break
+        parent_thread = threads_by_id.get(parent)
+        if not parent_thread:
+            return f"{thread.platform}:parent:{parent}"
+        current = parent_thread
+
+    normalized_title = " ".join(current.title.lower().split())
+    identity = f"{current.platform}\0{current.cwd}\0{normalized_title or current.id}"
+    digest = hashlib.sha256(identity.encode("utf-8")).hexdigest()[:16]
+    return f"{current.platform}:thread:{digest}"
 
 
 def split_sentences(message: str) -> Iterable[str]:
@@ -1019,9 +1074,11 @@ def cmd_skill_usage(args: argparse.Namespace) -> None:
         print("No installed skills found under the configured skill roots.")
         return
 
+    threads_by_id = {thread.id: thread for thread in rows}
     per_skill_threads: dict[str, set[str]] = defaultdict(set)
-    per_skill_uses: Counter = Counter()
-    per_skill_friction: dict[str, list[Thread]] = defaultdict(list)
+    per_skill_markers: Counter = Counter()
+    per_skill_clusters: dict[str, set[str]] = defaultdict(set)
+    per_skill_friction: dict[str, dict[str, Thread]] = defaultdict(dict)
     scanned = 0
     for thread in rows:
         if not Path(thread.rollout_path).exists():
@@ -1031,37 +1088,47 @@ def cmd_skill_usage(args: argparse.Namespace) -> None:
         has_friction = sig.error_outputs > 0 or sig.friction_cues > 0
         for skill, count in sig.skills.items():
             per_skill_threads[skill].add(thread.id)
-            per_skill_uses[skill] += count
+            per_skill_markers[skill] += count
+        cluster = session_cluster_key(thread, threads_by_id)
+        for skill in sig.primary_skills:
+            per_skill_clusters[skill].add(cluster)
             if has_friction:
-                per_skill_friction[skill].append(thread)
+                per_skill_friction[skill].setdefault(cluster, thread)
 
     print(f"## Skill Usage ({scanned} rollouts scanned, last {args.days} days)\n")
-    if not per_skill_uses:
+    if not per_skill_markers:
         print("No skill invocations detected in the scanned rollouts.")
         return
-    print("Uses  Threads Friction Skill")
-    print("----- ------- -------- --------------------------------")
-    for skill, uses in per_skill_uses.most_common():
+    print("Markers Threads Organic Friction Skill")
+    print("------- ------- ------- -------- --------------------------------")
+    for skill, markers in per_skill_markers.most_common():
         n_threads = len(per_skill_threads[skill])
+        n_clusters = len(per_skill_clusters[skill])
         n_friction = len(per_skill_friction[skill])
-        print(f"{uses:<5} {n_threads:<7} {n_friction:<8} {skill}")
+        print(f"{markers:<7} {n_threads:<7} {n_clusters:<7} {n_friction:<8} {skill}")
+
+    print(
+        "\nMarkers are deduplicated transcript mentions. Organic counts explicit "
+        "user or tool invocations after collapsing delegated children and exact "
+        "retry threads into parent-session clusters.\n"
+    )
 
     print("\n## Recurring Friction To Understand\n")
     any_friction = False
     for skill in sorted(per_skill_friction, key=lambda s: -len(per_skill_friction[s])):
-        threads_with_friction = per_skill_friction[skill]
-        if not threads_with_friction:
+        friction_clusters = per_skill_friction[skill]
+        if not friction_clusters:
             continue
         any_friction = True
-        print(f"### `{skill}` — {len(threads_with_friction)} friction thread(s)\n")
-        for thread in sorted(threads_with_friction, key=lambda t: -t.updated_at)[:5]:
+        print(f"### `{skill}` — {len(friction_clusters)} friction cluster(s)\n")
+        for thread in sorted(friction_clusters.values(), key=lambda t: -t.updated_at)[:5]:
             print(f"- `{thread.id}` updated {utc(thread.updated_at)} at `{thread.rollout_path}`")
         print()
     if not any_friction:
-        print("No co-occurring friction detected. Read the highest-use skills for quality review anyway.\n")
+        print("No co-occurring friction detected. Read the highest-organic-use skills anyway.\n")
     print(
-        "Next: read both representative successful threads and the cited friction "
-        "threads. Explain what this usage says about the user's workflow before "
+        "Next: read representative successful clusters and the cited friction "
+        "clusters. Explain what this usage says about the user's workflow before "
         "proposing any skill change."
     )
 

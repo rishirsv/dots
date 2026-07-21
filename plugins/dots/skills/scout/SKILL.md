@@ -50,6 +50,10 @@ Keep every question discrete. When the user answers only part of a batch,
 surface each skipped consequential question again when it returns to the
 frontier or keep it open in the snapshot.
 
+After a major correction, prototype choice, skipped batch, or topic or mode
+change, show a lightweight checkpoint with only **Settled**, **Still open**, and
+**Next frontier**. Do not repeat the checkpoint after ordinary answers.
+
 Use this compact shape for a normal batch:
 
 ```md
@@ -114,6 +118,14 @@ small set of deliberately different, disposable variations directly or through
 workers with disjoint output paths. Prototype production is not research unless
 it also requires source research.
 
+Establish the shared foundation before expanding the option set. Start with one
+conservative control that visibly preserves the controlling product surface or
+reference, plus at most two frontier alternatives. Confirm that shared
+foundation before generating more variations. If the user rejects every option
+for the same foundational reason, stop producing variants, return to the
+controlling references, and turn the rejection into a criterion for the next
+probe.
+
 Show the actual variations to the user through the appropriate visual or
 artifact surface; do not replace presentation with a prose description. Ask
 what feels right or wrong and translate the reaction into a reusable criterion.
@@ -150,6 +162,12 @@ Recheck the frontier when the user asks to plan or build. Resolve or explicitly
 carry forward any open decision that could change the downstream work, then
 produce the snapshot and hand its context to Ultraplan or the active planning
 workflow. Scout does not sequence or enter implementation.
+
+The last Scout response before another mode begins must contain the Decision
+Snapshot and the explicit line `Scout complete; next mode: <mode>`. Another mode
+may continue in the same task after that visible boundary, but Scout itself does
+not create implementation plans or tasks, edit product source or durable product
+documentation, or begin implementation.
 
 ## Final Check
 

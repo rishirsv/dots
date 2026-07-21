@@ -26,6 +26,10 @@
    - Is the layout too sparse? (Excessive whitespace without purpose)
    - Does density match the content type? (Data-dense UIs need tighter spacing; marketing pages need more air)
 
+6. **Symmetry and balance**: Compare opposing insets, paired controls, repeated component dimensions, centerlines, and distribution of visual mass. Treat asymmetry as valid only when it is clearly intentional.
+
+7. **Component sizing rhythm**: Establish a coherent scale for control and region heights—not only gaps—and flag isolated dimensions that break the surrounding progression without a functional reason.
+
 ## Plan Layout Improvements
 
 Create a systematic plan:
@@ -122,4 +126,6 @@ Create a systematic plan:
 - **Hierarchy**: Is the most important content obvious within 2 seconds?
 - **Breathing room**: Does the layout feel comfortable, not cramped or wasteful?
 - **Consistency**: Is the spacing system applied uniformly?
+- **Symmetry and balance**: Are opposing insets, paired controls, centerlines, and visual mass balanced unless the asymmetry is clearly intentional?
+- **Component sizing rhythm**: Do control and region heights follow a coherent progression, with isolated dimensions justified by function?
 - **Responsiveness**: Does the layout adapt gracefully across screen sizes?

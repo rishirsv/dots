@@ -10,11 +10,17 @@ python3 scripts/self_improve.py skill-usage --days 7 --limit 250
 ## What the script measures (and what it cannot)
 
 This is **heuristic candidate detection, not telemetry**. The script scans
-rollout transcripts and counts, per skill:
+rollout transcripts and reports, per skill:
 
-- **Uses** — total detected invocations.
-- **Threads** — distinct threads the skill appeared in.
-- **Friction** — threads where the skill co-occurred with a friction signal.
+- **Markers** — deduplicated transcript mentions detected from invocation
+  tokens, explicit launch wording, or matching tool calls.
+- **Threads** — distinct rollout threads containing any marker, including
+  delegated copies and assistant-only mentions.
+- **Organic** — parent-session clusters containing an explicit user invocation,
+  explicit invocation wording, or matching tool call. Exact retry threads and
+  delegated children collapse into one cluster.
+- **Friction** — organic parent-session clusters where the skill co-occurred
+  with a friction signal.
 
 Detection signals, in order of trust:
 
@@ -30,32 +36,44 @@ Friction signals are co-occurring in the same thread:
 - Frustration cues in user messages (`come on`, `can't you just`, `keep going`,
   `don't stop`, `why did you`, `I already told you`).
 
+The script removes duplicate transport copies of the same message before
+counting. This prevents Codex rollouts that store both `response_item` and
+`event_msg` representations from doubling one invocation.
+
 Limits to state honestly:
 
 - A skill loaded by description match (no `$` token, no marker) may be missed.
 - Friction in a thread is **correlation, not causation** — the error may be
   unrelated to the skill.
+- Assistant mentions can still raise Markers or Threads without increasing
+  Organic; use Organic when discussing adoption.
+- Exact-title retry clustering is a heuristic and can merge genuinely separate
+  attempts with the same working directory and title.
 - A skill that runs silently and well produces low counts; absence of friction
   is not proof of quality.
 
-So treat every row as a **thread to read**, never as a verdict.
+Treat every row as a lead, then read representative successful and friction
+clusters before reaching a verdict.
 
 ## Reading the output
 
 ```
-Uses  Threads Friction Skill
------ ------- -------- --------------------------------
-12    8       3        visual-design
-3     1       1        explain
+Markers Threads Organic Friction Skill
+------- ------- ------- -------- --------------------------------
+12      8       4       2        visual-design
+3       1       1       1        explain
 ```
 
-- High **Uses** + high **Friction** → the most valuable threads to review.
-- High **Uses** + zero **Friction** → still worth a quality read; this skill
+- Large Markers/Threads but low Organic → inspect delegation or retry fan-out
+  before interpreting adoption.
+- High **Organic** + high **Friction** → the most valuable clusters to review.
+- High **Organic** + zero **Friction** → still worth a quality read; this skill
   carries a lot of your workflow.
-- One **Use** + one **Friction** → likely a one-off; weight it low.
+- One **Organic** cluster + one **Friction** cluster → likely a one-off; weight
+  it low.
 
-The "Recurring Friction To Understand" section lists the specific friction
-threads per skill. These are your read list.
+The "Recurring Friction To Understand" section lists one representative thread
+for each friction cluster. These are the starting points for the read list.
 
 ## From analytics to a usage interpretation
 
@@ -89,9 +107,9 @@ Skill analytics also feeds higher-altitude proposals:
   skill covers. Describe the cost before proposing a new skill or automation.
 - **Skill overlap or misuse** — two skills fighting over the same trigger, or a
   skill being used for something it was not built for.
-- **The biggest single lever** — when one skill dominates Uses, a small quality
-  gain there outweighs fixing several rare ones. Prioritize by Uses × friction,
-  not by friction alone.
+- **The biggest single lever** — when one skill dominates Organic usage, a small
+  quality gain there outweighs fixing several rare ones. Prioritize organic
+  cluster coverage and repeated friction, not raw marker volume.
 
 ## In the deep pass
 

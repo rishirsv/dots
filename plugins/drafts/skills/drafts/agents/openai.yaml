@@ -1,8 +1,0 @@
-interface:
-  display_name: "Drafts"
-  short_description: "Start, rewrite, or shape writing"
-  brand_color: "#2563EB"
-  default_prompt: "Start here for Drafts. Bring an idea, notes, sources, or existing text to write, rewrite, humanize, or shape; Drafts will pull in Compose or Writing Voice when needed."
-
-policy:
-  allow_implicit_invocation: true

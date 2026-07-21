@@ -1,151 +1,133 @@
 # Review Checklists
 
-This reference defines what to inspect. The owning workflow decides whether
-findings are fixed, reported, or written to an audit document.
+Apply every relevant lens to the selected scope. The owning workflow decides
+whether to fix findings, return them in chat, or write an audit report.
 
-## Correctness Review
+## Compare Intent And Scope
 
-- Trace changed conditions, state transitions, errors, resource cleanup, and
-  boundary inputs such as empty, null, zero, overflow, timing, and concurrency.
-- Check whether the diff breaks an existing caller, invariant, contract, test,
-  or removed behavior.
-- Inspect tests and fixtures when they encode the affected invariant, and flag
-  only gaps introduced or exposed by the change.
-- Follow important changed preconditions, return shapes, exceptions, and
-  ordering into direct callers and callees when the diff depends on them.
+- Map the change to the authoritative request, plan, spec, PR body, or issue.
+- Flag requirements that are missing, partial, or implemented incorrectly.
+- Flag behavior and complexity that no requirement or necessary invariant
+  justifies.
+- Cite the governing requirement for each finding. If no authoritative intent
+  exists, state that limit instead of inferring one from a loosely related doc.
 
-## Agent 1: Code Reuse Review
+## Apply Repository Standards
 
-For each change:
+- Compare changed code with every applicable repository and path-scoped rule.
+- Cite both the changed location and the governing rule for each breach.
+- Let specific repository guidance override broader guidance and generic
+  heuristics.
+- Skip rules already enforced by deterministic tooling; report the tool result
+  under validation.
 
-1. **Search for existing utilities and helpers.** Look in shared modules,
-   utility directories, adjacent files, and the current owning layer for code
-   that already performs the newly written behavior.
-2. **Flag new functions that duplicate existing functionality.** Identify the
-   current function or owner that should be used instead of preserving a second
-   implementation.
-3. **Flag inline logic that could use an existing utility.** Check hand-written
-   string transformations, path handling, environment detection, type guards,
-   parsing, formatting, and other repository-standard operations.
+## Trace Correctness
 
-## Agent 2: Code Quality Review
+- Trace changed conditions, state transitions, errors, cleanup, and boundary
+  inputs such as empty, null, zero, overflow, timing, and concurrency.
+- Check direct callers, callees, invariants, contracts, tests, and removed
+  behavior when the change depends on them.
+- Inspect tests and fixtures that encode the affected invariant. Flag only gaps
+  introduced or exposed by the selected scope.
 
-Review the same changes for these hacky patterns:
+## Simplify Reuse
 
-1. **Redundant state**: duplicated state, cached values that can be derived, and
-   observers or effects that can be direct calls.
-2. **Parameter sprawl**: new parameters added to an existing function when the
-   current model should be generalized or restructured instead.
-3. **Copy-paste with slight variation**: near-duplicate blocks whose real shared
-   behavior should have one implementation.
-4. **Leaky abstractions**: internal details exposed to callers or changes that
-   break an existing abstraction boundary.
-5. **Stringly-typed code**: raw strings used where the repository already has
-   constants, enums, string unions, branded types, or a shared contract.
-6. **Unnecessary JSX nesting**: wrapper elements that add no layout or behavior
-   value when an inner component already exposes the needed props.
-7. **Unnecessary comments**: comments that restate what the code does, narrate
-   the change, or refer to the task/caller. Keep non-obvious why: hidden
-   constraints, subtle invariants, or necessary workarounds.
+- Search shared modules, utilities, adjacent files, and the owning layer for an
+  existing implementation.
+- Replace new functions or inline logic that duplicate an existing owner.
+- Do not extract a new abstraction merely because two snippets look similar;
+  require one stable responsibility and a concrete maintenance benefit.
 
-### Code Judo And Canonical Ownership
+## Simplify Quality
 
-Apply this subsection only to changed-code scope. Broad repo or subsystem
-structural discovery belongs to Architecture Review.
+- Remove redundant or derivable state, indirect effects, and duplicate caches.
+- Reduce parameter sprawl when a direct call or stronger owning input is
+  clearer.
+- Consolidate copy-paste variants when they implement one responsibility.
+- Repair leaky abstractions and keep behavior in its canonical owning layer.
+- Use existing constants, enums, unions, branded types, or shared contracts
+  instead of raw strings for established domain concepts.
+- Remove wrappers, comments, and indirection that add no behavior, constraint,
+  or explanatory value.
 
-- Challenge working code that makes the surrounding design messier. Prefer a
-  behavior-preserving restructuring that makes the implementation substantially
-  smaller, more direct, and easier to explain.
-- Look for a reframing that removes whole branches, helpers, modes,
-  conditionals, wrappers, or layers. Delete complexity instead of distributing
-  the same concepts across more files.
-- Prefer direct, boring, maintainable code over brittle or magical machinery.
-  Challenge pass-through helpers, identity wrappers, speculative indirection,
-  silent fallbacks, and generic mechanisms that hide simple assumptions.
-- Keep logic in the canonical owning layer. Feature behavior should not leak
-  into shared infrastructure, and implementation details should not leak
-  through public boundaries.
-- Push on unnecessary optionality, loose object shapes, cast-heavy boundaries,
-  and unclear invariants when a stronger current contract would remove branches
-  or fallback behavior.
-- Treat scattered special cases and ad-hoc conditionals as a design problem
-  when one state model, policy, dispatcher, or owner would make them disappear.
-- Treat feature flags as temporary deployment mechanisms. Avoid deep or
-  scattered flag checks and make the current cleanup boundary explicit.
+### Reject Over-Engineering
 
-A cleanup succeeds only when it preserves intended behavior and leaves the code
-easier to understand, debug, and change. Do not optimize for fewer lines,
-combine distinct concerns, remove a useful abstraction, or replace explicit
-code with clever dense code.
+Over-engineering is indirection, optionality, generality, state, configuration,
+compatibility, or ceremony that no current requirement or necessary invariant
+justifies and that creates a concrete maintenance, runtime, or review cost.
 
-## Agent 3: Efficiency Review
+Scan aggressively for:
 
-Review the same changes for:
+- abstractions, interfaces, factories, hooks, or parameters with one real use;
+- generic frameworks where direct domain code would be clearer;
+- optional paths, modes, feature flags, fallbacks, and configuration for
+  hypothetical needs;
+- duplicated state, adapters, compatibility layers, or validation without a
+  real boundary;
+- helpers and wrappers that merely rename, forward, or rearrange work;
+- phases, documents, schemas, or process gates whose result changes no decision;
+  and
+- defensive handling for states that the current contract makes impossible.
 
-1. **Unnecessary work**: redundant computations, repeated file reads, duplicate
-   network or API calls, and N+1 patterns.
-2. **Missed concurrency**: independent operations run sequentially even though
-   neither state nor ordering requires serialization.
-3. **Hot-path bloat**: new blocking or repeated work added to startup,
-   per-request, per-event, or per-render paths.
-4. **Recurring no-op updates**: polling loops, intervals, or event handlers that
-   update state or stores unconditionally. Preserve the local no-change signal
-   so downstream consumers are not notified when nothing changed. When a
-   wrapper accepts an updater or reducer, verify that it honors same-reference
-   returns or the repository's equivalent no-change contract.
-5. **Unnecessary existence checks**: checking for a file or resource before
-   operating on it, creating a check-then-act race. Perform the operation and
-   handle its error.
-6. **Memory**: unbounded structures, retained closures, missing cleanup, and
-   event-listener or subscription leaks.
-7. **Overly broad operations**: reading complete files, collections, payloads,
-   or dependency graphs when the operation needs only a bounded subset.
+Prefer deletion, inlining, a stronger contract, or one canonical owner. Report
+only when the extra machinery and its cost are visible in the selected scope;
+do not equate necessary complexity or unfamiliar design with over-engineering.
 
-Also challenge related updates that can leave state half-applied. Prefer one
-atomic operation when partial completion would make the flow brittle.
+### Apply Code Judo To Changed Code
 
-## Conditional Risk-Specific Angles
+Seek a smaller design that removes branches, helpers, modes, wrappers, or
+fallbacks rather than redistributing them. Prefer direct, explicit code and one
+canonical owner. Challenge unnecessary optionality, loose shapes, scattered
+special cases, and feature-flag checks.
 
-Use only the angles that match the change.
+Accept a simplification only when it preserves intended behavior and improves
+understanding, debugging, or changeability. Do not optimize for line count,
+merge distinct concerns, remove a useful abstraction, or replace explicit code
+with clever density. Broad structural discovery belongs to Architecture Review.
 
-### Adversarial Challenge
+## Simplify Efficiency
 
-Use this only when the user asks for a challenge or ship-readiness review, or
-when the change touches auth, persisted state, irreversible operations,
-concurrency, security boundaries, or migrations.
+- Remove redundant computation, file reads, network calls, queries, and broad
+  data loads.
+- Run independent work concurrently when ordering and shared state do not
+  require serialization.
+- Keep blocking or repeated work out of startup, request, event, and render hot
+  paths.
+- Preserve no-change signals so polling, reducers, and event handlers do not
+  publish recurring no-op updates.
+- Avoid check-then-act existence checks; perform the operation and handle its
+  error.
+- Bound retained collections and clean up closures, listeners, subscriptions,
+  and other resources.
+- Prefer one atomic operation when related updates could leave state
+  half-applied.
 
-Actively try to disprove the change. Question the chosen implementation, design
-choices, tradeoffs, and assumptions. It is not just a stricter pass over
-implementation defects.
+## Add Conditional Risk Checks
 
-Trace how bad inputs, retries, concurrent actions, or partially completed
-operations move through the code. If something only works on the happy path,
-treat that as a real weakness.
+Use only the checks the scope activates.
 
-Prioritize:
+### Challenge High-Risk Behavior
 
-- auth, permissions, tenant isolation, and trust boundaries
-- data loss, corruption, duplication, and irreversible state changes
-- rollback safety, retries, partial failure, and idempotency gaps
-- race conditions, ordering assumptions, stale state, and re-entrancy
-- empty-state, null, timeout, and degraded dependency behavior
-- version skew, schema drift, migration hazards, and compatibility regressions
-- observability gaps that would hide failure or make recovery harder
+Use an adversarial pass when the user requests ship-readiness or the change
+touches auth, permissions, tenant isolation, persisted state, irreversible
+operations, concurrency, security boundaries, or migrations.
 
-Be aggressive, but stay grounded.
+Trace bad inputs, retries, concurrent actions, partial failure, rollback,
+idempotency, stale state, empty and degraded states, version skew, schema drift,
+and observability. Keep every concern tied to a reachable path.
 
-### Removed Behavior
+### Trace Removed Behavior
 
 For each deletion, identify the invariant it enforced and where the new code
 re-establishes it.
 
-### Cross-File Contract
+### Trace Cross-File Contracts
 
-Trace direct callers and callees for changed shapes, errors, timing, and
-ownership.
+Follow changed shapes, errors, timing, ordering, and ownership through direct
+callers and callees.
 
-### Language Or Framework Pitfalls
+### Check Language And Framework Hazards
 
-Inspect relevant hazards such as missing awaits, closure capture, mutable
+Inspect applicable risks such as missing awaits, closure capture, mutable
 defaults, timezone drift, nil-map writes, escaping, injection, or equivalent
-local risks.
+local pitfalls.
