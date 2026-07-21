@@ -37,24 +37,6 @@
         "workflow"
       ],
       "homepage": "https://github.com/rishirsv/dots/tree/main/plugins/meta-skill"
-    },
-    {
-      "name": "drafts",
-      "version": "0.1.0",
-      "description": "Editorial drafting, rewrite, voice-guide, and revision support with durable context.",
-      "author": {
-        "name": "Rishi"
-      },
-      "source": "./plugins/drafts",
-      "category": "productivity",
-      "tags": [
-        "writing",
-        "drafts",
-        "rewrite",
-        "humanize",
-        "style"
-      ],
-      "homepage": "https://github.com/rishirsv/dots/tree/main/plugins/drafts"
     }
   ]
 }
