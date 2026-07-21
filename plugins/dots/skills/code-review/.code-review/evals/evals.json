@@ -44,6 +44,7 @@
       "expectations": [
         "The response treats the quoted product requirement and repository rule as separate governing authorities.",
         "The finding cites both authorities and identifies the requirement breach, ownership violation, and resulting failure scenario.",
+        "The response or execution trace shows distinct Reuse Review, Quality Review, and Efficiency Review coverage; when subagents are available, the three Simplify reviews run independently in parallel.",
         "The response proposes moving draft persistence through the repository while preserving the published record until explicit publication.",
         "The response remains report-only."
       ],

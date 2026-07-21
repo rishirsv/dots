@@ -4,10 +4,12 @@ Audit an explicit repository, subsystem, package, branch, or category. Find and
 verify the highest-value improvements, write the audit report, and stop. A
 separate task owns any selected fix or implementation plan.
 
-Read [Review Checklists](review-checklists.md). Apply intent, standards,
-correctness, all three Simplify lanes—including the required over-engineering
-scan—and only the conditional risk checks the target activates. Skip changed-
-code-only Code Judo unless the audit target is a branch or diff.
+Read [Review Checklists](review-checklists.md). Apply Intent and Scope
+Conformance, Repository Standards Review, Correctness Review, Simplify Agent 1:
+Reuse Review, Simplify Agent 2: Quality Review, and Simplify Agent 3: Efficiency
+Review, including the required Over-Engineering Scan. Add only the conditional
+risk checks the target activates. Skip changed-code-only Code Judo unless the
+audit target is a branch or diff.
 
 ## Keep The Audit Report-Only
 
@@ -55,13 +57,14 @@ current diff.
 
 Record missing or broken verification rather than pretending a baseline exists.
 
-## Set Depth And Lanes
+## Set Depth And Finder Lanes
 
 Use Direct for a narrow target. Use Deep for broad or high-risk targets and
 explicit exhaustive requests. Declare whether Deep coverage is full, hotspot-
 weighted, or sampled; Deep never implies uncapped whole-repository coverage.
 
-For broad targets, run independent read-only finder lanes when they improve
+Run the three Simplify reviews as the audit's core maintainability finders. For
+broad targets, add independent read-only category finders when they improve
 coverage. Give each finder the same packet:
 
 - target, coverage, depth, and skipped paths;

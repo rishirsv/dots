@@ -9,11 +9,23 @@ Review the selected scope against its intent, governing repository standards,
 correctness, and simplest sound implementation. Keep findings and edits inside
 that scope.
 
+Every changed-code review uses the **Simplify process**. The parent runs Intent
+and Scope Conformance, Repository Standards Review, and Correctness Review.
+When subagents are available, launch three independent reviews in parallel:
+
+- **Simplify Agent 1: Reuse Review**
+- **Simplify Agent 2: Quality Review**
+- **Simplify Agent 3: Efficiency Review**
+
+The parent verifies their candidates, fixes or reports the combined result, and
+validates the final state. Review depth may add scrutiny; it never removes the
+three Simplify reviews.
+
 ## Choose The Route
 
-- **Current changes — default after coding**: review the complete local change,
-  fix every Confirmed issue, simplify it, validate the result, and finish the
-  coding task.
+- **Current changes — default after coding**: run the Simplify process over the
+  complete local change, fix every Confirmed issue, validate the result, and
+  finish the coding task.
 - **Standalone review**: report on a named PR, branch, base, commit, range, or
   historical path. Make fixes only when the user requests them and the writable
   scope is clear.
@@ -58,18 +70,27 @@ tests, or existing owners when the finding depends on surrounding behavior.
 Do not turn unchanged code into a cleanup target unless a changed line requires
 the supporting edit.
 
-## 2. Review The Work
+## 2. Run The Review Process
 
 Read [Review Checklists](references/review-checklists.md) for every code, plan,
-or spec review. Apply its four lenses:
+or spec review.
 
-1. intent and scope conformance;
-2. repository standards;
-3. correctness; and
-4. simplification through reuse, quality, and efficiency.
+For every changed-code review:
 
-For plans and specs, apply the lenses to decisions, requirements, and contracts;
-skip code-specific checks that cannot apply.
+1. The parent runs Intent and Scope Conformance, Repository Standards Review,
+   and Correctness Review.
+2. Launch Simplify Agent 1: Reuse Review, Simplify Agent 2: Quality Review, and
+   Simplify Agent 3: Efficiency Review concurrently when subagents are
+   available. Give each the exact scope, complete diff, changed-file list,
+   authorities, allowed surrounding paths, and user focus.
+3. If subagents are unavailable, the parent runs all three Simplify reviews
+   directly and keeps their candidate sets distinct. No Simplify review may be
+   skipped.
+
+For plans and specs, apply Intent and Scope Conformance, Repository Standards
+Review, Correctness Review, Quality Review, and the Over-Engineering Scan to
+decisions, requirements, and contracts. Skip code-specific checks that cannot
+apply.
 
 Aggressively scan every scope for over-engineering: added indirection,
 optionality, generality, state, configuration, compatibility, or ceremony that
@@ -79,19 +100,12 @@ evidence-based.
 
 Choose review depth independently from the route:
 
-- **Direct — default**: perform every applicable lens directly for ordinary
-  diffs and narrow plan reviews.
-- **Deep**: add independent finders and fresh candidate verification for broad
-  diffs, explicit exhaustive requests, repeated misses, or high-risk behavior
-  such as auth, billing, security, concurrency, persisted state, migrations, or
-  cross-process contracts.
-
-In Deep review, run the reuse, quality, and efficiency lanes concurrently when
-subagents are available while the parent performs correctness. Add an
-independent intent or risk finder only when the available spec or risk warrants
-it. Give each finder the exact scope, complete diff, changed-file list,
-authorities, allowed surrounding paths, and user focus. If subagents are
-unavailable, perform every lens directly.
+- **Direct — default**: run the parent reviews and the three Simplify reviews.
+- **Deep**: run the same default process, then add independent correctness,
+  intent, or risk finders and fresh candidate verification for broad diffs,
+  explicit exhaustive requests, repeated misses, or high-risk behavior such as
+  auth, billing, security, concurrency, persisted state, migrations, or cross-
+  process contracts.
 
 If the user explicitly requests independent reviewers and subagents are
 unavailable, state that independence cannot be provided. Weight a user-named
@@ -145,10 +159,10 @@ audit, follow Audit Mode; its report is the only permitted write.
 ## 5. Validate And Return
 
 After fixes, run the narrowest relevant tests, typecheck, lint, or build.
-Inspect the final diff for unintended changes and rerun the lens responsible
-for each material edit. For report-only work, run checks only when they can
-confirm a material candidate. Audit checks must be read-only and side-effect
-free.
+Inspect the final diff for unintended changes and rerun the parent or Simplify
+review responsible for each material edit. For report-only work, run checks
+only when they can confirm a material candidate. Audit checks must be read-only
+and side-effect free.
 
 For a completed fix route, report:
 
@@ -158,8 +172,9 @@ For a completed fix route, report:
 - `Validation`
 - `Residual risk`, only when material
 
-If nothing needed fixing, name the reviewed scope and confirm that all four
-lenses were clean.
+If nothing needed fixing, name the reviewed scope and confirm that Intent and
+Scope Conformance, Repository Standards Review, Correctness Review, and all
+three Simplify reviews were clean.
 
 For report-only code, plan, or spec review, order Confirmed findings by severity:
 P0 blocker, P1 high, P2 medium, P3 low. Use:
