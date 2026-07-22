@@ -1,0 +1,72 @@
+<!-- component: disclosure
+title: Disclosure
+type: ui
+when: Progressive detail the reader can skip by default — sources, raw data,
+  an appendix, a long log. Native details/summary, no JS.
+deps: theme.css
+variants: default (hairline border card) | .disclosure-plain (no border, a
+  quiet expandable line for appendix links).
+gotchas: Never hide the document's main conclusion inside a disclosure — it
+  must stand fully visible in the body. This is native HTML: it works with
+  JS off, and the entrance transition is a progressive enhancement only.
+-->
+<style>
+  .disclosure {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    margin-bottom: var(--block);
+  }
+  .disclosure summary {
+    cursor: pointer;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    list-style: none;
+  }
+  .disclosure summary::-webkit-details-marker { display: none; }
+  .disclosure summary:hover { background: var(--a4); }
+  .disclosure[open] summary { border-bottom: 1px solid var(--a12); }
+  .disclosure-content {
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .disclosure[open] .disclosure-content {
+      animation: disclosure-in var(--dur-fast) var(--ease);
+    }
+  }
+  @keyframes disclosure-in {
+    from { opacity: 0; transform: translateY(-2px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .disclosure-plain {
+    border: none;
+    margin-bottom: 8px;
+  }
+  .disclosure-plain summary {
+    padding: 4px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    list-style: none;
+  }
+  .disclosure-plain summary::-webkit-details-marker { display: none; }
+  .disclosure-plain summary:hover { color: var(--foreground); }
+  .disclosure-plain .disclosure-content { padding: 8px 0 0; font-size: 13px; }
+</style>
+
+<details data-component="disclosure" class="disclosure">
+  <summary>Raw latency samples (n=482)</summary>
+  <div class="disclosure-content">
+    <p>p50 88ms, p90 210ms, p99 640ms, captured across three regions over the seven days preceding the migration. Full CSV export is linked in the appendix.</p>
+  </div>
+</details>
+
+<details class="disclosure-plain">
+  <summary>Sources and further reading</summary>
+  <div class="disclosure-content">
+    <p><a href="#">Original incident report</a> · <a href="#">Vendor SLA terms</a> · <a href="#">Internal retry benchmark, June 2026</a></p>
+  </div>
+</details>

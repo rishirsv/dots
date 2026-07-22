@@ -1,0 +1,41 @@
+# Local agent state
+/.agents/*
+!/.agents/plugins/
+!/.agents/plugins/marketplace.json
+/.claude/
+
+# Skill companion workspaces keep authored evals trackable and generated state ignored.
+**/.[a-z0-9_-]*/runs/
+**/.[a-z0-9_-]*/worktrees/
+**/.[a-z0-9_-]*/tmp/
+**/.[a-z0-9_-]*/packages/
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local virtual environments
+.venv/
+venv/
+
+# Local dependencies and build output
+node_modules/
+build/
+dist/
+
+# Local secrets and logs
+.env
+.env.*
+*.log
+
+# Local tool state
+.codex/

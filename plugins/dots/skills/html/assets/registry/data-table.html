@@ -1,0 +1,122 @@
+<!-- component: data-table
+title: Data table
+type: ui
+when: Structured rows a reader compares line by line — decisions, inventories,
+  risk registers. Builds on the base table styles already in theme.css;
+  reach for this only when you need labeled first columns, right-aligned
+  numeric columns, or a horizontal scroll wrapper for wide content.
+deps: theme.css
+variants: plain (default — theme.css table styles, no extra classes) |
+  first-column-labeled (.cell-label on the first <td> in each row) | numeric
+  columns (.col-num on the numeric <th>/<td> pair) | stacked
+  (.table-stack plus a data-label on every td; for text-heavy comparison rows).
+gotchas: Horizontal dividers only — never a full grid, never zebra striping,
+  never a left accent stripe on any row. Wrap wide tables in .table-scroll so
+  the page itself never scrolls sideways. Numeric columns get tabular-nums via
+  .col-num; only decorate a value with --accent when it is the single point
+  the reader must land on, not a whole column.
+-->
+<style>
+  .table-scroll {
+    overflow-x: auto;
+    margin-bottom: var(--section);
+  }
+  .cell-label {
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--foreground);
+  }
+  .col-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 680px) {
+    .table-stack { overflow: visible; }
+    .table-stack table,
+    .table-stack tbody,
+    .table-stack tr,
+    .table-stack td { display: block; width: 100%; }
+    .table-stack thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .table-stack tr {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--a20);
+    }
+    .table-stack tr:first-child { border-top: 1px solid var(--a20); }
+    .table-stack td {
+      display: grid;
+      grid-template-columns: minmax(88px, 0.42fr) minmax(0, 1fr);
+      gap: 12px;
+      padding: 5px 4px;
+      border: 0;
+      text-align: left;
+      white-space: normal;
+    }
+    .table-stack td::before {
+      content: attr(data-label);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+</style>
+
+<div data-component="data-table" class="table-scroll table-stack">
+  <table>
+    <thead>
+      <tr>
+        <th>Risk</th>
+        <th>Owner</th>
+        <th>Likelihood</th>
+        <th class="col-num">Exposure</th>
+        <th>Mitigation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="cell-label" data-label="Risk">Vendor SSO deprecation</td>
+        <td data-label="Owner">Priya N.</td>
+        <td data-label="Likelihood">High</td>
+        <td class="col-num" data-label="Exposure">$180k</td>
+        <td data-label="Mitigation">Migrate to OIDC before Sept 30 shutdown.</td>
+      </tr>
+      <tr>
+        <td class="cell-label" data-label="Risk">Single on-call for billing</td>
+        <td data-label="Owner">Marcus T.</td>
+        <td data-label="Likelihood">Medium</td>
+        <td class="col-num" data-label="Exposure">$40k</td>
+        <td data-label="Mitigation">Cross-train two engineers this quarter.</td>
+      </tr>
+      <tr>
+        <td class="cell-label" data-label="Risk">Unpinned build image</td>
+        <td data-label="Owner">Release eng.</td>
+        <td data-label="Likelihood">Medium</td>
+        <td class="col-num" data-label="Exposure">$15k</td>
+        <td data-label="Mitigation">Pin digest, add drift alert.</td>
+      </tr>
+      <tr>
+        <td class="cell-label" data-label="Risk">Data export lacks audit log</td>
+        <td data-label="Owner">Priya N.</td>
+        <td data-label="Likelihood">Low</td>
+        <td class="col-num" data-label="Exposure">$25k</td>
+        <td data-label="Mitigation">Ship logging with v2.4, tracked in DATA-118.</td>
+      </tr>
+      <tr>
+        <td class="cell-label" data-label="Risk">Regional failover untested</td>
+        <td data-label="Owner">SRE</td>
+        <td data-label="Likelihood">High</td>
+        <td class="col-num" data-label="Exposure">$210k</td>
+        <td data-label="Mitigation">Run game day before next release freeze.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

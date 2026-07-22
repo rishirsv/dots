@@ -1,0 +1,76 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
+SRC_DIR="$SCRIPT_DIR/../src"
+REQ="$SRC_DIR/requirements.txt"
+CACHE_ROOT="${META_SKILL_CACHE_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/meta-skill}"
+VENV="${META_SKILL_VENV:-$CACHE_ROOT/venv}"
+
+check_python_version() {
+  "$1" - <<'PY' >/dev/null 2>&1
+import sys
+raise SystemExit(0 if sys.version_info >= (3, 10) else 1)
+PY
+}
+
+find_python() {
+  if [ -n "${META_SKILL_PYTHON:-}" ]; then
+    printf '%s\n' "$META_SKILL_PYTHON"
+    return 0
+  fi
+  for name in python3.13 python3.12 python3.11 python3.10 python3; do
+    if command -v "$name" >/dev/null 2>&1; then
+      candidate=$(command -v "$name")
+      if check_python_version "$candidate"; then
+        printf '%s\n' "$candidate"
+        return 0
+      fi
+    fi
+  done
+  codex_python="$HOME/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+  if [ -x "$codex_python" ] && check_python_version "$codex_python"; then
+    printf '%s\n' "$codex_python"
+    return 0
+  fi
+  return 1
+}
+
+BASE_PYTHON=$(find_python) || {
+  echo "error: Meta Skill CLI requires Python 3.10+; set META_SKILL_PYTHON to a compatible interpreter." >&2
+  exit 2
+}
+
+check_python_version "$BASE_PYTHON" || {
+  echo "error: Meta Skill CLI requires Python 3.10+; selected interpreter is $BASE_PYTHON." >&2
+  exit 2
+}
+
+if [ ! -x "$VENV/bin/python" ]; then
+  mkdir -p "$CACHE_ROOT"
+  "$BASE_PYTHON" -m venv "$VENV"
+fi
+
+PYTHON="$VENV/bin/python"
+
+STAMP="$VENV/.requirements-stamp"
+REQ_SUM=$(cksum "$REQ")
+
+if [ "${META_SKILL_SKIP_DEP_UPDATE:-0}" = "1" ]; then
+  :
+elif [ -x "$VENV/bin/python" ] && [ -f "$STAMP" ] && [ "$(cat "$STAMP")" = "$REQ_SUM" ]; then
+  :
+else
+  "$PYTHON" -m pip install --upgrade pip >/dev/null
+  if "$PYTHON" -m pip install --upgrade -r "$REQ" >&2; then
+    printf '%s\n' "$REQ_SUM" > "$STAMP"
+  else
+    echo "error: failed to install Meta Skill dependencies from $REQ." >&2
+    exit 2
+  fi
+fi
+
+PYTHONPATH="$SRC_DIR${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONPATH
+
+exec "$PYTHON" -m meta_skill "$@"

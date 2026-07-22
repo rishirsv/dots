@@ -1,0 +1,52 @@
+<!-- component: wide-figure
+title: Wide figure
+type: ui
+when: One screenshot, diagram, or evidence image needs more room than the
+  article column while remaining readable at narrow widths.
+deps: theme.css, page-shell
+variants: default | contained (.is-contained keeps the figure in the article).
+gotchas: Use one focal image, meaningful alt text, and a caption that says what
+  the reader should notice. Embed images as data URIs or inline SVG; do not make
+  external requests. Do not shrink text-bearing SVGs into unreadable mobile
+  thumbnails: keep effective labels at least 11px, move labels into HTML, or
+  supply a compact mobile composition. Resize raster images near their largest
+  rendered width before encoding instead of embedding an oversized original.
+  For generated raster assets, follow references/generated-images.md and use
+  data-embed-src so the assembler removes the local path.
+-->
+<style>
+  .wide-figure {
+    width: min(1040px, calc(100vw - 48px));
+    margin: 0 50% var(--section);
+    transform: translateX(-50%);
+  }
+  .wide-figure.is-contained { width: 100%; margin-inline: 0; transform: none; }
+  .wide-figure img,
+  .wide-figure svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 720px;
+    object-fit: contain;
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    background: var(--a4);
+  }
+  .wide-figure figcaption {
+    max-width: 72ch;
+    margin-top: 10px;
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+</style>
+
+<figure data-component="wide-figure" class="wide-figure">
+  <svg viewBox="0 0 1040 360" role="img" aria-label="Wide comparison with the recommended option emphasized">
+    <rect width="1040" height="360" fill="var(--a4)" />
+    <rect x="80" y="64" width="880" height="232" rx="6" fill="var(--background)" stroke="var(--a20)" />
+    <rect x="132" y="112" width="440" height="28" rx="4" fill="var(--foreground)" opacity=".8" />
+    <rect x="132" y="176" width="776" height="72" rx="6" fill="var(--a8)" />
+  </svg>
+  <figcaption>The focal view keeps the main comparison readable without shrinking text into a mobile thumbnail.</figcaption>
+</figure>

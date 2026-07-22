@@ -1,0 +1,13 @@
+{
+  "name": "meta-skill",
+  "version": "0.2.0",
+  "description": "Create, revise, review, and evaluate agent skills.",
+  "author": {
+    "name": "Rishi"
+  },
+  "keywords": [
+    "skills",
+    "meta",
+    "workflow"
+  ]
+}

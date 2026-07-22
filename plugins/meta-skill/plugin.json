@@ -1,0 +1,15 @@
+{
+  "name": "meta-skill",
+  "version": "0.2.0",
+  "description": "Create, revise, review, and evaluate agent skills.",
+  "author": {
+    "name": "Rishi"
+  },
+  "keywords": ["skills", "meta", "workflow"],
+  "category": "Productivity",
+  "assets": "./assets",
+  "references": "./references",
+  "skills": "./skills",
+  "scripts": "./scripts",
+  "src": "./src"
+}

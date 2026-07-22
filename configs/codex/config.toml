@@ -1,0 +1,399 @@
+# Repo-local Codex config for maximum local autonomy in this trusted repo.
+# Supplements ~/.codex/config.toml when this trusted repository is open.
+
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+service_tier = "default"
+model = "gpt-5.6-terra"
+model_reasoning_effort = "medium"
+
+approvals_reviewer = "user"
+
+
+
+
+
+
+
+
+notify = ["/Users/rishi/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+
+[tools]
+view_image = true
+
+[features]
+apps = true
+memories = true
+prevent_idle_sleep = true
+undo = true
+js_repl = false
+
+[features.multi_agent_v2]
+hide_spawn_agent_metadata = false
+tool_namespace = "agents"
+
+[agents]
+max_threads = 6
+max_depth = 1
+
+[apps._default]
+open_world_enabled = true
+destructive_enabled = true
+
+[apps.asdk_app_6938a94a61d881918ef32cb999ff937c]
+enabled = false
+
+[apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.create_branch"]
+approval_mode = "approve"
+
+[apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.create_file"]
+approval_mode = "approve"
+
+[apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.create_pull_request"]
+approval_mode = "approve"
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."build-ios-apps@steady-app"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = false
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = false
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."dots@dots"]
+enabled = true
+
+[plugins."meta-skill@dots"]
+enabled = true
+
+[plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."ts-document-parser@kpmg"]
+enabled = true
+
+[plugins."build-ios-apps@openai-curated"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[projects."/Users/rishi/Code/agent"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/steady-app"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/dots"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011632839818Z-f0bed97d/trials/adhoc-1.current.t1/workspace"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-format.current.t1/workspace"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-format.no-skill.t1/workspace"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-sparse.no-skill.t1/workspace"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-sparse.current.t1/workspace"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T012222812619Z-648a2b43/trials/adhoc-1.current.t1/workspace"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-06/l"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/kpmg"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-07/files-mentioned-by-the-user-codex"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects/ts-ai"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects/01_Clients/Project_Frogmen"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-07/i-w"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-07/us"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-07/up"]
+trust_level = "trusted"
+
+[projects."/Users/rishi"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/kpmg-pptx"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-14/fix"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-14/upd"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/prosper"]
+[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-14/there-is"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-15/diagnose-my-ssh-and-connections-in"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-15/the-browser-blocks-direct-file-navigation"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/enterprise-skills"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-16/responsible-ai-insurance-playbook-sites-project"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-16/responsible-ai-insurance-playbook-sites-project-2"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.codex/.chatgpt-projects/g-p-69703af9c234819197d01ef6a24cb622"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-16/responsible-ai-insurance-playbook-sites-project-3"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-16/responsible-ai-insurance-playbook-sites-project-4"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-16/responsible-ai-insurance-playbook-sites-project-5"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-16/responsible-ai-insurance-playbook-sites-project-6"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.codex/.chatgpt-projects/g-p-6a526b216ac48191aa8d0e7705fd2af9"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.codex/.chatgpt-projects/g-p-6a5995d3899c8191b6cc3f98be926ea9"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-16/new-chat"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-16/i-want-to-add-other-models"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-17/i-need-you-to-find-me"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-18/si"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-18/re"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-18/i-m-getting-the-error-could"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-19/pro"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-20/us"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-20/go"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-20/get"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-20/ca"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-20/is"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-20/dr"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-20/review-my-booking-com-tabs-related"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-21/for"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-21/walk-me-through-how-kpmg-pages"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-21/i-w"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-21/fin"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-21/new-chat"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-21/dots-imsg-users-rishi-codex-plugins"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-21/dots-imsg-users-rishi-codex-plugins-2"]
+trust_level = "trusted"
+
+[marketplaces.openai-bundled]
+last_updated = "2026-07-22T04:25:41Z"
+source_type = "local"
+source = "/Users/rishi/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-07-16T13:11:21Z"
+source_type = "local"
+source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[marketplaces.dots]
+last_updated = "2026-07-22T03:48:54Z"
+source_type = "local"
+source = "/Users/rishi/Code/dots"
+
+[mcp_servers.node_repl]
+args = []
+command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/rishi/.codex"
+CODEX_HOME = "/Users/rishi/.codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "2793c6809f8a4c90923435aa3a6d1e6f8cabb145212f06328b860b076b899525,6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
+NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+BROWSER_USE_CODEX_APP_VERSION = "26.715.71837"
+SKY_CUA_SERVICE_PATH = "/Users/rishi/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000451/Codex Computer Use.app"
+CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
+
+[mcp_servers.computer-use]
+command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
+args = ["mcp"]
+cwd = "."
+enabled = false
+
+[mcp_servers.openaiDeveloperDocs]
+url = "https://developers.openai.com/mcp"
+
+[desktop]
+followUpQueueMode = "queue"
+microphoneInputDeviceId = "888efaab4053051a1ceb0e7a41cb03d93bdfdbe78a17aa725e3e58e35b91dfff"
+keepRemoteControlAwakeWhilePluggedIn = true
+selected-avatar-id = "custom:patch"
+avatar-overlay-mascot-width-px = 138
+dock-icon-preference = "app-default"
+conversationDetailMode = "STEPS_COMMANDS"
+preventSleepWhileRunning = true
+defaultTerminalLocation = "right"
+git-branch-prefix = ""
+git-create-pull-request-as-draft = false
+git-commit-instructions = """
+Run `git status --short` and `git diff --staged`. Stage only intended paths or hunks; preserve unrelated changes. Split independently reviewable work, or ask one scope question if partial staging is risky.
+
+Run `git diff --staged --check`. Reuse fresh validation; otherwise run obvious, cheap focused tests or linters. Never invent evidence or use `--no-verify` unless asked. Match `git log --oneline -5`; use an imperative subject of at most 50 characters. Add a body only to preserve the reason, constraint, or tradeoff, and omit tool-attribution trailers.
+
+After committing, run `git show --stat --oneline HEAD` and report the SHA, subject, and validation. Push only when explicitly requested: `git push` with an upstream, or `git push -u origin \"$(git branch --show-current)\"` without one. Ask first for detached/default branches, unclear remotes, or possible non-fast-forwards. Never open a PR, merge, rebase shared history, or force-push unless explicitly asked.
+"""
+git-pr-instructions = """
+Require a local Git repository, clear scope, `gh --version`, and authenticated `gh auth status`;
+
+Run `git status -sb`, `git diff --stat`, and `git diff --staged --stat`. If scope is mixed or unclear, ask which paths belong before staging, committing, or pushing. From the default branch, create the smallest repo-native, human-readable branch; otherwise keep the current branch unless asked. Repair review comments on the existing PR branch.
+
+Stage only intended paths, commit the confirmed description, run the most relevant checks, then `git push -u origin \"$(git branch --show-current)\"`. Create a draft PR by default and mark it ready only when explicitly requested. Match nearby PR title style. Write a concise reviewer-facing body covering outcome and impact, context or root cause, core implementation, review focus, and validation; use a temporary file for CLI Markdown when useful.
+
+Re-query the PR for merge state, checks, review decision, and review threads. UI or visual changes require real screenshot or clip embeds in the live body; keep the PR draft while required evidence is missing. Never stage unrelated changes or push without confirmed scope, and stop if no accessible GitHub remote exists. Summarize the branch, commit, PR URL, validation, PR health, and remaining confirmations.
+"""
+reviewDelivery = "detached"
+open-link-in-target-preference = "in-app-browser"
+show-context-window-usage = true
+show-ultra-in-model-picker-slider = true
+enabled-reasoning-efforts = ["low", "medium", "high", "xhigh", "ultra", "max"]
+
+[desktop.appearanceLightChromeTheme]
+accent = "#339cff"
+contrast = 45
+ink = "#1a1c1f"
+opaqueWindows = false
+surface = "#ffffff"
+
+[desktop.appearanceLightChromeTheme.fonts]
+code = "CommitMono"
+
+[desktop.appearanceLightChromeTheme.semanticColors]
+diffAdded = "#00a240"
+diffRemoved = "#ba2623"
+skill = "#924ff7"
+
+[desktop.appearanceDarkChromeTheme]
+accent = "#339cff"
+contrast = 60
+ink = "#ffffff"
+opaqueWindows = false
+surface = "#181818"
+
+[desktop.appearanceDarkChromeTheme.fonts]
+code = "CommitMono"
+
+[desktop.appearanceDarkChromeTheme.semanticColors]
+diffAdded = "#40c977"
+diffRemoved = "#fa423e"
+skill = "#ad7bf9"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+"gpt-5.6-sol" = 4
+
+[hooks.state]
+
+[hooks.state."/Users/rishi/Code/dots/.codex/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:6fb9793747b2f83b1a81960ed54db6b7bd844a03e9b2a06d44e1736f65614540"
+
+[shell_environment_policy.set]
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "2793c6809f8a4c90923435aa3a6d1e6f8cabb145212f06328b860b076b899525,6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/rishi/.codex"

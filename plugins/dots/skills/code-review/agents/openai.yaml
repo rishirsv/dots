@@ -1,0 +1,10 @@
+interface:
+  display_name: "Code Review"
+  short_description: "Review, simplify, fix, audit, or janitor code"
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
+  brand_color: "#3B82F6"
+  default_prompt: "Use $code-review to run the Simplify process. Keep the default three reviews for current work. For periodic Code Janitor passes, select materially active recent surfaces, use subagents for breadth, implement every validated product-preserving cleanup, flag product-changing opportunities for the user, and publish only when authorized."
+
+policy:
+  allow_implicit_invocation: false

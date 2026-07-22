@@ -1,0 +1,65 @@
+<!-- component: code-panel
+title: Code panel
+type: ui
+when: Multi-line code or config the reader needs verbatim — a snippet worth
+  quoting in full, not paraphrasing inline with <code>. Dark surface in both
+  light and dark mode so code always reads as code.
+deps: theme.css
+variants: default (filename header) | omit .code-head for an anonymous
+  fragment with no filename to show.
+gotchas: Horizontal scroll stays inside the pre — never let wide lines widen
+  the page. The syntax tint classes (.tok-k/.tok-s/.tok-c/.tok-n) are literal
+  colors scoped to the code surface, not page tokens, because the surface
+  stays dark even when the page flips to light mode.
+-->
+<style>
+  .code-panel {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-code);
+    overflow: hidden;
+    margin-bottom: var(--section);
+  }
+  .code-head {
+    background: var(--code-surface);
+    color: var(--code-ink);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-transform: lowercase;
+    opacity: 0.6;
+  }
+  .code-panel pre {
+    margin: 0;
+    background: var(--code-surface);
+    color: var(--code-ink);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 20px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    font-feature-settings: "liga" 0;
+    white-space: pre;
+  }
+  /* code-surface-scoped tints: literal colors, not page tokens — this
+     background never flips with the page theme, so these can't be a4/a55 etc. */
+  .tok-k { color: #8ab4ff; }
+  .tok-s { color: #b7c9ff; }
+  .tok-c { color: #6e7681; }
+  .tok-n { color: #ffb200; }
+</style>
+
+<div data-component="code-panel" class="code-panel">
+  <div class="code-head">retry.config.ts</div>
+  <pre><code><span class="tok-c">// exponential backoff for the ingest worker</span>
+<span class="tok-k">export</span> <span class="tok-k">const</span> retryConfig = {
+  maxAttempts: <span class="tok-n">5</span>,
+  baseDelayMs: <span class="tok-n">200</span>,
+  maxDelayMs: <span class="tok-n">10000</span>,
+  jitter: <span class="tok-s">"full"</span>,
+  retryOn: [<span class="tok-s">"ETIMEDOUT"</span>, <span class="tok-s">"ECONNRESET"</span>, <span class="tok-n">429</span>, <span class="tok-n">503</span>],
+  onExhausted: <span class="tok-k">function</span> (job) {
+    deadLetter.push(job);
+  },
+};</code></pre>
+</div>

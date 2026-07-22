@@ -1,0 +1,31 @@
+{
+  "name": "meta-skill",
+  "version": "0.2.0",
+  "description": "Create, revise, review, and evaluate agent skills.",
+  "author": {
+    "name": "Rishi"
+  },
+  "repository": "https://github.com/rishirsv/dots",
+  "keywords": [
+    "skills",
+    "meta",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Meta Skill",
+    "shortDescription": "Create, revise, review, and evaluate agent skills.",
+    "longDescription": "Focused tools for creating or revising skill source, diagnosing skills without edits, and evaluating skill behavior.",
+    "developerName": "Rishi",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Help me create, revise, review, or evaluate an agent skill.",
+    "brandColor": "#7C4DFF",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png",
+    "screenshots": []
+  }
+}

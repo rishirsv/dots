@@ -1,0 +1,25 @@
+{
+  "model": "fable",
+  "enabledPlugins": {
+    "build-ios-apps@steady-app": true,
+    "codex@openai-codex": true,
+    "dots@dots": true,
+    "meta-skill@dots": true
+  },
+  "extraKnownMarketplaces": {
+    "dots": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/rishi/Code/dots"
+      }
+    },
+    "steady-app": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/rishi/.claude/plugins/local-marketplaces/steady-app"
+      }
+    }
+  },
+  "effortLevel": "high",
+  "skipDangerousModePermissionPrompt": true
+}

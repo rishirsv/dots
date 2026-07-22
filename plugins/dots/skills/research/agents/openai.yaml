@@ -1,0 +1,10 @@
+interface:
+  display_name: "Research"
+  short_description: "Orchestrate delegated research and synthesize"
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
+  brand_color: "#3B82F6"
+  default_prompt: "Use $research to delegate all source investigation to bounded researcher subagents, verify their reports through follow-up workers when needed, and synthesize the evidence without searching in the parent thread."
+
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,31 @@
+{
+  "name": "dots",
+  "version": "0.2.54",
+  "description": "Opinionated development workflows and reusable skills for planning, building, reviewing, documenting, and shipping software.",
+  "author": {
+    "name": "Rishi"
+  },
+  "repository": "https://github.com/rishirsv/dots",
+  "keywords": [
+    "development",
+    "workflow",
+    "skills"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Dots",
+    "shortDescription": "Opinionated development workflows and reusable skills.",
+    "longDescription": "Opinionated development workflows and reusable skills for planning, building, reviewing, documenting, and shipping software.",
+    "developerName": "Rishi",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Use dots for this workflow.",
+    "brandColor": "#36C5A7",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png",
+    "screenshots": []
+  }
+}

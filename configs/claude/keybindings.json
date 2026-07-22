@@ -1,0 +1,12 @@
+{
+  "bindings": [
+    {
+      "context": "Chat",
+      "bindings": {
+        "shift+enter": "chat:newline",
+        "meta+enter": "chat:newline",
+        "enter": "chat:submit"
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+<!-- component: pull-quote
+title: Pull quote
+type: ui
+when: One thesis line in the document is worth isolating from the surrounding
+  prose so the reader can't skim past it — the single claim the rest of the
+  document argues for.
+deps: theme.css
+variants: none — one shape, centered or indented; do not add borders, bars,
+  or quote glyphs to it.
+gotchas: One per document, maximum. It must be an actual sentence lifted from
+  the document's own argument, never decorative filler or a generic
+  aphorism. No border, no left bar, no oversized quotation marks, no italics
+  — typographic weight and isolation are the only emphasis allowed.
+-->
+<style>
+  .pull-quote {
+    margin: 48px auto;
+    max-width: 46ch;
+    text-align: center;
+    font-size: 20px;
+    line-height: 1.4;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    color: var(--a70);
+  }
+
+  .pull-quote-attr {
+    display: block;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: normal;
+    color: var(--text-muted);
+  }
+</style>
+
+<p data-component="pull-quote" class="pull-quote">
+  The migration is safe to ship precisely because it changes nothing a
+  caller can observe until the compatibility shim is removed in v3.
+  <span class="pull-quote-attr">— Migration plan, Decision section</span>
+</p>
