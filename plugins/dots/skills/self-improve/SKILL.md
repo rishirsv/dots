@@ -29,7 +29,9 @@ directly; propose a memory note instead.
    and governing files.
 4. **Qualify the pattern.** Keep direct facts separate from inference, attach
    subagent evidence to its parent session, mark contradictions, and reject
-   one-off implementation requests. Script scores are leads, not verdicts.
+   one-off implementation requests. Before proposing a skill change, pass the
+   generalization gate in [references/thread-evidence.md](references/thread-evidence.md).
+   Script scores are leads, not verdicts.
 5. **Propose the smallest durable change.** Name the exact behavior, target,
    evidence, strength, owner, and verification. Stop for approval.
 6. **Apply or route.** Apply only approved instruction-file changes directly.
@@ -138,6 +140,7 @@ script, validator, or harness when a mechanical check is stronger than prose.
 - Filter one-off implementation requests unless the user explicitly states a
   durable preference or correction.
 - Inspect the cited transcript before proposing or applying a change.
+- For skill changes, pass the generalization gate before including the proposal.
 - Keep proposal destinations disjoint.
 - Prefer the smallest change that prevents recurrence.
 - Do not expose secrets, private transcript contents, or local transcript paths
@@ -175,6 +178,7 @@ change is justified.
   Destination: <one bucket>
   Support: <cluster count>
   Strength: <strong|medium|weak|contradicted>
+  Generalization: <failure class, incident-independent rule, adjacent-skill boundary, and falsifier>
   Evidence: <platform, session id, update time, minimum private locator>
   Approval needed: <yes and why>
 

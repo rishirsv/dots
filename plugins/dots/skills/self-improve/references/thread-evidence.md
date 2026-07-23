@@ -25,6 +25,22 @@ Thread ids, timestamps, and transcript paths establish provenance. Do not copy
 them into portable skill or instruction text unless the runtime task requires
 them.
 
+## Generalization gate
+
+Before proposing a skill change:
+
+1. Name the reusable failure class in behavioral terms.
+2. State the rule without copying the incident's names, wording, counts, or
+   numeric heuristic unless the number is independently supported.
+3. Check the nearest adjacent skill or workflow and keep the rule with the
+   component that owns the behavior.
+4. Give a counterexample or falsifier that would show the rule is too broad or
+   the diagnosis is wrong.
+
+Reject or narrow the proposal when it cannot pass all four checks. A direct
+user correction can establish the need for a rule, but the correction's
+surface form is not automatically the portable rule.
+
 ## File references
 
 Rank file evidence by how it was observed:
