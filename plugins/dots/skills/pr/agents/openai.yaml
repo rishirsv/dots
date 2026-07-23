@@ -1,5 +1,5 @@
 interface:
-  display_name: "pr"
+  display_name: "PR"
   short_description: "Create, update, or watch a GitHub pull request"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

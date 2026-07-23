@@ -1,5 +1,5 @@
 interface:
-  display_name: "imessage-context"
+  display_name: "iMessage Context"
   short_description: "Read relevant iMessage history as task context"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

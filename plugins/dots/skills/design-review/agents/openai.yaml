@@ -1,5 +1,5 @@
 interface:
-  display_name: "design-review"
+  display_name: "Design Review"
   short_description: "UI, UX, accessibility, and motion review"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

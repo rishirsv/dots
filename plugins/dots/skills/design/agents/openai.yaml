@@ -1,5 +1,5 @@
 interface:
-  display_name: "design"
+  display_name: "Design"
   short_description: "Design UI and name motion effects"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

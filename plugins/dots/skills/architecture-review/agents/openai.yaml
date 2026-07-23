@@ -1,5 +1,5 @@
 interface:
-  display_name: "architecture-review"
+  display_name: "Architecture Review"
   short_description: "Find structural refactor candidates"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

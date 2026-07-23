@@ -1,5 +1,5 @@
 interface:
-  display_name: "skill-reviewer"
+  display_name: "Skill Reviewer"
   short_description: "Diagnose skills without changing source"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

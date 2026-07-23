@@ -1,5 +1,5 @@
 interface:
-  display_name: "pulse"
+  display_name: "Pulse"
   short_description: "Read current social and market signal"
   default_prompt: "Use $pulse to find what people are saying, where views differ, and how strong the evidence is."
 policy:

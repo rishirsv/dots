@@ -1,5 +1,5 @@
 interface:
-  display_name: "explain"
+  display_name: "Explain"
   short_description: "Clear, conclusion-first explanations"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

@@ -1,5 +1,5 @@
 interface:
-  display_name: "self-improve"
+  display_name: "Self-Improve"
   short_description: "Mine Codex or Claude sessions for durable agent improvements"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

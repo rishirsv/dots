@@ -1,5 +1,5 @@
 interface:
-  display_name: "research"
+  display_name: "Research"
   short_description: "Orchestrate delegated research and synthesize"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

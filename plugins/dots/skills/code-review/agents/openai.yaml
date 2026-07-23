@@ -1,5 +1,5 @@
 interface:
-  display_name: "code-review"
+  display_name: "Code Review"
   short_description: "Review, simplify, fix, audit, or janitor code"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

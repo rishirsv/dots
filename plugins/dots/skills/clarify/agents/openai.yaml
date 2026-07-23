@@ -1,5 +1,5 @@
 interface:
-  display_name: "clarify"
+  display_name: "Clarify"
   short_description: "Clarify requirements before implementing"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
