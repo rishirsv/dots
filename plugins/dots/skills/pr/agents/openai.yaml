@@ -1,0 +1,10 @@
+interface:
+  display_name: "PR"
+  short_description: "Create, update, or watch a GitHub pull request"
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
+  brand_color: "#3B82F6"
+  default_prompt: "Use $pr to create a draft pull request from the intended local changes. Verify the repository, branch, GitHub account, and commit identity; commit and push only the scoped work; reuse fresh validation; and report the live pull-request state."
+
+policy:
+  allow_implicit_invocation: false
