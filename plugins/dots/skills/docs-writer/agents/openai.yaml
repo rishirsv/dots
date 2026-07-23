@@ -1,5 +1,5 @@
 interface:
-  display_name: "Docs Writer"
+  display_name: "docs-writer"
   short_description: "Write durable repo and knowledge docs"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

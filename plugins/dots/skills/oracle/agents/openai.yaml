@@ -1,5 +1,5 @@
 interface:
-  display_name: "Oracle"
+  display_name: "oracle"
   short_description: "Package a focused request and local context so another model or CLI agent can provide an advisory second opinion."
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

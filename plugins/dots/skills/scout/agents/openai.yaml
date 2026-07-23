@@ -1,5 +1,5 @@
 interface:
-  display_name: "Scout"
+  display_name: "scout"
   short_description: "Grill a fuzzy idea into a decision snapshot"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

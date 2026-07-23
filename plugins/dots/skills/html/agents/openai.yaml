@@ -1,5 +1,5 @@
 interface:
-  display_name: "HTML"
+  display_name: "html"
   short_description: "Create self-contained HTML artifacts and fragments"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

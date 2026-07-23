@@ -1,5 +1,5 @@
 interface:
-  display_name: "Chief of Staff"
+  display_name: "chief-of-staff"
   short_description: "Coordinate project work, decisions, and evidence"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

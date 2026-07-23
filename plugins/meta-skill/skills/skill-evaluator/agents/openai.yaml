@@ -1,5 +1,5 @@
 interface:
-  display_name: "Skill Evaluator"
+  display_name: "skill-evaluator"
   short_description: "Run and review agent skill evaluations"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

@@ -1,5 +1,5 @@
 interface:
-  display_name: "Handoff"
+  display_name: "handoff"
   short_description: "Create a clear continuation handoff"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

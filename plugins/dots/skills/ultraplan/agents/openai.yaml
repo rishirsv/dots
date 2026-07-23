@@ -1,5 +1,5 @@
 interface:
-  display_name: "Plan"
+  display_name: "plan"
   short_description: "Plan implementation end to end, stress-tested before build"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
