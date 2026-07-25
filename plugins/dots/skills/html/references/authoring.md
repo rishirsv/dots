@@ -37,13 +37,28 @@ meaning the reader would otherwise miss.
   artifact's main value, use an interactive-visualization or product-UI
   workflow instead of building a half-interactive document.
 
+## Spec-loading tiers
+
+Load only the guidance needed for the work in front of you:
+
+| Work | Read |
+|---|---|
+| Small edit to an existing artifact | The artifact, its named component source in `assets/registry/`, and the verification section below |
+| Standard page | The visual outcome atlas, one routed outcome, this reference, and the visual component atlas |
+| Chart, diagram, generated image, PR walkthrough, or code explainer | The standard-page set plus only that visual or outcome reference |
+| Novel canvas or high-stakes keeper | The relevant set above plus `DESIGN.md`, then prove the exact output with actual-page screenshots |
+
+Do not load every reference pre-emptively. Escalate when the composition uses a
+specialized visual, breaks established anatomy, or carries evidence whose loss
+would make a polished page misleading.
+
 ## Page assembly
 
-1. Read [the outcome registry](../assets/outcomes/registry.json), choose the
-   closest reader job, and inspect that one complete page. Outcome pages
-   calibrate hierarchy, pacing, and proof; they never dictate an exact section
-   list. If the job is genuinely mixed, inspect one adjacent outcome after
-   naming what the first page does not cover.
+1. Open [the visual outcome atlas](../assets/outcomes/index.html), choose the
+   closest reader job from its complete-page previews, and inspect that one
+   page. Outcome pages calibrate hierarchy, pacing, and proof; they never
+   dictate an exact section list. If the job is genuinely mixed, inspect one
+   adjacent outcome after naming what the first page does not cover.
 2. Start from `page-shell` — it owns the context line, title (+ one status chip
    only if the document has a real status), dek, footer, and width mode. Choose
    `article` for prose-led work, `wide` for parallel evidence, and `canvas` for
@@ -61,13 +76,17 @@ meaning the reader would otherwise miss.
 4. Lead with `stat-tiles` only when supplied headline measures summarize the
    story; otherwise lead with the argument or the visual that answers the
    reader's question. Never lead with a figure the reader cannot parse yet.
-5. Pick components by their `when:` line in `registry.json`. For a page with
-   several components, use `scripts/assemble.mjs` to inline the theme and each
-   selected component's CSS once around a real body fragment. For a small page,
-   copying remains fine: copy the fragment's CSS into the page `<style>` (after
-   theme.css) and the markup into place; replace every piece of example content.
+5. Choose components visually in [the component atlas](../assets/atlas.html),
+   then read the selected source files in `assets/registry/`; each header
+   comment states when to use it. For a page with several components, use
+   `scripts/assemble.mjs` to inline the theme and each selected component's CSS
+   once around a real body fragment. For a small page, copying remains fine:
+   copy the fragment's CSS into the page `<style>` (after theme.css) and the
+   markup into place; replace every piece of example content.
    Duplicate-component CSS is copied once, markup as often as needed. Use
-   `process-steps` for linear sequences and reserve `flow-diagram` for branches.
+   `process-steps` for linear sequences. When relationships need a diagram,
+   choose the exact family through [diagrams.md](diagrams.md) instead of forcing
+   every structure into `flow-diagram`.
    When an original raster image earns a place, read
    [generated-images.md](generated-images.md), generate and inspect it through
    `imagegen`, copy the selected final into the workspace, and reference it with
@@ -118,8 +137,8 @@ single self-contained `.html` remains the deliverable.
 
 Rendered artifacts are machine-editable: every component instance carries
 `data-component="<name>"` on its root. To modify one, find the block by
-attribute, look its name up in `registry.json`, and edit against that
-fragment's anatomy — never guess structure from the markup. Keep the
+attribute, open the same-named source in `assets/registry/`, and edit against
+that fragment's anatomy — never guess structure from the markup. Keep the
 attribute when copying fragments and when adding instances; an artifact
 whose blocks have lost their names is opaque to the next editor.
 When the original body fragment is available, edit that source and reassemble;
@@ -179,6 +198,19 @@ node scripts/check-artifact.mjs /path/to/finished.html
 It rejects host-only APIs, external resource loads, custom tab order, unlabeled
 controls, inaccessible image/SVG content, and text below 11px. A pass proves
 those structural properties only; continue with rendered inspection.
+
+For a page, capture the exact delivered file:
+
+```bash
+node scripts/capture-artifact.mjs \
+  --in /path/to/finished.html \
+  --out-dir /path/to/rendered-proof
+```
+
+This renders full-page screenshots at 1280, 768, 360, and 320 in light and
+dark modes, plus reduced-motion and JS-off states. Inspect those images. The
+shared `visual-check.mjs` fixture proves catalog behavior for maintainers; it
+does not prove the page being handed to the user.
 
 ### Page verification
 

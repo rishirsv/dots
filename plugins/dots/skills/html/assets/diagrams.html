@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagram atlas</title>
+<style>
+/* GENERATED from DESIGN.md by scripts/generate-theme.mjs — do not edit.
+ * Tokens + base document styles for dots HTML artifacts. Inline this file
+ * verbatim inside <style> in every artifact. */
+
+:root {
+  --background: #fbfbfa;
+  --foreground: #0d0d0d;
+  --accent: #1f5eff;
+  --accent-deep: #12379e;
+  --warning-ink: #6b4c00;
+  --warning-line: rgba(180,130,0,0.35);
+  --warning-bg: rgba(255,178,0,0.06);
+  --danger-ink: #8c1d18;
+  --danger-line: rgba(200,60,50,0.35);
+  --danger-bg: rgba(220,70,60,0.05);
+  --code-surface: #0d0d0d;
+  --code-ink: #ededed;
+  --a4: rgba(13, 13, 13, 0.04);
+  --a8: rgba(13, 13, 13, 0.08);
+  --a12: rgba(13, 13, 13, 0.12);
+  --a20: rgba(13, 13, 13, 0.20);
+  --a40: rgba(13, 13, 13, 0.40);
+  --a55: rgba(13, 13, 13, 0.55);
+  --a60: rgba(13, 13, 13, 0.60);
+  --a70: rgba(13, 13, 13, 0.70);
+  --text-muted: var(--a60);
+  --font-sans: -apple-system, Helvetica Neue, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace;
+  --article: 720px;
+  --wide: 1040px;
+  --canvas: 1440px;
+  --section: 48px;
+  --block: 16px;
+  --r-card: 6px;
+  --r-code: 6px;
+  --r-inline: 4px;
+  --r-pill: 6px;
+  --dur-fast: 150ms;
+  --dur-reveal: 400ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --stagger: 60ms;
+  --chart-emphasis: var(--accent);
+  --chart-value-emphasis: var(--accent-deep);
+  --chart-pos: var(--a40);
+  --chart-neg: var(--a20);
+  --chart-mark: var(--a20);
+  --chart-track: var(--a4);
+  --chart-grid: var(--a12);
+  --chart-label: var(--text-muted);
+  --chart-value: var(--text-muted);
+}
+
+[data-theme="dark"] {
+  --background: #0f0f0e;
+  --foreground: #f5f5f4;
+  --accent: #6f94ff;
+  --accent-deep: #b7c9ff;
+  --warning-ink: #f2c14e;
+  --warning-line: rgba(255,193,77,0.35);
+  --warning-bg: rgba(255,193,77,0.08);
+  --danger-ink: #ff8a80;
+  --danger-line: rgba(255,120,110,0.35);
+  --danger-bg: rgba(255,120,110,0.07);
+  --code-surface: #161615;
+  --code-ink: #ededed;
+  --a4: rgba(245, 245, 244, 0.04);
+  --a8: rgba(245, 245, 244, 0.08);
+  --a12: rgba(245, 245, 244, 0.12);
+  --a20: rgba(245, 245, 244, 0.20);
+  --a40: rgba(245, 245, 244, 0.40);
+  --a55: rgba(245, 245, 244, 0.55);
+  --a60: rgba(245, 245, 244, 0.60);
+  --a70: rgba(245, 245, 244, 0.70);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --background: #0f0f0e;
+    --foreground: #f5f5f4;
+    --accent: #6f94ff;
+    --accent-deep: #b7c9ff;
+    --warning-ink: #f2c14e;
+    --warning-line: rgba(255,193,77,0.35);
+    --warning-bg: rgba(255,193,77,0.08);
+    --danger-ink: #ff8a80;
+    --danger-line: rgba(255,120,110,0.35);
+    --danger-bg: rgba(255,120,110,0.07);
+    --code-surface: #161615;
+    --code-ink: #ededed;
+    --a4: rgba(245, 245, 244, 0.04);
+    --a8: rgba(245, 245, 244, 0.08);
+    --a12: rgba(245, 245, 244, 0.12);
+    --a20: rgba(245, 245, 244, 0.20);
+    --a40: rgba(245, 245, 244, 0.40);
+    --a55: rgba(245, 245, 244, 0.55);
+    --a60: rgba(245, 245, 244, 0.60);
+    --a70: rgba(245, 245, 244, 0.70);
+  }
+}
+
+/* ---------- base ---------- */
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; overflow-x: clip; }
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-inline);
+}
+
+::selection { background: var(--a12); }
+
+h1 {
+  font-size: 40px;
+  line-height: 48px;
+  letter-spacing: -2.4px;
+  font-weight: 600;
+  margin: 0;
+  text-wrap: balance;
+}
+
+@media (max-width: 380px) {
+  h1 {
+    font-size: 32px;
+    line-height: 38px;
+    letter-spacing: -1.5px;
+  }
+}
+
+h2 {
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: -0.96px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  text-wrap: balance;
+}
+
+h3 {
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.32px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+p { margin: 0 0 var(--block); }
+p:last-child { margin-bottom: 0; }
+
+section { margin-bottom: var(--section); }
+
+code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--a4);
+  border-radius: var(--r-inline);
+  padding: 1px 5px;
+}
+
+pre code { background: none; padding: 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  border-top: 1px solid var(--a20);
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--a12);
+  vertical-align: top;
+}
+
+thead th {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
+
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- motion: choreographed moments only ---------- */
+/* One-time load stagger + one-time scroll reveals. Elements render complete
+ * and static by default; page-behavior opts them in only when JS
+ * runs and reduced-motion is off. Nothing loops; nothing is ambient. */
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js-motion .stagger > * {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: rise var(--dur-reveal) var(--ease) forwards;
+  }
+  html.js-motion .stagger > *:nth-child(1) { animation-delay: 0ms; }
+  html.js-motion .stagger > *:nth-child(2) { animation-delay: var(--stagger); }
+  html.js-motion .stagger > *:nth-child(3) { animation-delay: calc(var(--stagger) * 2); }
+  html.js-motion .stagger > *:nth-child(4) { animation-delay: calc(var(--stagger) * 3); }
+  html.js-motion .stagger > *:nth-child(5) { animation-delay: calc(var(--stagger) * 4); }
+
+  html.js-motion .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity var(--dur-reveal) var(--ease), transform var(--dur-reveal) var(--ease);
+  }
+  html.js-motion .reveal.is-in { opacity: 1; transform: none; }
+
+  html.js-motion .reveal .bar-fill {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform calc(var(--dur-reveal) * 1.5) var(--ease) 120ms;
+  }
+  html.js-motion .reveal.is-in .bar-fill { transform: scaleX(1); }
+
+  a, summary, button { transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease); }
+}
+
+@keyframes rise {
+  to { opacity: 1; transform: none; }
+}
+
+.page {
+    max-width: var(--article);
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+  .page[data-layout="wide"] { max-width: var(--wide); }
+  .page[data-layout="canvas"] { max-width: var(--canvas); }
+  .reading-column { max-width: var(--article); }
+  .page[data-layout="article"] .reading-column,
+  .page[data-layout="wide"] .reading-column { margin-right: auto; }
+  .page[data-layout="canvas"] .reading-column { margin-left: auto; margin-right: auto; }
+  .page > header { margin-bottom: var(--section); }
+  .context-line { font-size: 13px; color: var(--text-muted); margin: 0 0 20px; }
+  .title-row {
+    display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .title-row h1 { flex: 1 1 480px; min-width: 0; }
+  .status {
+    display: inline-flex; align-items: center; height: 20px; padding: 0 8px;
+    border-radius: var(--r-pill); background: var(--a4); color: var(--a70);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+    white-space: nowrap; border: 1px solid var(--a12);
+  }
+  .dek { font-size: 16px; color: var(--text-muted); margin: 0; max-width: 62ch; }
+  footer.sources {
+    margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--a12);
+    font-size: 12px; color: var(--text-muted); line-height: 1.7;
+  }
+  footer.sources a { color: var(--text-muted); }
+  @media (max-width: 680px) {
+    .page { padding: 40px 24px 72px; }
+    .title-row { display: block; }
+    .title-row .status { margin-top: 10px; }
+  }
+</style>
+</head>
+<body>
+<div data-component="page-shell" class="page" data-layout="canvas">
+  <header class="stagger">
+    <p class="context-line">dots html / visual vocabulary</p>
+    <div class="title-row">
+      <h1>Diagram atlas</h1>
+
+    </div>
+    <p class="dek">Eighteen reusable templates for structure, process, hierarchy, interaction, and quantitative explanation.</p>
+  </header>
+
+  <style>
+    .diagram-intro { margin-bottom: var(--section); }
+    .diagram-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .diagram-card {
+      min-width: 0;
+      margin: 0;
+      padding: 18px;
+      border: 1px solid var(--a12);
+      border-radius: var(--r-card);
+      background: var(--background);
+    }
+    .diagram-card h2 { font-size: 18px; line-height: 24px; margin-bottom: 4px; }
+    .diagram-use { color: var(--text-muted); font-size: 13px; margin-bottom: 14px; }
+    .diagram-scroll { overflow-x: auto; overscroll-behavior-inline: contain; }
+    .diagram-canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-width: 320px;
+      border: 1px solid var(--a8);
+      border-radius: var(--r-card);
+      background: var(--a4);
+    }
+    .diagram-node { fill: var(--background); stroke: var(--a40); stroke-width: 1.5; }
+    .diagram-node.is-focal { fill: var(--a4); stroke: var(--accent); stroke-width: 2; }
+    .diagram-edge { fill: none; stroke: var(--a40); stroke-width: 1.5; }
+    .diagram-edge.is-focal { stroke: var(--accent); stroke-width: 2; }
+    .diagram-gridline { stroke: var(--a12); stroke-width: 1; }
+    .diagram-label {
+      fill: var(--foreground);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+    .diagram-label.is-small { fill: var(--text-muted); font-size: 12px; }
+    .diagram-value {
+      fill: var(--foreground);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      text-anchor: middle;
+    }
+    .diagram-summary {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.55;
+      margin: 12px 0 0;
+    }
+    @media (max-width: 760px) {
+      .diagram-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <div class="reading-column diagram-intro">
+    <section id="choose">
+      <h2>Choose the relationship before drawing</h2>
+      <p>These 18 templates cover system structure, process, hierarchy, interaction, and quantitative explanation. Copy the closest figure, keep the shared visual rules, and replace every illustrative label with grounded content.</p>
+      <p>Use a table for a binary comparison and prose when the diagram would only put a box around a sentence.</p>
+    </section>
+  </div>
+
+  <div class="diagram-grid">
+    <figure id="architecture" class="diagram-card" data-diagram="architecture">
+      <h2>Architecture</h2>
+      <p class="diagram-use">System components and their principal connections.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
+        <defs><marker id="architecture-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs>
+        <path class="diagram-edge" d="M76 90H116M204 90H244M160 68V42" marker-end="url(#architecture-arrow)"/>
+        <rect class="diagram-node" x="16" y="68" width="60" height="44" rx="6"/><text class="diagram-label" x="46" y="90">client</text>
+        <rect class="diagram-node is-focal" x="116" y="68" width="88" height="44" rx="6"/><text class="diagram-label" x="160" y="90">service</text>
+        <rect class="diagram-node" x="244" y="68" width="60" height="44" rx="6"/><text class="diagram-label" x="274" y="90">store</text>
+        <rect class="diagram-node" x="122" y="10" width="76" height="32" rx="6"/><text class="diagram-label is-small" x="160" y="26">policy</text>
+      </svg></div>
+      <figcaption class="diagram-summary">The client enters one focal service, which reads the store under a policy boundary.</figcaption>
+    </figure>
+
+    <figure id="architecture-board" class="diagram-card" data-diagram="architecture-board">
+      <h2>Architecture board</h2>
+      <p class="diagram-use">A full-system panorama with layers, path, and ownership.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 220" aria-hidden="true">
+        <rect class="diagram-node" x="14" y="14" width="292" height="34" rx="5"/><text class="diagram-label" x="160" y="31">roles · operators · consumers</text>
+        <rect class="diagram-node" x="14" y="58" width="292" height="52" rx="5"/><line class="diagram-gridline" x1="111" y1="58" x2="111" y2="110"/><line class="diagram-gridline" x1="209" y1="58" x2="209" y2="110"/><text class="diagram-label" x="62" y="84">surface</text><text class="diagram-label" x="160" y="84">runtime</text><text class="diagram-label" x="258" y="84">control</text>
+        <rect class="diagram-node is-focal" x="14" y="120" width="292" height="36" rx="5"/><text class="diagram-label" x="160" y="138">primary execution path</text>
+        <rect class="diagram-node" x="14" y="166" width="292" height="40" rx="5"/><text class="diagram-label" x="160" y="186">owners · proof · next intervention</text>
+      </svg></div>
+      <figcaption class="diagram-summary">Four bands separate who uses the system, what runs, the main path, and who owns the next change.</figcaption>
+    </figure>
+
+    <figure id="flowchart" class="diagram-card" data-diagram="flowchart">
+      <h2>Flowchart</h2>
+      <p class="diagram-use">A decision branch where each edge changes the outcome.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
+        <defs><marker id="flowchart-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs>
+        <rect class="diagram-node" x="18" y="68" width="70" height="40" rx="6"/><text class="diagram-label" x="53" y="88">input</text>
+        <path class="diagram-node is-focal" d="M160 50 212 88 160 126 108 88Z"/><text class="diagram-label" x="160" y="88">valid?</text>
+        <rect class="diagram-node" x="238" y="22" width="66" height="36" rx="6"/><text class="diagram-label" x="271" y="40">accept</text>
+        <rect class="diagram-node" x="238" y="122" width="66" height="36" rx="6"/><text class="diagram-label" x="271" y="140">repair</text>
+        <path class="diagram-edge" d="M88 88H104M207 70 234 50M207 106 234 132" marker-end="url(#flowchart-arrow)"/>
+        <text class="diagram-label is-small" x="220" y="57">yes</text><text class="diagram-label is-small" x="220" y="119">no</text>
+      </svg></div>
+      <figcaption class="diagram-summary">Input is accepted when valid; otherwise it enters a repair path.</figcaption>
+    </figure>
+
+    <figure id="quadrant" class="diagram-card" data-diagram="quadrant">
+      <h2>Quadrant</h2>
+      <p class="diagram-use">Position items against two independent criteria.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
+        <line class="diagram-gridline" x1="42" y1="144" x2="298" y2="144"/><line class="diagram-gridline" x1="42" y1="144" x2="42" y2="18"/>
+        <line class="diagram-gridline" x1="170" y1="18" x2="170" y2="144"/><line class="diagram-gridline" x1="42" y1="81" x2="298" y2="81"/>
+        <circle cx="236" cy="48" r="9" fill="var(--accent)"/><text class="diagram-label is-small" x="236" y="30">A</text>
+        <circle cx="112" cy="62" r="7" fill="var(--a40)"/><text class="diagram-label is-small" x="112" y="44">B</text>
+        <circle cx="220" cy="116" r="7" fill="var(--a40)"/><text class="diagram-label is-small" x="220" y="98">C</text>
+        <text class="diagram-label is-small" x="170" y="164">effort →</text><text class="diagram-label is-small" transform="translate(18 82) rotate(-90)">impact →</text>
+      </svg></div>
+      <figcaption class="diagram-summary">Option A combines the highest impact with above-average effort.</figcaption>
+    </figure>
+
+    <figure id="bar-chart" class="diagram-card" data-diagram="bar-chart">
+      <h2>Bar chart</h2>
+      <p class="diagram-use">Compare category magnitudes with one meaningful emphasis.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
+        <text class="diagram-label is-small" x="48" y="38">alpha</text><rect x="82" y="26" width="154" height="20" rx="3" fill="var(--a20)"/><text class="diagram-value" x="254" y="41">68</text>
+        <text class="diagram-label is-small" x="48" y="78">beta</text><rect x="82" y="66" width="202" height="20" rx="3" fill="var(--accent)"/><text class="diagram-value" x="298" y="81">89</text>
+        <text class="diagram-label is-small" x="48" y="118">gamma</text><rect x="82" y="106" width="118" height="20" rx="3" fill="var(--a20)"/><text class="diagram-value" x="218" y="121">52</text>
+        <text class="diagram-label is-small" x="48" y="158">delta</text><rect x="82" y="146" width="78" height="20" rx="3" fill="var(--a20)"/><text class="diagram-value" x="178" y="161">34</text>
+      </svg></div>
+      <figcaption class="diagram-summary">Beta leads the four supplied categories at 89.</figcaption>
+    </figure>
+
+    <figure id="line-chart" class="diagram-card" data-diagram="line-chart">
+      <h2>Line chart</h2>
+      <p class="diagram-use">Show a time series whose direction and inflections matter.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
+        <line class="diagram-gridline" x1="34" y1="146" x2="300" y2="146"/><line class="diagram-gridline" x1="34" y1="22" x2="34" y2="146"/>
+        <line class="diagram-gridline" x1="34" y1="84" x2="300" y2="84"/>
+        <polyline points="38,126 82,112 126,118 170,78 214,66 258,40 296,52" fill="none" stroke="var(--accent)" stroke-width="3"/>
+        <g fill="var(--background)" stroke="var(--accent)" stroke-width="2"><circle cx="38" cy="126" r="4"/><circle cx="82" cy="112" r="4"/><circle cx="126" cy="118" r="4"/><circle cx="170" cy="78" r="4"/><circle cx="214" cy="66" r="4"/><circle cx="258" cy="40" r="4"/><circle cx="296" cy="52" r="4"/></g>
+        <text class="diagram-label is-small" x="48" y="164">week 1</text><text class="diagram-label is-small" x="278" y="164">week 7</text>
+      </svg></div>
+      <figcaption class="diagram-summary">The measure rises overall, with a small third-week reversal and a final-week pullback.</figcaption>
+    </figure>
+
+    <figure id="donut-chart" class="diagram-card" data-diagram="donut-chart">
+      <h2>Donut chart</h2>
+      <p class="diagram-use">Show a whole divided into a few clearly labeled parts.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
+        <circle cx="98" cy="90" r="52" fill="none" stroke="var(--a12)" stroke-width="24"/>
+        <circle cx="98" cy="90" r="52" fill="none" stroke="var(--accent)" stroke-width="24" stroke-dasharray="171.5 155.2" transform="rotate(-90 98 90)"/>
+        <circle cx="98" cy="90" r="52" fill="none" stroke="var(--a40)" stroke-width="24" stroke-dasharray="98 228.7" stroke-dashoffset="-171.5" transform="rotate(-90 98 90)"/>
+        <text class="diagram-value" x="98" y="94">100%</text>
+        <rect x="182" y="46" width="12" height="12" rx="2" fill="var(--accent)"/><text class="diagram-label is-small" x="240" y="52">core · 52%</text>
+        <rect x="182" y="82" width="12" height="12" rx="2" fill="var(--a40)"/><text class="diagram-label is-small" x="240" y="88">support · 30%</text>
+        <rect x="182" y="118" width="12" height="12" rx="2" fill="var(--a12)"/><text class="diagram-label is-small" x="240" y="124">other · 18%</text>
+      </svg></div>
+      <figcaption class="diagram-summary">Core work accounts for 52% of the supplied total, followed by support at 30%.</figcaption>
+    </figure>
+
+    <figure id="state-machine" class="diagram-card" data-diagram="state-machine">
+      <h2>State machine</h2>
+      <p class="diagram-use">Finite states and the events that transition between them.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
+        <defs><marker id="state-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs>
+        <circle cx="28" cy="90" r="8" fill="var(--foreground)"/>
+        <rect class="diagram-node" x="58" y="68" width="68" height="44" rx="22"/><text class="diagram-label" x="92" y="90">draft</text>
+        <rect class="diagram-node is-focal" x="158" y="68" width="78" height="44" rx="22"/><text class="diagram-label" x="197" y="90">verified</text>
+        <rect class="diagram-node" x="264" y="68" width="42" height="44" rx="22"/><text class="diagram-label is-small" x="285" y="90">live</text>
+        <path class="diagram-edge" d="M36 90H54M126 90H154M236 90H260" marker-end="url(#state-arrow)"/>
+        <text class="diagram-label is-small" x="142" y="72">check</text><text class="diagram-label is-small" x="250" y="72">ship</text>
+      </svg></div>
+      <figcaption class="diagram-summary">A draft becomes verified after its check and moves live only through publication.</figcaption>
+    </figure>
+
+    <figure id="timeline" class="diagram-card" data-diagram="timeline">
+      <h2>Timeline</h2>
+      <p class="diagram-use">Milestones where order and elapsed time carry meaning.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
+        <line x1="32" y1="90" x2="288" y2="90" stroke="var(--a20)" stroke-width="3"/>
+        <circle cx="54" cy="90" r="7" fill="var(--a40)"/><circle cx="132" cy="90" r="7" fill="var(--a40)"/><circle cx="214" cy="90" r="8" fill="var(--accent)"/><circle cx="280" cy="90" r="7" fill="var(--a40)"/>
+        <text class="diagram-label is-small" x="54" y="62">09:10</text><text class="diagram-label" x="54" y="122">detect</text>
+        <text class="diagram-label is-small" x="132" y="62">09:18</text><text class="diagram-label" x="132" y="122">contain</text>
+        <text class="diagram-label is-small" x="214" y="62">09:31</text><text class="diagram-label" x="214" y="122">repair</text>
+        <text class="diagram-label is-small" x="280" y="62">09:42</text><text class="diagram-label" x="280" y="122">close</text>
+      </svg></div>
+      <figcaption class="diagram-summary">Detection led to containment in eight minutes; repair completed 13 minutes later.</figcaption>
+    </figure>
+
+    <figure id="swimlane" class="diagram-card" data-diagram="swimlane">
+      <h2>Swimlane</h2>
+      <p class="diagram-use">A process crossing responsibilities or system boundaries.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 220" aria-hidden="true">
+        <defs><marker id="swimlane-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs>
+        <rect class="diagram-node" x="10" y="12" width="300" height="58" rx="5"/><rect class="diagram-node" x="10" y="80" width="300" height="58" rx="5"/><rect class="diagram-node" x="10" y="148" width="300" height="58" rx="5"/>
+        <text class="diagram-label is-small" x="46" y="41">author</text><text class="diagram-label is-small" x="46" y="109">CI</text><text class="diagram-label is-small" x="46" y="177">release</text>
+        <rect class="diagram-node" x="86" y="24" width="66" height="34" rx="5"/><text class="diagram-label is-small" x="119" y="41">commit</text>
+        <rect class="diagram-node is-focal" x="150" y="92" width="70" height="34" rx="5"/><text class="diagram-label is-small" x="185" y="109">verify</text>
+        <rect class="diagram-node" x="220" y="160" width="70" height="34" rx="5"/><text class="diagram-label is-small" x="255" y="177">publish</text>
+        <path class="diagram-edge" d="M152 41 C176 41 164 78 176 88M220 109 C248 109 238 144 248 156" marker-end="url(#swimlane-arrow)"/>
+      </svg></div>
+      <figcaption class="diagram-summary">The author commits, CI owns verification, and release owns publication.</figcaption>
+    </figure>
+
+    <figure id="tree" class="diagram-card" data-diagram="tree">
+      <h2>Tree</h2>
+      <p class="diagram-use">Parent-child hierarchy such as modules, teams, or directories.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 200" aria-hidden="true">
+        <path class="diagram-edge" d="M160 52V78M64 78H256M64 78V104M160 78V104M256 78V104M64 138V160M256 138V160"/>
+        <rect class="diagram-node is-focal" x="120" y="18" width="80" height="34" rx="5"/><text class="diagram-label" x="160" y="35">root</text>
+        <rect class="diagram-node" x="24" y="104" width="80" height="34" rx="5"/><text class="diagram-label" x="64" y="121">surface</text>
+        <rect class="diagram-node" x="120" y="104" width="80" height="34" rx="5"/><text class="diagram-label" x="160" y="121">runtime</text>
+        <rect class="diagram-node" x="216" y="104" width="80" height="34" rx="5"/><text class="diagram-label" x="256" y="121">proof</text>
+        <text class="diagram-label is-small" x="64" y="178">web · app</text><text class="diagram-label is-small" x="256" y="178">tests · logs</text>
+      </svg></div>
+      <figcaption class="diagram-summary">The root separates the surface, runtime, and proof domains.</figcaption>
+    </figure>
+
+    <figure id="layer-stack" class="diagram-card" data-diagram="layer-stack">
+      <h2>Layer stack</h2>
+      <p class="diagram-use">Vertically ordered layers and the contracts between them.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 220" aria-hidden="true">
+        <rect class="diagram-node" x="42" y="18" width="236" height="34" rx="5"/><text class="diagram-label" x="160" y="35">experience</text>
+        <rect class="diagram-node" x="54" y="60" width="212" height="34" rx="5"/><text class="diagram-label" x="160" y="77">application</text>
+        <rect class="diagram-node is-focal" x="66" y="102" width="188" height="34" rx="5"/><text class="diagram-label" x="160" y="119">domain</text>
+        <rect class="diagram-node" x="78" y="144" width="164" height="34" rx="5"/><text class="diagram-label" x="160" y="161">data</text>
+        <rect class="diagram-node" x="90" y="186" width="140" height="24" rx="5"/><text class="diagram-label is-small" x="160" y="198">infrastructure</text>
+      </svg></div>
+      <figcaption class="diagram-summary">Experience depends on application and domain layers, which sit above data and infrastructure.</figcaption>
+    </figure>
+
+    <figure id="venn" class="diagram-card" data-diagram="venn">
+      <h2>Venn</h2>
+      <p class="diagram-use">Meaningful overlap among two or three bounded sets.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
+        <circle cx="128" cy="86" r="58" fill="var(--accent)" fill-opacity=".10" stroke="var(--accent)" stroke-width="2"/>
+        <circle cx="192" cy="86" r="58" fill="var(--a20)" stroke="var(--a40)" stroke-width="2"/>
+        <text class="diagram-label" x="104" y="82">speed</text><text class="diagram-label" x="216" y="82">proof</text><text class="diagram-label is-small" x="160" y="104">release</text>
+      </svg></div>
+      <figcaption class="diagram-summary">The release path is the overlap between fast execution and durable proof.</figcaption>
+    </figure>
+
+    <figure id="candlestick" class="diagram-card" data-diagram="candlestick">
+      <h2>Candlestick</h2>
+      <p class="diagram-use">Open-high-low-close movement where ranges matter.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
+        <line class="diagram-gridline" x1="28" y1="146" x2="300" y2="146"/><line class="diagram-gridline" x1="28" y1="28" x2="28" y2="146"/>
+        <g stroke-width="2"><line x1="66" y1="46" x2="66" y2="126" stroke="var(--a40)"/><rect x="56" y="68" width="20" height="34" fill="var(--background)" stroke="var(--a40)"/>
+        <line x1="112" y1="54" x2="112" y2="138" stroke="var(--accent)"/><rect x="102" y="84" width="20" height="30" fill="var(--accent)" stroke="var(--accent)"/>
+        <line x1="158" y1="34" x2="158" y2="118" stroke="var(--a40)"/><rect x="148" y="54" width="20" height="38" fill="var(--background)" stroke="var(--a40)"/>
+        <line x1="204" y1="60" x2="204" y2="142" stroke="var(--accent)"/><rect x="194" y="84" width="20" height="34" fill="var(--accent)" stroke="var(--accent)"/>
+        <line x1="250" y1="28" x2="250" y2="110" stroke="var(--a40)"/><rect x="240" y="48" width="20" height="36" fill="var(--background)" stroke="var(--a40)"/></g>
+        <text class="diagram-label is-small" x="160" y="164">five periods</text>
+      </svg></div>
+      <figcaption class="diagram-summary">The five-period series alternates down and up closes while the overall high moves upward.</figcaption>
+    </figure>
+
+    <figure id="waterfall" class="diagram-card" data-diagram="waterfall">
+      <h2>Waterfall</h2>
+      <p class="diagram-use">Explain how additions and deductions bridge two totals.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
+        <line class="diagram-gridline" x1="24" y1="146" x2="302" y2="146"/>
+        <rect x="34" y="86" width="42" height="60" fill="var(--a40)"/><text class="diagram-value" x="55" y="78">100</text>
+        <rect x="88" y="58" width="42" height="28" fill="var(--accent)"/><line class="diagram-gridline" x1="76" y1="86" x2="88" y2="86"/><text class="diagram-value" x="109" y="50">+24</text>
+        <rect x="142" y="58" width="42" height="18" fill="var(--a20)"/><line class="diagram-gridline" x1="130" y1="58" x2="142" y2="58"/><text class="diagram-value" x="163" y="92">−18</text>
+        <rect x="196" y="40" width="42" height="36" fill="var(--accent)"/><line class="diagram-gridline" x1="184" y1="76" x2="196" y2="76"/><text class="diagram-value" x="217" y="32">+32</text>
+        <rect x="250" y="40" width="42" height="106" fill="var(--foreground)"/><text class="diagram-value" x="271" y="30">138</text>
+      </svg></div>
+      <figcaption class="diagram-summary">A starting value of 100 reaches 138 after additions of 24 and 32 offset an 18-point deduction.</figcaption>
+    </figure>
+
+    <figure id="sequence" class="diagram-card" data-diagram="sequence">
+      <h2>Sequence</h2>
+      <p class="diagram-use">Messages among participants ordered from top to bottom.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 220" aria-hidden="true">
+        <defs><marker id="sequence-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs>
+        <rect class="diagram-node" x="22" y="16" width="72" height="34" rx="5"/><text class="diagram-label" x="58" y="33">client</text>
+        <rect class="diagram-node is-focal" x="124" y="16" width="72" height="34" rx="5"/><text class="diagram-label" x="160" y="33">API</text>
+        <rect class="diagram-node" x="226" y="16" width="72" height="34" rx="5"/><text class="diagram-label" x="262" y="33">store</text>
+        <g stroke="var(--a20)" stroke-dasharray="5 4"><line x1="58" y1="50" x2="58" y2="204"/><line x1="160" y1="50" x2="160" y2="204"/><line x1="262" y1="50" x2="262" y2="204"/></g>
+        <path class="diagram-edge" d="M58 78H156" marker-end="url(#sequence-arrow)"/><text class="diagram-label is-small" x="109" y="68">request</text>
+        <path class="diagram-edge" d="M160 118H258" marker-end="url(#sequence-arrow)"/><text class="diagram-label is-small" x="211" y="108">read</text>
+        <path class="diagram-edge" d="M262 158H164" stroke-dasharray="5 4" marker-end="url(#sequence-arrow)"/><text class="diagram-label is-small" x="211" y="148">result</text>
+        <path class="diagram-edge" d="M160 194H62" stroke-dasharray="5 4" marker-end="url(#sequence-arrow)"/><text class="diagram-label is-small" x="109" y="184">response</text>
+      </svg></div>
+      <figcaption class="diagram-summary">The client calls the API, which reads the store and returns the result.</figcaption>
+    </figure>
+
+    <figure id="class" class="diagram-card" data-diagram="class">
+      <h2>Class</h2>
+      <p class="diagram-use">Types, their fields and methods, and inheritance.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 220" aria-hidden="true">
+        <defs><marker id="class-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 5 10 0 10 10Z" fill="var(--background)" stroke="var(--a40)"/></marker></defs>
+        <rect class="diagram-node is-focal" x="104" y="14" width="112" height="76" rx="4"/><line class="diagram-gridline" x1="104" y1="42" x2="216" y2="42"/><line class="diagram-gridline" x1="104" y1="66" x2="216" y2="66"/><text class="diagram-label" x="160" y="28">Artifact</text><text class="diagram-label is-small" x="160" y="54">title: string</text><text class="diagram-label is-small" x="160" y="78">render()</text>
+        <rect class="diagram-node" x="24" y="138" width="112" height="62" rx="4"/><line class="diagram-gridline" x1="24" y1="166" x2="136" y2="166"/><text class="diagram-label" x="80" y="152">Page</text><text class="diagram-label is-small" x="80" y="182">layout: width</text>
+        <rect class="diagram-node" x="184" y="138" width="112" height="62" rx="4"/><line class="diagram-gridline" x1="184" y1="166" x2="296" y2="166"/><text class="diagram-label" x="240" y="152">Fragment</text><text class="diagram-label is-small" x="240" y="182">scope: host</text>
+        <path class="diagram-edge" d="M80 138V114H144V94" marker-end="url(#class-arrow)"/><path class="diagram-edge" d="M240 138V114H176V94" marker-end="url(#class-arrow)"/>
+      </svg></div>
+      <figcaption class="diagram-summary">Page and Fragment inherit the shared Artifact contract while adding their own fields.</figcaption>
+    </figure>
+
+    <figure id="entity-relationship" class="diagram-card" data-diagram="entity-relationship">
+      <h2>Entity relationship</h2>
+      <p class="diagram-use">Records, keys, and the cardinality between them.</p>
+      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 220" aria-hidden="true">
+        <rect class="diagram-node is-focal" x="18" y="42" width="108" height="120" rx="4"/><line class="diagram-gridline" x1="18" y1="72" x2="126" y2="72"/><text class="diagram-label" x="72" y="57">Outcome</text><text class="diagram-label is-small" x="72" y="90">id · primary</text><text class="diagram-label is-small" x="72" y="116">title</text><text class="diagram-label is-small" x="72" y="142">layout</text>
+        <rect class="diagram-node" x="194" y="42" width="108" height="120" rx="4"/><line class="diagram-gridline" x1="194" y1="72" x2="302" y2="72"/><text class="diagram-label" x="248" y="57">Section</text><text class="diagram-label is-small" x="248" y="90">id · primary</text><text class="diagram-label is-small" x="248" y="116">outcome_id</text><text class="diagram-label is-small" x="248" y="142">position</text>
+        <line class="diagram-edge" x1="126" y1="102" x2="194" y2="102"/><text class="diagram-label" x="142" y="92">1</text><text class="diagram-label" x="178" y="92">N</text>
+      </svg></div>
+      <figcaption class="diagram-summary">One Outcome owns many ordered Sections through the outcome identifier.</figcaption>
+    </figure>
+  </div>
+
+  <div class="reading-column">
+    <section id="rules">
+      <h2>Shared limits</h2>
+      <p>Embedded diagrams target 4–9 nodes and one or two focal elements. Keep equivalent meaning in adjacent HTML, inspect the actual display width, and split a drawing that cannot remain legible without shrinking labels.</p>
+    </section>
+  </div>
+
+  <footer class="sources">Illustrative templates only. Replace every label and value with grounded source material; the shared Dots identity remains fixed.</footer>
+</div>
+
+</body>
+</html>

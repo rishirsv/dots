@@ -44,6 +44,32 @@ gotchas: Active state is weight + ink color only — never an accent bar or
     .toc-wide { display: block; }
     .toc-compact { display: none; }
   }
+
+  @media (min-width: 1264px) and (max-width: 1487px) {
+    .page[data-layout="wide"] .toc-rail {
+      position: static;
+      float: none;
+      width: auto;
+      max-height: none;
+      overflow: visible;
+      margin: 0 0 48px;
+    }
+    .page[data-layout="wide"] .toc-wide { display: none; }
+    .page[data-layout="wide"] .toc-compact { display: block; }
+  }
+
+  @media (min-width: 1264px) and (max-width: 1887px) {
+    .page[data-layout="canvas"] .toc-rail {
+      position: static;
+      float: none;
+      width: auto;
+      max-height: none;
+      overflow: visible;
+      margin: 0 0 48px;
+    }
+    .page[data-layout="canvas"] .toc-wide { display: none; }
+    .page[data-layout="canvas"] .toc-compact { display: block; }
+  }
 </style>
 
 <nav data-component="toc-rail" class="toc-rail" aria-label="On this page">

@@ -16,13 +16,14 @@ The system has four decisions, made in this order:
   [references/DESIGN.md](references/DESIGN.md) and compiled to
   [assets/theme.css](assets/theme.css). Identity is constant; never restyle it
   per artifact.
-- **Outcome** — the complete reading experience the job needs. Route through
-  [assets/outcomes/registry.json](assets/outcomes/registry.json), then inspect
-  the closest finished page. Outcome references teach judgment and reading
-  order; they are not templates or scaffolds.
+- **Outcome** — the complete reading experience the job needs. Start with the
+  visual [outcome atlas](assets/outcomes/index.html), then inspect the closest
+  finished page. Outcome references teach judgment and reading order; they are
+  not templates or scaffolds.
 - **Form** — the document's shape, composed per content from the component
-  catalog in `assets/registry/`. The registry remains portable implementation
-  truth; form follows the content's job.
+  catalog shown in [assets/atlas.html](assets/atlas.html), with reusable source
+  in `assets/registry/`. The fragments remain portable implementation truth;
+  form follows the content's job.
 - **Treatment** — how much design the request calls for, read per artifact:
   a quick working memo gets the plain column; a keeper explainer earns the
   TOC rail, figures, and full motion.
@@ -59,11 +60,12 @@ Choose the delivery branch before assembly:
 2. **Choose page or fragment.** Do not start with the page shell and strip it
    back later; follow the selected branch in
    [references/authoring.md](references/authoring.md).
-3. **Route a page by outcome.** Read
-   [assets/outcomes/registry.json](assets/outcomes/registry.json) and inspect
-   the one closest finished page. Use a second only when the reader job is
-   genuinely mixed. Borrow its narrative logic, not its sample content or
-   exact component sequence. For a fragment, skip the outcome layer.
+3. **Route a page by outcome.** Open
+   [assets/outcomes/index.html](assets/outcomes/index.html), compare the
+   complete-page previews, and inspect the one closest finished page. Use a
+   second only when the reader job is genuinely mixed. Borrow its narrative
+   logic, not its sample content or exact component sequence. For a fragment,
+   skip the outcome layer.
 4. **Choose the smallest composition that does the job.** Do not invent
    controls, KPI rows, cards, legends, or secondary facts to make the artifact
    feel complete. If filtering, simulation, or mutable state is the main job,
@@ -71,18 +73,18 @@ Choose the delivery branch before assembly:
 5. **Choose the page width.** Use `article` for prose-led pages, `wide` when
    parallel evidence is part of the first read, and `canvas` for visual
    references. A canvas page keeps prose inside `.reading-column`.
-6. **Compose from the catalog.** Start from
-   [assets/registry/registry.json](assets/registry/registry.json) — every asset
-   lists when to use it. Visual components are self-describing fragments
-   (header comment → scoped CSS → copy-paste markup); behavior entries provide
-   optional scripts. Copy selected assets verbatim, then replace example
-   content with real content. For multi-component pages, use
-   `scripts/assemble.mjs` to package the chosen CSS once instead of rebuilding
-   the document wrapper by hand. Custom CSS is allowed only for genuinely novel
-   needs and may only consume existing tokens. When unsure what a visual looks
-   like, open [assets/atlas.html](assets/atlas.html), the neutral all-view
-   fixture. When unsure how a complete page should read, open the routed
-   outcome.
+6. **Compose from the visual catalog.** Open
+   [assets/atlas.html](assets/atlas.html), choose only the visuals the content
+   earns, then inspect those named fragments in `assets/registry/`. Each source
+   states when to use it and carries scoped CSS plus copy-paste markup;
+   behavior entries provide optional scripts. Copy selected assets verbatim,
+   then replace example content with real content. For multi-component pages,
+   use `scripts/assemble.mjs` to package the chosen CSS once instead of
+   rebuilding the document wrapper by hand. Custom CSS is allowed only for
+   genuinely novel needs and may only consume existing tokens. For diagrams,
+   choose from the 18-template [diagram atlas](assets/diagrams.html) using
+   [references/diagrams.md](references/diagrams.md). When unsure how a complete
+   page should read, open the routed outcome.
    When an original raster image would materially improve the artifact, use
    the `imagegen` skill and follow the first-class integration workflow in
    [references/generated-images.md](references/generated-images.md). Do not
@@ -93,14 +95,19 @@ Choose the delivery branch before assembly:
    reader-facing sources footer only when attribution helps the artifact.
    Never expose tool names, sessions, prompts, private working paths, scratch
    files, or generation metadata.
-8. **Verify before handoff.** Run `scripts/check-artifact.mjs` on the finished
-   file, then use the branch-specific rendered checklist in
+8. **Verify the delivered artifact before handoff.** Run
+   `scripts/check-artifact.mjs` on the finished file. For a page, also run
+   `scripts/capture-artifact.mjs` against that exact file and inspect its
+   screenshots; do not substitute the shared component fixture. Then apply the
+   branch-specific checklist in
    [references/authoring.md](references/authoring.md#verification). A failed
-   structural or rendered check blocks handoff; pages also require dark-mode,
-   reduced-motion, and JS-off checks.
+   structural or rendered check blocks handoff; pages require dark-mode,
+   reduced-motion, and JS-off proof.
 
 For charts of any kind, read [references/charts.md](references/charts.md)
 first — form follows the data's job, and some data should not be a chart.
+For a diagram, read [references/diagrams.md](references/diagrams.md) and choose
+the relationship before drawing.
 For a purpose-built generated photo, illustration, texture, or mockup, read
 [references/generated-images.md](references/generated-images.md), then use the
 `imagegen` skill before assembly.
