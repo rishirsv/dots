@@ -10,15 +10,19 @@ status briefs, and static mocks — one self-contained `.html` file a reader can
 open, skim, navigate, and share. Read the source material, understand what
 matters for the intended reader, then write and display it clearly.
 
-The system has three layers, and every artifact uses all three:
+The system has four decisions, made in this order:
 
 - **Identity** — the standard look, defined once as tokens in
   [references/DESIGN.md](references/DESIGN.md) and compiled to
   [assets/theme.css](assets/theme.css). Identity is constant; never restyle it
   per artifact.
+- **Outcome** — the complete reading experience the job needs. Route through
+  [assets/outcomes/registry.json](assets/outcomes/registry.json), then inspect
+  the closest finished page. Outcome references teach judgment and reading
+  order; they are not templates or scaffolds.
 - **Form** — the document's shape, composed per content from the component
-  catalog in `assets/registry/`. There are no page templates; form follows
-  the content's job.
+  catalog in `assets/registry/`. The registry remains portable implementation
+  truth; form follows the content's job.
 - **Treatment** — how much design the request calls for, read per artifact:
   a quick working memo gets the plain column; a keeper explainer earns the
   TOC rail, figures, and full motion.
@@ -55,11 +59,19 @@ Choose the delivery branch before assembly:
 2. **Choose page or fragment.** Do not start with the page shell and strip it
    back later; follow the selected branch in
    [references/authoring.md](references/authoring.md).
-3. **Choose the smallest composition that does the job.** Do not invent
+3. **Route a page by outcome.** Read
+   [assets/outcomes/registry.json](assets/outcomes/registry.json) and inspect
+   the one closest finished page. Use a second only when the reader job is
+   genuinely mixed. Borrow its narrative logic, not its sample content or
+   exact component sequence. For a fragment, skip the outcome layer.
+4. **Choose the smallest composition that does the job.** Do not invent
    controls, KPI rows, cards, legends, or secondary facts to make the artifact
    feel complete. If filtering, simulation, or mutable state is the main job,
    stop and use an interactive-visualization or product-UI workflow instead.
-4. **Compose from the catalog.** Start from
+5. **Choose the page width.** Use `article` for prose-led pages, `wide` when
+   parallel evidence is part of the first read, and `canvas` for visual
+   references. A canvas page keeps prose inside `.reading-column`.
+6. **Compose from the catalog.** Start from
    [assets/registry/registry.json](assets/registry/registry.json) — every asset
    lists when to use it. Visual components are self-describing fragments
    (header comment → scoped CSS → copy-paste markup); behavior entries provide
@@ -67,21 +79,21 @@ Choose the delivery branch before assembly:
    content with real content. For multi-component pages, use
    `scripts/assemble.mjs` to package the chosen CSS once instead of rebuilding
    the document wrapper by hand. Custom CSS is allowed only for genuinely novel
-   needs and may only consume existing tokens. When unsure what composition
-   fits, open
-   [assets/atlas.html](assets/atlas.html) — every component rendered — and
-   the finished pages in `assets/exemplars/`.
+   needs and may only consume existing tokens. When unsure what a visual looks
+   like, open [assets/atlas.html](assets/atlas.html), the neutral all-view
+   fixture. When unsure how a complete page should read, open the routed
+   outcome.
    When an original raster image would materially improve the artifact, use
    the `imagegen` skill and follow the first-class integration workflow in
    [references/generated-images.md](references/generated-images.md). Do not
    generate diagrams, exact UI evidence, or decorative filler.
-5. **Write like it ships.** Real content everywhere — no lorem, no fake
+7. **Write like it ships.** Real content everywhere — no lorem, no fake
    numbers, no invented KPIs. Every figure traceable to its source; honest
    gaps marked ("not verified") rather than smoothed over. Include a
    reader-facing sources footer only when attribution helps the artifact.
    Never expose tool names, sessions, prompts, private working paths, scratch
    files, or generation metadata.
-6. **Verify before handoff.** Run `scripts/check-artifact.mjs` on the finished
+8. **Verify before handoff.** Run `scripts/check-artifact.mjs` on the finished
    file, then use the branch-specific rendered checklist in
    [references/authoring.md](references/authoring.md#verification). A failed
    structural or rendered check blocks handoff; pages also require dark-mode,

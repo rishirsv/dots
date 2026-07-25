@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choose one release proof boundary</title>
+<style>
+/* GENERATED from DESIGN.md by scripts/generate-theme.mjs — do not edit.
+ * Tokens + base document styles for dots HTML artifacts. Inline this file
+ * verbatim inside <style> in every artifact. */
+
+:root {
+  --background: #fbfbfa;
+  --foreground: #0d0d0d;
+  --accent: #1f5eff;
+  --accent-deep: #12379e;
+  --warning-ink: #6b4c00;
+  --warning-line: rgba(180,130,0,0.35);
+  --warning-bg: rgba(255,178,0,0.06);
+  --danger-ink: #8c1d18;
+  --danger-line: rgba(200,60,50,0.35);
+  --danger-bg: rgba(220,70,60,0.05);
+  --code-surface: #0d0d0d;
+  --code-ink: #ededed;
+  --a4: rgba(13, 13, 13, 0.04);
+  --a8: rgba(13, 13, 13, 0.08);
+  --a12: rgba(13, 13, 13, 0.12);
+  --a20: rgba(13, 13, 13, 0.20);
+  --a40: rgba(13, 13, 13, 0.40);
+  --a55: rgba(13, 13, 13, 0.55);
+  --a60: rgba(13, 13, 13, 0.60);
+  --a70: rgba(13, 13, 13, 0.70);
+  --text-muted: var(--a60);
+  --font-sans: -apple-system, Helvetica Neue, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace;
+  --article: 720px;
+  --wide: 1040px;
+  --canvas: 1440px;
+  --section: 48px;
+  --block: 16px;
+  --r-card: 6px;
+  --r-code: 6px;
+  --r-inline: 4px;
+  --r-pill: 6px;
+  --dur-fast: 150ms;
+  --dur-reveal: 400ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --stagger: 60ms;
+  --chart-emphasis: var(--accent);
+  --chart-value-emphasis: var(--accent-deep);
+  --chart-pos: var(--a40);
+  --chart-neg: var(--a20);
+  --chart-mark: var(--a20);
+  --chart-track: var(--a4);
+  --chart-grid: var(--a12);
+  --chart-label: var(--text-muted);
+  --chart-value: var(--text-muted);
+}
+
+[data-theme="dark"] {
+  --background: #0f0f0e;
+  --foreground: #f5f5f4;
+  --accent: #6f94ff;
+  --accent-deep: #b7c9ff;
+  --warning-ink: #f2c14e;
+  --warning-line: rgba(255,193,77,0.35);
+  --warning-bg: rgba(255,193,77,0.08);
+  --danger-ink: #ff8a80;
+  --danger-line: rgba(255,120,110,0.35);
+  --danger-bg: rgba(255,120,110,0.07);
+  --code-surface: #161615;
+  --code-ink: #ededed;
+  --a4: rgba(245, 245, 244, 0.04);
+  --a8: rgba(245, 245, 244, 0.08);
+  --a12: rgba(245, 245, 244, 0.12);
+  --a20: rgba(245, 245, 244, 0.20);
+  --a40: rgba(245, 245, 244, 0.40);
+  --a55: rgba(245, 245, 244, 0.55);
+  --a60: rgba(245, 245, 244, 0.60);
+  --a70: rgba(245, 245, 244, 0.70);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --background: #0f0f0e;
+    --foreground: #f5f5f4;
+    --accent: #6f94ff;
+    --accent-deep: #b7c9ff;
+    --warning-ink: #f2c14e;
+    --warning-line: rgba(255,193,77,0.35);
+    --warning-bg: rgba(255,193,77,0.08);
+    --danger-ink: #ff8a80;
+    --danger-line: rgba(255,120,110,0.35);
+    --danger-bg: rgba(255,120,110,0.07);
+    --code-surface: #161615;
+    --code-ink: #ededed;
+    --a4: rgba(245, 245, 244, 0.04);
+    --a8: rgba(245, 245, 244, 0.08);
+    --a12: rgba(245, 245, 244, 0.12);
+    --a20: rgba(245, 245, 244, 0.20);
+    --a40: rgba(245, 245, 244, 0.40);
+    --a55: rgba(245, 245, 244, 0.55);
+    --a60: rgba(245, 245, 244, 0.60);
+    --a70: rgba(245, 245, 244, 0.70);
+  }
+}
+
+/* ---------- base ---------- */
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; overflow-x: clip; }
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-inline);
+}
+
+::selection { background: var(--a12); }
+
+h1 {
+  font-size: 40px;
+  line-height: 48px;
+  letter-spacing: -2.4px;
+  font-weight: 600;
+  margin: 0;
+  text-wrap: balance;
+}
+
+@media (max-width: 380px) {
+  h1 {
+    font-size: 32px;
+    line-height: 38px;
+    letter-spacing: -1.5px;
+  }
+}
+
+h2 {
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: -0.96px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  text-wrap: balance;
+}
+
+h3 {
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.32px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+p { margin: 0 0 var(--block); }
+p:last-child { margin-bottom: 0; }
+
+section { margin-bottom: var(--section); }
+
+code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--a4);
+  border-radius: var(--r-inline);
+  padding: 1px 5px;
+}
+
+pre code { background: none; padding: 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  border-top: 1px solid var(--a20);
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--a12);
+  vertical-align: top;
+}
+
+thead th {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
+
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- motion: choreographed moments only ---------- */
+/* One-time load stagger + one-time scroll reveals. Elements render complete
+ * and static by default; page-behavior opts them in only when JS
+ * runs and reduced-motion is off. Nothing loops; nothing is ambient. */
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js-motion .stagger > * {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: rise var(--dur-reveal) var(--ease) forwards;
+  }
+  html.js-motion .stagger > *:nth-child(1) { animation-delay: 0ms; }
+  html.js-motion .stagger > *:nth-child(2) { animation-delay: var(--stagger); }
+  html.js-motion .stagger > *:nth-child(3) { animation-delay: calc(var(--stagger) * 2); }
+  html.js-motion .stagger > *:nth-child(4) { animation-delay: calc(var(--stagger) * 3); }
+  html.js-motion .stagger > *:nth-child(5) { animation-delay: calc(var(--stagger) * 4); }
+
+  html.js-motion .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity var(--dur-reveal) var(--ease), transform var(--dur-reveal) var(--ease);
+  }
+  html.js-motion .reveal.is-in { opacity: 1; transform: none; }
+
+  html.js-motion .reveal .bar-fill {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform calc(var(--dur-reveal) * 1.5) var(--ease) 120ms;
+  }
+  html.js-motion .reveal.is-in .bar-fill { transform: scaleX(1); }
+
+  a, summary, button { transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease); }
+}
+
+@keyframes rise {
+  to { opacity: 1; transform: none; }
+}
+
+.page {
+    max-width: var(--article);
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+  .page[data-layout="wide"] { max-width: var(--wide); }
+  .page[data-layout="canvas"] { max-width: var(--canvas); }
+  .reading-column { max-width: var(--article); }
+  .page[data-layout="article"] .reading-column,
+  .page[data-layout="wide"] .reading-column { margin-right: auto; }
+  .page[data-layout="canvas"] .reading-column { margin-left: auto; margin-right: auto; }
+  .page > header { margin-bottom: var(--section); }
+  .context-line { font-size: 13px; color: var(--text-muted); margin: 0 0 20px; }
+  .title-row {
+    display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .title-row h1 { flex: 1 1 480px; min-width: 0; }
+  .status {
+    display: inline-flex; align-items: center; height: 20px; padding: 0 8px;
+    border-radius: var(--r-pill); background: var(--a4); color: var(--a70);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+    white-space: nowrap; border: 1px solid var(--a12);
+  }
+  .dek { font-size: 16px; color: var(--text-muted); margin: 0; max-width: 62ch; }
+  footer.sources {
+    margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--a12);
+    font-size: 12px; color: var(--text-muted); line-height: 1.7;
+  }
+  footer.sources a { color: var(--text-muted); }
+  @media (max-width: 680px) {
+    .page { padding: 40px 24px 72px; }
+    .title-row { display: block; }
+    .title-row .status { margin-top: 10px; }
+  }
+
+.callout {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .callout p { margin: 0; }
+  .callout p + p { margin-top: 6px; }
+  .callout strong { font-weight: 700; }
+  .callout.warn {
+    background: var(--warning-bg);
+    border-color: var(--warning-line);
+    color: var(--warning-ink);
+  }
+  .callout.danger {
+    background: var(--danger-bg);
+    border-color: var(--danger-line);
+    color: var(--danger-ink);
+  }
+  .callout-stack { display: flex; flex-direction: column; gap: 10px; }
+
+.comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+    gap: 1px;
+    background: var(--a12);
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    margin-bottom: var(--section);
+  }
+  .comparison-grid[data-columns="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .comparison-grid[data-columns="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .comparison-grid[data-columns="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  @media (max-width: 680px) { .comparison-grid[data-columns] { grid-template-columns: 1fr; } }
+  .option-card {
+    background: var(--background);
+    padding: 18px 20px;
+  }
+  .option-card h3 { margin-bottom: 8px; }
+  .option-card p { font-size: 14px; line-height: 1.6; margin: 0 0 12px; }
+  .option-card .recommend-mark { font-weight: 700; color: var(--accent-deep); }
+  .best-for { font-size: 12px; color: var(--text-muted); text-transform: none; }
+
+.table-scroll {
+    overflow-x: auto;
+    margin-bottom: var(--section);
+  }
+  .cell-label {
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--foreground);
+  }
+  .col-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 680px) {
+    .table-stack { overflow: visible; }
+    .table-stack table,
+    .table-stack tbody,
+    .table-stack tr,
+    .table-stack td { display: block; width: 100%; }
+    .table-stack thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .table-stack tr {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--a20);
+    }
+    .table-stack tr:first-child { border-top: 1px solid var(--a20); }
+    .table-stack td {
+      display: grid;
+      grid-template-columns: minmax(88px, 0.42fr) minmax(0, 1fr);
+      gap: 12px;
+      padding: 5px 4px;
+      border: 0;
+      text-align: left;
+      white-space: normal;
+    }
+    .table-stack td::before {
+      content: attr(data-label);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+
+.recommendation {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    padding: 20px 22px;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: var(--section);
+  }
+  .recommendation p { margin: 0; }
+  .recommendation p + p { margin-top: 10px; }
+  .recommendation strong { font-weight: 700; }
+</style>
+</head>
+<body>
+<div data-component="page-shell" class="page" data-layout="wide">
+  <header class="stagger">
+    <p class="context-line">sample / decision comparison</p>
+    <div class="title-row">
+      <h1>Choose one release proof boundary</h1>
+      <span class="status">decision</span>
+    </div>
+    <p class="dek">Three approaches reduce duplicate release work. Only one preserves a literal chain from verification to publication.</p>
+  </header>
+
+  <div class="reading-column">
+    <section id="frame"><h2>The decision</h2><p>Choose the smallest release architecture that proves the exact candidate once, then passes that same artifact to packaging and upload. This is illustrative content; replace every claim with evidence from the real system.</p>
+      <div data-component="callout" class="callout"><p><strong>Non-negotiable.</strong> A successful source build is not proof of a separately reconstructed upload candidate.</p></div>
+    </section>
+  </div>
+  <section id="options"><h2>Three viable approaches</h2>
+    <div data-component="comparison-grid" class="comparison-grid" data-columns="3">
+      <div class="option-card"><h3>Keep separate gates</h3><p>Each release stage builds its own artifact. Familiar, but no single receipt identifies what shipped.</p><div class="best-for">best for: disposable development builds</div></div>
+      <div class="option-card"><h3>Freeze one candidate</h3><p><span class="recommend-mark">Recommended.</span> Build once, verify the immutable candidate, then package and upload that exact path.</p><div class="best-for">best for: releases that need auditable proof</div></div>
+      <div class="option-card"><h3>Trust remote CI</h3><p>Publish after external checks report green. Simple locally, but the remote result still needs an artifact identity contract.</p><div class="best-for">best for: mature artifact-producing CI</div></div>
+    </div>
+  </section>
+  <section id="criteria"><h2>Shared criteria expose the real tradeoff</h2>
+    <div data-component="data-table" class="table-scroll"><table><thead><tr><th>Criterion</th><th>Separate gates</th><th>Frozen candidate</th><th>Remote CI</th></tr></thead><tbody>
+      <tr><td>Candidate identity</td><td>Changes by stage</td><td>Stable end to end</td><td>Depends on CI contract</td></tr>
+      <tr><td>Duplicate work</td><td>High</td><td>Low</td><td>Low locally</td></tr>
+      <tr><td>Failure receipt</td><td>Fragmented</td><td>One local chain</td><td>Split across systems</td></tr>
+      <tr><td>Operational change</td><td>None</td><td>Contained</td><td>Broad</td></tr>
+    </tbody></table></div>
+  </section>
+  <div class="reading-column">
+    <section id="tradeoff"><h2>The cost worth accepting</h2><p>The frozen candidate approach adds explicit artifact ownership to the release path. That is a real change, but it is smaller than importing a new CI architecture and directly closes the proof gap.</p></section>
+    <section id="recommendation"><h2>Recommendation</h2><div data-component="recommendation" class="recommendation"><p><strong>Freeze one candidate and make every later stage consume it.</strong> Record the candidate identifier, focused verification results, and publication receipt in one release summary.</p><p>Do not widen this work into a build-system rewrite; preserve the existing build command and change only artifact handoff.</p></div></section>
+  </div>
+
+  <footer class="sources">Illustrative reference: replace all sample claims, dates, metrics, paths, and decisions with grounded source material.</footer>
+</div>
+
+</body>
+</html>

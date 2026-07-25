@@ -50,6 +50,8 @@ typography:
 spacing:
   unit: 4px
   article: 720px
+  wide: 1040px
+  canvas: 1440px
   section: 48px
   block: 16px
 rounded:
@@ -131,14 +133,22 @@ tabular-nums`. Headings get `text-wrap: balance`.
 
 ## Layout
 
-One centered article column (`spacing.article`, 720px) on one flat ground.
-Sections separated by `spacing.section` (48px) of air and, at most, a
+Pages use one of three maximum widths on the same flat ground:
+
+- `article` (`spacing.article`, 720px) for prose-led explanations, status,
+  incidents, and plans.
+- `wide` (`spacing.wide`, 1040px) for comparisons, reviews, file maps, and
+  other pages where parallel evidence is part of the first read.
+- `canvas` (`spacing.canvas`, 1440px) for visual references and atlases. Keep
+  prose inside a nested article-width reading column; canvas is room for the
+  visuals, not permission to stretch sentences.
+
+Sections are separated by `spacing.section` (48px) of air and, at most, a
 hairline rule. The table of contents is a margin rail — sticky, docked left or
-right of the column at wide viewports with a scroll-spy active state,
-collapsing to a compact native disclosure on narrow viewports. Linear
-processes reflow into a vertical sequence; branching diagrams and genuinely
-wide tables stay bounded inside their own containers. The page never scrolls
-sideways.
+right of the reading column at wide viewports with a scroll-spy active state,
+collapsing to a compact native disclosure on narrow viewports. Linear processes
+reflow into a vertical sequence; branching diagrams and genuinely wide tables
+stay bounded inside their own containers. The page never scrolls sideways.
 
 The page shell owns the transition from its header to the first content block;
 do not hang structural spacing from the header's last child. Parallel grids

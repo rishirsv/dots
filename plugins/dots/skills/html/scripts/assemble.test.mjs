@@ -19,6 +19,7 @@ test("assembles one self-contained page and deduplicates selected component CSS"
     dek: "The decision and its evidence.",
     status: "verified",
     footer: "Sources: supplied release checks.",
+    layout: "wide",
     body,
     components: ["callout", "page-behavior", "callout"],
   });
@@ -26,6 +27,7 @@ test("assembles one self-contained page and deduplicates selected component CSS"
   assert.match(html, /^<!doctype html>/);
   assert.match(html, /<h1>Release &lt;readiness&gt;<\/h1>/);
   assert.match(html, /<span class="status">verified<\/span>/);
+  assert.match(html, /data-layout="wide"/);
   assert.equal((html.match(/\.callout \{/g) ?? []).length, 1);
   assert.equal((html.match(/data-component="callout"/g) ?? []).length, 2);
   assert.equal((html.match(/GENERATED from DESIGN\.md/g) ?? []).length, 1);
@@ -111,4 +113,9 @@ test("rejects ambiguous or unsupported embedded image sources", () => {
     body: '<section id="image"><h2>Image</h2><img data-embed-src="./focal.svg" alt=""></section>',
     assetRoot: "/tmp",
   }), /unsupported embedded image type/);
+  assert.throws(() => assemble({
+    title: "Bad layout",
+    body: "<section><h2>One</h2></section>",
+    layout: "dashboard",
+  }), /unknown layout/);
 });

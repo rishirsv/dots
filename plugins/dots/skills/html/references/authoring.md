@@ -39,22 +39,29 @@ meaning the reader would otherwise miss.
 
 ## Page assembly
 
-1. Start from `page-shell` — it is the invariant frame: context line, title
-   (+ one status chip only if the document has a real status), dek, footer,
-   and article column. Inline `theme.css` verbatim before component CSS; never
-   edit its tokens or add colors inline.
-2. Preserve a strong reading order already present in the source material. If
-   it has none, choose the closest narrative job from
-   [recipes.md](recipes.md); recipes arrange the content but never supply
-   missing claims or evidence. Outline sections before styling. Each
+1. Read [the outcome registry](../assets/outcomes/registry.json), choose the
+   closest reader job, and inspect that one complete page. Outcome pages
+   calibrate hierarchy, pacing, and proof; they never dictate an exact section
+   list. If the job is genuinely mixed, inspect one adjacent outcome after
+   naming what the first page does not cover.
+2. Start from `page-shell` — it owns the context line, title (+ one status chip
+   only if the document has a real status), dek, footer, and width mode. Choose
+   `article` for prose-led work, `wide` for parallel evidence, and `canvas` for
+   visual references. Keep canvas prose inside `.reading-column`. Inline
+   `theme.css` verbatim before component CSS; never edit its tokens or add
+   colors inline.
+3. Preserve a strong reading order already present in the source material. If
+   it has none, use the routed outcome or choose the closest narrative job from
+   [recipes.md](recipes.md); neither may supply missing claims or evidence.
+   Outline sections before styling. Each
    `<section id="...">` gets an `<h2>`; ids are short and stable. Add
    `toc-rail` for six or more sections, or when a long reference page benefits
    from non-linear lookup. Omit it from short utilitarian pages; on narrow
    screens the component becomes a compact native disclosure.
-3. Lead with `stat-tiles` only when supplied headline measures summarize the
+4. Lead with `stat-tiles` only when supplied headline measures summarize the
    story; otherwise lead with the argument or the visual that answers the
    reader's question. Never lead with a figure the reader cannot parse yet.
-4. Pick components by their `when:` line in `registry.json`. For a page with
+5. Pick components by their `when:` line in `registry.json`. For a page with
    several components, use `scripts/assemble.mjs` to inline the theme and each
    selected component's CSS once around a real body fragment. For a small page,
    copying remains fine: copy the fragment's CSS into the page `<style>` (after
@@ -65,7 +72,7 @@ meaning the reader would otherwise miss.
    [generated-images.md](generated-images.md), generate and inspect it through
    `imagegen`, copy the selected final into the workspace, and reference it with
    `data-embed-src`; the assembler embeds it as a data URI.
-5. Add `page-behavior` only when the page needs motion, one-time reveals, TOC
+6. Add `page-behavior` only when the page needs motion, one-time reveals, TOC
    scroll-spy, or a theme toggle. Figures that should animate get
    `class="reveal"` on their container. Use it for charts and diagrams, not
    for text sections. Without `page-behavior`, the page remains static and
@@ -73,7 +80,7 @@ meaning the reader would otherwise miss.
    Generate the forms supported by `scripts/chart.mjs`; author other forms
    directly against the same tokens and accessibility contract. See
    [charts.md](charts.md#generate-supported-forms-author-others).
-6. Close with `recommendation` when the document commits to something, then
+7. Close with `recommendation` when the document commits to something, then
    the sources footer. Appendix material (raw data, full logs, candidate
    configs) goes in `disclosure` blocks after the footer, never before the
    conclusion.
@@ -88,14 +95,16 @@ node scripts/assemble.mjs \
   --title "Release readiness" \
   --context "project / release" \
   --dek "What is ready, what is blocked, and the next decision." \
+  --layout article \
   --components process-steps,callout,data-table \
   --body /path/to/body.html \
   --out /path/to/release-readiness.html
 ```
 
 Add `--status`, `--footer`, or `page-behavior` in `--components` only when the
-content calls for them. The assembler packages chosen CSS and behavior; it does
-not select components, invent content, or impose a section order.
+content calls for them. `--layout` accepts `article`, `wide`, or `canvas` and
+defaults to `article`. The assembler packages chosen CSS and behavior; it does
+not select outcomes, components, content, or section order.
 
 ### Working source and assembled output
 

@@ -4,8 +4,8 @@ type: ui
 when: A before/after code change worth showing inline — a fix, a migration
   step, a config change — where the added/removed lines carry the point.
 deps: code-panel
-variants: default (mixed add/del/context lines) | all-context (no add/del,
-  falls back to a plain code-panel — use that component directly instead).
+variants: default (mixed add/del/context lines) | annotated (line-number gutter
+  and an adjacent explanation for one meaningful hunk).
 gotchas: Keep hunks short, ≤15 lines — if the real diff is longer, show the
   meaningful slice and link to the full diff rather than pasting it all. Marks
   are a background tint plus a +/- glyph in a fixed-width gutter, never a
@@ -41,6 +41,15 @@ gotchas: Keep hunks short, ≤15 lines — if the real diff is longer, show the
     white-space: pre;
     padding: 0 20px;
   }
+  .diff-line-number {
+    display: inline-block;
+    width: 34px;
+    flex: none;
+    color: rgba(237, 237, 237, 0.38);
+    text-align: right;
+    padding-right: 12px;
+    user-select: none;
+  }
   .diff-gutter {
     display: inline-block;
     width: 16px;
@@ -59,9 +68,39 @@ gotchas: Keep hunks short, ≤15 lines — if the real diff is longer, show the
     color: var(--code-ink);
   }
   .diff-line.del .diff-gutter { color: rgba(240, 130, 120, 0.9); }
+  .diff-annotation {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 280px);
+    border-top: 1px solid var(--a12);
+    background: var(--background);
+  }
+  .diff-annotation-code {
+    min-width: 0;
+    background: var(--code-surface);
+  }
+  .diff-note {
+    padding: 16px 20px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .diff-note strong { color: var(--foreground); }
+  @media (max-width: 680px) {
+    .diff-annotation { grid-template-columns: 1fr; }
+    .diff-note { border-top: 1px solid var(--a12); }
+  }
 </style>
 
 <div data-component="diff-block" class="diff-block">
   <div class="diff-head">retry.config.ts</div>
   <pre><div class="diff-line ctx"><span class="diff-gutter"> </span>export const retryConfig = {</div><div class="diff-line del"><span class="diff-gutter">-</span>  maxAttempts: 3,</div><div class="diff-line add"><span class="diff-gutter">+</span>  maxAttempts: 5,</div><div class="diff-line del"><span class="diff-gutter">-</span>  baseDelayMs: 500,</div><div class="diff-line add"><span class="diff-gutter">+</span>  baseDelayMs: 200,</div><div class="diff-line add"><span class="diff-gutter">+</span>  jitter: "full",</div><div class="diff-line ctx"><span class="diff-gutter"> </span>  retryOn: ["ETIMEDOUT", "ECONNRESET", 429, 503],</div><div class="diff-line ctx"><span class="diff-gutter"> </span>};</div></pre>
+</div>
+
+<!-- Annotated variant: keep the note adjacent to one short hunk. -->
+<div data-component="diff-block" class="diff-block">
+  <div class="diff-head">release-gate.ts</div>
+  <div class="diff-annotation">
+    <pre class="diff-annotation-code"><div class="diff-line del"><span class="diff-line-number">42</span><span class="diff-gutter">-</span>if (build.passed) publish(build);</div><div class="diff-line add"><span class="diff-line-number">42</span><span class="diff-gutter">+</span>if (candidate.verified) publish(candidate);</div></pre>
+    <p class="diff-note"><strong>The ownership boundary moves.</strong> Publication now consumes the frozen candidate that verification proved, rather than reconstructing from a build result.</p>
+  </div>
 </div>

@@ -4,7 +4,8 @@ type: block
 when: Every page starts here. The document skeleton: header (context line,
   title, optional single status chip, dek), article column, and footer slot.
 deps: theme.css (inline verbatim in <style> before component CSS)
-variants: none — the shell is invariant; vary the content, not the frame.
+variants: article (default, prose-led) | wide (parallel evidence) | canvas
+  (visual references; keep prose in .reading-column).
 gotchas: The status chip is the page's ONE allowed chip; omit it when there is
   no real status. The context line is a quiet breadcrumb, never an uppercase
   eyebrow. Replace slot comments with real content; keep section ids stable —
@@ -17,6 +18,12 @@ gotchas: The status chip is the page's ONE allowed chip; omit it when there is
     margin: 0 auto;
     padding: 64px 24px 96px;
   }
+  .page[data-layout="wide"] { max-width: var(--wide); }
+  .page[data-layout="canvas"] { max-width: var(--canvas); }
+  .reading-column { max-width: var(--article); }
+  .page[data-layout="article"] .reading-column,
+  .page[data-layout="wide"] .reading-column { margin-right: auto; }
+  .page[data-layout="canvas"] .reading-column { margin-left: auto; margin-right: auto; }
   .page > header { margin-bottom: var(--section); }
   .context-line { font-size: 13px; color: var(--text-muted); margin: 0 0 20px; }
   .title-row {
@@ -43,7 +50,7 @@ gotchas: The status chip is the page's ONE allowed chip; omit it when there is
   }
 </style>
 
-<div data-component="page-shell" class="page">
+<div data-component="page-shell" class="page" data-layout="article">
   <header class="stagger">
     <p class="context-line">project / area</p>
     <div class="title-row">

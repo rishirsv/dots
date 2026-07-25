@@ -1,0 +1,55 @@
+<!-- component: finding-list
+title: Finding list
+type: ui
+when: A review or incident has findings that need severity, evidence,
+  consequence, and a concrete next action in one scan.
+deps: theme.css
+variants: default | compact (omit consequence only when the action implies it).
+gotchas: Severity must be written as text and never communicated by color
+  alone. Do not use this as a generic task list. Keep one finding per real
+  issue and cite the evidence in the body.
+-->
+<style>
+  .finding-list { list-style: none; padding: 0; margin: 0 0 var(--section); }
+  .finding {
+    display: grid;
+    grid-template-columns: 68px minmax(0, 1fr);
+    gap: 16px;
+    padding: 18px 0;
+    border-top: 1px solid var(--a12);
+  }
+  .finding:last-child { border-bottom: 1px solid var(--a12); }
+  .finding-severity {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .finding[data-severity="high"] .finding-severity { color: var(--danger-ink); }
+  .finding[data-severity="medium"] .finding-severity { color: var(--warning-ink); }
+  .finding h3 { margin-bottom: 6px; }
+  .finding p { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
+  .finding-action { color: var(--foreground); }
+  @media (max-width: 520px) {
+    .finding { grid-template-columns: 1fr; gap: 6px; }
+  }
+</style>
+
+<ol data-component="finding-list" class="finding-list">
+  <li class="finding" data-severity="high">
+    <div class="finding-severity">High</div>
+    <div>
+      <h3>Verification and publication use different candidates</h3>
+      <p><strong>Evidence.</strong> The release task rebuilds after the final validation step, so the uploaded archive is not the proven artifact.</p>
+      <p><strong>Consequence.</strong> A passing check cannot establish what shipped.</p>
+      <p class="finding-action"><strong>Action.</strong> Freeze one candidate, verify it once, and pass that exact path to publication.</p>
+    </div>
+  </li>
+  <li class="finding" data-severity="medium">
+    <div class="finding-severity">Medium</div>
+    <div>
+      <h3>The failure receipt omits the owning stage</h3>
+      <p><strong>Evidence.</strong> The summary reports only a final non-zero exit code.</p>
+      <p class="finding-action"><strong>Action.</strong> Preserve the stage name and focused command in the receipt.</p>
+    </div>
+  </li>
+</ol>

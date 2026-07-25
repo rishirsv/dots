@@ -1,0 +1,45 @@
+<!-- component: file-map
+title: File map
+type: ui
+when: A technical explanation or implementation plan needs to show which files
+  own behavior and how their responsibilities differ.
+deps: theme.css
+variants: default | grouped (add section headings outside the list).
+gotchas: This is an ownership map, not a directory dump. Include only files
+  the reader must understand and describe why each one matters.
+-->
+<style>
+  .file-map { list-style: none; padding: 0; margin: 0 0 var(--section); border-top: 1px solid var(--a20); }
+  .file-map-item {
+    display: grid;
+    grid-template-columns: minmax(180px, 0.8fr) minmax(0, 1.2fr);
+    gap: 24px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--a12);
+  }
+  .file-path {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+  .file-role { font-size: 14px; color: var(--text-muted); }
+  .file-role strong { color: var(--foreground); }
+  @media (max-width: 600px) {
+    .file-map-item { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+
+<ul data-component="file-map" class="file-map">
+  <li class="file-map-item">
+    <div class="file-path">src/release/candidate.ts</div>
+    <div class="file-role"><strong>Owns candidate identity.</strong> Creates the immutable artifact reference passed through validation and publication.</div>
+  </li>
+  <li class="file-map-item">
+    <div class="file-path">src/release/verify.ts</div>
+    <div class="file-role"><strong>Owns release proof.</strong> Runs focused gates against the supplied candidate without rebuilding it.</div>
+  </li>
+  <li class="file-map-item">
+    <div class="file-path">src/release/publish.ts</div>
+    <div class="file-role"><strong>Owns external handoff.</strong> Uploads only the verified candidate and records the remote receipt.</div>
+  </li>
+</ul>

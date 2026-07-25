@@ -4,8 +4,8 @@ type: ui
 when: A branching system where nodes and edges carry meaning — a request path,
   dependency map, or state machine. Use process-steps for a linear sequence.
 deps: theme.css
-variants: none — one horizontal node-edge layout; rearrange node positions
-  and count for the specific flow, keeping the same visual language.
+variants: default | annotated (numbered SVG callouts paired with an ordered
+  explanation below the diagram).
 gotchas: Do not use this for an ordinary left-to-right sequence; process-steps
   stays fully visible on narrow screens. Hand-author only simple branching
   flows of up to about 8 nodes; beyond that,
@@ -68,6 +68,43 @@ gotchas: Do not use this for an ordinary left-to-right sequence; process-steps
     line-height: 1.6;
     margin: 0;
   }
+  .flow-callout {
+    fill: var(--accent);
+    stroke: var(--background);
+    stroke-width: 2;
+  }
+  .flow-callout-label {
+    fill: var(--background);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+  .flow-notes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    padding: 16px 0 0;
+    margin: 0;
+    list-style: none;
+    counter-reset: flow-note;
+  }
+  .flow-notes li {
+    counter-increment: flow-note;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .flow-notes li::before {
+    content: counter(flow-note);
+    display: block;
+    color: var(--accent-deep);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  @media (max-width: 680px) {
+    .flow-notes { grid-template-columns: 1fr; gap: 12px; }
+  }
 </style>
 
 <div data-component="flow-diagram" class="flow-diagram-wrap">
@@ -106,3 +143,31 @@ gotchas: Do not use this for an ordinary left-to-right sequence; process-steps
   A commit triggers a CI build, which runs the test suite; a pass deploys to
   staging, a fail triggers an automatic rollback.
 </p>
+
+<!-- Annotated variant: the numbered notes are the accessible explanation. -->
+<div data-component="flow-diagram" class="flow-diagram-wrap">
+  <svg class="flow-diagram" viewBox="0 0 640 190" aria-hidden="true">
+    <defs>
+      <marker id="annotated-flow-arrow" viewBox="0 0 10 10" refX="9" refY="5"
+        markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 Z" fill="var(--a40)" />
+      </marker>
+    </defs>
+    <rect class="flow-node-rect" x="20" y="72" width="150" height="48" rx="8" />
+    <text class="flow-node-label" x="95" y="96">source</text>
+    <rect class="flow-node-rect is-emphasized" x="245" y="72" width="150" height="48" rx="8" />
+    <text class="flow-node-label" x="320" y="96">verify</text>
+    <rect class="flow-node-rect" x="470" y="72" width="150" height="48" rx="8" />
+    <text class="flow-node-label" x="545" y="96">handoff</text>
+    <path class="flow-edge" d="M170,96 L241,96" marker-end="url(#annotated-flow-arrow)" />
+    <path class="flow-edge" d="M395,96 L466,96" marker-end="url(#annotated-flow-arrow)" />
+    <circle class="flow-callout" cx="95" cy="54" r="12" /><text class="flow-callout-label" x="95" y="54">1</text>
+    <circle class="flow-callout" cx="320" cy="54" r="12" /><text class="flow-callout-label" x="320" y="54">2</text>
+    <circle class="flow-callout" cx="545" cy="54" r="12" /><text class="flow-callout-label" x="545" y="54">3</text>
+  </svg>
+</div>
+<ol class="flow-notes">
+  <li>Ground the page in supplied material and separate facts from unknowns.</li>
+  <li>Check structure, responsive behavior, theme, motion, and source honesty.</li>
+  <li>Deliver one self-contained artifact with its decision and evidence intact.</li>
+</ol>

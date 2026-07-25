@@ -73,11 +73,12 @@ function orderedComponents(requested) {
   return ordered;
 }
 
-function pageShell({ title, context, dek, status, footer, body }) {
+function pageShell({ title, context, dek, status, footer, body, layout }) {
   let shell = sourceFor("page-shell").match(/<div data-component="page-shell"[\s\S]*$/)?.[0];
   if (!shell) fail("page-shell markup is missing");
 
   shell = shell
+    .replace('data-layout="article"', `data-layout="${layout}"`)
     .replace(/<p class="context-line">[\s\S]*?<\/p>/, context ? `<p class="context-line">${escapeText(context)}</p>` : "")
     .replace(/<h1>[\s\S]*?<\/h1>/, `<h1>${escapeText(title)}</h1>`)
     .replace(/<span class="status">[\s\S]*?<\/span>/, status ? `<span class="status">${escapeText(status)}</span>` : "")
@@ -89,9 +90,10 @@ function pageShell({ title, context, dek, status, footer, body }) {
   return shell;
 }
 
-export function assemble({ title, context = "", dek = "", status = "", footer = "", body, components = [], lang = "en", assetRoot }) {
+export function assemble({ title, context = "", dek = "", status = "", footer = "", body, components = [], lang = "en", assetRoot, layout = "article" }) {
   if (!title) fail("title is required");
   if (body == null) fail("body is required");
+  if (!["article", "wide", "canvas"].includes(layout)) fail(`unknown layout "${layout}"`);
 
   const selected = orderedComponents([...new Set(components.filter(Boolean))]);
   const componentSources = selected.map((name) => sourceFor(name));
@@ -103,7 +105,7 @@ export function assemble({ title, context = "", dek = "", status = "", footer = 
   const scripts = componentSources
     .flatMap((source) => [...source.matchAll(/^<script(?:\s[^>]*)?>[\s\S]*?^<\/script>/gim)].map((match) => match[0].trim()))
     .join("\n\n");
-  const shell = pageShell({ title, context, dek, status, footer, body: embedLocalImages(body, assetRoot) });
+  const shell = pageShell({ title, context, dek, status, footer, body: embedLocalImages(body, assetRoot), layout });
 
   return `<!doctype html>
 <html lang="${escapeText(lang)}">
@@ -148,6 +150,7 @@ if (invokedDirectly) {
       status: args.status,
       footer: args.footer,
       lang: args.lang,
+      layout: args.layout,
       body: readFileSync(args.body, "utf8"),
       assetRoot: dirname(resolve(args.body)),
       components: (args.components ?? "").split(",").map((name) => name.trim()).filter(Boolean),

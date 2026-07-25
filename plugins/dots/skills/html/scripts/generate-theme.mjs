@@ -113,6 +113,8 @@ ${alphaLadder(colors.foreground, steps)}
   --font-sans: ${t("body", "fontFamily")};
   --font-mono: ${t("mono", "fontFamily")};
   --article: ${spacing.article};
+  --wide: ${spacing.wide};
+  --canvas: ${spacing.canvas};
   --section: ${spacing.section};
   --block: ${spacing.block};
   --r-card: ${rounded.card};

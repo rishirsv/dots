@@ -1,0 +1,61 @@
+<!-- component: mockup-frame
+title: Mockup frame
+type: ui
+when: A plan or explanation benefits from a compact static concept view of the
+  intended result, and the visual is not observed product evidence.
+deps: theme.css
+variants: default | paired (place two frames in a composition-owned grid).
+gotchas: The figcaption must say "Concept — not observed UI." Do not use this
+  for screenshots, proof, interactive controls, or decorative filler.
+-->
+<style>
+  .mockup-frame { margin: 0 0 var(--section); }
+  .mockup-surface {
+    min-height: 280px;
+    border: 1px solid var(--a20);
+    border-radius: var(--r-card);
+    padding: 28px;
+    background: var(--background);
+  }
+  .mockup-toolbar {
+    display: flex;
+    gap: 6px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--a12);
+  }
+  .mockup-toolbar span { width: 7px; height: 7px; border-radius: 50%; background: var(--a20); }
+  .mockup-layout { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 28px; padding-top: 28px; }
+  .mockup-nav, .mockup-main { display: grid; align-content: start; gap: 10px; }
+  .mockup-line { height: 10px; background: var(--a8); border-radius: var(--r-inline); }
+  .mockup-line.is-strong { background: var(--foreground); opacity: .82; width: 72%; height: 16px; }
+  .mockup-line.is-accent { background: var(--accent); width: 44%; }
+  .mockup-line.is-short { width: 84%; }
+  .mockup-block { height: 96px; border: 1px solid var(--a12); border-radius: var(--r-card); margin-top: 12px; }
+  .mockup-frame figcaption { margin-top: 10px; font-size: 12px; color: var(--text-muted); }
+  @media (max-width: 600px) {
+    .mockup-surface { min-height: 220px; padding: 20px; }
+    .mockup-layout { grid-template-columns: 1fr; }
+    .mockup-nav { display: none; }
+  }
+</style>
+
+<figure data-component="mockup-frame" class="mockup-frame">
+  <div class="mockup-surface" role="img" aria-label="Concept layout with navigation and a primary content area">
+    <div class="mockup-toolbar" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="mockup-layout" aria-hidden="true">
+      <div class="mockup-nav">
+        <div class="mockup-line is-accent"></div>
+        <div class="mockup-line"></div>
+        <div class="mockup-line"></div>
+        <div class="mockup-line"></div>
+      </div>
+      <div class="mockup-main">
+        <div class="mockup-line is-strong"></div>
+        <div class="mockup-line"></div>
+        <div class="mockup-line is-short"></div>
+        <div class="mockup-block"></div>
+      </div>
+    </div>
+  </div>
+  <figcaption><strong>Concept — not observed UI.</strong> The primary action and its evidence share one reading path.</figcaption>
+</figure>

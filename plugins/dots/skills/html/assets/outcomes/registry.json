@@ -1,0 +1,65 @@
+{
+  "$comment": "Outcome references teach reading order and editorial judgment. They are complete sample pages, not scaffolds. Select the nearest job, inspect one page, then compose real content from the component registry.",
+  "items": [
+    {
+      "name": "decision-comparison",
+      "title": "Decision comparison",
+      "file": "decision-comparison.html",
+      "job": "Choose among materially different approaches and commit to one.",
+      "layout": "wide",
+      "treatment": "editorial",
+      "shape": ["decision frame", "option cases", "shared criteria", "tradeoffs", "recommendation"],
+      "boundary": "If the reader must change filters or weights, route to an interactive visualization."
+    },
+    {
+      "name": "technical-explainer",
+      "title": "Technical explainer",
+      "file": "technical-explainer.html",
+      "job": "Build an accurate mental model of a system or change.",
+      "layout": "wide",
+      "treatment": "editorial",
+      "shape": ["thesis", "annotated flow", "ownership map", "worked example", "gotchas"],
+      "boundary": "If the intended result is durable repository documentation, route to docs-writer."
+    },
+    {
+      "name": "status-report",
+      "title": "Status report",
+      "file": "status-report.html",
+      "job": "Explain meaningful movement, current constraints, and the next decision.",
+      "layout": "article",
+      "treatment": "utilitarian",
+      "shape": ["headline movement", "traceable measures", "workstreams", "risks", "next action"],
+      "boundary": "Do not invent metrics or turn ordinary activity into KPI theater."
+    },
+    {
+      "name": "incident-account",
+      "title": "Incident account",
+      "file": "incident-account.html",
+      "job": "Explain impact, chronology, cause, response, and prevention.",
+      "layout": "article",
+      "treatment": "editorial",
+      "shape": ["impact", "chronology", "causal chain", "findings", "prevention"],
+      "boundary": "Keep confirmed facts, inference, and open investigation distinct."
+    },
+    {
+      "name": "implementation-plan",
+      "title": "Implementation plan",
+      "file": "implementation-plan.html",
+      "job": "Make a change executable with explicit ownership, proof, and rollback.",
+      "layout": "wide",
+      "treatment": "editorial",
+      "shape": ["contract", "concept outcome", "ownership map", "phases", "proof", "rollback"],
+      "boundary": "Mutable prototypes and product UI belong to design; this page describes the contract."
+    },
+    {
+      "name": "pr-walkthrough",
+      "title": "PR walkthrough",
+      "file": "pr-walkthrough.html",
+      "job": "Help a reviewer understand the behavioral change, risks, and proof.",
+      "layout": "wide",
+      "treatment": "editorial",
+      "shape": ["review thesis", "file map", "annotated diff", "findings", "validation"],
+      "boundary": "Ground every claim in the actual diff and repository context."
+    }
+  ]
+}

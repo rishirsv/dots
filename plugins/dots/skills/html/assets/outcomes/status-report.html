@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Release workflow is one boundary from ready</title>
+<style>
+/* GENERATED from DESIGN.md by scripts/generate-theme.mjs — do not edit.
+ * Tokens + base document styles for dots HTML artifacts. Inline this file
+ * verbatim inside <style> in every artifact. */
+
+:root {
+  --background: #fbfbfa;
+  --foreground: #0d0d0d;
+  --accent: #1f5eff;
+  --accent-deep: #12379e;
+  --warning-ink: #6b4c00;
+  --warning-line: rgba(180,130,0,0.35);
+  --warning-bg: rgba(255,178,0,0.06);
+  --danger-ink: #8c1d18;
+  --danger-line: rgba(200,60,50,0.35);
+  --danger-bg: rgba(220,70,60,0.05);
+  --code-surface: #0d0d0d;
+  --code-ink: #ededed;
+  --a4: rgba(13, 13, 13, 0.04);
+  --a8: rgba(13, 13, 13, 0.08);
+  --a12: rgba(13, 13, 13, 0.12);
+  --a20: rgba(13, 13, 13, 0.20);
+  --a40: rgba(13, 13, 13, 0.40);
+  --a55: rgba(13, 13, 13, 0.55);
+  --a60: rgba(13, 13, 13, 0.60);
+  --a70: rgba(13, 13, 13, 0.70);
+  --text-muted: var(--a60);
+  --font-sans: -apple-system, Helvetica Neue, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace;
+  --article: 720px;
+  --wide: 1040px;
+  --canvas: 1440px;
+  --section: 48px;
+  --block: 16px;
+  --r-card: 6px;
+  --r-code: 6px;
+  --r-inline: 4px;
+  --r-pill: 6px;
+  --dur-fast: 150ms;
+  --dur-reveal: 400ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --stagger: 60ms;
+  --chart-emphasis: var(--accent);
+  --chart-value-emphasis: var(--accent-deep);
+  --chart-pos: var(--a40);
+  --chart-neg: var(--a20);
+  --chart-mark: var(--a20);
+  --chart-track: var(--a4);
+  --chart-grid: var(--a12);
+  --chart-label: var(--text-muted);
+  --chart-value: var(--text-muted);
+}
+
+[data-theme="dark"] {
+  --background: #0f0f0e;
+  --foreground: #f5f5f4;
+  --accent: #6f94ff;
+  --accent-deep: #b7c9ff;
+  --warning-ink: #f2c14e;
+  --warning-line: rgba(255,193,77,0.35);
+  --warning-bg: rgba(255,193,77,0.08);
+  --danger-ink: #ff8a80;
+  --danger-line: rgba(255,120,110,0.35);
+  --danger-bg: rgba(255,120,110,0.07);
+  --code-surface: #161615;
+  --code-ink: #ededed;
+  --a4: rgba(245, 245, 244, 0.04);
+  --a8: rgba(245, 245, 244, 0.08);
+  --a12: rgba(245, 245, 244, 0.12);
+  --a20: rgba(245, 245, 244, 0.20);
+  --a40: rgba(245, 245, 244, 0.40);
+  --a55: rgba(245, 245, 244, 0.55);
+  --a60: rgba(245, 245, 244, 0.60);
+  --a70: rgba(245, 245, 244, 0.70);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --background: #0f0f0e;
+    --foreground: #f5f5f4;
+    --accent: #6f94ff;
+    --accent-deep: #b7c9ff;
+    --warning-ink: #f2c14e;
+    --warning-line: rgba(255,193,77,0.35);
+    --warning-bg: rgba(255,193,77,0.08);
+    --danger-ink: #ff8a80;
+    --danger-line: rgba(255,120,110,0.35);
+    --danger-bg: rgba(255,120,110,0.07);
+    --code-surface: #161615;
+    --code-ink: #ededed;
+    --a4: rgba(245, 245, 244, 0.04);
+    --a8: rgba(245, 245, 244, 0.08);
+    --a12: rgba(245, 245, 244, 0.12);
+    --a20: rgba(245, 245, 244, 0.20);
+    --a40: rgba(245, 245, 244, 0.40);
+    --a55: rgba(245, 245, 244, 0.55);
+    --a60: rgba(245, 245, 244, 0.60);
+    --a70: rgba(245, 245, 244, 0.70);
+  }
+}
+
+/* ---------- base ---------- */
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; overflow-x: clip; }
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-inline);
+}
+
+::selection { background: var(--a12); }
+
+h1 {
+  font-size: 40px;
+  line-height: 48px;
+  letter-spacing: -2.4px;
+  font-weight: 600;
+  margin: 0;
+  text-wrap: balance;
+}
+
+@media (max-width: 380px) {
+  h1 {
+    font-size: 32px;
+    line-height: 38px;
+    letter-spacing: -1.5px;
+  }
+}
+
+h2 {
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: -0.96px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  text-wrap: balance;
+}
+
+h3 {
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.32px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+p { margin: 0 0 var(--block); }
+p:last-child { margin-bottom: 0; }
+
+section { margin-bottom: var(--section); }
+
+code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--a4);
+  border-radius: var(--r-inline);
+  padding: 1px 5px;
+}
+
+pre code { background: none; padding: 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  border-top: 1px solid var(--a20);
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--a12);
+  vertical-align: top;
+}
+
+thead th {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
+
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- motion: choreographed moments only ---------- */
+/* One-time load stagger + one-time scroll reveals. Elements render complete
+ * and static by default; page-behavior opts them in only when JS
+ * runs and reduced-motion is off. Nothing loops; nothing is ambient. */
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js-motion .stagger > * {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: rise var(--dur-reveal) var(--ease) forwards;
+  }
+  html.js-motion .stagger > *:nth-child(1) { animation-delay: 0ms; }
+  html.js-motion .stagger > *:nth-child(2) { animation-delay: var(--stagger); }
+  html.js-motion .stagger > *:nth-child(3) { animation-delay: calc(var(--stagger) * 2); }
+  html.js-motion .stagger > *:nth-child(4) { animation-delay: calc(var(--stagger) * 3); }
+  html.js-motion .stagger > *:nth-child(5) { animation-delay: calc(var(--stagger) * 4); }
+
+  html.js-motion .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity var(--dur-reveal) var(--ease), transform var(--dur-reveal) var(--ease);
+  }
+  html.js-motion .reveal.is-in { opacity: 1; transform: none; }
+
+  html.js-motion .reveal .bar-fill {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform calc(var(--dur-reveal) * 1.5) var(--ease) 120ms;
+  }
+  html.js-motion .reveal.is-in .bar-fill { transform: scaleX(1); }
+
+  a, summary, button { transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease); }
+}
+
+@keyframes rise {
+  to { opacity: 1; transform: none; }
+}
+
+.page {
+    max-width: var(--article);
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+  .page[data-layout="wide"] { max-width: var(--wide); }
+  .page[data-layout="canvas"] { max-width: var(--canvas); }
+  .reading-column { max-width: var(--article); }
+  .page[data-layout="article"] .reading-column,
+  .page[data-layout="wide"] .reading-column { margin-right: auto; }
+  .page[data-layout="canvas"] .reading-column { margin-left: auto; margin-right: auto; }
+  .page > header { margin-bottom: var(--section); }
+  .context-line { font-size: 13px; color: var(--text-muted); margin: 0 0 20px; }
+  .title-row {
+    display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .title-row h1 { flex: 1 1 480px; min-width: 0; }
+  .status {
+    display: inline-flex; align-items: center; height: 20px; padding: 0 8px;
+    border-radius: var(--r-pill); background: var(--a4); color: var(--a70);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+    white-space: nowrap; border: 1px solid var(--a12);
+  }
+  .dek { font-size: 16px; color: var(--text-muted); margin: 0; max-width: 62ch; }
+  footer.sources {
+    margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--a12);
+    font-size: 12px; color: var(--text-muted); line-height: 1.7;
+  }
+  footer.sources a { color: var(--text-muted); }
+  @media (max-width: 680px) {
+    .page { padding: 40px 24px 72px; }
+    .title-row { display: block; }
+    .title-row .status { margin-top: 10px; }
+  }
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--a12);
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    margin-bottom: var(--section);
+  }
+  @media (max-width: 620px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+  .kpi-tile { padding: 18px 16px; background: var(--background); }
+  .kpi-value {
+    font-size: 22px; font-weight: 600; letter-spacing: -0.6px;
+    font-variant-numeric: tabular-nums; margin-bottom: 4px;
+  }
+  .kpi-label { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .kpi-note { font-size: 11px; color: var(--text-muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+.timeline {
+    list-style: none;
+    margin: 0 0 var(--section);
+    padding: 0;
+  }
+
+  .milestone {
+    position: relative;
+    display: flex;
+    gap: 14px;
+    padding-bottom: 24px;
+    padding-left: 4px;
+  }
+
+  .milestone::before {
+    /* hairline connector — structural gray, never accent */
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 18px;
+    bottom: -6px;
+    width: 1px;
+    background: var(--a20);
+  }
+
+  .milestone:last-child::before { display: none; }
+
+  .milestone-marker {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    background: var(--foreground);
+  }
+
+  .milestone.is-pending .milestone-marker {
+    background: transparent;
+    border: 1.5px solid var(--a40);
+  }
+
+  .milestone.is-current .milestone-marker {
+    background: var(--accent);
+  }
+
+  .milestone-body { flex: 1 1 auto; min-width: 0; }
+
+  .milestone-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .milestone-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  .milestone-date {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .milestone-detail {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-top: 2px;
+  }
+
+  /* compact variant: title + date only, no detail lines */
+  .timeline.compact .milestone { padding-bottom: 16px; }
+  .timeline.compact .milestone-detail { display: none; }
+
+.callout {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .callout p { margin: 0; }
+  .callout p + p { margin-top: 6px; }
+  .callout strong { font-weight: 700; }
+  .callout.warn {
+    background: var(--warning-bg);
+    border-color: var(--warning-line);
+    color: var(--warning-ink);
+  }
+  .callout.danger {
+    background: var(--danger-bg);
+    border-color: var(--danger-line);
+    color: var(--danger-ink);
+  }
+  .callout-stack { display: flex; flex-direction: column; gap: 10px; }
+
+.recommendation {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    padding: 20px 22px;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: var(--section);
+  }
+  .recommendation p { margin: 0; }
+  .recommendation p + p { margin-top: 10px; }
+  .recommendation strong { font-weight: 700; }
+</style>
+</head>
+<body>
+<div data-component="page-shell" class="page" data-layout="article">
+  <header class="stagger">
+    <p class="context-line">sample / status report</p>
+    <div class="title-row">
+      <h1>Release workflow is one boundary from ready</h1>
+      <span class="status">on track</span>
+    </div>
+    <p class="dek">The duplicated validation path is removed. One owner decision remains before the release path can be exercised end to end.</p>
+  </header>
+
+  <section id="movement"><h2>Why this week matters</h2><p>The workflow now creates one candidate and preserves its identity through focused verification. This changes the release from a series of plausible green checks into a chain that can identify what ships.</p></section>
+  <div data-component="stat-tiles" class="kpi-grid">
+    <div class="kpi-tile"><div class="kpi-value">1</div><div class="kpi-label">candidate per release</div><div class="kpi-note">was 3 rebuilds</div></div>
+    <div class="kpi-tile"><div class="kpi-value">7m</div><div class="kpi-label">focused gate</div><div class="kpi-note">fixture timing</div></div>
+    <div class="kpi-tile"><div class="kpi-value">1</div><div class="kpi-label">owner decision open</div></div>
+    <div class="kpi-tile"><div class="kpi-value">0</div><div class="kpi-label">production releases run</div><div class="kpi-note">not yet verified</div></div>
+  </div>
+  <section id="workstreams"><h2>Workstreams</h2><ol data-component="timeline" class="timeline">
+    <li class="milestone"><span class="milestone-marker" aria-hidden="true"></span><div class="milestone-body"><div class="milestone-head"><span class="milestone-title">Candidate identity contract</span><span class="milestone-date">complete</span></div><p class="milestone-detail">Build, verify, and publish now accept the same immutable reference.</p></div></li>
+    <li class="milestone"><span class="milestone-marker" aria-hidden="true"></span><div class="milestone-body"><div class="milestone-head"><span class="milestone-title">Focused validation</span><span class="milestone-date">complete</span></div><p class="milestone-detail">Deterministic source and archive checks pass on the fixture candidate.</p></div></li>
+    <li class="milestone is-current"><span class="milestone-marker" aria-hidden="true"></span><div class="milestone-body"><div class="milestone-head"><span class="milestone-title">Publication ownership</span><span class="milestone-date">decision</span></div><p class="milestone-detail">Choose whether the release owner or CI service creates the external upload receipt.</p></div></li>
+  </ol></section>
+  <section id="risk"><h2>Current constraint</h2><div data-component="callout" class="callout warn"><p><strong>Not yet release proof.</strong> The fixture validates the contract, but no production credentialed upload has exercised the final handoff.</p></div></section>
+  <section id="next"><h2>Next action</h2><div data-component="recommendation" class="recommendation"><p><strong>Assign the external upload receipt to the release owner and run one non-production candidate through the full path.</strong> That closes the only ownership ambiguity without redesigning CI.</p></div></section>
+
+  <footer class="sources">Illustrative reference: replace all sample claims, dates, metrics, paths, and decisions with grounded source material.</footer>
+</div>
+
+</body>
+</html>
