@@ -86,8 +86,7 @@ report the remainder.
 
 Use the repository's owning tests for each changed invariant and its required
 final gate at the normal ready boundary. Inspect the final diff against the
-landed-work window and rerun the responsible Simplify review after material
-edits.
+landed-work window.
 
 Publish only when the user or invoking workflow authorizes publication. Follow
 repository branch, commit, validation, and draft-versus-ready rules. A safe

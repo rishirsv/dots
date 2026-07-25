@@ -180,11 +180,11 @@ audit, follow Audit Mode; its report is the only permitted write.
 
 ## 5. Validate And Return
 
-After fixes, run the narrowest relevant tests, typecheck, lint, or build.
-Inspect the final diff for unintended changes and rerun the parent or Simplify
-review responsible for each material edit. For report-only work, run checks
-only when they can confirm a material candidate. Audit checks must be read-only
-and side-effect free.
+After fixes, the parent inspects the final diff and runs only checks needed for
+the changed behavior. Do not rerun a review. If a high-impact fix remains
+uncertain, ask a fresh verifier to check only that issue. For report-only work,
+run checks only when they can confirm a material candidate. Audit checks must
+be read-only and side-effect free.
 
 For a completed fix route, report:
 
