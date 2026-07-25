@@ -1,21 +1,29 @@
 # Interaction Design
 
-## The Eight Interactive States
+## Assign Reachable States To Their Owner
 
-Every interactive element needs these states designed:
+Start with the default state, then map only states the interaction can actually
+reach. A state may belong to the control, field, region, or whole flow; do not
+force every outcome onto every element.
 
-| State | When | Visual Treatment |
-|-------|------|------------------|
-| **Default** | At rest | Base styling |
-| **Hover** | Pointer over (not touch) | Subtle lift, color shift |
-| **Focus** | Keyboard/programmatic focus | Visible ring (see below) |
-| **Active** | Being pressed | Pressed in, darker |
-| **Disabled** | Not interactive | Reduced opacity, no pointer |
-| **Loading** | Processing | Spinner, skeleton |
-| **Error** | Invalid state | Red border, icon, message |
-| **Success** | Completed | Green check, confirmation |
+| State | Reachable when | Design obligation |
+|-------|----------------|-------------------|
+| **Default** | The element is available at rest | Make purpose and affordance clear |
+| **Hover** | A fine pointer can hover | Reinforce affordance without carrying essential information |
+| **Focus** | Keyboard or programmatic focus can land | Provide a persistent visible indicator |
+| **Active** | The control is being pressed or manipulated | Acknowledge the direct action |
+| **Disabled** | An action is temporarily unavailable | Make unavailability clear; explain the reason when it is not evident |
+| **Loading** | This owner is waiting on work | Preserve context and show progress at the smallest truthful scope |
+| **Error** | This owner can fail or contain invalid input | Identify the problem, preserve recoverable input, and expose recovery |
+| **Success** | Completion needs acknowledgment | Confirm the result at the level where it occurred |
 
-**The common miss**: Designing hover without focus, or vice versa. They're different. Keyboard users never see hover states.
+Selected, expanded, empty, stale, permission, offline, and reduced-motion paths
+are additional states when the product can reach them. Do not invent states to
+complete a checklist.
+
+**The common miss**: designing hover without focus, or using hover to reveal
+essential information. Keyboard users never see hover, and touch users may not
+have it.
 
 ## Focus Rings: Do Them Right
 
@@ -42,11 +50,19 @@ button:focus-visible {
 
 ## Form Design: The Non-Obvious
 
-**Placeholders aren't labels.** They disappear on input. Always use visible `<label>` elements. **Validate on blur**, not on every keystroke (exception: password strength). Place errors **below** fields with `aria-describedby` connecting them.
+**Placeholders aren't labels.** They disappear on input. Use persistent visible
+labels. Validate at the earliest useful boundary without interrupting every
+keystroke; immediate feedback is appropriate when it changes what the person can
+do next, such as format guidance or password requirements. Place field errors
+next to the field and connect them with `aria-describedby`.
 
 ## Loading States
 
-**Optimistic updates**: Show success immediately, rollback on failure. Use for low-stakes actions (likes, follows), not payments or destructive actions. **Skeleton screens > spinners**: they preview content shape and feel faster than generic spinners.
+**Optimistic updates**: show success immediately and roll back on failure only
+for low-stakes, reversible actions—not payments or destructive actions. Use a
+skeleton when the content structure is known and the preview reduces perceived
+uncertainty; use a progress indicator, retained content, or quiet pending state
+when that is more truthful.
 
 ## Destructive Actions: Undo > Confirm
 
@@ -84,4 +100,7 @@ Don't rely on gestures as the only way to perform actions.
 
 ---
 
-**Avoid**: Removing focus indicators without alternatives. Using placeholder text as labels. Touch targets <44x44px. Generic error messages. Custom controls without ARIA/keyboard support.
+**Avoid**: Removing focus indicators without alternatives. Using placeholder
+text as labels. Touch targets <44x44px. Generic error messages. Custom controls
+without ARIA/keyboard support. Fabricating unreachable states or assigning a
+flow-level loading, error, or success outcome to every child control.

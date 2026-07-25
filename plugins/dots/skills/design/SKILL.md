@@ -1,13 +1,13 @@
 ---
 name: design
-description: "Designs, builds, redesigns, and polishes visible product UI, and names vaguely described motion effects. Use for web/app screens, React, iOS/SwiftUI, UI design, UX, frontend, or ‘what is this animation called?’ Not for HTML reports, docs, backend, CLI, or invisible fixes."
+description: "Designs, builds, redesigns, and polishes visible product UI, and names vaguely described motion effects. Use for web/app screens, React, iOS/SwiftUI, UI design, UX, frontend, or ‘what is this animation called?’ Not for independent design critique or audits, HTML reports, docs, backend, CLI, or invisible fixes."
 ---
 
 # Visual Design
 
-Create, critique, revise, and faithfully implement distinctive visible UI, or
-name a vaguely described motion effect. Use this skill whenever front-end work
-changes what a user sees or the user needs precise interaction terminology.
+Create, revise, and faithfully implement distinctive visible UI, or name a
+vaguely described motion effect. Use this skill whenever front-end work changes
+what a user sees or the user needs precise interaction terminology.
 
 ## References
 
@@ -17,6 +17,11 @@ changes what a user sees or the user needs precise interaction terminology.
   forming a new-surface brief or UI-generation prompt from sparse direction.
 - Read [visual-principles.md](references/visual-principles.md) before choosing
   the visual direction, typography, layout language, or polish pass.
+- Read [typography.md](references/typography.md) when establishing or changing
+  type roles, hierarchy, reading measure, responsive type, font delivery, or
+  text scaling.
+- Read [color.md](references/color.md) when establishing or changing palette,
+  semantic color, themes, contrast, atmospheric color, or data color.
 - Read [spacing.md](references/spacing.md) when choosing or auditing density,
   spatial rhythm, proportions, symmetry, component sizing, spacing systems,
   optical alignment, or hit areas.
@@ -47,8 +52,8 @@ Use this skill for:
 
 - new web pages, app screens, dashboards, tools, games, landing pages,
   iOS/SwiftUI views, and interactive prototypes
-- visual redesigns, style passes, critique, polish loops, responsive cleanup,
-  and design-system alignment
+- visual redesigns, style passes, implementation polish loops, responsive
+  cleanup, and design-system alignment
 - implementation work where Image Gen concepts, screenshots, or accepted visual
   references need faithful translation into code
 - terminology questions where the user describes an animation or interaction
@@ -58,6 +63,10 @@ Do not use it for backend-only changes, CLI tools, pure docs/prose work, report
 or brief HTML artifacts, static artifact mocks, or bug fixes with no visible UI
 surface. Use `html` when the user wants formed content rendered as a shareable
 HTML document or static mock.
+Route independent design critique, experience audits, design-system audits,
+acceptance reviews, and motion reviews to
+[design-review](../design-review/SKILL.md). This skill may self-check and revise
+the surface it is actively building; it does not own a review-only request.
 Chat-native throwaway diagrams or mockup sketches are outside this skill. For a
 small UI fix inside an existing design system, follow the repo's local
 conventions first and use only the relevant polish and validation parts of this
@@ -102,6 +111,13 @@ visual change, use the discovery and brief gate in
 authorized assumptions provide enough direction, state the compact brief and
 proceed. Stop for confirmation only when an unresolved choice would materially
 change the product, visual direction, or implementation scope.
+
+Before changing direction, classify the work using the refinement, extension,
+whole-surface, redesign, and new-world boundaries in
+[grounding.md](references/grounding.md). A local addition inherits its
+surroundings. A redesign must be explicit; it preserves product truth and
+function while replacing the authorized visual world instead of splitting the
+difference with the incumbent look.
 
 ### 2. Scout Before Coding
 
@@ -161,11 +177,13 @@ and the iOS doctrine for native motion and direct manipulation. Apply each
 platform clause only to the interaction mechanism it covers.
 
 Build the real usable surface first, not a marketing wrapper around a future
-app. Design every reachable state, not just the happy path: default, empty,
-loading, error, disabled, selected, success, dense data, responsive collapse,
-hover, focus, and reduced-motion. Harden the surface against real-world content —
-text overflow, long strings, localization, and recoverable errors that preserve
-user input — so it does not break outside the ideal case.
+app. Map states to the component, region, or flow that owns them, then design
+every state a user can actually reach: default plus applicable empty, loading,
+error, disabled, selected, success, dense-data, responsive-collapse, hover,
+focus, and reduced-motion paths. Do not fabricate a component-level state when
+the outcome belongs to the surrounding flow. Harden the surface against
+real-world content — text overflow, long strings, localization, and recoverable
+errors that preserve user input — so it does not break outside the ideal case.
 
 Keep real interactive app UI text, navigation, buttons, forms, tables, controls,
 and labels code-native. Use generated raster assets for logos, brand marks,
@@ -224,9 +242,6 @@ pre-existing user artifacts merely because they look temporary.
 
 When a brief contains a blocking decision, present the brief and that decision.
 Otherwise state the direction briefly and proceed with the implementation.
-
-For critique-only work, report the strongest design findings first, then give a
-specific repair plan.
 
 For implementation work, finish with the design direction, material changes,
 repo design anchors followed, validation performed, remaining intentional

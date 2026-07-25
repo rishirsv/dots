@@ -73,14 +73,17 @@ language, imagery rules, motion timing, and explicit anti-patterns.
 
 ## Typography
 
-Typography carries personality. Pair display and body faces deliberately, set a
-clear type scale, and choose weights, widths, spacing, and line lengths with
-intent.
+Read [typography.md](typography.md). Typography carries information, hierarchy,
+and voice. Establish a small role system, tune it to the actual face, content,
+language, width, and platform, and verify it under scaling, fallback, and
+localization stress.
 
-Make the type treatment part of the design, not a neutral delivery vehicle.
-Audit content typography and UI chrome typography separately: buttons, tabs,
-inputs, toolbars, sidebars, table cells, captions, status bars, command
-palettes, and mobile line breaks all need deliberate type choices.
+## Color
+
+Read [color.md](color.md). Color must have a stable semantic role or a deliberate
+atmospheric purpose. Choose its hierarchy, emotional temperature, contrast
+range, and dosage before choosing swatches; preserve brand and domain meaning,
+and compose each theme rather than mechanically inverting one.
 
 ## Structure
 

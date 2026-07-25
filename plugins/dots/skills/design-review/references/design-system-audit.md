@@ -1,168 +1,116 @@
 # Design-System Audit
 
-Audit one coherent product surface against the system that actually governs it.
-Preserve the product's identity, reuse existing owners, and prefer no finding to
-an unsupported one.
+Trace one product surface through its governing design sources and report only
+proven conformance defects. Source can establish system drift; rendered or user
+evidence is still required for experiential claims.
 
-Use the parent skill's severity, finding anatomy, and final-response contract.
+## Select And Trace
 
-## Design System Discovery
+Honor the user's scope. For a broad repository, select one deployable
+application and one coherent surface family representing a primary task.
 
-Aligning the feature to the design system is **not optional**. Polish without alignment is decoration on top of drift, and it makes the next person's job harder. Discovery comes before any other polish work.
+Start from the surface's route or composition and trace imports, props,
+resolved configuration, token aliases, CSS inheritance, generated artifacts,
+primitives, variants, and shared components. Repository proximity, similar
+names, or repeated values do not prove a runtime connection.
 
-1. **Find the design system**: Search for design system documentation, component libraries, style guides, or token definitions. Study the core patterns: design principles, target audience, color tokens, spacing scale, typography styles, component API, motion conventions.
-2. **Note the conventions**: How are shared components imported? What spacing scale is used? Which colors come from tokens vs hard-coded values? What motion and interaction patterns are established? What flow shapes are used for comparable actions (modal vs full-page, inline vs route, save-on-blur vs explicit submit)?
-3. **Identify drift, then name the root cause**: For every deviation, classify it as a **missing token** (the value should exist in the system but doesn't), a **one-off implementation** (a shared component already exists but wasn't used), or a **conceptual misalignment** (the feature's flow, IA, or hierarchy doesn't match neighboring features). The fix differs by category: patch the value, swap to the shared component, or rework the flow. Fixing the symptom without naming the cause is how drift compounds.
+Exclude previews, configurators, legacy systems, enterprise variants, and other
+applications unless the traced path consumes them.
 
-If a design system exists, polish **must** align the feature with it. If none exists, polish against the conventions visible in the codebase. **If anything about the system is ambiguous, ask. Never guess at design system principles.**
+## Reconstruct The Local System
 
-## 1. Select the surface
-
-Honor the user's scope. If the request is broad, select one deployable application and one coherent surface family representing a primary product task. State the selection; do not synthesize the whole repository into one product.
-
-Start from the surface's routes and layouts. Trace the rendered path through compositions, shared components, variants, resolved tokens, and styles. Do not begin with a repository-wide search for inconsistencies.
-
-A connection exists only when it is proven through rendering, imports, props, resolved configuration, CSS inheritance, or a generated artifact loaded by the surface. Shared names, similar tokens, repository proximity, and conceptual relationships do not establish a connection. Exclude other applications, previews, configurators, generated registries, legacy systems, and enterprise variants unless they participate in the traced path.
-
-## 2. Reconstruct the local system
-
-Check for `DESIGN.md`, repository guidance, and surface-local design documentation. Use a source only after proving it is current and governs the selected surface; drafts, proposals, migrations, and task lists describe future intent unless explicitly accepted and current. Absence of design documentation is not a finding.
-
-Inspect only the tokens, variables, themes, primitives, variants, and compositions relevant to the traced path. Resolve aliases and variants to their definitions. Classify an implementation as local or legacy only when the repository says so.
+Inspect current repository guidance, `DESIGN.md` or equivalent, tokens, themes,
+component APIs, and surface-local design documentation. A source governs the
+audit only when evidence shows it is current and applies to this surface.
+Drafts, migrations, proposals, and task lists describe future intent unless
+explicitly accepted.
 
 Record:
 
 ```markdown
-## Design language
+## Design Language
 - Audited surface:
-- Design sources:
-- Documented decisions:
-- Governing owners and consumers:
+- Governing sources:
+- Runtime owners and consumers:
+- Binding decisions:
 - Explicit exceptions:
 ```
 
-Write `None documented` under `Explicit exceptions` unless a cited source explicitly identifies the exception.
+Write `None documented` for exceptions unless a cited source names one.
+Absence of formal design documentation is not a finding; use proven local
+owners and conventions.
 
-## Design-System Conformance Dimensions
+## Generate Candidates
 
-Apply only dimensions the available evidence can establish. Read
-[spacing.md](../../design/references/spacing.md) for the complete spatial method.
+Inspect only dimensions connected to the traced surface and governing contract:
 
-### Information Architecture & Flow
+- flow shape, terminology, hierarchy, and disclosure;
+- typography roles and tokens;
+- color roles, themes, and contrast;
+- spacing, sizing, layout, and responsiveness;
+- primitives, variants, states, forms, icons, and assets;
+- explicit accessibility or motion rules.
 
-Visual polish on a misshapen flow is wasted work. Match the *shape* of the experience to the system, not just the surface.
+Load detailed doctrine only when the contract makes that dimension material:
 
-- **Progressive disclosure**: Match how much is revealed when, compared to neighboring features. A settings page exposing 40 fields when the rest of the app reveals 5 at a time is drift, even if every field is perfectly styled.
-- **Established user flows**: Multi-step actions follow the same shape as comparable flows elsewhere: modal vs full-page, inline edit vs separate route, save-on-blur vs explicit submit, optimistic vs pessimistic updates.
-- **Hierarchy & complexity**: The same conceptual weight gets the same visual weight throughout. Primary actions don't become tertiary in one corner of the product, and tertiary actions don't shout.
-- **Empty, loading, and arrival transitions**: How content arrives, updates, and leaves matches how it does in adjacent features.
-- **Naming and mental model**: The feature uses the same nouns and verbs as the rest of the system. A "Workspace" here shouldn't be a "Project" three screens away.
+- [spacing.md](../../design/references/spacing.md)
+- [typography.md](../../design/references/typography.md)
+- [color.md](../../design/references/color.md)
+- [interaction-design.md](../../design/references/interaction-design.md)
+- [motion-audit.md](motion-audit.md)
 
-### Typography Refinement
+Classify a candidate as:
 
-- **Hierarchy consistency**: Same elements use same sizes/weights throughout
-- **Line length**: 45-75 characters for body text
-- **Line height**: Appropriate for font size and context
-- **Widows & orphans**: No single words on last line
-- **Hyphenation**: Appropriate for language and column width
-- **Kerning**: Adjust letter spacing where needed (especially headlines)
-- **Font loading**: No FOUT/FOIT flashes
+- **missing owner:** a reusable rule belongs in the system but has no owner;
+- **one-off implementation:** an existing owner should be used;
+- **contract mismatch:** the implementation contradicts a binding decision;
+- **documented exception:** intentional and not a finding.
 
-### Color & Contrast
+Search hits, repetition, omissions, arbitrary values, and implementation
+differences create candidates, not findings.
 
-- **Contrast ratios**: All text meets WCAG standards
-- **Consistent token usage**: No hard-coded colors, all use design tokens
-- **Theme consistency**: Works in all theme variants
-- **Color meaning**: Same colors mean same things throughout
-- **Accessible focus**: Focus indicators visible with sufficient contrast
-- **Gray on color**: Never put gray text on colored backgrounds; use a shade of that color or transparency
+## Prove Each Finding
 
-### Interaction States
+Keep a candidate only when all three proofs exist:
 
-Every interactive element needs all states:
+1. **Contract:** cite a binding decision for this property and scope, or a
+   direct contradiction in presentation or copy within the same task.
+2. **Runtime:** prove the cited owner, value, or behavior reaches the audited
+   surface.
+3. **Correction:** state one change required by the evidence, naming the
+   existing token, primitive, variant, component, or governing rule when one
+   exists.
 
-- **Default**: Resting state
-- **Hover**: Subtle feedback (color, scale, shadow)
-- **Focus**: Keyboard focus indicator (never remove without replacement)
-- **Active**: Click/tap feedback
-- **Disabled**: Clearly non-interactive
-- **Loading**: Async action feedback
-- **Error**: Validation or error state
-- **Success**: Successful completion
+Reject the candidate when the evidence supports several corrections, the
+intended rule is ambiguous, the proposal invents product intent, or the primary
+problem is functional behavior rather than design-system conformance.
 
-**Missing states create confusion and broken experiences**.
+Source can prove token, type, color, spacing, copy, component, variant,
+responsive-presentation, and explicit contract violations. Hierarchy,
+discoverability, usability, perceived coherence, and motion feel require
+rendered or user evidence.
 
-### Content & Copy
+Exclude accessibility semantics, broken routes, data wiring, actions,
+performance, architecture, and general code quality unless the user requested
+that scope or a binding design contract governs it.
 
-- **Consistent terminology**: Same things called same names throughout
-- **Consistent capitalization**: Title Case vs Sentence case applied consistently
-- **Grammar & spelling**: No typos
-- **Appropriate length**: Not too wordy, not too terse
-- **Punctuation consistency**: Periods on sentences, not on labels (unless all labels have them)
+## Falsify And Report
 
-### Icons & Images
+Re-open every cited source and implementation. Delete a candidate when:
 
-- **Consistent style**: All icons from same family or matching style
-- **Appropriate sizing**: Icons sized consistently for context
-- **Proper alignment**: Icons align with adjacent text optically
-- **Alt text**: All images have descriptive alt text
-- **Loading states**: Images don't cause layout shift, proper aspect ratios
-- **Retina support**: 2x assets for high-DPI screens
+- the cited rule does not govern this property or surface;
+- counterevidence makes the difference valid;
+- the implementation was misread;
+- the correction remains ambiguous;
+- another finding already describes the root cause.
 
-### Forms & Inputs
+Report:
 
-- **Label consistency**: All inputs properly labeled
-- **Required indicators**: Clear and consistent
-- **Error messages**: Helpful and consistent
-- **Tab order**: Logical keyboard navigation
-- **Auto-focus**: Appropriate (don't overuse)
-- **Validation timing**: Consistent (on blur vs on submit)
+1. the reconstructed design language;
+2. findings that survived contract, runtime, correction, and falsification;
+3. the first improvement to make;
+4. claims that still require rendered evidence.
 
-### Edge Cases & Error States
-
-- **Loading states**: All async actions have loading feedback
-- **Empty states**: Helpful empty states, not just blank space
-- **Error states**: Clear error messages with recovery paths
-- **Success states**: Confirmation of successful actions
-- **Long content**: Handles very long names, descriptions, etc.
-- **No content**: Handles missing data gracefully
-- **Offline**: Appropriate offline handling (if applicable)
-
-### Responsiveness
-
-- **All breakpoints**: Test mobile, tablet, desktop
-- **Touch targets**: 44x44px minimum on touch devices
-- **Readable text**: No text smaller than 14px on mobile
-- **No horizontal scroll**: Content fits viewport
-- **Appropriate reflow**: Content adapts logically
-
-## 3. Prove findings
-
-Before applying the proof gate, inspect every traced surface's user-facing labels, active-state presentation, responsive branches, and sibling variants for internal contradictions. Treat the results only as candidates.
-
-A finding is in scope only when its correction primarily changes visual presentation, interface copy, layout, component styling, or conformance to a documented design rule. If the correction primarily changes whether product behavior works, reject it.
-
-Search results, repetition, and implementation differences produce candidates, not findings. Keep a candidate only when all three proofs exist:
-
-1. **Contract** — Cite a binding design decision for this property and scope, or a direct contradiction in user-facing presentation or content within the same task. “Prefer,” “generally,” names, omissions, repetition, and absence of an exception do not establish a contract.
-2. **Runtime** — Prove that the cited owner, value, or behavior reaches the affected surface through the traced runtime path. Do not compare separate ownership layers or lifecycle states.
-3. **Correction** — State one change required by the evidence. If it depends on an existing token, variant, primitive, or exemplar, name it exactly. If the evidence cannot determine the correct choice, the intended condition is ambiguous, the proposal contains alternatives, or the correction requires inventing product intent, reject the candidate.
-
-Source can prove token, typography, color, spacing, layout, copy, component-variant, responsive-presentation, and explicit design-contract violations. It cannot turn functional behavior, state management, or interaction correctness into design findings. Hierarchy, prominence, density, clarity, discoverability, usability, and perceived coherence require rendered or user evidence.
-
-Discard accessibility and HTML/ARIA semantic findings unless the user explicitly requests them. Discard broken routes, redirects, data wiring, action failures, metadata, package API, performance, architecture, and code-quality findings unless the user requested them or a product-specific design contract governs them.
-
-Assign confidence only after all proofs pass. Reuse an existing owner when the evidence supports it; do not create a shared primitive from repetition alone.
-
-## 4. Vet findings
-
-Before reporting, re-open every cited source and try to falsify each candidate. Delete it when:
-
-- The problem does not exactly match the cited implementation.
-- The rule does not govern that property and surface.
-- Counterevidence shows the difference is valid or deliberate.
-- The evidence supports multiple corrections.
-- The correction invents product intent.
-- Another finding describes the same root problem.
-
-Only findings that survive this pass may enter the table.
+Return a positive-null result when no candidate survives. Finish only when each
+finding names the governing owner, traced consumer, exact correction, and
+falsifier checked.

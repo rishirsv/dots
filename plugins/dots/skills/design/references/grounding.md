@@ -18,8 +18,37 @@ Find the repo's design authority before reaching for generic taste:
 
 Treat these as the repo design contract. If none exist, say so and design from
 the brief. Resolve conflicts by prioritizing the user's explicit goal, then the
-repo design system, then checked-in rules, then accepted concepts for this
-surface, then this skill's general principles.
+checked-in rules, then the repo design system, then an accepted target for this
+surface, then nearby shipped behavior, then this skill's general principles.
+
+## Determine The Change Freedom
+
+Decide what the task is allowed to change before choosing a visual direction.
+A missing design document does not make the work greenfield. Inspect the code,
+tokens, components, assets, and representative screens for a coherent identity.
+
+- **Refinement:** preserve the incumbent identity, behavior, information,
+  visible copy, and everything outside the requested scope. Improve the use of
+  the current system rather than replacing it under the name of polish.
+- **Local extension:** inherit the surrounding surface. Resolve only the new
+  purpose, content, hierarchy, reachable states, interaction, and how the
+  addition joins the existing experience. Do not turn a component, feature, or
+  state into an identity exercise.
+- **Whole surface inside an established world:** keep the visual system fixed
+  while exploring composition, structure, and flow. New layout freedom is not
+  permission to replace type, palette, material, components, or motion language.
+- **Redesign:** preserve product truth, content, function, native affordances,
+  constraints, and confirmed brand commitments; replace the authorized visual
+  world rather than polishing it or blending old and new. The incumbent surface
+  is evidence of what the product is, not authority over what it becomes.
+- **Incomplete identity:** preserve confirmed assets and recognizable traits,
+  then extend only the missing system needed for this work.
+- **No visual authority:** create a coherent world from the user's goal,
+  audience, product truth, and subject evidence.
+
+A redesign must be explicit in the request or confirmed brief. Ask before
+expanding a refinement into a redesign, changing a durable design contract, or
+letting a local extension alter the wider product identity.
 
 ## Discovery Round
 
