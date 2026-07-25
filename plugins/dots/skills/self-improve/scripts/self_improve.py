@@ -5,8 +5,9 @@ evidence-backed improvement proposals.
 Division of labor (keep this honest):
 - This script SURFACES candidates: it scans sessions for preference and correction
   sentences, scores evidence strength, ranks threads, detects skill usage and
-  friction, flags unconsolidated memory summaries, flags stale durable goals, and
-  inspects a repo for missing scaffolding.
+  friction, derives quantitative usage statistics, flags unconsolidated memory
+  summaries, flags stale durable goals, and inspects a repo for missing
+  scaffolding.
 - The AGENT extracts the real evidence (expected vs actual behavior, the durable
   correction) by reading the cited threads, and proposes the smallest change.
 
@@ -41,6 +42,7 @@ from session_sources import (  # noqa: E402
     CodexSource,
     SessionRecord as Thread,
     SessionSource,
+    parse_timestamp,
 )
 
 
@@ -56,6 +58,9 @@ MEMORIES_DB = CODEX_HOME / "memories_1.sqlite"
 GOALS_DB = CODEX_HOME / "goals_1.sqlite"
 # Durable record of proposal decisions so weekly runs don't resurface settled items.
 DECISIONS_FILE = CODEX_HOME / "self_improve_decisions.json"
+# Derived per-session statistics, keyed by schema version + session id + mtime.
+STATS_CACHE_FILE = CODEX_HOME / "self_improve_stats_cache.json"
+STATS_SCHEMA = 3
 PLATFORM = "codex"
 SESSION_SOURCE: SessionSource = CodexSource(CODEX_HOME, iter_session_events)
 
@@ -73,6 +78,7 @@ def platform_paths(platform: str) -> dict[str, Any]:
             else home / "projects" / "<project>" / "memory" / "MEMORY.md"
         ),
         "decisions": home / "self_improve_decisions.json",
+        "stats_cache": home / "self_improve_stats_cache.json",
         "skill_roots": (home / "skills", Path.home() / ".agents" / "skills", SOURCE_SKILLS_ROOT, plugin_cache),
         "plugin_cache": plugin_cache,
     }
@@ -95,13 +101,14 @@ def resolve_platform(requested: str) -> str:
 
 def configure_platform(platform: str) -> None:
     global PLATFORM, SESSION_SOURCE
-    global GLOBAL_AGENTS, MEMORIES_DIR, MEMORY_MD, DECISIONS_FILE, SKILL_ROOTS
+    global GLOBAL_AGENTS, MEMORIES_DIR, MEMORY_MD, DECISIONS_FILE, STATS_CACHE_FILE, SKILL_ROOTS
     PLATFORM = platform
     paths = platform_paths(platform)
     GLOBAL_AGENTS = paths["instructions"]
     MEMORIES_DIR = paths["memories"]
     MEMORY_MD = paths["memory"]
     DECISIONS_FILE = paths["decisions"]
+    STATS_CACHE_FILE = paths["stats_cache"]
     SKILL_ROOTS = paths["skill_roots"]
     SESSION_SOURCE = CodexSource(CODEX_HOME, iter_session_events) if platform == "codex" else ClaudeSource(CLAUDE_HOME)
 
@@ -172,6 +179,92 @@ ERROR_MARKERS = (
     "segmentation fault",
     "unhandled exception",
 )
+
+# Coarse buckets for tool-output failures, ordered most specific first. Used only
+# for aggregate profiling; a bucket is a lead about where friction concentrates.
+ERROR_CATEGORIES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("Permission Denied", ("permission denied", "operation not permitted", "not authorized")),
+    ("File Not Found", ("no such file or directory", "does not exist", "cannot find")),
+    ("Edit Failed", ("string to replace not found", "no changes were made", "modified since")),
+    ("Timeout", ("timed out", "timeout exceeded", "deadline exceeded")),
+    ("Network", ("connection refused", "could not resolve host", "network is unreachable")),
+    ("Crash Or Exception", ("traceback (most recent call last)", "segmentation fault", "unhandled exception")),
+    ("Command Failed", ("exit code 1", "non-zero exit", "command not found", "fatal:")),
+)
+
+# Expected tool replies that read like failures but describe normal operation —
+# a polling tool reporting that nothing arrived yet is not friction.
+BENIGN_OUTPUT_MARKERS = (
+    '"timed_out":true',
+    "wait timed out",
+    "no new events",
+    "no output yet",
+)
+
+# The host's own interrupt sentinel is definitive.
+INTERRUPT_SENTINEL_RE = re.compile(r"\[request interrupted", re.IGNORECASE)
+
+# A stop phrase only means an interruption in a short imperative turn. A long task
+# brief that happens to say "stop when done" is instruction, not interruption.
+STOP_PHRASE_RE = re.compile(
+    r"\b(?:stop|stop it|hold on|cancel that|never ?mind)\b|\bno,? (?:don't|do not|stop)\b",
+    re.IGNORECASE,
+)
+SHORT_TURN_CHARS = 120
+
+
+def _is_interruption(text: str) -> bool:
+    if INTERRUPT_SENTINEL_RE.search(text):
+        return True
+    return len(text) <= SHORT_TURN_CHARS and bool(STOP_PHRASE_RE.search(text))
+
+# Hosts inject instruction and context blocks that arrive with the user role but
+# were never typed by the user. Counting them distorts message volume, timing,
+# and every keyword signal derived from user turns.
+INJECTED_USER_RE = re.compile(
+    r"^\s*(?:"
+    r"<(?:recommended_plugins|realtime_delegation|system[-_]reminder|user_instructions"
+    r"|environment_context|instructions|context|persistent_state|memory|skill"
+    r"|task[-_]notification|task[-_]reminder|local[-_]command[-_]caveat)\b"
+    r"|#\s*(?:AGENTS|CLAUDE)\.md\b"
+    r")",
+    re.IGNORECASE,
+)
+
+# Report runs must not profile themselves. These markers identify a transcript
+# whose early turns are a usage-report or self-improve pass.
+SELF_REFERENTIAL_MARKERS = (
+    "respond with only a valid json object",
+    "self_improve.py",
+    "self-improve insights",
+    "agent usage review",
+)
+
+# File extension to language label, for aggregate language mix only.
+LANGUAGE_BY_SUFFIX = {
+    ".ts": "TypeScript", ".tsx": "TypeScript", ".js": "JavaScript", ".jsx": "JavaScript",
+    ".py": "Python", ".rb": "Ruby", ".go": "Go", ".rs": "Rust", ".java": "Java",
+    ".kt": "Kotlin", ".swift": "Swift", ".c": "C", ".h": "C", ".cpp": "C++", ".cc": "C++",
+    ".hpp": "C++", ".cs": "C#", ".php": "PHP", ".lua": "Lua", ".sql": "SQL",
+    ".md": "Markdown", ".json": "JSON", ".yaml": "YAML", ".yml": "YAML", ".toml": "TOML",
+    ".sh": "Shell", ".zsh": "Shell", ".bash": "Shell", ".css": "CSS", ".scss": "CSS",
+    ".html": "HTML", ".ipynb": "Notebook",
+}
+
+# Tool arguments that carry a real file path in a dedicated field (structured
+# confidence per references/thread-evidence.md).
+PATH_ARG_KEYS = ("file_path", "path", "notebook_path", "filePath", "target_file")
+COMMAND_ARG_KEYS = ("command", "cmd", "script")
+
+RESPONSE_GAP_BUCKETS: tuple[tuple[str, int], ...] = (
+    ("<10s", 10), ("10-30s", 30), ("30s-1m", 60), ("1-2m", 120),
+    ("2-5m", 300), ("5-15m", 900), (">15m", 10**9),
+)
+
+# A resumed session's first-to-last span can cover days of wall clock, so summing
+# spans overstates time worked. Engaged time sums consecutive event gaps and drops
+# any gap longer than this, which bounds the total to plausible working time.
+IDLE_GAP_SECONDS = 15 * 60
 
 NOISY_RE = re.compile(
     r"```|^#+\s|^[-+]{1,3}|^file:\s|^lines:\s|diff hunk|review findings",
@@ -335,6 +428,10 @@ def _output_text(output: Any) -> str:
         return output
     if isinstance(output, dict):
         return " ".join(str(v) for v in output.values() if isinstance(v, (str, int, float)))
+    # Hosts also emit tool output as a list of content blocks; flattening it is
+    # required or error markers in block-form output are never seen.
+    if isinstance(output, list):
+        return " ".join(_output_text(item) for item in output)
     return ""
 
 
@@ -753,6 +850,316 @@ def save_decisions(decided: dict[str, dict[str, Any]]) -> None:
     )
 
 
+# --- derived session statistics ----------------------------------------------
+
+def load_stats_cache() -> dict[str, dict[str, Any]]:
+    if not STATS_CACHE_FILE.exists():
+        return {}
+    try:
+        data = json.loads(STATS_CACHE_FILE.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+    entries = data.get("sessions") if isinstance(data, dict) else None
+    return entries if isinstance(entries, dict) else {}
+
+
+def save_stats_cache(entries: dict[str, dict[str, Any]]) -> None:
+    STATS_CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    STATS_CACHE_FILE.write_text(
+        json.dumps({"sessions": entries}, indent=2, sort_keys=True), encoding="utf-8"
+    )
+
+
+def stats_cache_key(thread: Thread) -> str:
+    """Invalidate on transcript mtime so a growing session is recomputed.
+
+    Bump STATS_SCHEMA whenever a derived field is added, removed, or redefined;
+    otherwise a cached entry from an older shape is read as current."""
+    try:
+        mtime = int(Path(thread.rollout_path).stat().st_mtime)
+    except OSError:
+        mtime = thread.updated_at
+    return f"v{STATS_SCHEMA}:{PLATFORM}:{thread.id}:{mtime}"
+
+
+def _arg_dict(payload: dict[str, Any]) -> dict[str, Any]:
+    arguments = payload.get("arguments") or payload.get("input") or {}
+    if isinstance(arguments, str):
+        try:
+            arguments = json.loads(arguments)
+        except json.JSONDecodeError:
+            return {}
+    return arguments if isinstance(arguments, dict) else {}
+
+
+def _error_category(text: str) -> str | None:
+    if any(marker in text for marker in BENIGN_OUTPUT_MARKERS):
+        return None
+    for label, markers in ERROR_CATEGORIES:
+        if any(marker in text for marker in markers):
+            return label
+    return None
+
+
+def _is_self_referential(early_user_text: str) -> bool:
+    return any(marker in early_user_text for marker in SELF_REFERENTIAL_MARKERS)
+
+
+def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, Any]:
+    """Derive one session's quantitative profile from its normalized event stream.
+
+    Counts only what the stream states. Anything the host does not record stays
+    absent rather than estimated, so the report can name its own coverage gaps.
+    """
+    tool_counts: Counter = Counter()
+    error_categories: Counter = Counter()
+    languages: Counter = Counter()
+    skills: Counter = Counter()
+    hours: Counter = Counter()
+    files: set[str] = set()
+    user_messages = 0
+    injected_messages = 0
+    assistant_messages = 0
+    tool_calls = 0
+    tool_errors = 0
+    friction_cues = 0
+    interruptions = 0
+    commits = 0
+    pushes = 0
+    response_gaps: list[int] = []
+    early_user_text: list[str] = []
+    last_assistant_ts: int | None = None
+    malformed: str | None = None
+    engaged_seconds = 0
+    stamped_events = 0
+    previous_ts: int | None = None
+    first_ts: int | None = None
+    last_ts: int | None = None
+
+    try:
+        for event in SESSION_SOURCE.events(thread):
+            payload = event.payload or {}
+            stamp = parse_timestamp(event.timestamp) if event.timestamp else None
+            if stamp is not None:
+                stamped_events += 1
+                first_ts = stamp if first_ts is None else min(first_ts, stamp)
+                last_ts = stamp if last_ts is None else max(last_ts, stamp)
+                if previous_ts is not None:
+                    delta = stamp - previous_ts
+                    if 0 <= delta <= IDLE_GAP_SECONDS:
+                        engaged_seconds += delta
+                previous_ts = stamp
+            if event.kind == "message":
+                if event.role == "user":
+                    if INJECTED_USER_RE.match(event.text):
+                        injected_messages += 1
+                        continue
+                    user_messages += 1
+                    lowered = event.text.lower()
+                    if len(early_user_text) < 5:
+                        early_user_text.append(lowered)
+                    if any(cue in lowered for cue in FRICTION_CUES):
+                        friction_cues += 1
+                    if _is_interruption(event.text):
+                        interruptions += 1
+                    for token in SKILL_TOKEN_RE.findall(event.text):
+                        if token.lower() in known_skills:
+                            skills[token.lower()] += 1
+                    if stamp is not None:
+                        hours[stamp // 3600 % 24] += 1
+                        if last_assistant_ts is not None and stamp >= last_assistant_ts:
+                            response_gaps.append(stamp - last_assistant_ts)
+                elif event.role == "assistant":
+                    assistant_messages += 1
+                    if stamp is not None:
+                        last_assistant_ts = stamp
+            elif event.kind == "function_call":
+                tool_calls += 1
+                name = str(payload.get("name") or "").strip()
+                if name:
+                    tool_counts[name] += 1
+                arguments = _arg_dict(payload)
+                for key in PATH_ARG_KEYS:
+                    value = arguments.get(key)
+                    if isinstance(value, str) and value:
+                        files.add(value)
+                        language = LANGUAGE_BY_SUFFIX.get(Path(value).suffix.lower())
+                        if language:
+                            languages[language] += 1
+                for key in COMMAND_ARG_KEYS:
+                    command = arguments.get(key)
+                    if not isinstance(command, str):
+                        continue
+                    lowered = command.lower()
+                    if "git commit" in lowered:
+                        commits += 1
+                    if "git push" in lowered:
+                        pushes += 1
+                invoked = str(arguments.get("skill") or "").lower()
+                if invoked in known_skills:
+                    skills[invoked] += 1
+            elif event.kind == "function_call_output":
+                text = _output_text(payload.get("output"))[:2000].lower()
+                if any(marker in text for marker in ERROR_MARKERS):
+                    tool_errors += 1
+                category = _error_category(text)
+                if category:
+                    error_categories[category] += 1
+    except ValueError as exc:
+        # A malformed rollout line is reported, not silently dropped.
+        malformed = str(exc)
+
+    span_minutes = max(0, thread.updated_at - thread.created_at) // 60
+    # Prefer the stamped event window; a record's span can predate a resume.
+    if first_ts is not None and last_ts is not None:
+        span_minutes = min(span_minutes, max(0, last_ts - first_ts) // 60) or span_minutes
+    return {
+        "session_id": thread.id,
+        "platform": PLATFORM,
+        "cwd": thread.cwd,
+        "model": thread.model,
+        "start": thread.created_at,
+        "end": thread.updated_at,
+        "duration_minutes": span_minutes,
+        "engaged_minutes": engaged_seconds // 60,
+        "stamped_events": stamped_events,
+        "user_messages": user_messages,
+        "injected_messages": injected_messages,
+        "assistant_messages": assistant_messages,
+        "tool_calls": tool_calls,
+        "tool_counts": dict(tool_counts),
+        "tool_errors": tool_errors,
+        "error_categories": dict(error_categories),
+        "friction_cues": friction_cues,
+        "interruptions": interruptions,
+        "commits": commits,
+        "pushes": pushes,
+        "languages": dict(languages),
+        "files_touched": len(files),
+        "skills": dict(skills),
+        "hours": {str(hour): count for hour, count in hours.items()},
+        "response_gaps": response_gaps,
+        "self_referential": _is_self_referential(" ".join(early_user_text)),
+        "malformed": malformed,
+    }
+
+
+def is_low_signal(entry: dict[str, Any]) -> bool:
+    """Drop sessions too small to describe how the user works."""
+    return entry["user_messages"] < 2 or entry["duration_minutes"] < 1
+
+
+def collect_session_stats(
+    rows: list[Thread], *, max_new: int, refresh: bool
+) -> tuple[list[dict[str, Any]], dict[str, int]]:
+    """Return per-session stats plus a coverage record naming what was skipped."""
+    known = known_skill_names()
+    cache = load_stats_cache()
+    coverage = {
+        "listed": len(rows),
+        "cached": 0,
+        "computed": 0,
+        "capped": 0,
+        "missing_transcript": 0,
+        "low_signal": 0,
+        "self_referential": 0,
+        "malformed": 0,
+    }
+    entries: list[dict[str, Any]] = []
+    updated = False
+    for thread in rows:
+        if not Path(thread.rollout_path).exists():
+            coverage["missing_transcript"] += 1
+            continue
+        key = stats_cache_key(thread)
+        entry = None if refresh else cache.get(key)
+        if entry is None:
+            if coverage["computed"] >= max_new:
+                coverage["capped"] += 1
+                continue
+            entry = derive_session_stats(thread, known)
+            cache[key] = entry
+            updated = True
+            coverage["computed"] += 1
+        else:
+            coverage["cached"] += 1
+        if entry.get("malformed"):
+            coverage["malformed"] += 1
+        if entry.get("self_referential"):
+            coverage["self_referential"] += 1
+            continue
+        if is_low_signal(entry):
+            coverage["low_signal"] += 1
+            continue
+        entries.append(entry)
+    if updated:
+        save_stats_cache(cache)
+    entries.sort(key=lambda item: -item["end"])
+    return entries, coverage
+
+
+def _project_label(cwd: str) -> str:
+    return Path(cwd).name if cwd else "unknown"
+
+
+def aggregate_session_stats(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    tool_counts: Counter = Counter()
+    error_categories: Counter = Counter()
+    languages: Counter = Counter()
+    skills: Counter = Counter()
+    hours: Counter = Counter()
+    projects: Counter = Counter()
+    models: Counter = Counter()
+    gaps: list[int] = []
+    totals = Counter()
+    for entry in entries:
+        tool_counts.update(entry["tool_counts"])
+        error_categories.update(entry["error_categories"])
+        languages.update(entry["languages"])
+        skills.update(entry["skills"])
+        hours.update({int(hour): count for hour, count in entry["hours"].items()})
+        projects[_project_label(entry["cwd"])] += 1
+        if entry["model"]:
+            models[entry["model"]] += 1
+        gaps.extend(entry["response_gaps"])
+        for field_name in (
+            "user_messages", "injected_messages", "assistant_messages", "tool_calls", "tool_errors",
+            "friction_cues", "interruptions", "commits", "pushes",
+            "duration_minutes", "engaged_minutes", "files_touched", "stamped_events",
+        ):
+            totals[field_name] += entry.get(field_name, 0)
+
+    gap_histogram: dict[str, int] = {label: 0 for label, _ in RESPONSE_GAP_BUCKETS}
+    for gap in gaps:
+        for label, ceiling in RESPONSE_GAP_BUCKETS:
+            if gap < ceiling:
+                gap_histogram[label] += 1
+                break
+
+    installed = sorted(known_skill_names())
+    return {
+        "platform": PLATFORM,
+        "sessions": len(entries),
+        "date_range": {
+            "start": utc(min(entry["start"] for entry in entries)) if entries else "",
+            "end": utc(max(entry["end"] for entry in entries)) if entries else "",
+        },
+        "totals": dict(totals),
+        "hours_engaged": round(totals["engaged_minutes"] / 60, 1),
+        "hours_span": round(totals["duration_minutes"] / 60, 1),
+        "projects": projects.most_common(),
+        "models": models.most_common(),
+        "tools": tool_counts.most_common(),
+        "error_categories": error_categories.most_common(),
+        "languages": languages.most_common(),
+        "skills_used": skills.most_common(),
+        "skills_installed_unused": [name for name in installed if name not in skills],
+        "response_gap_histogram": gap_histogram,
+        "response_gap_samples": len(gaps),
+        "hour_histogram": {str(hour): hours.get(hour, 0) for hour in range(24)},
+    }
+
+
 # --- printers ----------------------------------------------------------------
 
 def print_thread_table(rows: list[Thread]) -> None:
@@ -814,6 +1221,7 @@ def cmd_inventory(args: argparse.Namespace) -> None:
     print(f"- Personal instructions: `{GLOBAL_AGENTS}` ({'present' if GLOBAL_AGENTS.exists() else 'missing'})")
     print(f"- Memory root: `{MEMORIES_DIR}` ({'present' if MEMORIES_DIR.exists() else 'missing'})")
     print(f"- Decision log: `{DECISIONS_FILE}` ({len(load_decisions())} recorded decisions)")
+    print(f"- Statistics cache: `{STATS_CACHE_FILE}` ({len(load_stats_cache())} cached sessions)")
     print("- Skill roots:")
     for root in SKILL_ROOTS:
         count = (
@@ -1133,6 +1541,95 @@ def cmd_skill_usage(args: argparse.Namespace) -> None:
     )
 
 
+def _print_counter_rows(title: str, rows: list[tuple[Any, int]], limit: int) -> None:
+    print(f"### {title}\n")
+    if not rows:
+        print("No data in range.\n")
+        return
+    for label, count in rows[:limit]:
+        print(f"- {label}: {count}")
+    if len(rows) > limit:
+        print(f"- ...{len(rows) - limit} more")
+    print()
+
+
+def cmd_stats(args: argparse.Namespace) -> None:
+    """Quantitative profile of how the user works, for the insights route.
+
+    This mode supplies facts only: durations, message and tool volumes, language
+    mix, failure buckets, response gaps, and which installed skills went unused.
+    The AGENT interprets them. Coverage is reported so the report can state its
+    own limits instead of implying it saw everything."""
+    rows = threads(limit=args.limit, archived=args.archived, days=args.days, query=args.query, cwd=args.cwd)
+    entries, coverage = collect_session_stats(rows, max_new=args.max_new, refresh=args.refresh)
+    summary = aggregate_session_stats(entries)
+
+    if args.json:
+        print(json.dumps({"summary": summary, "coverage": coverage, "sessions": entries}, indent=2))
+        return
+
+    print(f"## Usage Statistics ({PLATFORM})\n")
+    if not entries:
+        print("No sessions with enough signal in range.\n")
+    else:
+        totals = summary["totals"]
+        print(f"- Window: {summary['date_range']['start']} to {summary['date_range']['end']} (last {args.days} days)")
+        print(f"- Sessions analyzed: {summary['sessions']} of {coverage['listed']} listed")
+        print(f"- Messages: {totals['user_messages']} from the user, {totals['assistant_messages']} from the agent "
+              f"({totals['injected_messages']} host-injected blocks excluded)")
+        if totals["stamped_events"]:
+            print(f"- Engaged time: {summary['hours_engaged']}h "
+                  f"(gaps over {IDLE_GAP_SECONDS // 60}m excluded; total session span {summary['hours_span']}h)")
+        else:
+            print(f"- Session span: {summary['hours_span']}h (no stamped events; span includes idle and resumed time)")
+        print(f"- Tool calls: {totals['tool_calls']} ({totals['tool_errors']} failed outputs)")
+        print(f"- Commits: {totals['commits']} · pushes: {totals['pushes']}")
+        print(f"- Interruption markers: {totals['interruptions']} · friction cues: {totals['friction_cues']}")
+        unmeasurable = []
+        if not totals["interruptions"]:
+            unmeasurable.append("no interrupt sentinel found — this host may not record interruptions")
+        if not totals["tool_errors"]:
+            unmeasurable.append("no tool-output failure markers matched this host's tool surface")
+        if not totals["stamped_events"]:
+            unmeasurable.append("no stamped events, so timing distributions are unavailable")
+        for note in unmeasurable:
+            print(f"- Unmeasurable: {note}")
+        print()
+
+        _print_counter_rows("Projects", summary["projects"], args.top)
+        _print_counter_rows("Tools", summary["tools"], args.top)
+        _print_counter_rows("Languages", summary["languages"], args.top)
+        _print_counter_rows("Failure Buckets", summary["error_categories"], args.top)
+        _print_counter_rows("Skills Used", summary["skills_used"], args.top)
+        _print_counter_rows("Models", summary["models"], args.top)
+
+        unused = summary["skills_installed_unused"]
+        print("### Installed But Unused Skills\n")
+        if unused:
+            print(f"- {', '.join(unused[: args.top * 2])}")
+            print("- Absence of a marker is a lead, not proof the skill never ran.\n")
+        else:
+            print("Every installed skill appeared at least once.\n")
+
+        print("### User Response Gaps\n")
+        if summary["response_gap_samples"]:
+            for label, count in summary["response_gap_histogram"].items():
+                print(f"- {label}: {count}")
+            print(f"- Samples: {summary['response_gap_samples']}\n")
+        else:
+            print("The host did not stamp enough events to measure response gaps.\n")
+
+    print("### Coverage\n")
+    print(f"- Listed: {coverage['listed']} · cached: {coverage['cached']} · computed: {coverage['computed']}")
+    if coverage["capped"]:
+        print(f"- Capped: {coverage['capped']} sessions were not computed this run (raise --max-new)")
+    print(f"- Excluded: {coverage['low_signal']} low-signal, {coverage['self_referential']} report runs, "
+          f"{coverage['missing_transcript']} missing transcripts")
+    if coverage["malformed"]:
+        print(f"- Malformed rollout lines encountered in {coverage['malformed']} session(s)")
+    print("- Retention: absence of an older session is not evidence the work never happened.")
+
+
 def _detect_stack(root: Path) -> dict[str, bool]:
     def has(*names: str) -> bool:
         return any((root / name).exists() for name in names)
@@ -1390,6 +1887,19 @@ def build_parser() -> argparse.ArgumentParser:
     usage_p.add_argument("--query")
     usage_p.add_argument("--cwd")
     usage_p.set_defaults(func=cmd_skill_usage)
+
+    stats_p = sub.add_parser("stats", help="Quantitative usage profile for the insights route")
+    stats_p.add_argument("--limit", type=int, default=400)
+    stats_p.add_argument("--archived", choices=("active", "archived", "all"), default="all")
+    stats_p.add_argument("--days", type=int, default=30)
+    stats_p.add_argument("--query")
+    stats_p.add_argument("--cwd")
+    stats_p.add_argument("--top", type=int, default=10)
+    stats_p.add_argument("--max-new", type=int, default=200,
+                         help="cap on sessions derived this run; capped sessions are reported")
+    stats_p.add_argument("--refresh", action="store_true", help="ignore the cache and recompute")
+    stats_p.add_argument("--json", action="store_true", help="emit the full structured profile")
+    stats_p.set_defaults(func=cmd_stats)
 
     scaffold_p = sub.add_parser("scaffold", help="Inspect a repo for missing scaffolding + emit a research handoff")
     scaffold_p.add_argument("--path", help="repo directory to inspect (default: cwd)")

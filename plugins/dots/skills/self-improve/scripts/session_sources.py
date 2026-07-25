@@ -34,6 +34,9 @@ class SessionEvent:
     role: str = ""
     text: str = ""
     payload: dict[str, Any] | None = None
+    # Raw host timestamp when the rollout records one. Empty when the host does
+    # not stamp the event; callers must degrade instead of assuming coverage.
+    timestamp: str = ""
 
 
 class SessionSource(Protocol):
@@ -64,6 +67,11 @@ def _timestamp(value: Any) -> int | None:
         return int(datetime.fromisoformat(value.replace("Z", "+00:00")).timestamp())
     except ValueError:
         return None
+
+
+def parse_timestamp(value: Any) -> int | None:
+    """Normalize a host timestamp to epoch seconds, or None when unparseable."""
+    return _timestamp(value)
 
 
 def _content_text(content: Any) -> str:
@@ -176,6 +184,7 @@ class CodexSource:
                 role=event.role or "",
                 text=event.text or "",
                 payload=event.payload or {},
+                timestamp=str(getattr(event, "timestamp", "") or ""),
             )
 
 
@@ -272,26 +281,32 @@ class ClaudeSource:
         for path in self._paths(session, include_subagents):
             for item in iter_jsonl(path):
                 kind = item.get("type")
+                stamp = str(item.get("timestamp") or "")
                 if kind == "user":
                     if item.get("isMeta"):
                         continue
                     content = (item.get("message") or {}).get("content")
                     text = _content_text(content).strip()
                     if text:
-                        yield SessionEvent(kind="message", role="user", text=text, payload=item)
+                        yield SessionEvent(
+                            kind="message", role="user", text=text, payload=item, timestamp=stamp
+                        )
                     if isinstance(content, list):
                         for block in content:
                             if isinstance(block, dict) and block.get("type") == "tool_result":
                                 yield SessionEvent(
                                     kind="function_call_output",
                                     payload={"output": _content_text(block.get("content"))},
+                                    timestamp=stamp,
                                 )
                 elif kind == "assistant":
                     message = item.get("message") or {}
                     content = message.get("content")
                     text = _content_text(content).strip()
                     if text:
-                        yield SessionEvent(kind="message", role="assistant", text=text, payload=item)
+                        yield SessionEvent(
+                            kind="message", role="assistant", text=text, payload=item, timestamp=stamp
+                        )
                     if not isinstance(content, list):
                         continue
                     for block in content:
@@ -304,9 +319,11 @@ class ClaudeSource:
                                     "name": str(block.get("name") or ""),
                                     "arguments": block.get("input") or {},
                                 },
+                                timestamp=stamp,
                             )
                         elif block.get("type") == "tool_result":
                             yield SessionEvent(
                                 kind="function_call_output",
                                 payload={"output": _content_text(block.get("content"))},
+                                timestamp=stamp,
                             )

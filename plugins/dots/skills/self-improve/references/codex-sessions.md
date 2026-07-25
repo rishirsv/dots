@@ -42,7 +42,12 @@ python3 scripts/self_improve.py --platform codex triage --days 30 --cwd "$PWD"
 python3 scripts/self_improve.py --platform codex show <thread-id>
 python3 scripts/self_improve.py --platform codex files <thread-id>
 python3 scripts/self_improve.py --platform codex deep --days 30
+python3 scripts/self_improve.py --platform codex stats --days 30 --json
 ```
+
+`stats` reads rollout events through the same normalized stream. Rollout records
+carry a `timestamp`, so response-gap and hour-of-day distributions are available
+here.
 
 The helper defaults to `CODEX_HOME` or `~/.codex`. Its transcript rendering is
 an evidence aid, not a substitute for live thread tools when those tools expose

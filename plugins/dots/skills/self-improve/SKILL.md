@@ -1,6 +1,6 @@
 ---
 name: self-improve
-description: "Mines Codex or Claude Code sessions, memories, skill usage, and instructions for repeated evidence of durable workflow improvements. Explicit-only; proposes changes before applying approved instruction edits. Not for one-off fixes or already-specified changes."
+description: "Mines Codex or Claude Code sessions, memories, skill usage, and instructions for repeated evidence of durable workflow improvements. The \"insights\" argument returns a report-only profile of how the user works. Explicit-only; proposes changes before applying instruction edits. Not for one-off or already-specified changes."
 ---
 
 # Self Improve
@@ -14,6 +14,29 @@ Do not edit anything until the user approves a concrete proposal. After
 approval, this skill may update the selected host's closest-scope instruction
 file. Route every other change to its owner. Never edit generated memory stores
 directly; propose a memory note instead.
+
+## Choose The Route
+
+- **Improvement review — default**: mine the selected host for repeated
+  evidence, propose the smallest durable changes, and stop for approval. Follow
+  the Workflow below.
+- **Insights report — the `insights` argument only**: profile how the user works
+  across the whole retained session window and return a coaching report. Read
+  [references/insights-report.md](references/insights-report.md). Report-only:
+  never edit an instruction file, skill, memory store, or script on this route.
+
+Select the insights route only on the explicit `insights` argument. The two
+routes carry different write authority, so an ambiguous trigger would turn a
+report request into an approval prompt for edits.
+
+The insights report is host-neutral: only the session source differs, so its
+sections and judgments read the same on either host. Name the host in the
+coverage block, not in the report body.
+
+The insights route does not replace the improvement review. When it surfaces a
+durable change, name it as a lead and offer to run the improvement review on
+that lead. Do not propose an edit from aggregate statistics alone; a proposal
+still needs the evidence packet and the generalization gate.
 
 ## Workflow
 
@@ -76,11 +99,17 @@ python3 scripts/self_improve.py --platform claude show <session-id>
 python3 scripts/self_improve.py --platform claude files <session-id>
 python3 scripts/self_improve.py --platform codex dream --days 90 --min-support 2
 python3 scripts/self_improve.py --platform claude deep --days 30
+python3 scripts/self_improve.py --platform codex stats --days 30 --top 10
+python3 scripts/self_improve.py --platform claude stats --days 30 --json
 python3 scripts/self_improve.py --platform claude decide accept <proposal-key>
 ```
 
 The shared modes are `inventory`, `list`, `triage`, `show`, `files`, `dream`,
-`skill-audit`, `skill-usage`, `scaffold`, `memory-audit`, `deep`, and `decide`.
+`skill-audit`, `skill-usage`, `scaffold`, `memory-audit`, `stats`, `deep`, and
+`decide`. `stats` serves the insights route: it derives per-session volume,
+language mix, failure buckets, response gaps, and unused installed skills,
+caches them by session id and transcript mtime, and reports every exclusion and
+cap in its coverage block.
 `goal-health` is Codex-only because Claude Code has no equivalent durable goals
 database. Claude `memory-audit` inventories project auto-memory and its limits;
 it does not emulate the Codex memory-consolidation database.

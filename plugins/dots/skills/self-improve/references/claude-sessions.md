@@ -62,7 +62,12 @@ python3 scripts/self_improve.py --platform claude triage --days 30
 python3 scripts/self_improve.py --platform claude show "${CLAUDE_SESSION_ID}"
 python3 scripts/self_improve.py --platform claude files "${CLAUDE_SESSION_ID}"
 python3 scripts/self_improve.py --platform claude deep --days 30
+python3 scripts/self_improve.py --platform claude stats --days 30 --json
 ```
+
+`stats` reads the same transcripts under the direct-JSONL boundary above. Session
+entries carry a `timestamp`, so response-gap and hour-of-day distributions are
+available here.
 
 Transcripts and history are plaintext and may contain file contents, command
 output, pasted text, or credentials. Restrict every review to the minimum
