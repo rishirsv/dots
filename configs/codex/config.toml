@@ -5,7 +5,7 @@ approval_policy = "never"
 sandbox_mode = "danger-full-access"
 service_tier = "default"
 model = "gpt-5.6-sol"
-model_reasoning_effort = "low"
+model_reasoning_effort = "high"
 
 approvals_reviewer = "user"
 
@@ -19,7 +19,8 @@ approvals_reviewer = "user"
 
 
 
-notify = ["/Users/rishi/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000451/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+
+notify = ["/Users/rishi/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [tools]
 view_image = true
@@ -95,6 +96,9 @@ enabled = true
 enabled = true
 
 [plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."sites@openai-bundled"]
 enabled = true
 
 [projects."/Users/rishi/Code/agent"]
@@ -293,18 +297,69 @@ trust_level = "trusted"
 [projects."/Users/rishi/Documents/Codex/2026-07-22/cre"]
 trust_level = "trusted"
 
+[projects."/Users/rishi/Documents/Codex/2026-07-24/i-ne"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-24/figure-out-next-steps"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/projects/travel"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-24/figure-out-next-steps-2"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-24/new-chat"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.codex/.chatgpt-projects/g-p-6a640f6b6154819182747eae20c2eab9"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-24/new-chat-2"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-24/referenced-chatgpt-conversation-this-is-untrusted"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-24/new-chat-3"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-24/realtime-voice-chat"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-24/architect-subagent-architect"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-24/v"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-24/vvvvvvvvvvvvvv"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-24/vvvvvvvvvvvvvv-2"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-24/work-in-the-local-advisory-results"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-24/advisory-results-reconciliation"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-24/analyze-the-disk-space-used-by"]
+trust_level = "trusted"
+
 [marketplaces.openai-bundled]
-last_updated = "2026-07-23T01:25:16Z"
+last_updated = "2026-07-25T00:55:58Z"
 source_type = "local"
 source = "/Users/rishi/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-07-16T13:11:21Z"
+last_updated = "2026-07-24T07:32:05Z"
 source_type = "local"
 source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.dots]
-last_updated = "2026-07-23T03:47:20Z"
+last_updated = "2026-07-25T03:32:38Z"
 source_type = "local"
 source = "/Users/rishi/Code/dots"
 
@@ -319,14 +374,14 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_n
 NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/rishi/.codex"
 CODEX_HOME = "/Users/rishi/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,d0b55a8f9e8e7e9c88421416ea4ce9542c302abf43aa7fc871be4553ea70dd26"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,e13fd947e846d3d306e9249dd3c73d14931b6494803dbafb16cef85e6add9506"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.715.72359"
-SKY_CUA_SERVICE_PATH = "/Users/rishi/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000451/Codex Computer Use.app"
+BROWSER_USE_CODEX_APP_VERSION = "26.721.41059"
+SKY_CUA_SERVICE_PATH = "/Users/rishi/.codex/computer-use/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
 [mcp_servers.computer-use]
@@ -340,7 +395,6 @@ url = "https://developers.openai.com/mcp"
 
 [desktop]
 followUpQueueMode = "queue"
-microphoneInputDeviceId = "888efaab4053051a1ceb0e7a41cb03d93bdfdbe78a17aa725e3e58e35b91dfff"
 keepRemoteControlAwakeWhilePluggedIn = true
 selected-avatar-id = "custom:patch"
 avatar-overlay-mascot-width-px = 138
@@ -369,8 +423,9 @@ Re-query the PR for merge state, checks, review decision, and review threads. UI
 reviewDelivery = "detached"
 open-link-in-target-preference = "in-app-browser"
 show-context-window-usage = true
-show-ultra-in-model-picker-slider = true
+show-ultra-in-model-picker-slider = false
 enabled-reasoning-efforts = ["low", "medium", "high", "xhigh", "ultra", "max"]
+realtimeVoiceScreenContextEnabled = true
 
 [desktop.appearanceLightChromeTheme]
 accent = "#339cff"
@@ -413,5 +468,5 @@ trusted_hash = "sha256:6fb9793747b2f83b1a81960ed54db6b7bd844a03e9b2a06d44e1736f6
 
 [shell_environment_policy.set]
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,d0b55a8f9e8e7e9c88421416ea4ce9542c302abf43aa7fc871be4553ea70dd26"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,e13fd947e846d3d306e9249dd3c73d14931b6494803dbafb16cef85e6add9506"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/rishi/.codex"

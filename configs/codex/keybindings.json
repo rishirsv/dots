@@ -10,5 +10,13 @@
   {
     "command": "hotkeyWindow",
     "key": "Ctrl+`"
+  },
+  {
+    "command": "realtimeVoice",
+    "key": "Ctrl+1"
+  },
+  {
+    "command": "switchToMode1",
+    "key": null
   }
 ]
