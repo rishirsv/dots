@@ -104,9 +104,9 @@ operation, account certainty, or required detail.
 5. Verify the staged scope again, commit, and push with an upstream when the
    branch lacks one. Never bypass hooks unless the user explicitly asks.
 6. Build the pull-request title and body from the base-to-head change, the
-   repository template, and actual validation. Keep a small change brief. For
-   larger work, cover outcome and impact, context or root cause, core
-   implementation, review focus, and validation.
+   repository template, and actual validation. Read
+   [pr-description.md](references/pr-description.md) and write the body as a
+   durable decision record and review guide, scaled to the change.
 7. Create a draft pull request unless the user explicitly requested ready.
    UI changes need real screenshot or clip evidence in the live body; leave the
    pull request draft when required evidence is missing.
@@ -118,9 +118,12 @@ operation, account certainty, or required detail.
 
 Resolve the current pull request from the branch or explicit URL. Read its
 current title, body, base, draft state, and base-to-head scope. Change only the
-requested fields, preserve useful template sections, and verify the live result
-once. Marking ready, changing the base, or adding reviewers is an external
-state change and requires clear user intent.
+requested fields and preserve useful template sections. When creating,
+rewriting, or reconciling the body, read
+[pr-description.md](references/pr-description.md), ground the explanation in
+the current source and evidence, and verify the live result once. Marking
+ready, changing the base, or adding reviewers is an external state change and
+requires clear user intent.
 
 ## Watch
 

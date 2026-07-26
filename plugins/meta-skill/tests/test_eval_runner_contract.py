@@ -15,7 +15,15 @@ sys.path.insert(0, str(ROOT / "plugins" / "meta-skill" / "src"))
 
 from meta_skill.errors import CliError
 from meta_skill.codex_exec import _command
-from meta_skill.runner import finalize_eval, prepare_eval, retry_trial, run_eval, submit_trial, unresolved_trials
+from meta_skill.runner import (
+    adhoc_context,
+    finalize_eval,
+    prepare_eval,
+    retry_trial,
+    run_eval,
+    submit_trial,
+    unresolved_trials,
+)
 from meta_skill.workbench_paths import worktrees_path
 
 
@@ -72,6 +80,22 @@ def write_result(
 
 
 class RunnerTests(unittest.TestCase):
+    def test_adhoc_context_builds_custom_manifest_without_authored_suite(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "skill"
+            skill(target)
+
+            context = adhoc_context(args(
+                target / "unused.json",
+                adhoc=True,
+                task="Describe the change",
+                skill=str(target),
+            ))
+
+            self.assertTrue(context["adhoc"])
+            self.assertEqual(context["manifest"]["format"], "custom")
+            self.assertEqual(context["manifest"]["evals"][0]["prompt"], "Describe the change")
+
     def test_codex_exec_ignores_user_config_and_rules_for_controlled_inventory(self):
         command = _command("codex", Path("/tmp/work"), "model", "medium", Path("/tmp/out"))
         self.assertIn("--ignore-user-config", command)

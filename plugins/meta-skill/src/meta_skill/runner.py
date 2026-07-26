@@ -424,7 +424,7 @@ def adhoc_context(args):
     return {
         "manifest": {
             "schema_version": 2,
-            "format": manifest.get("format", "custom"),
+            "format": "custom",
             "skill_name": skill_dir.name,
             "target": {"type": "skill", "ref": "SKILL.md"},
             "defaults": {"repetitions": 1, "timeout_seconds": 600},
