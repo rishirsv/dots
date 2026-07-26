@@ -28,12 +28,11 @@ independent task. Give each reviewer the landed commits or PRs, governing
 requirements, changed paths, allowed surrounding paths, and report-or-edit
 boundary.
 
-Each surface reviewer applies Reuse Review, Quality Review including the Over-
-Engineering Scan and Code Judo, and Efficiency Review. Add one cross-surface
-reviewer for canonical ownership, duplicated policy, or architecture only when
-the landed work crosses owners. Run independent reviewers concurrently. The
-parent verifies every candidate and owns final scope, product classification,
-integration, validation, and publication.
+Each surface reviewer applies the Correctness, Reuse, and Efficiency lanes. Add
+one cross-surface reviewer for canonical ownership, duplicated policy, or
+architecture only when the landed work crosses owners. Run independent reviewers
+concurrently. The parent verifies every candidate and owns final scope, product
+classification, integration, validation, and publication.
 
 Do not create three reviewers for every surface merely to preserve lane names.
 Preserve the three lenses, not unnecessary coordination.

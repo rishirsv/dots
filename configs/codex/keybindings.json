@@ -1,5 +1,17 @@
 [
   {
+    "command": "composer.cycleReasoningEffort",
+    "key": null
+  },
+  {
+    "command": "composer.decreaseReasoningEffort",
+    "key": "Command+Shift+Left"
+  },
+  {
+    "command": "composer.increaseReasoningEffort",
+    "key": "Command+Shift+Right"
+  },
+  {
     "command": "globalDictationHold",
     "key": "Ctrl+M"
   },

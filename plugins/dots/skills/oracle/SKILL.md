@@ -50,7 +50,7 @@ skill-improvement run ships the whole skill directory, not one file.
 Exclude dependency folders, build artifacts, credentials, and `.env` files
 unless the user explicitly approves a narrow redacted excerpt. For
 code-quality requests, include
-[../code-review/references/review-checklists.md](../code-review/references/review-checklists.md)
+the relevant `../code-review/references/lane-*.md` checklists
 (and [../../references/hard-cut-policy.md](../../references/hard-cut-policy.md)
 when hard cuts are in scope) so the advisory request stands alone.
 

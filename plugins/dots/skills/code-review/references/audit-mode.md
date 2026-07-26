@@ -4,12 +4,12 @@ Audit an explicit repository, subsystem, package, branch, or category. Find and
 verify the highest-value improvements, write the audit report, and stop. A
 separate task owns any selected fix or implementation plan.
 
-Read [Review Checklists](review-checklists.md). Apply Intent and Scope
-Conformance, Repository Standards Review, Correctness Review, Simplify Agent 1:
-Reuse Review, Simplify Agent 2: Quality Review, and Simplify Agent 3: Efficiency
-Review, including the required Over-Engineering Scan. Add only the conditional
-risk checks the target activates. Skip changed-code-only Code Judo unless the
-audit target is a branch or diff.
+Apply Intent and Scope Conformance and Repository Standards Review from the
+skill, plus the [Correctness Lane](lane-correctness.md), the
+[Reuse Lane](lane-reuse.md) including its required Over-Engineering Scan, and
+the [Efficiency Lane](lane-efficiency.md). Add only the conditional risk checks
+the target activates. Skip changed-code-only Code Judo unless the audit target
+is a branch or diff.
 
 ## Keep The Audit Report-Only
 
@@ -63,7 +63,7 @@ Use Direct for a narrow target. Use Deep for broad or high-risk targets and
 explicit exhaustive requests. Declare whether Deep coverage is full, hotspot-
 weighted, or sampled; Deep never implies uncapped whole-repository coverage.
 
-Run the three Simplify reviews as the audit's core maintainability finders. For
+Run the three lanes as the audit's core finders. For
 broad targets, add independent read-only category finders when they improve
 coverage. Give each finder the same packet:
 
