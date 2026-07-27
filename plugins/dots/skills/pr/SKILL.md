@@ -88,6 +88,19 @@ local branch, diff, commit, or push state. Prefer structured connector results
 to scraping GitHub pages. Fall back to `gh` when the connector lacks the
 operation, account certainty, or required detail.
 
+## Visual Evidence Gate
+
+For every create or update whose base-to-head diff changes user-visible UI,
+visuals, or interaction, read
+[visual-evidence.md](references/visual-evidence.md). The gate passes only when
+the live pull request body renders evidence for every affected surface and
+materially distinct state. A build, a launched runtime, or local media files do
+not satisfy it.
+
+Keep the pull request draft while required evidence is missing or broken. If an
+existing pull request is already ready and the user did not authorize changing
+its draft state, report the exact gap instead of claiming the gate passed.
+
 ## Create
 
 1. Confirm the repository, account, commit identity, scope, base, and branch.
@@ -106,10 +119,12 @@ operation, account certainty, or required detail.
 6. Build the pull-request title and body from the base-to-head change, the
    repository template, and actual validation. Read
    [pr-description.md](references/pr-description.md) and write the body as a
-   durable decision record and review guide, scaled to the change.
+   durable decision record and review guide, scaled to the change. Prepare any
+   required visual evidence before publishing.
 7. Create a draft pull request unless the user explicitly requested ready.
-   UI changes need real screenshot or clip evidence in the live body; leave the
-   pull request draft when required evidence is missing.
+   Upload required evidence after the pull request exists and satisfy the
+   visual evidence gate before making it ready or treating creation as
+   complete.
 8. Query the created pull request once for URL, merge state, checks, review
    decision, and unresolved threads. Report the branch, commit, validation,
    pull-request health, and any remaining confirmation.
@@ -121,9 +136,9 @@ current title, body, base, draft state, and base-to-head scope. Change only the
 requested fields and preserve useful template sections. When creating,
 rewriting, or reconciling the body, read
 [pr-description.md](references/pr-description.md), ground the explanation in
-the current source and evidence, and verify the live result once. Marking
-ready, changing the base, or adding reviewers is an external state change and
-requires clear user intent.
+the current source and evidence, apply the visual evidence gate when it
+matches, and verify the live result once. Marking ready, changing the base, or
+adding reviewers is an external state change and requires clear user intent.
 
 ## Watch
 

@@ -51,6 +51,13 @@ disclosure so the first screen still communicates the outcome and decision.
 Remove empty sections. Preserve repository-required template fields, but do not
 let a generic template reduce the explanation to checkboxes.
 
+For a user-visible UI, visual, or interaction change, also read
+[visual-evidence.md](visual-evidence.md). Put the primary behavior clip
+immediately after the Outcome when motion or a journey is central to the
+change. Put a labeled state gallery next to Validation when several screenshots
+are needed to prove coverage. Do not add empty media headings or placeholders
+when those forms do not help.
+
 ## Explain agent-heavy work honestly
 
 When agents performed much of the implementation, distinguish three kinds of
@@ -91,7 +98,7 @@ Adapt this shape rather than copying every heading:
 
 ```markdown
 ## Outcome
-<What behavior or capability is different?>
+<What behavior or capability is different? When useful, follow this paragraph with the primary behavior clip and its caption.>
 
 ## Why
 <What problem existed, and what human-approved decision resolves it?>
@@ -110,9 +117,11 @@ Please focus on:
 - <material invariant or tradeoff>
 
 ## Validation
+<When useful, place the labeled state gallery here.>
+
 | Claim | Evidence |
 | --- | --- |
-| <behavioral claim> | <observed proof and result> |
+| <behavioral or visual claim> | <observed proof, linked media, and result> |
 
 ## Remaining verification
 - <specific gap, or omit this section when none remains>
