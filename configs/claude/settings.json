@@ -1,5 +1,5 @@
 {
-  "model": "Opus",
+  "model": "fable",
   "enabledPlugins": {
     "build-ios-apps@steady-app": true,
     "codex@openai-codex": true,
@@ -20,7 +20,7 @@
       }
     }
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true
 }

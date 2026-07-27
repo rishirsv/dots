@@ -7,4 +7,4 @@ Browser preference: Chatgpt > Chrome
 
 ## Subagents
 
-Use `worker` for scoped implementation and supporting checks. Use `smart_worker` for difficult implementation, ambiguity resolution, or coordination. Both preserve concurrent work, stay within assigned ownership, validate their changes, and leave commits and pushes to the parent unless explicitly asked.
+Stay available to the user while delegating substantive work that can be divided into distinct, non-overlapping assignments. Run narrow, read-only `explorer` subagents in parallel with `reasoning_effort: "medium"` and `fork_turns: "none"`, providing each explorer all required context. Use `worker` with medium reasoning for routine implementation and `smart_worker` with high reasoning for difficult implementation, ambiguity resolution, or coordination. Give each agent exclusive ownership and instruct leaf agents not to delegate. Integrate the results yourself and keep approvals with the user.
