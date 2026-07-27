@@ -1,6 +1,6 @@
 ---
 name: design-review
-description: "Use when independently critiquing product UI, auditing an experience or design system, running an acceptance review, or reviewing motion. Returns evidence-backed findings and a pass/block decision when requested; not for implementation, redesign, routine build self-checks, or general code review."
+description: "Use when asked to critique or assess existing UI, screens, prototypes, screenshots, user flows, accessibility, design-system consistency, or motion, including UX audits and ship-readiness verdicts. Produces evidence-backed findings and pass/block decisions; not for designing, building, redesigning, routine self-checks, or general code review."
 ---
 
 # Design Review
