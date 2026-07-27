@@ -1,0 +1,27 @@
+{
+  "skill_name": "ultraplan",
+  "evaluation_mode": "diagnostic",
+  "objective": "Compare the legacy and revised output contracts for execution-critical coverage, reviewability, and plan density.",
+  "defaults": {
+    "repetitions": 1,
+    "timeout_seconds": 900
+  },
+  "variants": [
+    {
+      "variant": "baseline-0-2-64",
+      "display": "Baseline 0.2.64",
+      "skill": {
+        "kind": "git_ref",
+        "ref": "31f76248fdf61408236d703c836006d484795b75"
+      }
+    },
+    {
+      "variant": "current",
+      "display": "Revised output contract",
+      "skill": {
+        "kind": "current_worktree",
+        "ref": "."
+      }
+    }
+  ]
+}

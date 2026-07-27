@@ -5,10 +5,11 @@ description: "Creates or upgrades a repo-grounded implementation plan, pressure-
 
 # Plan
 
-This skill turns a rough request into an implementation plan the next agent can
-execute end to end with little help from the user. It grounds the plan in real
-source, challenges it, verifies what would change it, and strips overbuilding
-before handing off.
+This skill turns a rough request into a compact implementation plan a capable
+repo agent can execute without hidden product or architecture decisions. The
+executor is expected to inspect source, load repo instructions, and follow
+canonical docs; the plan preserves only the decisions, boundaries, anchors,
+sequencing, and proof that source inspection cannot safely reconstruct.
 
 This is planning, not execution. Do not edit implementation source, apply
 the plan, publish, or overwrite an original plan without explicit post-plan
@@ -70,8 +71,10 @@ Work through this order; do not narrate the machinery unless it helps the user.
    ask a focused subagent to confirm disputed claims. Do not change the plan from
    plausible but unverified critique.
 6. **Tighten and hand off.** Fold confirmed findings in, remove or defer
-   unnecessary work, and output the plan in the
-   [output contract](references/output-contract.md)'s shape.
+   unnecessary work, deduplicate the artifact, and output the plan in the
+   [output contract](references/output-contract.md)'s shape. When independently
+   approvable work can execute without a shared atomic change, split it into
+   separate plans instead of expanding one document.
 
 ## Challenge Lenses
 
@@ -133,8 +136,8 @@ semantics, data, and platform behavior.
 
 Default to saving the plan with the repo's plans convention; in chat, give a
 concise summary, not the full plan. Follow
-[output-contract.md](references/output-contract.md) for the plan shape, optional
-sections, upgrade rules, structural checks, and changelog.
+[output-contract.md](references/output-contract.md) for the plan shape,
+compression rules, split rule, upgrade behavior, and structural checks.
 
 Use ordinary planning language in generated artifacts, filenames, headings, chat
 summaries, and handoffs: `plan` or `implementation plan`.
@@ -149,8 +152,15 @@ Before calling the plan done:
 - load-bearing repo, data, UI, contract, or external claims are grounded
 - the plan names the steps between the user's request and end-to-end
   implementation
+- every paragraph changes an implementation decision, boundary, sequence, or
+  proof; routine context and canonical commands are referenced rather than
+  restated
+- the handoff states the intended outcome, authority boundary, and success
+  criteria without prescribing the executor's internal reasoning
 - risky parts were challenged, and plan-changing findings were verified before
   adoption
 - overbuilt work was removed, narrowed, or explicitly deferred
+- independently approvable work is split when that makes each plan executable
+  without duplicating shared context
 - open human decisions are named, not silently settled
 - the artifact follows the output contract, or the handoff says why it does not

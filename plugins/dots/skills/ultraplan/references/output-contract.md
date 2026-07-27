@@ -4,113 +4,113 @@ Read this before synthesis and before reviewing a created or upgraded plan.
 
 ## Delivery Default
 
-Save the full plan as a durable artifact using the repo's plans convention.
-Inspect repo instructions, planning docs, and existing plan locations before
-choosing the path; if none is discoverable, use the repo's active planning area,
-otherwise say so and ask only if the destination is genuinely blocking.
+Save the full plan using the repo's plan convention. If none exists, use its
+active planning area and ask only when the destination blocks progress. In chat,
+give the artifact path, core approach, open decisions or proof limits, and next
+gate—not the full plan or research mechanics.
 
-The chat reply is a concise summary, not the full plan: artifact path, core
-approach, important context checked, open decisions or proof limits, and the next
-gate. Keep planning depth, agent counts, and critique mechanics out of chat
-unless they change what the user does next.
+## Write For The Executor
 
-## Plan Shape
+Write an outcome-focused job handoff for a capable repo agent. It must stand
+without the planning conversation, but may rely on the executor to inspect
+source, load repo instructions, follow canonical docs, and run owned commands.
 
-Start with the executable plan, not an audit trail. The implementing agent
-should reach the outcome, approach, and first step immediately. Do not add a
-masthead or run-log by default. For non-code work, keep the same shape but use
-domain terms instead of files and commands.
+Preserve only what that inspection cannot safely reconstruct: why the work
+matters, observable outcome, scope and approval boundaries, non-obvious
+invariants, owners, reusable anchors, dependencies, success criteria, evidence,
+and real human or external gates. State each fact once and reference canonical
+context.
+
+Start with execution, not an audit trail. Omit research and source inventories,
+subagent reports, rejected options, repeated test matrices, generic repo
+conventions, internal reasoning, and routine actions the executor can derive.
+Use complete sentences and plain domain terms. Trim repetition and optional
+background before required facts.
+
+## Default Shape
 
 ```md
 # <Clear Title>
 
-## Outcome
-- <what is true when this is done>
+## Outcome and boundaries
+- Why: <what this enables for the user or system>
+- Outcome: <observable behavior or system state>
+- In scope / out of scope: <only boundaries that prevent scope drift>
+- Authority and locked constraints: <approval boundary and approved decisions
+  that shape implementation>
 
-## Approach
-- <chosen path and key sequencing dependency>
+## Implementation slices
+1. <vertical slice with one independently meaningful result>
+   - Anchors: <repo-relative paths, symbols, existing owners, or reusable work>
+   - Change: <behavior and contract to implement>
+   - Verify: <focused proof that can reject a bad implementation>
+2. <next dependent slice>
+   - Anchors / Change / Verify
 
-## Steps
-1. <first concrete slice>
-   - Change: <what to change>
-   - Verify: <how to prove this slice>
-2. <next slice>
-   - Change / Verify
+## Cross-cutting decisions
+- <only contracts or invariants that constrain more than one slice>
 
-## Validation
-- Automated: <commands/checks>
-- Manual: <screens, workflows, review, or proof limits>
-
-## Assumptions / Deferrals
-- <defaults chosen, or tempting work intentionally deferred>
+## Final verification and gates
+- Success criteria: <observable conditions that make the outcome complete>
+- Integrated proof: <evidence for end-to-end behavior, build, runtime, device,
+  or review>
+- Gate: <unresolved human or external prerequisite, recommended default, owner,
+  and implementation impact>
 ```
 
-Add a section only when it prevents a concrete implementation mistake:
+Omit `Cross-cutting decisions` when every constraint fits beside one slice.
+Omit the gate when none remains. Put current state, targets, interfaces,
+migrations, rollout, and visual decisions beside the slice they change; promote
+only genuinely shared constraints. Use exact data shapes only for approved
+contracts. Cite repo-relative paths and symbols for load-bearing claims, and
+commands only when repo guidance does not already own them. For non-code work,
+use domain anchors and proof.
 
-| Add | When |
-| --- | --- |
-| `Current State` | Implementation would otherwise start from a false premise or stale repo state. Keep it to facts that change the plan. |
-| `Context Checked` | The plan depends on repo docs, feature-building guidance, screenshots, external docs, or subagent research. |
-| `Target Standard` | The task changes a design-system rule, architecture contract, naming vocabulary, policy, or reusable primitive. |
-| `Contracts` | Data, API, state, routing, persistence, sync, or platform contracts must exist before implementation. |
-| `Visual Target` | Current screens, mockups, Image Gen concepts, or visual comparison shape implementation. |
-| `Scope` | Adjacent work is tempting enough that excluding it changes implementation behavior. |
-| `Read Gates` | Specific repo instructions, skills, docs, or references must be loaded before implementation. |
-| `Owners` | Ownership is cross-module, non-obvious, or needed to prevent duplicate work. |
+After approval, assume the executor continues through safe, in-scope local work
+and verification. Name only gates requiring a human decision, external write,
+destructive action, purchase, or material scope expansion.
 
-Put public API, interface, type, migration, compatibility, or rollout notes
-inside the relevant step unless they cut across the whole plan. Cite paths,
-symbols, and commands for load-bearing claims; prefer symbols over line numbers
-because lines drift. Include only detail that helps the implementer execute or
-verify the work; omit transcripts, chain-of-thought, and rejected alternatives.
-When a human decision remains unresolved, name it with the recommended default,
-decision owner, and implementation impact instead of silently settling it or
-blocking the rest of the plan.
+## Split Independent Work
+
+Split independently approvable and verifiable work into one compact dependency
+index plus one executable plan per slice. Keep shared constraints in the index;
+do not copy them. Keep one plan when a transaction, migration, release, or user
+journey must land and be verified atomically.
 
 ## Upgrading An Existing Plan
 
 Return the complete upgraded document in the input's format.
 
 - Preserve unchanged working sections; rewrite only what confirmed findings or a
-  chosen simplification require. Do not rewrite for style alone.
-- Convert false premises into owned precondition steps; convert "build X" into
-  "reuse existing X" when an owner exists; narrow or defer abstractions, shims,
-  and broad refactors that do not serve the current goal; isolate risky version,
-  SDK, schema, or dependency changes into their own gate.
-- Replace naive moves across layers with wrap, adapter, or projection designs
-  when transitive references would otherwise create cycles.
-- Keep refuted findings and losing alternatives out of the plan body — they go in
-  the changelog.
-- Markdown: preserve heading style and document spine; keep tables and fences
-  readable in plain Markdown.
+  chosen simplification require.
+- Turn false premises into preconditions, reuse existing owners, narrow or defer
+  unsupported abstractions and refactors, and isolate risky version, SDK,
+  schema, or dependency changes behind a gate.
+- Remove duplicated current state, evidence, test lists, and decisions even when
+  the input used separate headings for them. Preserve acceptance criteria and
+  source-backed constraints, not verbosity.
+- Keep refuted findings and losing alternatives out of the executable plan.
+- Markdown: preserve heading style and document spine.
 - HTML: preserve the outer scaffold, style, and script blocks; change plan
   content, not the visual system; keep one `<main>` and valid closing tags.
+
+Summarize material revisions in chat. Write a sibling changelog only when the
+user asks for one or the repo requires a durable audit trail. When required,
+keep it to the verdict, confirmed plan changes, deliberately excluded findings,
+and unresolved human decisions; do not restate the upgraded plan.
 
 ## Structural Checks
 
 Before handoff, check the artifact for its format:
 
-- Markdown: logical heading order, closed code fences, tables render as plain
-  Markdown, required sections present.
+- Markdown: logical headings, closed fences, readable tables, executable spine.
 - HTML: exactly one `<main>` when the input had one, valid closing `</body>` and
   `</html>` tags, expected section ids present or deliberately changed, no
   duplicate major ids introduced.
 - Any format: the artifact is complete, not a fragment, unless the user asked for
-  a fragment. For an upgrade, diff against the preserved base and inspect for
-  accidental rewrites, dropped acceptance criteria, stale false premises, or new
-  complexity not justified by confirmed findings.
-
-## Changelog
-
-For an upgraded plan, write a sibling Markdown changelog:
-
-1. `Verdict` — two or three sentences on the plan's health after the pass.
-2. `Confirmed changes applied` — grouped by lens: problem, evidence, change.
-3. `Refuted / not changed` — findings deliberately excluded, and why.
-4. `Chosen simplification` — only when the plan needed meaningful narrowing or a
-   different implementation path.
-5. `Open decisions for the human` — product, privacy, release, or ownership calls
-   the repo could not settle.
-
-The changelog is where the reader sees rejected claims and losing designs; the
-upgraded plan itself stays executable and focused.
+  a fragment. Each paragraph must change a decision, boundary, sequence, anchor,
+  or proof. It states the outcome, authority boundary, success criteria, and
+  required evidence without exposing or scripting internal reasoning. For an
+  upgrade, diff against the base and inspect for accidental rewrites, dropped
+  acceptance criteria, stale premises, duplicated facts, or new complexity not
+  justified by confirmed findings.

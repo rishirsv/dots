@@ -1,0 +1,14 @@
+{
+  "type": "regression",
+  "outcome": "artifact",
+  "priority": "high",
+  "coverage": [
+    "compact-plan",
+    "cross-layer-contract",
+    "trust-boundary",
+    "verification"
+  ],
+  "fixtures": [
+    "repo-context.md"
+  ]
+}

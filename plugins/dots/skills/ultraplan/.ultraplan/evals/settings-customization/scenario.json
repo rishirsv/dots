@@ -1,0 +1,15 @@
+{
+  "type": "regression",
+  "outcome": "artifact",
+  "priority": "high",
+  "coverage": [
+    "compact-plan",
+    "plan-partitioning",
+    "privacy",
+    "persistence",
+    "runtime-proof"
+  ],
+  "fixtures": [
+    "repo-context.md"
+  ]
+}
