@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drafts — implementation plan</title>
+<style>
+/* GENERATED from DESIGN.md by scripts/generate-theme.mjs — do not edit.
+ * Tokens + base document styles for dots HTML artifacts. Inline this file
+ * verbatim inside <style> in every artifact. */
+
+:root {
+  --background: #fbfbfa;
+  --foreground: #0d0d0d;
+  --accent: #1f5eff;
+  --accent-deep: #12379e;
+  --warning-ink: #6b4c00;
+  --warning-line: rgba(180,130,0,0.35);
+  --warning-bg: rgba(255,178,0,0.06);
+  --danger-ink: #8c1d18;
+  --danger-line: rgba(200,60,50,0.35);
+  --danger-bg: rgba(220,70,60,0.05);
+  --code-surface: #0d0d0d;
+  --code-ink: #ededed;
+  --a4: rgba(13, 13, 13, 0.04);
+  --a8: rgba(13, 13, 13, 0.08);
+  --a12: rgba(13, 13, 13, 0.12);
+  --a20: rgba(13, 13, 13, 0.20);
+  --a40: rgba(13, 13, 13, 0.40);
+  --a55: rgba(13, 13, 13, 0.55);
+  --a60: rgba(13, 13, 13, 0.60);
+  --a70: rgba(13, 13, 13, 0.70);
+  --text-muted: var(--a60);
+  --font-sans: -apple-system, Helvetica Neue, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace;
+  --article: 720px;
+  --wide: 1040px;
+  --canvas: 1440px;
+  --section: 48px;
+  --block: 16px;
+  --r-card: 6px;
+  --r-code: 6px;
+  --r-inline: 4px;
+  --r-pill: 6px;
+  --dur-fast: 150ms;
+  --dur-reveal: 400ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --stagger: 60ms;
+  --chart-emphasis: var(--accent);
+  --chart-value-emphasis: var(--accent-deep);
+  --chart-pos: var(--a40);
+  --chart-neg: var(--a20);
+  --chart-mark: var(--a20);
+  --chart-track: var(--a4);
+  --chart-grid: var(--a12);
+  --chart-label: var(--text-muted);
+  --chart-value: var(--text-muted);
+}
+
+[data-theme="dark"] {
+  --background: #0f0f0e;
+  --foreground: #f5f5f4;
+  --accent: #6f94ff;
+  --accent-deep: #b7c9ff;
+  --warning-ink: #f2c14e;
+  --warning-line: rgba(255,193,77,0.35);
+  --warning-bg: rgba(255,193,77,0.08);
+  --danger-ink: #ff8a80;
+  --danger-line: rgba(255,120,110,0.35);
+  --danger-bg: rgba(255,120,110,0.07);
+  --code-surface: #161615;
+  --code-ink: #ededed;
+  --a4: rgba(245, 245, 244, 0.04);
+  --a8: rgba(245, 245, 244, 0.08);
+  --a12: rgba(245, 245, 244, 0.12);
+  --a20: rgba(245, 245, 244, 0.20);
+  --a40: rgba(245, 245, 244, 0.40);
+  --a55: rgba(245, 245, 244, 0.55);
+  --a60: rgba(245, 245, 244, 0.60);
+  --a70: rgba(245, 245, 244, 0.70);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --background: #0f0f0e;
+    --foreground: #f5f5f4;
+    --accent: #6f94ff;
+    --accent-deep: #b7c9ff;
+    --warning-ink: #f2c14e;
+    --warning-line: rgba(255,193,77,0.35);
+    --warning-bg: rgba(255,193,77,0.08);
+    --danger-ink: #ff8a80;
+    --danger-line: rgba(255,120,110,0.35);
+    --danger-bg: rgba(255,120,110,0.07);
+    --code-surface: #161615;
+    --code-ink: #ededed;
+    --a4: rgba(245, 245, 244, 0.04);
+    --a8: rgba(245, 245, 244, 0.08);
+    --a12: rgba(245, 245, 244, 0.12);
+    --a20: rgba(245, 245, 244, 0.20);
+    --a40: rgba(245, 245, 244, 0.40);
+    --a55: rgba(245, 245, 244, 0.55);
+    --a60: rgba(245, 245, 244, 0.60);
+    --a70: rgba(245, 245, 244, 0.70);
+  }
+}
+
+/* ---------- base ---------- */
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; overflow-x: clip; }
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-inline);
+}
+
+::selection { background: var(--a12); }
+
+h1 {
+  font-size: 40px;
+  line-height: 48px;
+  letter-spacing: -2.4px;
+  font-weight: 600;
+  margin: 0;
+  text-wrap: balance;
+}
+
+@media (max-width: 380px) {
+  h1 {
+    font-size: 32px;
+    line-height: 38px;
+    letter-spacing: -1.5px;
+  }
+}
+
+h2 {
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: -0.96px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  text-wrap: balance;
+}
+
+h3 {
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.32px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+p { margin: 0 0 var(--block); }
+p:last-child { margin-bottom: 0; }
+
+section { margin-bottom: var(--section); }
+
+code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--a4);
+  border-radius: var(--r-inline);
+  padding: 1px 5px;
+}
+
+pre code { background: none; padding: 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  border-top: 1px solid var(--a20);
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--a12);
+  vertical-align: top;
+}
+
+thead th {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
+
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- motion: choreographed moments only ---------- */
+/* One-time load stagger + one-time scroll reveals. Elements render complete
+ * and static by default; page-behavior opts them in only when JS
+ * runs and reduced-motion is off. Nothing loops; nothing is ambient. */
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js-motion .stagger > * {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: rise var(--dur-reveal) var(--ease) forwards;
+  }
+  html.js-motion .stagger > *:nth-child(1) { animation-delay: 0ms; }
+  html.js-motion .stagger > *:nth-child(2) { animation-delay: var(--stagger); }
+  html.js-motion .stagger > *:nth-child(3) { animation-delay: calc(var(--stagger) * 2); }
+  html.js-motion .stagger > *:nth-child(4) { animation-delay: calc(var(--stagger) * 3); }
+  html.js-motion .stagger > *:nth-child(5) { animation-delay: calc(var(--stagger) * 4); }
+
+  html.js-motion .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity var(--dur-reveal) var(--ease), transform var(--dur-reveal) var(--ease);
+  }
+  html.js-motion .reveal.is-in { opacity: 1; transform: none; }
+
+  html.js-motion .reveal .bar-fill {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform calc(var(--dur-reveal) * 1.5) var(--ease) 120ms;
+  }
+  html.js-motion .reveal.is-in .bar-fill { transform: scaleX(1); }
+
+  a, summary, button { transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease); }
+}
+
+@keyframes rise {
+  to { opacity: 1; transform: none; }
+}
+
+.page {
+    max-width: var(--article);
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+  .page[data-layout="wide"] { max-width: var(--wide); }
+  .page[data-layout="canvas"] { max-width: var(--canvas); }
+  .reading-column { max-width: var(--article); }
+  .page[data-layout="article"] .reading-column,
+  .page[data-layout="wide"] .reading-column { margin-right: auto; }
+  .page[data-layout="canvas"] .reading-column { margin-left: auto; margin-right: auto; }
+  .page > header { margin-bottom: var(--section); }
+  .context-line { font-size: 13px; color: var(--text-muted); margin: 0 0 20px; }
+  .title-row {
+    display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .title-row h1 { flex: 1 1 480px; min-width: 0; }
+  .status {
+    display: inline-flex; align-items: center; height: 20px; padding: 0 8px;
+    border-radius: var(--r-pill); background: var(--a4); color: var(--a70);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+    white-space: nowrap; border: 1px solid var(--a12);
+  }
+  .dek { font-size: 16px; color: var(--text-muted); margin: 0; max-width: 62ch; }
+  footer.sources {
+    margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--a12);
+    font-size: 12px; color: var(--text-muted); line-height: 1.7;
+  }
+  footer.sources a { color: var(--text-muted); }
+  @media (max-width: 680px) {
+    .page { padding: 40px 24px 72px; }
+    .title-row { display: block; }
+    .title-row .status { margin-top: 10px; }
+  }
+
+.toc-rail {
+    font-size: 13px;
+    margin: 0 0 48px;
+  }
+  .toc-wide { display: none; }
+  .toc-rail summary,
+  .toc-label {
+    font-size: 11px; letter-spacing: 0.02em; color: var(--text-muted);
+  }
+  .toc-rail summary {
+    cursor: pointer;
+    padding: 6px 0;
+  }
+  .toc-label { margin: 0 0 6px; }
+  .toc-links { padding-top: 6px; }
+  .toc-rail a { display: block; color: var(--text-muted); padding: 3px 0; }
+  .toc-rail a:hover { color: var(--foreground); text-decoration: none; }
+  .toc-rail a.active { color: var(--foreground); font-weight: 600; }
+
+  @media (min-width: 1264px) {
+    .toc-rail {
+      position: sticky;
+      top: 64px;
+      float: right;
+      width: 200px;
+      max-height: calc(100vh - 128px);
+      overflow-y: auto;
+      margin: 8px calc(-200px - 48px) 0 0; /* dock in the right margin */
+    }
+    .toc-wide { display: block; }
+    .toc-compact { display: none; }
+  }
+
+.process-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+    gap: 24px;
+    list-style: none;
+    margin: 0 0 var(--section);
+    padding: 0;
+  }
+  .process-step { position: relative; min-width: 0; }
+  .process-step:not(:last-child)::after {
+    content: "\2192";
+    position: absolute;
+    top: 3px;
+    right: -17px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  .process-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 10px;
+    border: 1px solid var(--a20);
+    border-radius: 50%;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .process-step.is-current .process-marker {
+    border-color: var(--accent);
+    color: var(--accent-deep);
+    font-weight: 700;
+  }
+  .process-title { font-size: 14px; font-weight: 600; line-height: 1.45; }
+  .process-detail { margin: 4px 0 0; color: var(--text-muted); font-size: 12px; line-height: 1.55; }
+  @media (max-width: 680px) {
+    .process-steps { grid-template-columns: 1fr; gap: 16px; }
+    .process-step {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      column-gap: 12px;
+    }
+    .process-marker { grid-row: 1 / span 2; margin: 0; }
+    .process-step:not(:last-child)::after {
+      content: "";
+      top: 27px;
+      bottom: -17px;
+      left: 12px;
+      right: auto;
+      width: 1px;
+      background: var(--a20);
+    }
+  }
+
+.code-panel {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-code);
+    overflow: hidden;
+    margin-bottom: var(--section);
+  }
+  .code-head {
+    background: var(--code-surface);
+    color: var(--code-ink);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-transform: lowercase;
+    opacity: 0.6;
+  }
+  .code-panel pre {
+    margin: 0;
+    background: var(--code-surface);
+    color: var(--code-ink);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 20px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    font-feature-settings: "liga" 0;
+    white-space: pre;
+  }
+  /* code-surface-scoped tints: literal colors, not page tokens — this
+     background never flips with the page theme, so these can't be a4/a55 etc. */
+  .tok-k { color: #8ab4ff; }
+  .tok-s { color: #b7c9ff; }
+  .tok-c { color: #6e7681; }
+  .tok-n { color: #ffb200; }
+
+.table-scroll {
+    overflow-x: auto;
+    margin-bottom: var(--section);
+  }
+  .cell-label {
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--foreground);
+  }
+  .col-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 680px) {
+    .table-stack { overflow: visible; }
+    .table-stack table,
+    .table-stack tbody,
+    .table-stack tr,
+    .table-stack td { display: block; width: 100%; }
+    .table-stack thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .table-stack tr {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--a20);
+    }
+    .table-stack tr:first-child { border-top: 1px solid var(--a20); }
+    .table-stack td {
+      display: grid;
+      grid-template-columns: minmax(88px, 0.42fr) minmax(0, 1fr);
+      gap: 12px;
+      padding: 5px 4px;
+      border: 0;
+      text-align: left;
+      white-space: normal;
+    }
+    .table-stack td::before {
+      content: attr(data-label);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+
+.recommendation {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    padding: 20px 22px;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: var(--section);
+  }
+  .recommendation p { margin: 0; }
+  .recommendation p + p { margin-top: 10px; }
+  .recommendation strong { font-weight: 700; }
+</style>
+</head>
+<body>
+<div data-component="page-shell" class="page" data-layout="wide">
+  <header class="stagger">
+    <p class="context-line">Dots / dedicated plugin</p>
+    <div class="title-row">
+      <h1>Drafts — implementation plan</h1>
+      <span class="status">outline</span>
+    </div>
+    <p class="dek">A concrete plugin and state-file structure for a writing system that keeps rules, stylometry, working documents, and learning authority separate.</p>
+  </header>
+
+  <nav data-component="toc-rail" class="toc-rail" aria-label="On this page">
+    <div class="toc-wide">
+      <p class="toc-label">On this page</p>
+      <div class="toc-links">
+        <a href="#release-boundary">Release boundary</a>
+        <a href="#article-lineage">Article lineage</a>
+        <a href="#build-sequence">Build sequence</a>
+        <a href="#plugin-structure">Plugin structure</a>
+        <a href="#file-contracts">File contracts</a>
+        <a href="#runtime-state">Runtime state</a>
+        <a href="#contracts-and-proof">Proof</a>
+        <a href="#delivery-gate">Delivery gate</a>
+      </div>
+    </div>
+    <details class="toc-compact">
+      <summary>On this page</summary>
+      <div class="toc-links">
+        <a href="#release-boundary">Release boundary</a>
+        <a href="#article-lineage">Article lineage</a>
+        <a href="#build-sequence">Build sequence</a>
+        <a href="#plugin-structure">Plugin structure</a>
+        <a href="#file-contracts">File contracts</a>
+        <a href="#runtime-state">Runtime state</a>
+        <a href="#contracts-and-proof">Proof</a>
+        <a href="#delivery-gate">Delivery gate</a>
+      </div>
+    </details>
+  </nav>
+
+  <div class="reading-column">
+    <section id="release-boundary">
+      <h2>Release boundary</h2>
+      <p>Ship <strong>Drafts</strong> as a dedicated plugin with one owning skill. The first release learns from user-authorized evidence, resolves explicit writing rules and context-specific stylometry, drafts or edits through artifact-specific workflows, and preserves long-running document state.</p>
+      <p>Personal state lives in a Drafts-owned host namespace; project and report state lives under <code>.agents/drafts/</code>. Rules remain human-editable files. Stylometry remains derived evidence. Only explicit promotion turns a candidate rule into an active rule.</p>
+      <p><strong>Not in the first release:</strong> automatic mailbox or chat ingestion, sending messages, background learning, cross-device synchronization, multi-user service infrastructure, or autonomous publication.</p>
+    </section>
+  </div>
+
+  <section id="article-lineage">
+    <h2>How the Every research shapes Drafts</h2>
+    <div data-component="data-table" class="table-scroll table-stack">
+      <table>
+        <thead>
+          <tr>
+            <th>Source idea</th>
+            <th>Drafts contract</th>
+            <th>Owning files</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cell-label" data-label="Source idea">AI style guides</td>
+            <td data-label="Drafts contract">Encode voice tensions, structure, signature moves, anti-patterns, annotated examples, and revision checks as inspectable rules and descriptive profiles—not one prompt.</td>
+            <td data-label="Owning files"><code>rules/</code>, <code>stylometry/</code>, <code>language.md</code>, <code>learning.md</code></td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Source idea">Writing with AI</td>
+            <td data-label="Drafts contract">Interview first, negotiate the outline, draft section by section, adjudicate independent critics, then run AI-pattern, mechanical, line, and personal-voice checks.</td>
+            <td data-label="Owning files"><code>long-form.md</code>, <code>editing.md</code>, artifact <code>brief.md</code>, <code>outline.md</code>, <code>draft.md</code>, and checkpoints</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Source idea">After automation</td>
+            <td data-label="Drafts contract">Keep the user as framer and final judge. Agents can record evidence and propose rules, but cannot silently activate them or infer current intent from historical writing.</td>
+            <td data-label="Owning files"><code>SKILL.md</code>, <code>state-contract.md</code>, <code>learning.md</code>, <code>learning-events.jsonl</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="build-sequence">
+    <h2>Build sequence</h2>
+    <ol data-component="process-steps" class="process-steps">
+      <li class="process-step">
+        <span class="process-marker">1</span>
+        <div class="process-title">Establish contracts</div>
+        <p class="process-detail">Create the plugin shell, ubiquitous language, state-root contract, schemas, and deterministic precedence rules.</p>
+      </li>
+      <li class="process-step">
+        <span class="process-marker">2</span>
+        <div class="process-title">Build state core</div>
+        <p class="process-detail">Implement rule packs, context profiles, evidence ledgers, working documents, checkpoints, and effective-rule resolution.</p>
+      </li>
+      <li class="process-step">
+        <span class="process-marker">3</span>
+        <div class="process-title">Add writing workflows</div>
+        <p class="process-detail">Support quick messages, email, voice editing, and long-form interview, outline, drafting, review, and finalization.</p>
+      </li>
+      <li class="process-step">
+        <span class="process-marker">4</span>
+        <div class="process-title">Add learning</div>
+        <p class="process-detail">Extract stylometry, record edit pairs, propose candidate rules, and require explicit promotion before activation.</p>
+      </li>
+      <li class="process-step">
+        <span class="process-marker">5</span>
+        <div class="process-title">Evaluate and ship</div>
+        <p class="process-detail">Prove state integrity, context routing, rule authority, voice match, content preservation, and plugin portability.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section id="plugin-structure">
+    <h2>Proposed plugin structure</h2>
+    <div data-component="code-panel" class="code-panel">
+      <div class="code-head">plugins/drafts/</div>
+      <pre><code>plugins/drafts/
+  ├── plugin.json
+  ├── .codex-plugin/plugin.json
+  ├── .claude-plugin/plugin.json
+  ├── assets/
+  │   ├── icon.png
+  │   └── logo.png
+  ├── skills/drafts/
+  │   ├── SKILL.md
+  │   ├── agents/openai.yaml
+  │   ├── references/
+  │   │   ├── language.md
+  │   │   ├── state-contract.md
+  │   │   ├── schemas.md
+  │   │   ├── workflow-selection.md
+  │   │   ├── long-form.md
+  │   │   ├── editing.md
+  │   │   └── learning.md
+  │   ├── scripts/
+  │   │   ├── drafts_state.py
+  │   │   └── stylometry.py
+  │   ├── assets/state/
+  │   │   ├── profile.yaml
+  │   │   ├── context.yaml
+  │   │   ├── rule.md
+  │   │   └── artifact.yaml
+  │   └── .drafts/evals/evals.json
+  └── tests/
+      ├── test_state.py
+      ├── test_stylometry.py
+      └── fixtures/</code></pre>
+    </div>
+  </section>
+
+  <section id="file-contracts">
+    <h2>Shape of each plugin file</h2>
+    <div data-component="data-table" class="table-scroll table-stack">
+      <table>
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Shape</th>
+            <th>Responsibility</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cell-label" data-label="File"><code>plugin.json</code></td>
+            <td data-label="Shape">Name, version, description, author, keywords, category, assets path, and skills path.</td>
+            <td data-label="Responsibility">Portable plugin identity and package entrypoints.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>.codex-plugin/plugin.json</code></td>
+            <td data-label="Shape">Shared metadata plus repository, skill path, UI interface, capabilities, default prompt, brand color, icon, and logo.</td>
+            <td data-label="Responsibility">Codex marketplace and composer presentation.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>.claude-plugin/plugin.json</code></td>
+            <td data-label="Shape">Minimal Claude manifest: name, version, description, author, keywords.</td>
+            <td data-label="Responsibility">Claude plugin discovery without duplicating runtime guidance.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>assets/icon.png</code></td>
+            <td data-label="Shape">Small square raster icon.</td>
+            <td data-label="Responsibility">Compact composer and marketplace identity.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>assets/logo.png</code></td>
+            <td data-label="Shape">Large raster logo.</td>
+            <td data-label="Responsibility">Expanded plugin identity.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>SKILL.md</code></td>
+            <td data-label="Shape">Frontmatter with only <code>name</code> and triggering <code>description</code>; body contains the invariant contract, workflow router, state-loading order, approval boundary, and conditional reference links.</td>
+            <td data-label="Responsibility">Select the correct Drafts workflow and preserve the human framing and promotion gates. Detailed schemas and variants stay out.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>agents/openai.yaml</code></td>
+            <td data-label="Shape"><code>display_name</code>, <code>short_description</code>, <code>default_prompt</code>, icon paths, brand color, and implicit-invocation policy.</td>
+            <td data-label="Responsibility">Human-facing skill metadata that remains synchronized with <code>SKILL.md</code>.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>references/language.md</code></td>
+            <td data-label="Shape">Ubiquitous-language glossary plus the invariant distinction among rules, stylometry, current intent, workflow, evidence, and voice.</td>
+            <td data-label="Responsibility">Keep every workflow, schema, test, and user-facing explanation semantically consistent.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>references/state-contract.md</code></td>
+            <td data-label="Shape">Personal, context, project, artifact, and session scopes; state roots; one-writer rule; precedence; overrides; recovery; versioning; retention boundaries.</td>
+            <td data-label="Responsibility">Define where state lives, which state is canonical, and how conflicts resolve.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>references/schemas.md</code></td>
+            <td data-label="Shape">Field-level contracts for profile, context, rule, stylometry, evidence events, working documents, and checkpoints, with one minimal valid example each.</td>
+            <td data-label="Responsibility">Give people and scripts one inspectable schema vocabulary without duplicating validation code.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>references/workflow-selection.md</code></td>
+            <td data-label="Shape">Decision table for short message, email, long-form development, voice edit, developmental edit, line edit, final check, and profile maintenance.</td>
+            <td data-label="Responsibility">Scale process depth to the artifact and load only the relevant workflow reference.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>references/long-form.md</code></td>
+            <td data-label="Shape">Interview questions, readiness signal, negotiated-outline loop, section drafting, critic-panel protocol, human adjudication, and final checks.</td>
+            <td data-label="Responsibility">Encode the Every long-form process without turning it into autonomous authorship.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>references/editing.md</code></td>
+            <td data-label="Shape">Separate contracts for voice edit, developmental edit, line edit, AI-pattern scrub, mechanical style check, and personal-voice read.</td>
+            <td data-label="Responsibility">Prevent structural, factual, and stylistic changes from being conflated or silently learned.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>references/learning.md</code></td>
+            <td data-label="Shape">Evidence capture, sample attribution, edit-pair classification, stylometry rebuild, candidate-rule proposal, explicit promotion, rejection, retirement, and rollback.</td>
+            <td data-label="Responsibility">Make learning conservative, traceable, context-scoped, and reversible.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>scripts/drafts_state.py</code></td>
+            <td data-label="Shape">One deterministic CLI with verbs such as <code>init</code>, <code>validate</code>, <code>resolve</code>, <code>record</code>, <code>checkpoint</code>, <code>promote</code>, and <code>retire</code>.</td>
+            <td data-label="Responsibility">Own all file mutation, schema validation, effective-rule resolution, append-only events, and checkpoint creation.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>scripts/stylometry.py</code></td>
+            <td data-label="Shape">Pure extraction and aggregation functions plus a CLI for rebuilding a global baseline or one context profile from an explicit corpus.</td>
+            <td data-label="Responsibility">Measure interpretable features and uncertainty. It never creates or activates rules.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>assets/state/profile.yaml</code></td>
+            <td data-label="Shape">Minimal personal-profile skeleton: schema version, profile ID, context index, active stylometry version, created and updated timestamps.</td>
+            <td data-label="Responsibility">Seed the host-level Drafts profile.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>assets/state/context.yaml</code></td>
+            <td data-label="Shape">Context ID and name; channel, genre, audience, relationship, purpose, project, and document-stage dimensions; inheritance pointers.</td>
+            <td data-label="Responsibility">Seed reusable named context profiles.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>assets/state/rule.md</code></td>
+            <td data-label="Shape">YAML fields for ID, action, force, scope, status, authority, provenance, timestamps, and supersession; Markdown sections for directive, rationale, exceptions, preferred example, and avoided example.</td>
+            <td data-label="Responsibility">Seed one human-editable rule file.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>assets/state/artifact.yaml</code></td>
+            <td data-label="Shape">Artifact ID, type, context, current workflow stage, checkpoint pointer, external source pointer, and timestamps.</td>
+            <td data-label="Responsibility">Seed project-local working-document state.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>.drafts/evals/evals.json</code></td>
+            <td data-label="Shape">Authored scenarios for messages, email, reports, context isolation, rule conflict, promotion, rejection, resumption, and recovery.</td>
+            <td data-label="Responsibility">Development-only behavioral coverage; excluded from the portable skill runtime.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>tests/test_state.py</code></td>
+            <td data-label="Shape">Focused tests for initialization, schema validation, precedence, override, event append, checkpoint, promotion, retirement, and recovery.</td>
+            <td data-label="Responsibility">Prove deterministic state semantics.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>tests/test_stylometry.py</code></td>
+            <td data-label="Shape">Fixture-driven tests for feature extraction, corpus identity, global aggregation, context isolation, uncertainty, and version changes.</td>
+            <td data-label="Responsibility">Prove measurements are reproducible and cannot mutate normative rules.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="File"><code>tests/fixtures/</code></td>
+            <td data-label="Shape">Small attributed sample corpora, edit pairs, rule packs, context profiles, and expected resolved-state snapshots.</td>
+            <td data-label="Responsibility">Keep deterministic tests realistic without using private user writing.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="runtime-state">
+    <h2>Runtime state written by Drafts</h2>
+    <div data-component="code-panel" class="code-panel">
+      <div class="code-head">personal and project state</div>
+      <pre><code>~/.codex/skill-state/drafts/
+  ├── profile.yaml
+  ├── contexts/&lt;context-id&gt;.yaml
+  ├── rules/
+  │   ├── global/&lt;rule-id&gt;.md
+  │   └── contexts/&lt;context-id&gt;/&lt;rule-id&gt;.md
+  ├── stylometry/
+  │   ├── global.yaml
+  │   └── contexts/&lt;context-id&gt;.yaml
+  ├── evidence/
+  │   ├── samples/&lt;sample-id&gt;.md
+  │   ├── samples.jsonl
+  │   ├── edit-pairs.jsonl
+  │   └── learning-events.jsonl
+  └── history/stylometry/&lt;version&gt;.yaml
+
+  .agents/drafts/
+  ├── index.yaml
+  └── artifacts/&lt;artifact-id&gt;/
+      ├── brief.md
+      ├── state.yaml
+      ├── outline.md
+      ├── draft.md
+      ├── decisions.jsonl
+      └── checkpoints/&lt;version&gt;.md</code></pre>
+    </div>
+    <div data-component="data-table" class="table-scroll table-stack">
+      <table>
+        <thead>
+          <tr>
+            <th>Runtime file</th>
+            <th>Shape and authority</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>profile.yaml</code></td>
+            <td data-label="Shape and authority">Canonical personal index: profile identity, context IDs, and active stylometry version. Human-editable metadata; scripts validate updates.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>contexts/&lt;id&gt;.yaml</code></td>
+            <td data-label="Shape and authority">Named combination of structured context dimensions and inheritance. Canonical for routing.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>rules/**/&lt;id&gt;.md</code></td>
+            <td data-label="Shape and authority">One prescriptive rule per file. Canonical, human-editable, scope-aware, and governed by explicit promotion.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>stylometry/**/*.yaml</code></td>
+            <td data-label="Shape and authority">Derived distributions, sample counts, corpus digest, extractor version, uncertainty, and evidence references. Rebuildable; never normative.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>samples/&lt;id&gt;.md</code> + <code>samples.jsonl</code></td>
+            <td data-label="Shape and authority">Attributed sample content plus append-only metadata: author confidence, context, origin, representative or aspirational status, timestamps, and digest.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>edit-pairs.jsonl</code></td>
+            <td data-label="Shape and authority">Append-only before and after references, context, accepted time, and classified content, structural, factual, or stylistic differences.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>learning-events.jsonl</code></td>
+            <td data-label="Shape and authority">Append-only proposal, approval, rejection, promotion, retirement, and rebuild events with actor, evidence references, and timestamps.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>history/stylometry/&lt;version&gt;.yaml</code></td>
+            <td data-label="Shape and authority">Immutable profile snapshot produced whenever the corpus or extractor changes.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>.agents/drafts/index.yaml</code></td>
+            <td data-label="Shape and authority">Project-local artifact index with IDs, paths, current stages, and last checkpoint pointers.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>brief.md</code></td>
+            <td data-label="Shape and authority">Current purpose, audience, stakes, desired reader effect, required facts, sources, and non-goals. The user’s present frame.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>state.yaml</code></td>
+            <td data-label="Shape and authority">Artifact type, context, workflow stage, active checkpoint, open questions, source pointer, and timestamps.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>outline.md</code></td>
+            <td data-label="Shape and authority">Negotiated structure with section purpose, evidence obligations, status, and rejected beats.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>draft.md</code></td>
+            <td data-label="Shape and authority">Current local draft when no external document is authoritative. Section boundaries remain aligned with the outline.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>decisions.jsonl</code></td>
+            <td data-label="Shape and authority">Append-only structural, editorial, and critic-adjudication decisions so rejected directions do not recur.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Runtime file"><code>checkpoints/&lt;version&gt;.md</code></td>
+            <td data-label="Shape and authority">Immutable draft snapshot with parent, workflow stage, author, timestamp, and the state digest that produced it.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="contracts-and-proof">
+    <h2>Contracts and proof</h2>
+    <div data-component="data-table" class="table-scroll table-stack">
+      <table>
+        <thead>
+          <tr>
+            <th>Surface</th>
+            <th>Initial contract</th>
+            <th>Proof boundary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cell-label" data-label="Surface">Rules</td>
+            <td data-label="Initial contract">One file per rule; layered packs; visible inheritance, overrides, authority, force, and lifecycle.</td>
+            <td data-label="Proof boundary">Schema fixtures plus precedence and conflict tests.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Surface">Stylometry</td>
+            <td data-label="Initial contract">Versioned global baseline and context profiles with corpus identity, distributions, and uncertainty.</td>
+            <td data-label="Proof boundary">Deterministic extraction fixtures and context-isolation checks.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Surface">Documents</td>
+            <td data-label="Initial contract">Brief, current intent, outline, decisions, revisions, checkpoints, and recovery state remain artifact-scoped.</td>
+            <td data-label="Proof boundary">Checkpoint, resume, fork, and stale-state scenarios.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Surface">Learning</td>
+            <td data-label="Initial contract">Authorized evidence may update stylometry or propose rules; promotion is explicit and traceable.</td>
+            <td data-label="Proof boundary">Edit-pair classification, candidate lifecycle, rejection, promotion, and rollback tests.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Surface">Writing</td>
+            <td data-label="Initial contract">Current intent overrides durable preferences for the task; active rules outrank stylometric tendencies.</td>
+            <td data-label="Proof boundary">Behavioral scenarios separately grade rule compliance, voice match, content preservation, and naturalness.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="reading-column">
+    <section id="delivery-gate">
+      <h2>Delivery gate</h2>
+      <p>The first release is ready when a user can initialize Drafts, add representative samples, inspect the derived profile, create or edit a rule, draft in at least two distinct contexts, resume a long-form document, and explicitly promote or reject a candidate rule without hidden state changes.</p>
+      <p>Validation should combine focused unit and fixture tests, Meta-Skill validation for the owning skill, authored behavioral evaluations, manifest consistency checks, and the repository-wide verification gate.</p>
+      <div data-component="recommendation" class="recommendation">
+        <p><strong>Implement Drafts vertically, beginning with contracts and one complete email workflow.</strong> Prove state initialization, rule resolution, context selection, drafting, edit-pair capture, and explicit promotion end to end before adding long-form reports or broader stylometry.</p>
+        <p>This keeps the first implementation reviewable while testing every architectural boundary that later workflows depend on.</p>
+      </div>
+    </section>
+  </div>
+
+  <footer class="sources">Workflow basis: Every — AI Style Guides; After Automation; Writing With AI Is Harder Than You Think. Architecture basis: confirmed Drafts decision record and current Dots plugin conventions.</footer>
+</div>
+
+</body>
+</html>
