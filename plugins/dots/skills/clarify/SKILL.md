@@ -7,7 +7,9 @@ description: "Clarify requirements before implementing. Do not use automatically
 
 ## Goal
 
-Ask the minimum set of clarifying questions needed to avoid wrong work; do not start implementing until the must-have questions are answered (or the user explicitly approves proceeding with stated assumptions).
+Ask the minimum set of clarifying questions needed to avoid wrong work. Before
+implementing, confirm the resulting shared understanding unless the user
+explicitly approves proceeding with stated assumptions.
 
 ## Workflow
 
@@ -46,9 +48,25 @@ If the user explicitly asks you to proceed without answers:
 - State your assumptions as a short numbered list
 - Ask for confirmation; proceed only after they confirm or correct them
 
-### 4) Confirm interpretation, then proceed
+### 4) Write the shared understanding
 
-Once you have answers, restate the requirements in 1-3 sentences (including key constraints and what success looks like), then start work.
+Once you have answers, write a concise, easy-to-review `Shared understanding`.
+Include only applicable items: the outcome and definition of done, scope and
+non-goals, settled decisions and constraints, and assumptions or open questions.
+Distinguish recommendations and assumptions from settled decisions.
+
+For work with multiple meaningful implementation steps, add an
+`Implementation plan` with one bullet per step in execution order and include
+verification where relevant. Keep it as an alignment outline rather than a
+repo-grounded or pressure-tested plan. Do not plan past a blocking decision.
+
+### 5) Confirm, then proceed
+
+Ask the user to confirm or correct the shared understanding before
+implementation unless they explicitly waived another approval pause. Treat the
+confirmed version as the working contract. If later discovery changes a
+material decision, assumption, scope boundary, or success criterion, pause and
+update it before continuing.
 
 ## Question templates
 
