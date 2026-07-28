@@ -97,6 +97,13 @@ the live pull request body renders evidence for every affected surface and
 materially distinct state. A build, a launched runtime, or local media files do
 not satisfy it.
 
+Do not synthesize `raw.githubusercontent.com` or branch-backed `blob` URLs for
+local evidence. This is especially unreliable for private repositories and
+stops working when a review branch is deleted. Upload through GitHub's
+authenticated attachment flow unless repository policy or the user explicitly
+chooses a durable tracked location. Verify that the live page loaded the media
+itself; Markdown, alt text, or an `<img>` node alone is not proof.
+
 Keep the pull request draft while required evidence is missing or broken. If an
 existing pull request is already ready and the user did not authorize changing
 its draft state, report the exact gap instead of claiming the gate passed.
