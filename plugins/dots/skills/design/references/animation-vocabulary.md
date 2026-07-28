@@ -89,7 +89,7 @@ load this reference for design work with no motion or interaction component.
 - **Float** — A gentle, continuous up-and-down drift that makes a static element feel alive and weightless.
 - **Idle animation** — Subtle motion that plays while an element is just sitting there, waiting to be interacted with.
 
-### Polish & Effects — the small touches that separate good from great
+### Polish & Effects — visual treatments and comparison effects
 - **Blur** — A blur filter used to soften an element or mask tiny imperfections.
 - **Clip-path** — Clipping an element to a shape, used for reveals, masks, and before/after sliders.
 - **Mask** — Hiding or revealing parts of an element using a shape or gradient — like clip-path, but with soft, fadeable edges.
@@ -105,8 +105,12 @@ load this reference for design work with no motion or interaction component.
 - **Frame rate (FPS)** — Frames drawn per second. 60fps is the baseline for smooth motion; 120fps on newer displays.
 - **Jank** — Visible stutter when the browser drops frames because it can't keep up with the animation.
 - **Dropped frame** — A frame the browser missed its deadline to draw, causing a tiny hitch in motion.
-- **Compositing** — Letting the GPU move or fade an element on its own layer without redoing layout or paint.
-- **will-change** — A CSS hint that an element is about to animate, so the browser can promote it to its own layer ahead of time.
+- **Compositing** — The browser combining rendered layers into the final frame;
+  some composited updates may avoid layout or paint work.
+- **will-change** — A temporary CSS hint that a property is expected to change.
+  It may help the browser prepare, but does not guarantee layer promotion or
+  better performance; apply it only around known motion and measure the target
+  device.
 - **Layout thrashing** — Animating properties like width, height, top, or left that force the browser to recalculate layout every frame, causing jank.
 
 ### Principles to Know — concepts that guide when and how to animate
@@ -117,5 +121,7 @@ load this reference for design work with no motion or interaction component.
 - **Perceived performance** — The right animation makes an interface feel faster, even when it isn't.
 - **Frequency of use** — The more often a user sees an animation, the shorter and subtler it should be.
 - **Spatial consistency** — Animating so an element keeps its identity and position across states, so users never lose track of where things went.
-- **Hardware acceleration** — Animating transform and opacity lets the GPU keep motion smooth.
+- **Hardware acceleration** — Browser rendering work performed by accelerated
+  graphics hardware. Transforms and opacity are often compositor-friendly, but
+  no property guarantees smooth motion; measure the target browser and device.
 - **Reduced motion** — Respecting the user's prefers-reduced-motion setting by toning down or removing motion.

@@ -1,10 +1,10 @@
 # Image To Code
 
 Read this when translating a selected image, screenshot, mockup, or Image Gen
-reference into an interactive website or web app.
+reference into an interactive web or native app surface.
 
 You're tasked with recreating the selected visual target as an interactive
-website or web app.
+product surface.
 
 ## User Context
 
@@ -14,23 +14,37 @@ preferences, and share targets as grounding material when relevant.
 
 Do not inspect every saved reference. Inspect only what the current task needs.
 
+## Platform And Viewport Terms
+
+Use these terms consistently:
+
+- **Platform:** the implementation environment, such as responsive web, native
+  iOS, native Android, or another repository-defined target.
+- **Viewport:** the captured width, height, scale, and interaction state used
+  for visual comparison.
+- **Mobile web:** a responsive browser surface shown at a narrow viewport.
+- **Native mobile app:** a surface implemented with the target platform's native
+  app stack.
+
+A mobile-sized viewport identifies presentation dimensions, not platform. Derive
+the platform from the repository, brief, or target artifacts. If none establish
+it, default to responsive web and reproduce the reference viewport.
+
 ## Workflow
 
-Use this checklist in proportion to the surface. A small change within an
-existing design system needs only the relevant extraction, build, and visual
-verification steps.
+Use this checklist in proportion to the accepted target and requested surface.
 
-0. Start from a brief grounded per [grounding.md](grounding.md). The brief may
-   be explicitly confirmed, established by repository evidence, or stated with
-   assumptions the user authorized.
+0. Start from a brief grounded per [grounding.md](grounding.md), using repository
+   evidence and explicit assumptions.
 
 1. Do not start unless you have a selected image, screenshot, mockup, or Image
    Gen result to recreate. A written brief is not enough.
 
 2. Treat the provided image as the design to recreate.
 
-3. If the provided design is a mobile viewport, build a mobile app. If it's
-   unclear, default to desktop.
+3. Implement for the established platform. Treat the reference dimensions as
+   the target viewport; do not infer native app, mobile web, or desktop platform
+   from width alone.
 
 4. Review the reference design and catalog each image and icon asset. Reuse
    repository assets when they match; generate or source missing raster assets
@@ -65,9 +79,9 @@ verification steps.
    - When transparency is required, request or produce it through the installed
      image-generation workflow and verify edge quality in the final surface.
 
-5. Define all sections of the page. For each section, record the visible layout,
-   spacing, element sizes, and alignment relationships needed to recreate the
-   target.
+5. Define all screens, regions, or sections in the target. For each one, record
+   the visible layout, spacing, element sizes, and alignment relationships
+   needed to recreate it.
 
 6. Find freely available fonts that match the target design.
 
@@ -80,8 +94,8 @@ verification steps.
      metaphor, a simple production-quality SVG is acceptable. Keep its geometry,
      stroke/fill, optical weight, and states consistent with the icon system.
 
-8. Build the app starting with the repo's local prototype preflight when one
-   exists. Implement every visible control, state, and interaction shown or
+8. Build the surface using the repository's platform and local preflight when
+   one exists. Implement every visible control, state, and interaction shown or
    implied by the target.
 
    Examples include:
@@ -99,35 +113,38 @@ verification steps.
    - Do not leave visible controls as static chrome. Do not create new pages or
      routes unless the user asks for them.
 
-9. Run the local app.
+9. Run the target using the repository's web, simulator, device, or preview
+   workflow.
 
-10. Capture the local app using Codex in-app browser first. If it is
-    unavailable or unreliable, use another available browser and state the
-    fallback reason.
+10. Capture the rendered target:
 
-11. Run a rendered visual check. For routine work, inspect the relevant
-    viewports and states directly and fix visible drift. Run the independent
-    surface critique in [design-review](../../design-review/SKILL.md) as a
-    blocking gate when the implementation is target-driven,
-    acceptance-critical, externally shipped, brand- or accessibility-sensitive,
-    or the user requests it.
+    - For web, follow the tool order in the shared
+      [visual-proof checklist](../../../references/visual-proof.md).
+    - For a native app, use the repository's simulator, device, or preview
+      capture workflow.
+
+11. Run a rendered fidelity check. Inspect the relevant viewports and states
+    directly and fix visible drift. For acceptance-critical, externally shipped,
+    brand-sensitive, or accessibility-sensitive work, make the comparison
+    exhaustive for every material viewport and reachable state.
 
     Steps:
 
-    - Open the reference target and the latest prototype screenshot before the
-      gate. Compare the same viewport and the same interaction state; if they do
-      not match, capture the missing view first.
-    - For a full gate, run `design-review` on the target and screenshot together.
-    - Fix blocking findings, capture the app again, and repeat until the gate
-      passes or report the concrete blocker.
+    - Open the reference target and latest prototype screenshot. Compare the
+      same viewport and interaction state; if they do not match, capture the
+      missing view first.
+    - Record material differences in composition, hierarchy, typography, color,
+      spacing, assets, controls, responsive behavior, and reachable states.
+    - Fix material differences, capture the app again, and repeat until none
+      remain or report the concrete blocker.
 
-12. Handoff the app or website.
+12. Handoff the implemented surface.
 
-    - When a full design-review gate was required, hand off only after it passes
-      or with the concrete blocker clearly reported.
-    - Keep the prototype running locally when the task requires a live local
-      preview.
-    - Provide the clickable local URL.
+    - Hand off only after fidelity verification passes or with the concrete
+      blocker clearly reported.
+    - Keep the target running when the task requires a live preview.
+    - Provide the clickable local URL for web or the native run instructions and
+      captured artifact for a native app.
     - Briefly describe the work as a designer would.
 
 ## Extraction Checklist
@@ -135,7 +152,7 @@ verification steps.
 Before coding, extract:
 
 - visible copy, nav labels, CTAs, section headings, data labels, and proof text
-- per-section/state image inventory: source concept screenshot, native aspect,
+- per-section/state image inventory: source concept screenshot, source aspect,
   visual priority, readable text, typography relationships, spacing,
   button/control styling, component/container rules, dominant colors, and
   unresolved details that required a fresh extraction screenshot
@@ -244,21 +261,16 @@ supports them.
 
 ## Verification
 
-For a full independent gate, `design-review` owns fidelity verification — the
-surface-by-surface comparison, severity, pass/block decision, and findings. For
-routine self-checks, use the same build inputs below without creating a formal
-report.
+This skill owns fidelity verification:
 
-This skill owns only the build-side inputs to that gate:
-
-- Capture the implementation at the accepted concept's native dimensions when
+- Capture the implementation at the accepted concept's target dimensions when
   practical; record the blocker if not.
-- Bring the accepted concept and the latest screenshot into the same comparison
-  input with `view_image` so `design-review` can judge them together.
-  Functional QA — passing the build, clicking controls, verifying local state —
-  is not fidelity QA and cannot replace this.
+- Inspect the accepted concept and latest screenshot with `view_image`, then
+  compare matching viewports and interaction states. Functional QA — passing the
+  build, clicking controls, verifying local state — is not fidelity QA and
+  cannot replace this.
 - Provide the allowed-copy list and the per-section image inventory from the
-  Extraction Checklist so the gate can run the copy diff and asset audit.
+  Extraction Checklist for the copy diff and asset audit.
 - Verify generated assets load, are framed correctly, and do not obscure text
   or controls, and that the core workflow updates real local UI state. Do not
   ship inert controls, fake media progress, or placeholder interactions.
@@ -266,10 +278,10 @@ This skill owns only the build-side inputs to that gate:
 For concept-driven implementation, include:
 
 - accepted concept path
-- rendered screenshot method
-- Codex in-app browser verification method or browser fallback reason
+- rendered capture method
+- web browser verification method or native simulator/device capture method
 - `view_image` inspection of the accepted concept and latest screenshot
-- native-size viewport checked or blocker
+- target viewport dimensions checked or blocker
 - at least five inspected comparison points
 - above-the-fold copy diff result
 - material mismatches fixed

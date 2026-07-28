@@ -78,10 +78,6 @@ Every concept must give implementation enough visual information to build from:
 - purposeful motion or interaction cues that can be implemented later
 - specific, non-generic copy when exact copy is not supplied
 
-Default to roughly 7/10 creativity: distinctive and art-directed, but still
-implementable. "Clean" means edited, airy, legible, and not cluttered or
-repetitive.
-
 Reject concepts that are header-only for full-surface asks, cluttered, generic,
 repetitive, under-specified, unreadable, over-decorated, impractical to
 implement, or off-spec. Reject clean concepts too when the layout, imagery,

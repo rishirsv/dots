@@ -60,7 +60,7 @@ value.
 
 Audit content typography separately from UI chrome. Buttons, tabs, inputs,
 toolbars, sidebars, table cells, captions, status bars, command palettes, and
-mobile navigation have different density and truncation pressures from prose.
+compact navigation have different density and truncation pressures from prose.
 
 ## Apply
 

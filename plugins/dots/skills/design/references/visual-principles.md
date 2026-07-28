@@ -59,9 +59,9 @@ before concepting: one theme paradigm, one background character, one typography
 character, one hero or primary-screen architecture, one section/app rhythm, 2-4
 signature component motifs, and 1-2 motion cues.
 
-Default to roughly 7/10 creativity, low-to-medium density, generous spacing,
-high implementation clarity, strong typography discipline, and image-led moments
-when real visuals improve the page.
+Set density, spacing, typographic contrast, and image use from the product task,
+content, platform, and selected direction. Every choice must remain practical to
+implement and verify.
 
 Commit to the combination so the design feels intentional instead of generic.
 Adapt it to the product type rather than forcing every app into a
@@ -125,17 +125,17 @@ sizes or collage systems unless the brief calls for that direction.
 Use motion deliberately. Choose a few moments that reveal state, guide attention,
 make interaction tangible, or support the subject's atmosphere.
 
-An orchestrated moment usually lands harder than scattered effects. Too much
-animation can make a design feel generated. Respect reduced-motion preferences.
+Use one primary motion motif per flow and reserve other motion for state,
+feedback, or spatial continuity. Respect reduced-motion preferences.
 
 ## Complexity And Restraint
 
 Match complexity to the vision. Maximalist directions need elaborate execution.
 Minimal directions need precision in spacing, type, rhythm, and detail.
 
-Spend boldness in one place. Let the signature element be the memorable move,
-keep the rest disciplined, and cut decoration that does not serve the brief.
-Not taking a risk can be a risk, but every risk should have a job.
+Give each composition one product-specific focal element, keep repeated elements
+consistent, and remove decoration that does not serve hierarchy, state, content,
+or the selected visual world.
 
 ## Content
 

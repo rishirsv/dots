@@ -51,8 +51,6 @@ The moment lag appears, the feeling of directness "falls off a cliff." Response 
 
 ## 2. Direct manipulation — 1:1 tracking
 
-> "Touch and content should move together."
-
 When the user drags something, it must stay glued to the finger — and respect the offset from *where they grabbed it*. Snapping to the element's center on grab breaks the illusion immediately.
 
 - Use Pointer Events with `setPointerCapture` so tracking continues even when the pointer leaves the element's bounds.
@@ -66,9 +64,7 @@ el.addEventListener('pointerdown', (e) => {
 });
 ```
 
-## 3. Interruptibility — the single most important principle
-
-> "The thought and the gesture happen in parallel."
+## 3. Interruptibility
 
 Every animation must be interruptible and redirectable at any moment. A user must be able to grab a moving element mid-flight and reverse it without waiting for the animation to finish. A closing modal the user grabs again should follow the finger — not finish closing first, then reopen.
 
@@ -78,9 +74,7 @@ Every animation must be interruptible and redirectable at any moment. A user mus
 - **When a gesture reverses, blend velocity — don't hard-cut it.** Replacing one animation with another at a reversal creates a velocity discontinuity, a "brick wall." Spring libraries that carry velocity through a re-target avoid it. (This is what iOS's *additive animations* do natively; on the web, choose a spring library that re-targets from the current velocity.)
 - **Decompose 2D motion into independent X and Y springs.** A single spring on a 2D distance desyncs when X and Y have different velocities.
 
-## 4. Behavior over animation — use springs
-
-> "Think of animation as a conversation between you and the object, not something prescribed by the interface."
+## 4. Spring behavior
 
 A pre-scripted, fixed-duration animation can't respond to new input. A spring can — new input just changes the target, and the motion stays continuous. Reach for springs for anything a user can touch.
 
@@ -115,7 +109,8 @@ animate(el, { y: target }, { type: 'spring', bounce: 0.2, duration: 0.4 });
 
 ## 5. Velocity handoff — the seam between drag and animation
 
-When a gesture ends, the animation must **continue at the finger's exact velocity**, so there's no visible seam between dragging and animating. This is the detail that most separates "fluid" from "fine."
+When a gesture ends, continue from the finger's release velocity so dragging and
+animation do not have a visible seam.
 
 Pass the pointer's release velocity as the spring's initial velocity. Some spring APIs want **relative** velocity — normalize it by the remaining distance to the target:
 
@@ -126,8 +121,6 @@ relativeVelocity = gestureVelocity / (targetValue − currentValue)
 Example: element at `y=50`, target `y=150` (100px to go), finger moving 50px/s → initial spring velocity = `50 / 100 = 0.5`. Framer Motion / Motion take absolute px/s velocity directly (`velocity` option), so you usually hand it the raw value.
 
 ## 6. Momentum projection — animate to where the gesture is *going*
-
-> "Take a small input and make a big output."
 
 Don't snap to the nearest boundary from the *release point*. Use velocity to **project the resting position** — exactly like scroll deceleration — then snap to the target nearest that projected point. This is what makes a flick feel like it throws the element.
 
@@ -144,11 +137,11 @@ const target = nearestSnapPoint(projectedEndpoint);   // choose target from the 
 animateSpringTo(target, { velocity: releaseVelocity }); // then hand off velocity (§5)
 ```
 
-Note: the physics-textbook `v²/(2·decel)` is *not* what Apple ships — use the exponential-decay form above. This is the standard behavior in good bottom-sheets and carousels (Vaul, Embla).
+The exponential-decay form above models scroll-style deceleration. The
+constant-deceleration formula `v²/(2·decel)` produces different endpoints; use
+the model established by the target platform or repository.
 
 ## 7. Spatial consistency — symmetric paths, anchored origins
-
-> "If something disappears one way, we expect it to emerge from where it came."
 
 - **Enter and exit along the same path.** A panel that slides in from the right must dismiss to the right. In-from-right / out-the-bottom feels disconnected and confusing.
 - **Anchor interactions to their source.** A menu, popover, or sheet should originate from the element that triggered it — set `transform-origin` to the trigger, so the spatial relationship between button and content is obvious. (This is the same origin-awareness point as popovers scaling from their trigger, not their center.)
@@ -186,9 +179,7 @@ Smoothness is about *what's in the frames*, not just the frame rate.
   `CADisplayLink`). Prefer compositor-friendly transforms and opacity for
   per-frame spatial motion, but use other bounded properties when their material
   meaning earns the paint cost. Apply `will-change` only during known motion and
-  measure the target viewport or device; use the
-  [web motion standards](../../design-review/references/standards.md) for the
-  complete property and performance rules.
+  measure the target viewport or device.
 
 ## 13. Multimodal feedback — motion + sound + haptics
 
@@ -223,8 +214,10 @@ Also: avoid full-viewport moving backgrounds, slow looping oscillations (near 0.
 
 ## 17. Process
 
-- **Prototype interactively — an interactive demo is worth "a million static designs."** You discover the interface by building and playing with it; a working prototype also sets a concrete bar that prevents a mediocre final implementation.
-- **Design interaction and visuals together.** "You shouldn't be able to tell where one ends and the other begins." Motion is not a layer added after the pixels.
+- **Prototype motion interactively.** Inspect transitions during use instead of
+  relying only on static frames.
+- **Design interaction and visuals together.** Evaluate motion in the rendered
+  surface instead of adding it as a final visual pass.
 - **Test with real people in real context**, and review motion with fresh eyes — play it in slow motion / frame-by-frame to catch what's invisible at full speed.
 - **For SwiftUI, validate the transition rather than its final frame.** Build
   against the app's deployment target, record the interaction, inspect an

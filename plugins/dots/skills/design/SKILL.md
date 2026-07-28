@@ -1,20 +1,41 @@
 ---
 name: design
-description: "Designs, builds, redesigns, and polishes visible product UI, and names vaguely described motion effects. Use for web/app screens, React, iOS/SwiftUI, UI design, UX, frontend, or ‘what is this animation called?’ Not for independent design critique or audits, HTML reports, docs, backend, CLI, or invisible fixes."
+description: "Designs, builds, redesigns, and polishes visible product UI. Use for web and app screens, React, iOS/SwiftUI, frontend implementation, responsive refinement, and design-system alignment; not for docs, backend, CLI, or invisible fixes."
 ---
 
 # Visual Design
 
-Create, revise, and faithfully implement distinctive visible UI, or name a
-vaguely described motion effect. Use this skill whenever front-end work changes
-what a user sees or the user needs precise interaction terminology.
+Create, revise, and faithfully implement distinctive visible product UI. Use
+this skill when the requested work changes a web or app surface that users see
+and interact with.
 
-## References
+## Route
 
-- Read [grounding.md](references/grounding.md) before starting a new surface,
-  vague feature, redesign, or substantial visual change.
-- Read [briefing-calibration.md](references/briefing-calibration.md) when
-  forming a new-surface brief or UI-generation prompt from sparse direction.
+Use this skill for:
+
+- new web pages, app screens, dashboards, tools, games, landing pages,
+  iOS/SwiftUI views, and interactive prototypes
+- visual redesigns, style passes, implementation polish loops, responsive
+  cleanup, and design-system alignment
+- implementation work where Image Gen concepts, screenshots, or accepted visual
+  references need faithful translation into code
+
+Do not use it for backend-only changes, CLI tools, pure docs/prose work, static
+artifact mocks, chat-native throwaway diagrams, or bug fixes with no visible UI
+surface.
+
+Choose the path before loading references:
+
+- **Accepted visual target:** ground the product context, then follow the
+  target-driven path in [image-to-code.md](references/image-to-code.md).
+- **No accepted visual target:** ground the work, decide whether visual
+  ambiguity warrants concepts, then implement the chosen direction.
+
+## Conditional References
+
+- Read [grounding.md](references/grounding.md) before changing visual direction
+  or implementing a new or modified surface. It owns source precedence, change
+  freedom, assumptions, and the brief.
 - Read [visual-principles.md](references/visual-principles.md) before choosing
   the visual direction, typography, layout language, or polish pass.
 - Read [typography.md](references/typography.md) when establishing or changing
@@ -28,98 +49,48 @@ what a user sees or the user needs precise interaction terminology.
 - Read [interaction-design.md](references/interaction-design.md) when designing
   interactive states, focus, forms, loading, destructive actions, keyboard
   navigation, or gesture discoverability for web UI.
-- Read [animation-vocabulary.md](references/animation-vocabulary.md) on demand
-  for terminology-only naming requests or when motion and interaction design
-  needs precise language.
-- Read [web motion standards](../design-review/references/standards.md) when
-  implementing or polishing web animation: purpose and frequency, easing,
-  duration, origin, interruptibility, performance, accessibility, or gestures.
+- Read [animation-vocabulary.md](references/animation-vocabulary.md) when
+  precise motion language would improve an interaction being designed.
 - Read [ios-motion.md](references/ios-motion.md) for iOS/SwiftUI animation and,
   on any platform, direct-manipulation gestures, springs, momentum,
   rubber-banding, or synchronized haptics.
 - Read [imagegen-concepts.md](references/imagegen-concepts.md) when concepting
   with Image Gen or generating visual assets.
 - Read [image-to-code.md](references/image-to-code.md) when implementing a
-  selected screenshot, mockup, reference image, or accepted Image Gen concept
-  as a faithful responsive frontend.
+  selected screenshot, mockup, reference image, or accepted Image Gen concept.
 - Read [surface-gates.md](references/surface-gates.md) when the UI type has
   specific preservation rules such as dashboards, games, media surfaces, forms,
   canvas tools, or landing pages.
 
-## Route
-
-Use this skill for:
-
-- new web pages, app screens, dashboards, tools, games, landing pages,
-  iOS/SwiftUI views, and interactive prototypes
-- visual redesigns, style passes, implementation polish loops, responsive
-  cleanup, and design-system alignment
-- implementation work where Image Gen concepts, screenshots, or accepted visual
-  references need faithful translation into code
-- terminology questions where the user describes an animation or interaction
-  but does not know its precise design term
-
-Do not use it for backend-only changes, CLI tools, pure docs/prose work, report
-or brief HTML artifacts, static artifact mocks, or bug fixes with no visible UI
-surface. Use `html` when the user wants formed content rendered as a shareable
-HTML document or static mock.
-Route independent design critique, experience audits, design-system audits,
-acceptance reviews, and motion reviews to
-[design-review](../design-review/SKILL.md). This skill may self-check and revise
-the surface it is actively building; it does not own a review-only request.
-Chat-native throwaway diagrams or mockup sketches are outside this skill. For a
-small UI fix inside an existing design system, follow the repo's local
-conventions first and use only the relevant polish and validation parts of this
-skill.
-
-## Motion Vocabulary Lookup
-
-When the user only wants the name of a vaguely described motion or interaction,
-read [animation-vocabulary.md](references/animation-vocabulary.md) and answer
-directly without entering the design workflow below.
-
-Lead with the strongest glossary term and its definition verbatim. If several
-terms fit, list the best match first, then one or two close alternatives with a
-brief contrast. When nothing matches exactly, name the closest term and
-identify it as an approximation or combine existing glossary terms. Do not
-invent terminology or expand a naming answer into design, review, or
-implementation advice unless the user asks.
-
-## Workflow
+## Design Workflow
 
 ### 1. Ground The Work
 
-Start from the target repo and product context before designing. Load the repo
-design contract — the precedence of design sources and the conflict-resolution
-authority order — from [grounding.md](references/grounding.md): an `AGENTS.md`
-`## Design` section or `DESIGN.md`, then tokens / theme / component library, then
-nearby shipped UI, then product briefs and prior accepted designs.
+Read [grounding.md](references/grounding.md). Follow its source precedence, set
+the permitted change freedom, state a compact executable brief, and proceed
+using repository evidence and safe assumptions. Current product evidence
+outranks remembered preferences. Ask only when a required input cannot be
+derived or safely assumed and different answers would materially change the
+product, scope, or implementation.
 
-When the repo carries design conventions they are the authority for how this
-surface looks; apply this skill's visual principles inside those constraints, and
-build through the repo's existing components and tokens before writing new
-markup. Treat shipped code as evidence, not law — if the user's ask or the task
-conflicts with a repo pattern, name the conflict and ask before overriding.
+Grounding is complete when the design authority, product truth, requested scope,
+and any material unresolved decision are explicit.
 
-Use relevant memory or prior context about the human's preferences, product, or
-past designs only as a hint. The subject's own world, materials, instruments,
-artifacts, and vernacular should drive distinctive choices.
+### 2. Choose The Implementation Path
 
-If the task is a genuinely ambiguous new surface, redesign, or substantial
-visual change, use the discovery and brief gate in
-[grounding.md](references/grounding.md). When the repository, request, or
-authorized assumptions provide enough direction, state the compact brief and
-proceed. Stop for confirmation only when an unresolved choice would materially
-change the product, visual direction, or implementation scope.
+#### Accepted target
 
-Before changing direction, classify the work using the refinement, extension,
-whole-surface, redesign, and new-world boundaries in
-[grounding.md](references/grounding.md). A local addition inherits its
-surroundings. A redesign must be explicit; it preserves product truth and
-function while replacing the authorized visual world instead of splitting the
-difference with the incumbent look.
+For a selected screenshot, mockup, reference image, or accepted Image Gen
+concept, read [image-to-code.md](references/image-to-code.md) and follow its
+target-recreation workflow through design-system extraction, asset and state
+verification, rendered comparison, and fidelity verification.
 
-### 2. Scout Before Coding
+Treat the accepted target as the production design spec. Do not reinterpret
+layout, visible copy, hierarchy, styling, imagery, density, sections, or
+component model unless the user approves the deviation or a concrete blocker
+requires it.
+
+#### Material visual ambiguity
 
 Use Image Gen concepts when visual ambiguity is high enough that seeing options
 would materially improve the decision, or when the surface needs raster assets
@@ -138,16 +109,22 @@ When concept selection would materially change implementation, ask the user to
 choose before coding. Otherwise use the strongest concept as stated direction
 and proceed within the user's authorization.
 
-Once the user accepts a concept, treat it as the production design spec. Do not
-reinterpret layout, visible copy, hierarchy, styling, imagery, density, sections,
-or component model unless the user approves the deviation or a concrete blocker
-requires it. Use [image-to-code.md](references/image-to-code.md) for the
-implementation workflow.
+Once a concept is selected, enter the accepted-target path above.
 
-### 3. Extract The Design System
+#### Direction already clear
 
-Before coding from an accepted concept or selected visual target, extract a
-small design system:
+When the repository design system, brief, or authorized assumptions determine
+the direction, state the compact direction and implement without concept
+generation.
+
+### 3. Implement Or Revise The Surface
+
+Follow the repo's framework, routing, component, styling, state, accessibility,
+and asset conventions. For a new complex app UI without an existing framework
+constraint, default to React + Vite.
+
+For work without an accepted target, extract the design system needed for the
+surface before coding:
 
 - tokens: background, surface, text, muted text, borders, shadows, accents,
   semantic colors, radii, elevation, spacing, and motion timing
@@ -164,26 +141,21 @@ small design system:
 Build through that system so repeated elements stay consistent. Differences
 should be explicit variants, not copied one-off styles.
 
-### 4. Implement Or Revise The Surface
-
-Follow the repo's framework, routing, component, styling, state, accessibility,
-and asset conventions. For a new complex app UI without an existing framework
-constraint, default to React + Vite.
-
 When motion or gesture behavior is part of the surface, load the applicable
 conditional motion references before implementing or revising it. Use the
-vocabulary to name the intended behavior, the web standards for browser motion,
-and the iOS doctrine for native motion and direct manipulation. Apply each
-platform clause only to the interaction mechanism it covers.
+vocabulary to name the intended behavior, the repository's platform conventions
+for browser motion, and the iOS doctrine for native motion and direct
+manipulation. Apply each platform clause only to the interaction mechanism it
+covers.
 
 Build the real usable surface first, not a marketing wrapper around a future
-app. Map states to the component, region, or flow that owns them, then design
-every state a user can actually reach: default plus applicable empty, loading,
-error, disabled, selected, success, dense-data, responsive-collapse, hover,
-focus, and reduced-motion paths. Do not fabricate a component-level state when
-the outcome belongs to the surrounding flow. Harden the surface against
-real-world content — text overflow, long strings, localization, and recoverable
-errors that preserve user input — so it does not break outside the ideal case.
+app. Read [interaction-design.md](references/interaction-design.md), assign each
+reachable state to the control, field, region, or flow that owns it, and design
+only applicable states. Apply reduced-motion behavior as a user preference
+across affected interactions, not as an element-owned state. Harden the surface
+against real-world content — text overflow, long strings, localization, and
+recoverable errors that preserve user input — so it does not break outside the
+ideal case.
 
 Keep real interactive app UI text, navigation, buttons, forms, tables, controls,
 and labels code-native. Use generated raster assets for logos, brand marks,
@@ -195,7 +167,10 @@ fake metrics, decorative gradients, color overlays, card grids, extra sections,
 or new visible copy. A hero eyebrow or badge is allowed only when the user
 explicitly requested it or the accepted/reference design already contains it.
 
-### 5. Polish In Loops
+Implementation is complete when the full requested surface and every applicable
+reachable state work with realistic content inside the governing design system.
+
+### 4. Polish In Loops
 
 After the first pass, critique the rendered surface against the brief, repo
 design guidance, visual principles, and accepted concept if one exists.
@@ -203,7 +178,8 @@ design guidance, visual principles, and accepted concept if one exists.
 Run focused polish loops:
 
 - composition, hierarchy, spacing, alignment, density, and rhythm
-- typography scale, weight, line length, control text, labels, and mobile wraps
+- typography scale, weight, line length, control text, labels, and
+  narrow-viewport wrapping
 - palette, material, image treatment, shadows, borders, and container model
 - interaction affordances, states, motion, focus, and ergonomic flow
 - copy specificity, empty states, labels, data realism, and microcopy
@@ -211,10 +187,13 @@ Run focused polish loops:
   subject
 
 Change the design after critique. Do not only describe what could be better.
-Spend boldness in one place, keep the surrounding system disciplined, and remove
-decoration that does not serve the brief.
+Give the composition one product-specific focal move, keep repeated elements
+consistent, and remove decoration that does not serve the brief.
 
-### 6. Validate Fidelity
+Polish is complete only after the rendered surface has changed in response to
+the critique or the inspection finds no material visual issue.
+
+### 5. Validate Fidelity
 
 Validate the rendered product, not just the build. Follow the shared
 [visual-proof checklist](../../references/visual-proof.md) for tool order,
@@ -224,19 +203,20 @@ chrome.
 
 Use a focused visual self-check for routine work: inspect the rendered surface
 at relevant viewports and states, compare it with the brief and local design
-system, and fix visible regressions. Run the full independent surface critique
-from [design-review](../design-review/SKILL.md) when the work is target-driven,
-acceptance-critical, externally shipped, brand- or accessibility-sensitive, or
-the user requests an independent review. A full gate owns the comparison method,
-severity, and pass/block decision; functional QA cannot replace it.
-
-Use [image-to-code.md](references/image-to-code.md) for the build-loop details:
-target recreation, design-system extraction, asset and state verification, and
-the build-side inputs to the gate.
+system, and fix visible regressions. For target-driven, acceptance-critical,
+externally shipped, brand-sensitive, or accessibility-sensitive work, compare
+the accepted target and rendered surface at matching viewports and states,
+record material mismatches, fix them, and repeat until no material mismatch
+remains or a concrete blocker is reported. Functional QA cannot replace visual
+fidelity verification.
 
 Remove only temporary QA screenshots, reports, scratch notes, and generated
 assets created by the current task and no longer needed. Never delete
 pre-existing user artifacts merely because they look temporary.
+
+Validation is complete when the rendered surface has been inspected at relevant
+viewports and states, visible regressions are fixed, and required fidelity
+comparisons have either passed or produced a concrete unresolved blocker.
 
 ## Output
 

@@ -17,9 +17,12 @@ force every outcome onto every element.
 | **Error** | This owner can fail or contain invalid input | Identify the problem, preserve recoverable input, and expose recovery |
 | **Success** | Completion needs acknowledgment | Confirm the result at the level where it occurred |
 
-Selected, expanded, empty, stale, permission, offline, and reduced-motion paths
-are additional states when the product can reach them. Do not invent states to
-complete a checklist.
+Selected, expanded, empty, stale, permission, and offline are additional states
+when the product can reach them. Assign each to the control, field, region, or
+flow that owns the outcome. Do not invent states to complete a checklist.
+
+Reduced motion is a user preference that changes applicable motion paths across
+the affected interaction or flow; it is not an element-owned state.
 
 **The common miss**: designing hover without focus, or using hover to reveal
 essential information. Keyboard users never see hover, and touch users may not

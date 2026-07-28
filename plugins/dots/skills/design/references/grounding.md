@@ -1,103 +1,106 @@
-# Grounding
+# Grounding And Brief
 
-Read before starting a new surface, vague feature, redesign, or substantial
-visual change.
+Read before changing visual direction or implementing a new or modified
+surface. This reference owns source precedence, change freedom, assumptions,
+and the brief.
 
-Use [briefing-calibration.md](briefing-calibration.md) when the task needs a
-new-surface brief or UI-generation prompt from sparse visual direction.
+## Ground In Product Evidence
 
-## Source Anchors
+Find the repository's design authority before applying general taste:
 
-Find the repo's design authority before reaching for generic taste:
+1. Checked-in design rules such as `AGENTS.md` `## Design` or `## UI`,
+   `DESIGN.md`, or an equivalent.
+2. Design tokens, theme, component library, assets, and platform conventions.
+3. Nearby shipped UI, product briefs, tickets, flows, screenshots, URLs, and
+   prior accepted designs.
 
-1. Checked-in design rules (`AGENTS.md` `## Design`/`## UI`, `DESIGN.md`, or
-   equivalent).
-2. Design tokens, theme, and component library.
-3. Nearby shipped UI, product briefs, tickets, existing flows, screenshots,
-   URLs, or prior accepted designs.
+Treat these as the repository design contract. Resolve conflicts in this order:
+the user's explicit goal, checked-in rules, the repository design system, an
+accepted target for this surface, nearby shipped behavior, then this skill's
+general principles. If no authority exists, design from the user goal, audience,
+product truth, and subject evidence.
 
-Treat these as the repo design contract. If none exist, say so and design from
-the brief. Resolve conflicts by prioritizing the user's explicit goal, then the
-checked-in rules, then the repo design system, then an accepted target for this
-surface, then nearby shipped behavior, then this skill's general principles.
+## Set The Change Freedom
 
-## Determine The Change Freedom
+Classify the work before choosing a direction:
 
-Decide what the task is allowed to change before choosing a visual direction.
-A missing design document does not make the work greenfield. Inspect the code,
-tokens, components, assets, and representative screens for a coherent identity.
-
-- **Refinement:** preserve the incumbent identity, behavior, information,
-  visible copy, and everything outside the requested scope. Improve the use of
-  the current system rather than replacing it under the name of polish.
-- **Local extension:** inherit the surrounding surface. Resolve only the new
-  purpose, content, hierarchy, reachable states, interaction, and how the
-  addition joins the existing experience. Do not turn a component, feature, or
-  state into an identity exercise.
-- **Whole surface inside an established world:** keep the visual system fixed
-  while exploring composition, structure, and flow. New layout freedom is not
-  permission to replace type, palette, material, components, or motion language.
+- **Refinement:** preserve identity, behavior, information, visible copy, and
+  everything outside the requested scope.
+- **Local extension:** inherit the surrounding surface and design only the new
+  purpose, content, hierarchy, reachable states, interaction, and join.
+- **Whole surface in an established world:** explore composition, structure,
+  and flow while preserving type, palette, material, components, and motion
+  language.
 - **Redesign:** preserve product truth, content, function, native affordances,
-  constraints, and confirmed brand commitments; replace the authorized visual
-  world rather than polishing it or blending old and new. The incumbent surface
-  is evidence of what the product is, not authority over what it becomes.
-- **Incomplete identity:** preserve confirmed assets and recognizable traits,
-  then extend only the missing system needed for this work.
-- **No visual authority:** create a coherent world from the user's goal,
+  constraints, and established brand commitments while replacing the
+  authorized visual world.
+- **Incomplete identity:** preserve established assets and recognizable traits,
+  then extend only the missing system.
+- **No visual authority:** create a coherent world from the user goal,
   audience, product truth, and subject evidence.
 
-A redesign must be explicit in the request or confirmed brief. Ask before
-expanding a refinement into a redesign, changing a durable design contract, or
-letting a local extension alter the wider product identity.
+Do not expand a refinement into a redesign, alter a durable design contract, or
+let a local extension redefine the wider product identity unless the request
+authorizes it. State the supported interpretation and proceed. Ask only when a
+required input cannot be derived or safely assumed and different answers would
+materially change the product, scope, or implementation.
 
-## Discovery Round
+## Form The Brief
 
-Ask only for inputs that would materially change the design or build. Prefer one
-round; add another only for real blockers. When the repo and prompt make the
-answer obvious, assert the default and ask the user to confirm or correct it.
+Use repository evidence and authorized assumptions to resolve purpose, user,
+content and data, visual direction, scope, interaction, constraints, and
+anti-goals. State a compact brief and proceed in the same turn.
 
-For sparse requests, resolve the missing pieces that matter: purpose and user,
-content/data and states, visual direction or reference, scope and interactivity,
-and constraints or anti-goals. Keep the question round short.
+For ordinary work, capture:
 
-## Brief Gate
+- **Outcome and user:** what is being built, who it serves, and the primary
+  action or decision.
+- **Change freedom:** refinement, extension, established-world surface,
+  redesign, incomplete identity, or new visual world.
+- **Direction and anchors:** the visual lane, subject-specific materials, and
+  what each available reference contributes.
+- **Structure:** first viewport, major regions, hierarchy, section or screen
+  flow, container model, and responsive continuation.
+- **System:** typography roles, spacing and grid, palette and material, imagery,
+  icon language, component motifs, and motion behavior.
+- **Content and states:** visible copy, data ranges, media roles, reachable
+  states, and interaction from entry to completion.
+- **Constraints:** scope, platform, accessibility, fidelity, implementation
+  limits, and explicit visual anti-patterns.
+- **Acceptance:** what makes the result product-specific, what would make it
+  generic or off-brief, and what must be true before handoff.
 
-Use the gate for genuinely ambiguous new apps, prototypes, redesigns, or
-substantial UI builds. If the request, repository, existing surface, or
-authorized assumptions already establish a coherent direction, state a compact
-brief and proceed in the same turn. Stop for confirmation only when an
-unresolved decision would materially change the user goal, visual direction,
-scope, or build.
+Expand only the fields whose ambiguity would change the design. Spend detail
+first on layout, spacing or grid, typography, reference contributions, and
+negative constraints. Keep palette concise unless brand fidelity,
+accessibility, or an accepted target requires exact values.
 
-A visual target is helpful but not mandatory. When none exists, ground the
-brief in repository evidence and explicit assumptions; generate concepts only
-when seeing alternatives would materially improve the decision.
+A visual target is helpful but not mandatory. Generate concepts only when
+seeing alternatives would materially improve the decision or the surface needs
+missing raster assets.
 
-Use a compact brief for clear work: what is being built, visual lane, scope, and
-remaining question or confirmation. Use the full form only for genuinely
-ambiguous, multi-screen, or standalone planning requests:
+## Make Direction Executable
 
-1. Feature Summary — what this is, who it's for, what it must accomplish.
-2. Primary User Action — the single most important thing the user should do.
-3. Design Direction — scene sentence, tone constraints, references, and the
-   specific quality each anchor contributes.
-4. Scope — fidelity, breadth, interactivity, time intent.
-5. Structure — layout skeleton, grid or spacing rhythm, first viewport
-   architecture, section rhythm, container model, hierarchy, and information
-   flow.
-6. Key States — default, empty, loading, error, success, edge cases.
-7. Interaction Model — click, hover, scroll, feedback, entry-to-completion.
-8. Content Requirements — copy, labels, microcopy, dynamic ranges, image/media
-   roles and likely sources.
-9. Anti-patterns — visual tropes, component shapes, palette moves, effects, or
-   layout formulas to avoid.
-10. Client-Ready Checks — what makes the surface product-specific, what generic
-   pattern would fail it, and what the review gate should treat as unacceptable.
-11. Recommended References — this skill's references or the repo's own design
-   docs that guide implementation.
-12. Open Questions — only genuine blockers; assert obvious defaults instead.
+Translate mood words into visible decisions rather than leaving them as the
+brief:
 
-Spend brief detail first on layout skeleton, spacing rhythm or grid,
-typography direction, references, and negative constraints. Keep palette concise
-unless brand fidelity or accessibility requires exact values. Do not let long
-copy or broad vibe adjectives substitute for executable structure.
+- `sophisticated` may mean editorial type relationships, restrained chrome,
+  precise spacing, and quiet dividers.
+- `tactile` may use physical materials, textures, controls, or artifacts from
+  the subject's world.
+- `energetic` may use tighter rhythm, sharper contrast, asymmetric crops, and
+  faster state transitions.
+- `calm` may use fewer competing tiers, longer line heights, quieter motion,
+  and more separation between groups.
+
+Before concepting, ask what prevents the design from being swapped into another
+product with only copy and color changes. If the answer is only a palette,
+slogan, or mood, strengthen the brief with subject-specific imagery, data,
+materials, type behavior, spacing rhythm, component motifs, and anti-patterns.
+
+When revising a concept, preserve what works and specify visible deltas such as
+gutter rhythm, type weight, image variety, component shape, or motion timing.
+Avoid broad resets when a targeted correction preserves the useful design.
+
+Grounding is complete when the design authority, change freedom, compact brief,
+assumptions, and any genuine blocker are explicit.
