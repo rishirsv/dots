@@ -87,8 +87,10 @@ scripts/sync-plugins.sh
 
 ## Verify
 
+Use focused checks for the setup or source you changed, then inspect the
+worktree:
+
 ```sh
-scripts/verify.sh
 git status --short
 ```
 
@@ -96,4 +98,18 @@ Before committing setup changes:
 
 ```sh
 git diff --check
+```
+
+`scripts/verify.sh --full` is the full repository integration gate. It checks
+plugin and marketplace metadata, marketplace packaging/installability,
+Meta-Skill and Dots skills and eval suites, the Meta-Skill CLI and workbench,
+deterministic HTML generation/tests, config sync dry runs, and Meta-Skill and
+Dots test suites. It is not a routine setup check.
+
+Run it only when the user explicitly requests it, for marketplace or plugin
+packaging, for cross-plugin/shared integration or release infrastructure, or
+when changing the gate itself:
+
+```sh
+scripts/verify.sh --full
 ```

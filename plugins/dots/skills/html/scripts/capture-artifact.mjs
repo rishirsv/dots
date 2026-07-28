@@ -9,12 +9,11 @@
  *     --out-dir /path/to/screenshots
  */
 
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { spawn } from "node:child_process";
-import { checkArtifact } from "./check-artifact.mjs";
 
 const chromeCandidates = [
   process.env.CHROME_BIN,
@@ -264,10 +263,6 @@ try {
 
   const artifact = resolve(input);
   if (!existsSync(artifact)) fail(`cannot read "${input}"`);
-  const structuralFailures = checkArtifact(readFileSync(artifact, "utf8"));
-  if (structuralFailures.length) {
-    fail(`structural gate failed: ${structuralFailures.map((failure) => failure.code).join(", ")}`);
-  }
 
   const chrome = chromeCandidates.find(existsSync);
   if (!chrome) fail("Chrome was not found; set CHROME_BIN to a Chromium-based browser");

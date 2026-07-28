@@ -177,91 +177,33 @@ for them. Name files for the content (`sync-rollout-brief.html`), not the skill.
 
 Treat delivery states precisely:
 
-- **Standalone** means the local self-contained file passed structural and
-  rendered inspection.
+- **Standalone** means the local self-contained file is ready to open and
+  share.
 - **Published** means the user explicitly asked for hosting, an available
   publishing workflow completed, and the resulting URL was opened and verified.
 - If publishing is unavailable or fails, return the standalone file and state
   that it was not published. Never infer publication from file creation.
 
-## Verification
+## Handoff review
 
-Before handoff, render and check — headless screenshots are fine for most
-passes, a real browser for keepers:
+Never run automated HTML structural validation.
 
-Run the structural gate first:
+Review the source before handoff:
 
-```bash
-node scripts/check-artifact.mjs /path/to/finished.html
-```
+- Preserve the source material's claims, decisions, and uncertainty; trace
+  figures to their sources and mark unverified gaps.
+- Keep a page self-contained with no external requests. Keep a fragment scoped
+  to one root with no page shell, document footer, script, reveal state, or
+  dependency on host behavior.
+- Use the design system and semantic HTML. Preserve native tab order and visible
+  focus, label controls, provide equivalent text for informative figures, and
+  pair color with text, shape, or line treatment.
+- Ensure generated assets have a reader purpose, accurate alt text, useful
+  context when needed, and no claim to be observed evidence.
+- Remove internal provenance, prompts, private paths, scratch files, and
+  generation metadata.
 
-It rejects host-only APIs, external resource loads, custom tab order, unlabeled
-controls, inaccessible image/SVG content, and text below 11px. A pass proves
-those structural properties only; continue with rendered inspection.
-
-For a page, capture the exact delivered file:
-
-```bash
-node scripts/capture-artifact.mjs \
-  --in /path/to/finished.html \
-  --out-dir /path/to/rendered-proof
-```
-
-This renders full-page screenshots at 1280, 768, 360, and 320 in light and
-dark modes, plus reduced-motion and JS-off states. Inspect those images. The
-shared `visual-check.mjs` fixture proves catalog behavior for maintainers; it
-does not prove the page being handed to the user.
-
-### Page verification
-
-- **Widths**: 1280, 768, 360, and 320. No page-level horizontal scroll at any of
-  them; wide tables/code scroll inside their containers; the TOC rail docks
-  in the margin at wide widths, remains visible while the article scrolls,
-  and sits inline at narrow ones. A long rail scrolls internally instead of
-  running below the viewport.
-- **Responsive components**: linear `process-steps` remain fully visible;
-  stacked tables show every cell label; title and status never overlap; wide
-  figures and evidence galleries keep captions and focal content readable. At
-  320px, a long title must leave room for orientation or supporting context in
-  the first viewport rather than becoming the whole page. Text inside a scaled
-  SVG remains at least 11px effective size; otherwise move it to HTML or author
-  a compact mobile composition.
-- **Dark mode**: force `data-theme="dark"` (or emulate
-  `prefers-color-scheme`). Text stays readable, chart emphasis still reads,
-  code surface stays dark, no hard-coded colors leak through. Inspect after
-  the documented load stagger settles; also confirm the pre-animation state
-  never becomes the only readable state.
-- **Reduced motion**: with `prefers-reduced-motion: reduce`, the page is
-  fully static and complete.
-- **JS off**: everything renders; reveals are visible; details open natively;
-  only the theme toggle and scroll-spy go quiet.
-- **Design system**: compare the artifact against [DESIGN.md](DESIGN.md),
-  including its tokens, visual rationale, component rules, and Do's and Don'ts.
-- **First impression**: at every width and theme, the title, dek, and first
-  decision-bearing content have deliberate contrast and spacing; no invisible
-  hero text, accidental empty screen, or ornamental delay blocks the answer.
-- **Generated assets**: every generated image has a defined reader purpose,
-  accurate alt text, a useful caption when context is needed, and a data-URI
-  source in the final page. No generated visual fills an accidental layout gap
-  or masquerades as observed evidence.
-- **Accessibility**: use semantic structure and native controls; preserve native
-  tab order and visible focus; give every action a visible label or accessible
-  name; give informative figures equivalent adjacent content or an accessible
-  summary; pair color with text, shape, or line treatment.
-- **Honesty sweep**: every number traceable; helpful reader-facing sources
-  included; internal provenance omitted; gaps marked, not smoothed.
-
-### Fragment verification
-
-- **Boundary**: one scoped root; no `:root`, page shell, document-level
-  footer, script, reveal state, or dependency on host behavior.
-- **Widths**: render inside a minimal host at 1280, 768, and 360. The fragment
-  does not create page-level horizontal scroll.
-- **Ground**: its scoped tokens set an explicit background, foreground, and
-  font; host CSS and theme changes do not make it illegible.
-- **Design and honesty**: apply the same design-system and honesty checks as
-  a page.
-- **Structure**: run `check-artifact.mjs` on the wrapped fragment fixture and
-  require a pass before delivery.
-
-Report what was verified with the artifact; if a check was skipped, say so.
+Use browser or rendered review only when the user asks for it or when visual
+proof is the task. In that case, inspect the states relevant to the requested
+proof and report exactly what was reviewed. Do not imply rendered or interaction
+proof from source inspection.

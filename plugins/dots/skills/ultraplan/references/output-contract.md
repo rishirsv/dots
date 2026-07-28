@@ -99,18 +99,16 @@ user asks for one or the repo requires a durable audit trail. When required,
 keep it to the verdict, confirmed plan changes, deliberately excluded findings,
 and unresolved human decisions; do not restate the upgraded plan.
 
-## Structural Checks
+## Content And Handoff Checks
 
-Before handoff, check the artifact for its format:
+Before handoff, check that the artifact preserves the plan's content and remains
+usable in its existing format:
 
-- Markdown: logical headings, closed fences, readable tables, executable spine.
-- HTML: exactly one `<main>` when the input had one, valid closing `</body>` and
-  `</html>` tags, expected section ids present or deliberately changed, no
-  duplicate major ids introduced.
-- Any format: the artifact is complete, not a fragment, unless the user asked for
-  a fragment. Each paragraph must change a decision, boundary, sequence, anchor,
-  or proof. It states the outcome, authority boundary, success criteria, and
-  required evidence without exposing or scripting internal reasoning. For an
-  upgrade, diff against the base and inspect for accidental rewrites, dropped
-  acceptance criteria, stale premises, duplicated facts, or new complexity not
-  justified by confirmed findings.
+- The artifact is complete, not a fragment, unless the user asked for a
+  fragment.
+- Each paragraph changes a decision, boundary, sequence, anchor, or proof.
+- It states the outcome, authority boundary, success criteria, and required
+  evidence without exposing or scripting internal reasoning.
+- For an upgrade, diff against the base and inspect for accidental rewrites,
+  dropped acceptance criteria, stale premises, duplicated facts, or new
+  complexity not justified by confirmed findings.

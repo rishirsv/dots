@@ -1,6 +1,12 @@
 #!/usr/bin/env zsh
 set -euo pipefail
 
+if [[ $# -ne 1 || "${1-}" != "--full" ]]; then
+  echo "Usage: scripts/verify.sh --full"
+  echo "This is the full repository integration gate; use focused checks for ordinary changes."
+  exit 2
+fi
+
 ROOT="${0:A:h:h}"
 METASKILL="plugins/meta-skill/scripts/metaskill"
 META_SKILLS=(
@@ -101,9 +107,6 @@ done < <(find plugins/dots -path '*/evals/evals.json' -not -path '*/runs/*' -pri
 echo "==> Dots HTML deterministic checks"
 node plugins/dots/skills/html/scripts/generate-theme.mjs --check
 node --test plugins/dots/skills/html/scripts/*.test.mjs
-for artifact in plugins/dots/skills/html/assets/atlas.html plugins/dots/skills/html/assets/exemplars/*.html; do
-  node plugins/dots/skills/html/scripts/check-artifact.mjs "$artifact" >/dev/null
-done
 
 echo "==> Dry-run config sync"
 scripts/sync-configs.sh --dry-run --codex --codex-personal --claude

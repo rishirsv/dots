@@ -42,8 +42,18 @@ Source repo for Rishi's personal plugins, agent workflows, and machine config.
 
 ## Validation
 
-- Run baseline repo verification with `scripts/verify.sh`.
+- Use focused checks for ordinary changes, including documentation, config, and
+  a single skill.
 - After editing a skill, review the changed files directly and run relevant
   deterministic tests.
 - For Meta-Skill validation, prefer
   `plugins/meta-skill/scripts/metaskill validate <skill-dir> --json`.
+- Never run automated HTML structural validation.
+- `scripts/verify.sh --full` is the full repository integration gate. It checks
+  plugin and marketplace metadata, validates and smoke-installs marketplace
+  plugins, validates Meta-Skill and Dots skills and eval suites, exercises the
+  Meta-Skill CLI and workbench, runs deterministic HTML generation/tests,
+  dry-runs config sync, and runs Meta-Skill and Dots test suites.
+- Run `scripts/verify.sh --full` only when the user explicitly requests it, for
+  marketplace or plugin packaging, for cross-plugin/shared integration or
+  release-infrastructure changes, or when changing the gate itself.

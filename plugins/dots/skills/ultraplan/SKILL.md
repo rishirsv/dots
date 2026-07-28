@@ -137,7 +137,8 @@ semantics, data, and platform behavior.
 Default to saving the plan with the repo's plans convention; in chat, give a
 concise summary, not the full plan. Follow
 [output-contract.md](references/output-contract.md) for the plan shape,
-compression rules, split rule, upgrade behavior, and structural checks.
+compression rules, split rule, upgrade behavior, and content-preservation
+checks.
 
 Use ordinary planning language in generated artifacts, filenames, headings, chat
 summaries, and handoffs: `plan` or `implementation plan`.

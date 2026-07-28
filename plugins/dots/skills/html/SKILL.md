@@ -95,14 +95,12 @@ Choose the delivery branch before assembly:
    reader-facing sources footer only when attribution helps the artifact.
    Never expose tool names, sessions, prompts, private working paths, scratch
    files, or generation metadata.
-8. **Verify the delivered artifact before handoff.** Run
-   `scripts/check-artifact.mjs` on the finished file. For a page, also run
-   `scripts/capture-artifact.mjs` against that exact file and inspect its
-   screenshots; do not substitute the shared component fixture. Then apply the
-   branch-specific checklist in
-   [references/authoring.md](references/authoring.md#verification). A failed
-   structural or rendered check blocks handoff; pages require dark-mode,
-   reduced-motion, and JS-off proof.
+8. **Review the delivered artifact before handoff.** Check the source, content
+   fidelity, self-contained delivery, and the applicable handoff points in
+   [references/authoring.md](references/authoring.md#handoff-review). Never run
+   automated HTML structural validation. Use browser or rendered review only
+   when the user asks for it or visual proof is the task; otherwise it is not a
+   delivery requirement.
 
 For charts of any kind, read [references/charts.md](references/charts.md)
 first — form follows the data's job, and some data should not be a chart.

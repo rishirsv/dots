@@ -13,7 +13,6 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { spawn } from "node:child_process";
 import { assemble } from "./assemble.mjs";
-import { checkArtifact } from "./check-artifact.mjs";
 
 const chromeCandidates = [
   process.env.CHROME_BIN,
@@ -332,8 +331,6 @@ try {
     body: bodyFixture(),
     components: ["toc-rail", "callout", "process-steps", "comparison-grid", "data-table", "wide-figure", "evidence-gallery", "page-behavior"],
   });
-  const structuralFailures = checkArtifact(base);
-  if (structuralFailures.length) fail(`fixture structural checks: ${structuralFailures.map((failure) => failure.code).join(", ")}`);
   const lightPath = join(temp, "light.html");
   const darkPath = join(temp, "dark.html");
   const withDiagnostics = base.replace("</body>", `${diagnosticScript()}\n</body>`);

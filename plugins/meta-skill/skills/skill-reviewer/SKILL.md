@@ -34,8 +34,11 @@ checks that apply to the skill. Load the relevant domain module when the skill
 creates or analyzes one of its named artifacts.
 
 For a full diagnostic, run the repository's documented read-only structural
-validator when one is available. Report the result as mechanical evidence,
-not proof of task success.
+validator when one is available and repository instructions permit it. A
+repository prohibition controls even when this skill would otherwise call for
+the validator; do not substitute a similar prohibited automated check. Report
+an allowed validator's result as mechanical evidence, not proof of task
+success.
 
 Record the intended behavior, files and artifacts inspected, evidence
 available, and evidence gaps. Do not turn a narrow question into a general

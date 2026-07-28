@@ -905,7 +905,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
     <section id="delivery-gate">
       <h2>Delivery gate</h2>
       <p>The first release is ready when a user can initialize Drafts, add representative samples, inspect the derived profile, create or edit a rule, draft in at least two distinct contexts, resume a long-form document, and explicitly promote or reject a candidate rule without hidden state changes.</p>
-      <p>Validation should combine focused unit and fixture tests, Meta-Skill validation for the owning skill, authored behavioral evaluations, manifest consistency checks, and the repository-wide verification gate.</p>
+      <p>Validation should use focused checks for the changed surfaces: unit and fixture tests, Meta-Skill validation for the owning skill, authored behavioral evaluations, and manifest consistency checks.</p>
       <div data-component="recommendation" class="recommendation">
         <p><strong>Implement Drafts vertically, beginning with contracts and one complete email workflow.</strong> Prove state initialization, rule resolution, context selection, drafting, edit-pair capture, and explicit promotion end to end before adding long-form reports or broader stylometry.</p>
         <p>This keeps the first implementation reviewable while testing every architectural boundary that later workflows depend on.</p>

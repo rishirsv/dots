@@ -143,6 +143,11 @@ Keep one authoritative home for each rule:
 
 ### 5. Validate And Iterate
 
+Follow the repository's validation policy. Do not run a check that repository
+instructions prohibit, even when this skill would otherwise require it. Use
+the allowed focused checks for the changed surface and report any omitted check
+whose absence limits the completion claim.
+
 Re-read changed runtime files as a fresh agent. Check that discovery,
 instructions, resources, output, and completion agree. Prune every runtime
 sentence in isolation:
@@ -166,9 +171,10 @@ each hit as a required runtime dependency or leakage. For every runtime section,
 ask whether a future agent needs it while handling a user's task. Move
 maintainer-only material to development state or deterministic tooling.
 
-Run changed scripts the way a future agent will. Test valid and failing inputs
-where failure behavior matters. Resolve runtime links from the effective
-package when the skill depends on shared resources. Run
+Run changed scripts the way a future agent will when repository instructions
+permit it. Test valid and failing inputs where failure behavior matters.
+Resolve runtime links from the effective package when the skill depends on
+shared resources. When permitted, run
 `<meta-skill-root>/scripts/metaskill validate <skill-dir> --json` and require
 `ok: true`.
 
@@ -234,9 +240,10 @@ plugin workflow for a plugin-contained skill.
 
 ## Completion
 
-Finish only after applicable deterministic validation passes. For the broad
-changes named above, include the payload scan, allowed runtime dependencies,
-and maintainer-placement findings in the completion evidence.
+Finish only after applicable, repository-permitted deterministic validation
+passes. For the broad changes named above, include the payload scan, allowed
+runtime dependencies, and maintainer-placement findings in the completion
+evidence.
 
 Report:
 
