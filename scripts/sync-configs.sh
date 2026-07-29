@@ -7,7 +7,7 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--drafts-styles|--claude|--vscode|--ghostty|--cmux|--starship|--raycast|--zsh|--launchagents|--karabiner ...]
+Usage: scripts/sync-configs.sh [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--drafts-styles|--claude|--vscode|--ghostty|--starship|--raycast|--zsh|--karabiner ...]
 
 Installs repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
@@ -20,7 +20,7 @@ EOF
 add_target() {
   local target="$1"
   if [[ "$target" == "all" ]]; then
-    TARGETS=(codex codex-personal drafts-styles claude vscode ghostty cmux starship raycast zsh launchagents karabiner)
+    TARGETS=(codex codex-personal drafts-styles claude vscode ghostty starship raycast zsh karabiner)
     return
   fi
   TARGETS+=("$target")
@@ -55,9 +55,6 @@ while (( $# )); do
     --ghostty)
       add_target ghostty
       ;;
-    --cmux)
-      add_target cmux
-      ;;
     --starship)
       add_target starship
       ;;
@@ -66,9 +63,6 @@ while (( $# )); do
       ;;
     --zsh)
       add_target zsh
-      ;;
-    --launchagents)
-      add_target launchagents
       ;;
     --karabiner)
       add_target karabiner
@@ -247,19 +241,6 @@ sync_ghostty() {
   install_file "$ROOT/configs/ghostty/config" "$HOME/.config/ghostty/config"
 }
 
-sync_cmux() {
-  install_file "$ROOT/configs/cmux/cmux.json" "$HOME/.config/cmux/cmux.json"
-  if (( DRY_RUN )); then
-    log "Would set cmux sidebarState to inactive"
-    log "Would enable cmux Codex integration"
-  else
-    defaults write com.cmuxterm.app sidebarState -string inactive
-    defaults write com.cmuxterm.app codexHooksEnabled -bool true
-    log "Set cmux sidebarState to inactive"
-    log "Enabled cmux Codex integration"
-  fi
-}
-
 sync_starship() {
   install_file "$ROOT/configs/starship.toml" "$HOME/.config/starship.toml"
 }
@@ -271,10 +252,6 @@ sync_raycast() {
 sync_zsh() {
   install_file "$ROOT/configs/zsh/.zprofile" "$HOME/.zprofile"
   install_file "$ROOT/configs/zsh/.zshrc" "$HOME/.zshrc"
-}
-
-sync_launchagents() {
-  install_file "$ROOT/configs/cmux/launchagents/com.rishi.cmux.disable-session-restore.plist" "$HOME/Library/LaunchAgents/com.rishi.cmux.disable-session-restore.plist"
 }
 
 sync_karabiner() {
@@ -290,11 +267,9 @@ for target in "${TARGETS[@]}"; do
     claude) sync_claude ;;
     vscode) sync_vscode ;;
     ghostty) sync_ghostty ;;
-    cmux) sync_cmux ;;
     starship) sync_starship ;;
     raycast) sync_raycast ;;
     zsh) sync_zsh ;;
-    launchagents) sync_launchagents ;;
     karabiner) sync_karabiner ;;
     *)
       echo "Unknown target: $target" >&2
