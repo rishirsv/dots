@@ -232,7 +232,88 @@ class SkillInventoryTests(unittest.TestCase):
         self.assertIn("sample-plugin:sample-skill", result.stdout)
 
 
+class SelfImproveScopeTests(unittest.TestCase):
+    def test_ordinary_review_defaults_are_bounded(self):
+        parser = self_improve.build_parser()
+        for command in ("triage", "dream", "skill-audit"):
+            args = parser.parse_args([command])
+            self.assertEqual(args.days, 30)
+            self.assertEqual(args.limit, 100)
+
+    def test_insights_stats_defaults_to_retained_window(self):
+        args = self_improve.build_parser().parse_args(["stats"])
+        self.assertIsNone(args.days)
+        self.assertIsNone(args.limit)
+
+
 class OracleContainmentTests(unittest.TestCase):
+    def test_package_scope_must_be_explicit(self):
+        script = PLUGIN_ROOT / "skills" / "oracle" / "scripts" / "oracle_package.py"
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "context.txt").write_text("context")
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(script),
+                    "--root",
+                    str(root),
+                    "--task",
+                    "Review",
+                    "--dry-run",
+                ],
+                capture_output=True,
+                text=True,
+            )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("positive --file selector", result.stderr)
+
+    def test_all_repo_requires_explicit_flag(self):
+        script = PLUGIN_ROOT / "skills" / "oracle" / "scripts" / "oracle_package.py"
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "context.txt").write_text("context")
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(script),
+                    "--root",
+                    str(root),
+                    "--task",
+                    "Review",
+                    "--all-repo",
+                    "--dry-run",
+                ],
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("context.txt", result.stdout)
+
+    def test_all_repo_rejects_file_selectors(self):
+        script = PLUGIN_ROOT / "skills" / "oracle" / "scripts" / "oracle_package.py"
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "context.txt").write_text("context")
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(script),
+                    "--root",
+                    str(root),
+                    "--task",
+                    "Review",
+                    "--all-repo",
+                    "--file",
+                    "context.txt",
+                    "--dry-run",
+                ],
+                capture_output=True,
+                text=True,
+            )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("cannot be combined", result.stderr)
+
     def test_outside_root_literal_is_rejected(self):
         script = PLUGIN_ROOT / "skills" / "oracle" / "scripts" / "oracle_package.py"
         with tempfile.TemporaryDirectory() as tmp:

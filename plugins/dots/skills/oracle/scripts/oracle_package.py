@@ -162,7 +162,7 @@ def expand_patterns(patterns: list[str], root: Path) -> tuple[list[Path], list[s
 
 def matching_includes(rel: str, includes: list[str]) -> list[str]:
     if not includes:
-        return ["default repo file selection"]
+        return ["explicit --all-repo selection"]
     matches = [pattern for pattern in includes if fnmatch.fnmatch(rel, pattern) or rel == pattern]
     return matches or ["literal or directory include"]
 
@@ -348,6 +348,11 @@ def main() -> int:
     parser.add_argument("--mode", default=None, help=argparse.SUPPRESS)
     parser.add_argument("--decision", default="", help="Decision, choice, or hypothesis the oracle should improve.")
     parser.add_argument("--file", action="append", default=[], help="File, directory, glob, or !exclude glob. Repeatable.")
+    parser.add_argument(
+        "--all-repo",
+        action="store_true",
+        help="Explicitly package every eligible file in the repository. Cannot be combined with --file.",
+    )
     parser.add_argument("--context-map-file", help="Curated Attached Context bullet list. Suppresses mechanical file reasons in prompt.md.")
     parser.add_argument("--notes", default="", help="Extra constraints or context notes.")
     parser.add_argument("--root", default=".", help="Repository/project root.")
@@ -380,6 +385,17 @@ def main() -> int:
         help="Warn (not fail) when context.zip exceeds this size in megabytes. Default 25.",
     )
     args = parser.parse_args()
+
+    positive_file_selectors = [
+        pattern for pattern in args.file if pattern.strip() and not pattern.startswith("!")
+    ]
+    if args.all_repo and args.file:
+        raise SystemExit("--all-repo cannot be combined with --file.")
+    if not args.all_repo and not positive_file_selectors:
+        raise SystemExit(
+            "Provide at least one positive --file selector, or pass --all-repo "
+            "to package the entire repository."
+        )
 
     root = Path(args.root).expanduser().resolve()
     if args.prompt_file and (args.task or args.task_file):

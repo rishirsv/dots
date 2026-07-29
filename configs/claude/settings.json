@@ -4,7 +4,8 @@
     "build-ios-apps@steady-app": true,
     "codex@openai-codex": true,
     "dots@dots": true,
-    "meta-skill@dots": true
+    "meta-skill@dots": true,
+    "warp@claude-code-warp": true
   },
   "extraKnownMarketplaces": {
     "dots": {
@@ -18,10 +19,16 @@
         "source": "directory",
         "path": "/Users/rishi/.claude/plugins/local-marketplaces/steady-app"
       }
+    },
+    "claude-code-warp": {
+      "source": {
+        "source": "github",
+        "repo": "warpdotdev/claude-code-warp"
+      }
     }
   },
   "effortLevel": "high",
-  "enableRemoteControl": false,
   "tui": "fullscreen",
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "enableRemoteControl": false
 }

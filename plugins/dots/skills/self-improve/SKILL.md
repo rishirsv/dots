@@ -45,8 +45,11 @@ still needs the evidence packet and the generalization gate.
    must name both platforms, preserve the source on every evidence item, and
    deduplicate only after each host has been analyzed separately.
 2. **Inventory and triage.** Confirm the selected session source exists, then
-   rank sessions by explicit corrections, preferences, repeated friction,
-   failed checks, and relevance to the current repository.
+   start with the most recent 30 days and at most 100 sessions. Rank them by
+   explicit corrections, preferences, repeated friction, failed checks, and
+   relevance to the current repository. Expand the window only to close a
+   concrete evidence gap, such as locating an earlier occurrence of the same
+   correction or checking contradictory evidence. State the gap before expanding.
 3. **Read the evidence.** Inspect the conversation, tool calls, and referenced
    files. Establish the request, expected behavior, actual behavior, correction,
    and governing files.
@@ -97,10 +100,9 @@ python3 scripts/self_improve.py --platform claude triage --days 30 --cwd "$PWD"
 python3 scripts/self_improve.py --platform codex show <thread-id>
 python3 scripts/self_improve.py --platform claude show <session-id>
 python3 scripts/self_improve.py --platform claude files <session-id>
-python3 scripts/self_improve.py --platform codex dream --days 90 --min-support 2
-python3 scripts/self_improve.py --platform claude deep --days 30
-python3 scripts/self_improve.py --platform codex stats --days 30 --top 10
-python3 scripts/self_improve.py --platform claude stats --days 30 --json
+python3 scripts/self_improve.py --platform codex dream --min-support 2
+python3 scripts/self_improve.py --platform codex stats --top 10
+python3 scripts/self_improve.py --platform claude stats --json
 python3 scripts/self_improve.py --platform claude decide accept <proposal-key>
 ```
 
@@ -113,6 +115,14 @@ cap in its coverage block.
 `goal-health` is Codex-only because Claude Code has no equivalent durable goals
 database. Claude `memory-audit` inventories project auto-memory and its limits;
 it does not emulate the Codex memory-consolidation database.
+
+`triage`, `dream`, and `skill-audit` default to the bounded ordinary-review
+window: 30 days and at most 100 sessions. Use explicit `--days` and `--limit`
+values only when the evidence gap requires a wider search. `deep` combines
+multiple analyses; run it only when the user explicitly asks for a deep or
+comprehensive review. `stats` is different: invoking the explicit `insights`
+route profiles the whole retained window by default, subject to the reported
+derivation cap.
 
 The helper isolates platform state:
 

@@ -83,6 +83,18 @@ package is over budget, drop altitude or split the run. Inspect `prompt.md`
 and the `context.zip` file list before sending. Rebuild bad packages; do not
 patch zips by hand.
 
+Every package command must state its scope. Pass at least one positive `--file`
+selector; exclusion selectors do not count. Use `--all-repo` only when the
+decision genuinely requires the entire repository, and do not combine it with
+`--file`:
+
+```bash
+python3 plugins/dots/skills/oracle/scripts/oracle_package.py \
+  --task "Review this repository-wide migration." \
+  --all-repo \
+  --dry-run
+```
+
 ## Advisor Routes
 
 | route | trigger phrasing | action |

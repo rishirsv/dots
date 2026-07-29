@@ -31,9 +31,11 @@ Implementation guide: request approach, file-by-file steps, risks,
 constraints, and validation. Do not ask the advisor to edit files or complete
 the implementation.
 
-Package record: when using `.agents/oracle/<task>`, inspect `prompt.md`,
-`context.zip`, and token total before running the CLI. Save the answer next to
-the package.
+Package record: when using `.agents/oracle/<task>`, select bounded context with
+one or more positive `--file` selectors. Use `--all-repo` only for an
+intentional repository-wide package; it cannot be combined with `--file`.
+Inspect `prompt.md`, `context.zip`, and token total before running the CLI. Save
+the answer next to the package.
 
 ## Claude (`claude` CLI)
 

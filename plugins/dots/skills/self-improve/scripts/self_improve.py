@@ -359,7 +359,7 @@ def shorten(value: str, width: int) -> str:
 
 def threads(
     *,
-    limit: int,
+    limit: int | None,
     archived: str,
     days: int | None = None,
     query: str | None = None,
@@ -1573,7 +1573,8 @@ def cmd_stats(args: argparse.Namespace) -> None:
         print("No sessions with enough signal in range.\n")
     else:
         totals = summary["totals"]
-        print(f"- Window: {summary['date_range']['start']} to {summary['date_range']['end']} (last {args.days} days)")
+        window = f"last {args.days} days" if args.days is not None else "whole retained window"
+        print(f"- Window: {summary['date_range']['start']} to {summary['date_range']['end']} ({window})")
         print(f"- Sessions analyzed: {summary['sessions']} of {coverage['listed']} listed")
         print(f"- Messages: {totals['user_messages']} from the user, {totals['assistant_messages']} from the agent "
               f"({totals['injected_messages']} host-injected blocks excluded)")
@@ -1825,9 +1826,9 @@ def cmd_decide(args: argparse.Namespace) -> None:
 # --- parser ------------------------------------------------------------------
 
 def _add_mining_args(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--limit", type=int, default=250)
+    parser.add_argument("--limit", type=int, default=100)
     parser.add_argument("--archived", choices=("active", "archived", "all"), default="all")
-    parser.add_argument("--days", type=int, default=365)
+    parser.add_argument("--days", type=int, default=30)
     parser.add_argument("--query")
     parser.add_argument("--min-support", type=int, default=2)
     parser.add_argument("--min-strength", choices=("weak", "medium", "strong"), default="medium")
@@ -1889,9 +1890,9 @@ def build_parser() -> argparse.ArgumentParser:
     usage_p.set_defaults(func=cmd_skill_usage)
 
     stats_p = sub.add_parser("stats", help="Quantitative usage profile for the insights route")
-    stats_p.add_argument("--limit", type=int, default=400)
+    stats_p.add_argument("--limit", type=int)
     stats_p.add_argument("--archived", choices=("active", "archived", "all"), default="all")
-    stats_p.add_argument("--days", type=int, default=30)
+    stats_p.add_argument("--days", type=int)
     stats_p.add_argument("--query")
     stats_p.add_argument("--cwd")
     stats_p.add_argument("--top", type=int, default=10)

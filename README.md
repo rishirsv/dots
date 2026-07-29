@@ -7,8 +7,8 @@ Source repo for Rishi's personal plugins, agent workflows, and machine config.
 - `plugins/`: maintained plugin source.
 - `.agents/plugins/marketplace.json`: Codex marketplace source.
 - `.claude-plugin/marketplace.json`: Claude marketplace source.
-- `configs/`: source copies for Codex, Claude, Drafts, Ghostty, VS Code,
-  Starship, Raycast, Zsh, and Karabiner.
+- `configs/`: source copies for Codex, Claude, Drafts, Ghostty, Warp Preview,
+  VS Code, Starship, Raycast, Zsh, and Karabiner.
 - `scripts/`: repo helpers.
 - `AGENTS.md`: repo-local agent instructions.
 
@@ -16,6 +16,7 @@ Source repo for Rishi's personal plugins, agent workflows, and machine config.
 
 ```sh
 scripts/sync-plugins.sh
+scripts/sync-configs.sh --status --all
 scripts/sync-configs.sh --dry-run --all
 ```
 
@@ -27,15 +28,38 @@ Sync configs with scoped targets:
 ```sh
 scripts/sync-configs.sh --codex
 scripts/sync-configs.sh --codex-personal
-scripts/sync-configs.sh --drafts-styles
 scripts/sync-configs.sh --claude
 scripts/sync-configs.sh --vscode
 scripts/sync-configs.sh --ghostty
+scripts/sync-configs.sh --warp-preview
 scripts/sync-configs.sh --starship
 scripts/sync-configs.sh --raycast
 scripts/sync-configs.sh --zsh
 scripts/sync-configs.sh --karabiner
 ```
+
+Apply is the default mode. `--dry-run` previews an apply, and `--status`
+compares live targets without changing them. For `--codex` and
+`--codex-personal`, `config.toml` is a regular `0600` file: Dots owns only the
+marked portable block, while permissions, project trust, marketplaces, local
+MCP servers, hook state, and other machine state remain outside that block.
+`AGENTS.md`, `keybindings.json`, and agent definitions remain symlinked to this
+repo.
+
+After intentionally editing the portable block in one live Codex config,
+capture only that block back to the tracked source:
+
+```sh
+scripts/sync-configs.sh --capture --codex
+```
+
+`--capture` accepts only `--codex` or `--codex-personal`. Applying either Codex
+target creates a timestamped backup before migrating or changing its live
+`config.toml`.
+
+Codex and Claude share `configs/agents/AGENTS.md` as their global instruction
+source. The sync installs it as `~/.codex/AGENTS.md`,
+`~/.codex-personal/AGENTS.md`, and `~/.claude/CLAUDE.md`.
 
 For Meta-Skill changes, also run:
 

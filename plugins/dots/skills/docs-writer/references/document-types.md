@@ -1,8 +1,8 @@
 # Document types
 
-Read this after choosing the documentation job. Prefer the repo's existing
-structure when it is clear; use these recipes when the repo has no stronger
-local convention.
+Choose the closest recipe after identifying the documentation job. Follow the
+repository's structure and metadata conventions first, including required or
+forbidden status, date, ownership, and frontmatter fields.
 
 ## README
 
@@ -185,30 +185,8 @@ especially when choices are expensive to reverse, several people or systems must
 coordinate, requirements are ambiguous, or the work carries security, privacy,
 data, reliability, compatibility, cost, or long-term maintenance risk.
 
-Read [design-docs.md](design-docs.md) before writing, revising, or reviewing a
-design doc.
-
-Recommended shape:
-
-- Metadata.
-- Objective.
-- Background.
-- Goals.
-- Non-goals.
-- Scenarios.
-- Proposed design.
-- How to build it, when implementation order affects risk or coordination.
-- Interfaces, dependencies, data model, or infrastructure.
-- Security, privacy, logging, retention, SLOs, monitoring, and legal
-  considerations when applicable.
-- Timeline or rollout plan.
-- Open issues.
-- Resolved issues.
-- Alternatives considered.
-
-Do not treat this as mandatory boilerplate. Choose sections with the penalty
-filter: document the decisions that would be painful, risky, or costly to get
-wrong, and leave cheap implementation details to the implementation.
+Use [design-docs.md](design-docs.md) for section selection, implementation
+sequencing ownership, and the review checklist.
 
 ## Investigation plan
 
@@ -263,7 +241,7 @@ Use for a durable decision, rejected alternatives, or a design proposal.
 
 Recommended shape:
 
-- Status.
+- Status only when the repository convention calls for it.
 - Context.
 - Decision.
 - Consequences.

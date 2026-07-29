@@ -1,13 +1,8 @@
 # Design docs
 
-Use this reference when writing, revising, or reviewing a design doc, technical
-design, implementation design, architecture proposal, or durable "how to build
-it" plan.
-
-A design doc helps reviewers find expensive mistakes before implementation.
-It is not a transcript of every possible implementation detail. Spend the
-document's attention on decisions that are hard to reverse, risky to
-misunderstand, or important for several people or systems to coordinate around.
+Expose expensive mistakes before implementation. Spend the design doc's
+attention on decisions that are hard to reverse, risky to misunderstand, or
+important for several people or systems to coordinate around.
 
 ## When to use a design doc
 
@@ -60,8 +55,10 @@ profile.
 Recommended default shape:
 
 - **Title**: short, distinctive, and stable enough for people to reference.
-- **Metadata**: author, status, created date when useful, owning team or repo,
-  canonical URL or path, and reviewers when the repo convention supports it.
+- **Metadata**: only fields supported by the repository convention, such as
+  author, status, created date, owning team or repo, canonical URL or path, and
+  reviewers. Do not introduce generic status or date fields when local
+  documentation omits or forbids them.
 - **Objective**: one plain-language sentence explaining what the project will
   make true.
 - **Background**: why this work exists, what problem it solves, relevant prior
@@ -133,6 +130,10 @@ Include a "How to build it", "Implementation plan", or "Build plan" section
 when implementation order is part of the design. This is common when the work
 needs staged rollout, migration safety, early feedback, cross-team coordination,
 or proof that the design can be built without a large risky launch.
+
+Follow the repository's ownership model for sequencing. Keep design-dependent
+build strategy here; put delivery sequencing in the owning roadmap, issue
+tracker, or pull request when those surfaces own execution.
 
 Do not turn this section into a full task tracker. It should explain the build
 strategy reviewers need to validate the design.

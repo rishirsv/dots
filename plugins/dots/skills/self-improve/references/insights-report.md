@@ -22,9 +22,8 @@ Run the statistics pass first, then read a small number of representative
 sessions to explain what the numbers mean:
 
 ```bash
-python3 scripts/self_improve.py stats --days 30 --top 10
-python3 scripts/self_improve.py stats --days 30 --json
-python3 scripts/self_improve.py skill-usage --days 30
+python3 scripts/self_improve.py stats --top 10
+python3 scripts/self_improve.py stats --json
 ```
 
 `stats` derives per-session facts and caches them by schema version, session id,
@@ -32,7 +31,9 @@ and transcript mtime, so repeat runs only touch new sessions. It excludes
 sessions with fewer than two user messages or under a minute of elapsed time,
 and excludes transcripts whose opening turns are themselves a usage report or
 self-improve pass — otherwise the report profiles the reporting. It reports every
-exclusion and cap in its coverage block. Carry those numbers into the report; a
+exclusion and cap in its coverage block. With no `--days` or `--limit`, it lists
+the whole retained window; use those flags only when the user explicitly asks
+for a narrower insights report. Carry the coverage numbers into the report; a
 silent cap reads as full coverage.
 
 Read these fields the way `stats` defines them:

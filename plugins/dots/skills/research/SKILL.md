@@ -1,28 +1,31 @@
 ---
 name: research
-description: "Produces evidence-backed answers and reports from delegated research across code, docs, web sources, and technical options. Use when explicitly asked for research, a research report, or deep research; not for implementation or formal planning."
+description: "Produces evidence-backed answers and reports from proportionate investigation across code, docs, web sources, and technical options. Use when explicitly asked for research, a research report, or deep research; not for implementation or formal planning."
 ---
 
 # Research
 
-Produce evidence-backed answers and research reports through delegated
-researchers. The parent thread scopes the question, dispatches workers,
-evaluates their reports, requests follow-up, and writes the synthesis. Workers
-perform all codebase searches, source reads, web searches, and evidence
-collection.
+Produce evidence-backed answers and research reports through the lightest
+investigation shape that preserves source quality and usable context. The
+parent thread scopes the question, inspects one bounded source directly when
+that can answer it, delegates broader or independent research, and writes the
+synthesis.
 
 ## Workflow
 
 1. State the question, scope, intended output, and what will make the research
    complete. Keep this to one compact update unless the user requested a formal
    research contract.
-2. Dispatch at least one bounded research worker. Split independent source
-   classes, claims, or open questions into separate workers when that improves
-   coverage or keeps their evidence focused.
-3. Require each worker to return a compact claim-level report: answer and
-   implications first, then supporting citations, confidence, contradictions,
-   gaps, and useful next checks. Raw search trails, page dumps, transcripts, and
-   broad file contents stay out of the parent thread.
+2. Choose the investigation shape:
+   - **Direct:** inspect in the parent when one bounded source or a small
+     supplied set can answer one narrow question without crowding out synthesis.
+   - **Delegated:** dispatch bounded workers when the work spans independent
+     source classes or questions, needs broad search, or would put substantial
+     raw source context in the parent.
+3. For delegated work, require each worker to return a compact claim-level
+   report: answer and implications first, then supporting citations, confidence,
+   contradictions, gaps, and useful next checks. Raw search trails, page dumps,
+   transcripts, and broad file contents stay out of the parent thread.
 4. Evaluate whether the returned reports answer the question. For material
    gaps, contradictions, or weak claims, dispatch a focused follow-up or an
    independent verification worker.
@@ -30,9 +33,10 @@ collection.
    recommendation, preserve consequential uncertainty, and deliver the
    requested output.
 
-If delegation is unavailable or the user forbids it, explain that this workflow
-cannot perform the research without putting source context in the parent thread.
-Do not silently fall back to direct research.
+If delegation is unavailable or the user forbids it, use the direct path only
+when the question and source boundary remain genuinely narrow. For broader work,
+state the coverage limit and return the strongest bounded result rather than
+silently pulling a large research corpus into the parent thread.
 
 ## Worker Briefs
 
@@ -77,10 +81,11 @@ Treat worker reports as evidence, not final answers:
 - **Recommendation**: a proposed choice after weighing evidence and tradeoffs.
 - **Open question**: uncertainty that could change the answer or next action.
 
-The parent verifies at the report level: check completeness, compare independent
-reports, identify unsupported claims, and delegate source-level verification.
-Do not open underlying sources in the parent thread. Use only evidence returned
-by workers, and never invent citations, URLs, paths, quotes, or command results.
+For delegated work, the parent verifies at the report level: check completeness,
+compare independent reports, identify unsupported claims, and delegate
+source-level verification. For direct work, inspect only the bounded sources
+needed for the answer. Never invent citations, URLs, paths, quotes, or command
+results.
 
 ## Output And Artifacts
 
@@ -93,8 +98,9 @@ the planning workflow owns the implementation plan.
 
 ## Final Check
 
-- At least one worker performed all source investigation.
-- The parent used compact reports rather than raw source context.
+- The investigation used the direct path only for a narrow question and bounded
+  sources; broader or independent work was delegated.
+- Delegated work returned compact reports rather than raw source context.
 - Material contradictions and weak claims were resolved or named.
 - The answer distinguishes evidence, inference, recommendation, and uncertainty.
 - Durable artifacts were created only when requested or justified by repository

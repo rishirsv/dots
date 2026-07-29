@@ -30,6 +30,11 @@ When unsure, start one altitude **smaller** and use `--dry-run` to preview the
 manifest and token total before committing. Raise altitude only when a concrete
 claim the oracle must make depends on context you left out.
 
+Translate that altitude into positive `--file` selectors. Exclusion-only
+selection is invalid because it leaves the package boundary implicit. Reserve
+`--all-repo` for a deliberate repository-wide decision, not as a shortcut for
+choosing context.
+
 ## Archetypes
 
 Each archetype lists when to use it, the altitude, what to include by role, what

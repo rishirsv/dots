@@ -45,7 +45,7 @@ class SessionSource(Protocol):
     def list_sessions(
         self,
         *,
-        limit: int,
+        limit: int | None,
         archived: str,
         days: int | None = None,
         query: str | None = None,
@@ -118,7 +118,7 @@ class CodexSource:
     def list_sessions(
         self,
         *,
-        limit: int,
+        limit: int | None,
         archived: str,
         days: int | None = None,
         query: str | None = None,
@@ -146,7 +146,10 @@ class CodexSource:
             where.append("cwd LIKE ?")
             params.append(f"{cwd}%")
         where_sql = "WHERE " + " AND ".join(where) if where else ""
-        params.append(limit)
+        limit_sql = ""
+        if limit is not None:
+            limit_sql = " LIMIT ?"
+            params.append(limit)
         try:
             conn = sqlite3.connect(f"file:{self.state_db}?mode=ro", uri=True)
         except sqlite3.Error as exc:
@@ -158,7 +161,7 @@ class CodexSource:
                     SELECT id, title, source, cwd, created_at, updated_at, archived,
                            coalesce(model, ''), rollout_path
                     FROM threads {where_sql}
-                    ORDER BY updated_at DESC, id DESC LIMIT ?
+                    ORDER BY updated_at DESC, id DESC{limit_sql}
                     """,
                     params,
                 ).fetchall()
@@ -238,7 +241,7 @@ class ClaudeSource:
     def list_sessions(
         self,
         *,
-        limit: int,
+        limit: int | None,
         archived: str,
         days: int | None = None,
         query: str | None = None,
@@ -264,7 +267,7 @@ class ClaudeSource:
             if query and query.lower() not in f"{session.title} {session.cwd}".lower():
                 continue
             rows.append(session)
-            if len(rows) >= limit:
+            if limit is not None and len(rows) >= limit:
                 break
         return rows
 

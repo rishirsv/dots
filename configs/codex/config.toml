@@ -1,51 +1,24 @@
-# Repo-local Codex config for maximum local autonomy in this trusted repo.
-# Supplements ~/.codex/config.toml when this trusted repository is open.
+# Portable Codex defaults managed by Dots.
+# Machine-local permissions and runtime state remain in ~/.codex/config.toml.
 
-approval_policy = "never"
-sandbox_mode = "danger-full-access"
 service_tier = "default"
 model = "gpt-5.6-sol"
 model_reasoning_effort = "medium"
-
 approvals_reviewer = "user"
-
-
-
-
-
-
-
-
-
-
-
-
-notify = ["/Users/rishi/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [tools]
 view_image = true
 
 [features]
 apps = true
+hooks = true
 memories = true
+multi_agent = true
 prevent_idle_sleep = true
-undo = true
-js_repl = false
-
-[features.multi_agent_v2]
-hide_spawn_agent_metadata = false
-tool_namespace = "agents"
 
 [agents]
 max_threads = 12
 max_depth = 1
-
-[apps._default]
-open_world_enabled = true
-destructive_enabled = true
-
-[apps.asdk_app_6938a94a61d881918ef32cb999ff937c]
-enabled = false
 
 [apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.create_branch"]
 approval_mode = "approve"
@@ -104,349 +77,6 @@ enabled = true
 [plugins."warp@codex-warp"]
 enabled = true
 
-[projects."/Users/rishi/Code/agent"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/steady-app"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/dots"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011632839818Z-f0bed97d/trials/adhoc-1.current.t1/workspace"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-format.current.t1/workspace"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-format.no-skill.t1/workspace"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-sparse.no-skill.t1/workspace"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-sparse.current.t1/workspace"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T012222812619Z-648a2b43/trials/adhoc-1.current.t1/workspace"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-06/l"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/kpmg"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-07/files-mentioned-by-the-user-codex"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects/ts-ai"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects/01_Clients/Project_Frogmen"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-07/i-w"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-07/us"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-07/up"]
-trust_level = "trusted"
-
-[projects."/Users/rishi"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/kpmg-pptx"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-14/fix"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-14/upd"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/prosper"]
-[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-14/there-is"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-15/diagnose-my-ssh-and-connections-in"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-15/the-browser-blocks-direct-file-navigation"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/enterprise-skills"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-16/responsible-ai-insurance-playbook-sites-project"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-16/responsible-ai-insurance-playbook-sites-project-2"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.codex/.chatgpt-projects/g-p-69703af9c234819197d01ef6a24cb622"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-16/responsible-ai-insurance-playbook-sites-project-3"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-16/responsible-ai-insurance-playbook-sites-project-4"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-16/responsible-ai-insurance-playbook-sites-project-5"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-16/responsible-ai-insurance-playbook-sites-project-6"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.codex/.chatgpt-projects/g-p-6a526b216ac48191aa8d0e7705fd2af9"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.codex/.chatgpt-projects/g-p-6a5995d3899c8191b6cc3f98be926ea9"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-16/new-chat"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-16/i-want-to-add-other-models"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-17/i-need-you-to-find-me"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-18/si"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-18/re"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-18/i-m-getting-the-error-could"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-19/pro"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-20/us"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-20/go"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-20/get"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-20/ca"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-20/is"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-20/dr"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-20/review-my-booking-com-tabs-related"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-21/for"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-21/walk-me-through-how-kpmg-pages"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-21/i-w"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-21/fin"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-21/new-chat"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-21/dots-imsg-users-rishi-codex-plugins"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-21/dots-imsg-users-rishi-codex-plugins-2"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-22/wha"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-22/you-re-right-i-found-the"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-22/fi"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-22/https-every-to-working-overtime-writing"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-22/cre"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/i-ne"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/figure-out-next-steps"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/projects/travel"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/figure-out-next-steps-2"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/new-chat"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.codex/.chatgpt-projects/g-p-6a640f6b6154819182747eae20c2eab9"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/new-chat-2"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/referenced-chatgpt-conversation-this-is-untrusted"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/new-chat-3"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/realtime-voice-chat"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/architect-subagent-architect"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/v"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/vvvvvvvvvvvvvv"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/vvvvvvvvvvvvvv-2"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/work-in-the-local-advisory-results"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/advisory-results-reconciliation"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-24/analyze-the-disk-space-used-by"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-25/new-chat"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-26/realtime-voice-chat"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-26/realtime-voice-chat-2"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-26/realtime-voice-chat-3"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-26/new-chat"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-26/realtime-voice-chat-4"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-26/realtime-voice-chat-5"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-27/realtime-voice-chat"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-27/realtime-voice-chat-2"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-27/realtime-voice-chat-3"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-27/realtime-voice-chat-4"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-27/rev"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-27/why-did-the-south-korean-stock"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-27/realtime-voice-chat-5"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-27/use-gmail-and-send-srushti-an"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-27/madrid-hotel-comparison"]
-trust_level = "trusted"
-
-[marketplaces.openai-bundled]
-last_updated = "2026-07-29T03:00:45Z"
-source_type = "local"
-source = "/Users/rishi/.codex/.tmp/bundled-marketplaces/openai-bundled"
-
-[marketplaces.openai-primary-runtime]
-last_updated = "2026-07-27T22:32:10Z"
-source_type = "local"
-source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
-
-[marketplaces.dots]
-last_updated = "2026-07-27T00:23:26Z"
-source_type = "local"
-source = "/Users/rishi/Code/dots"
-
-[marketplaces.codex-warp]
-last_updated = "2026-07-29T03:21:04Z"
-last_revision = "f11334dc715d48f07d133db6046895cb45f4accb"
-source_type = "git"
-source = "https://github.com/warpdotdev/codex-warp.git"
-
-[mcp_servers.node_repl]
-args = []
-command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
-startup_timeout_sec = 120
-
-[mcp_servers.node_repl.env]
-NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
-NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
-NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
-NODE_REPL_TRUSTED_CODE_PATHS = "/Users/rishi/.codex"
-CODEX_HOME = "/Users/rishi/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,e13fd947e846d3d306e9249dd3c73d14931b6494803dbafb16cef85e6add9506"
-BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
-NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
-NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
-BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.721.41059"
-SKY_CUA_SERVICE_PATH = "/Users/rishi/.codex/computer-use/Codex Computer Use.app"
-CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
-
-[mcp_servers.computer-use]
-command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
-args = ["mcp"]
-cwd = "."
-enabled = false
-
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
 
@@ -493,7 +123,7 @@ opaqueWindows = false
 surface = "#ffffff"
 
 [desktop.appearanceLightChromeTheme.fonts]
-code = "CommitMono"
+code = "SF Mono Terminal"
 
 [desktop.appearanceLightChromeTheme.semanticColors]
 diffAdded = "#00a240"
@@ -508,38 +138,9 @@ opaqueWindows = false
 surface = "#181818"
 
 [desktop.appearanceDarkChromeTheme.fonts]
-code = "CommitMono"
+code = "SF Mono Terminal"
 
 [desktop.appearanceDarkChromeTheme.semanticColors]
 diffAdded = "#40c977"
 diffRemoved = "#fa423e"
 skill = "#ad7bf9"
-
-[tui.model_availability_nux]
-"gpt-5.5" = 4
-"gpt-5.6-sol" = 4
-
-[hooks.state]
-
-[hooks.state."/Users/rishi/Code/dots/.codex/hooks.json:pre_tool_use:0:0"]
-trusted_hash = "sha256:b09e4381778bd6404d2b1d1e948cf723e726593a43395f8808a5845fa82d5bc6"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:permission_request:0:0"]
-trusted_hash = "sha256:a5f8b0ebc36bb459328ffeb5f62ff146dfb74e3d88d4c369cf0280f7b354e388"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:post_tool_use:0:0"]
-trusted_hash = "sha256:be77e14a9094af2f521258e2bff1f5d777249bc50ce8eb0574a85bea9bd79e7f"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:session_start:0:0"]
-trusted_hash = "sha256:91587043033e7831d4d154fdef2e495f3113c3552a4529d8013f5546ffb2c140"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:user_prompt_submit:0:0"]
-trusted_hash = "sha256:2480a7db650a36e05d8005aabca58b9d106f3b7a46f7094d7747d0d77773f75c"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:stop:0:0"]
-trusted_hash = "sha256:6a3b3af655efa426e920425de93a830fe25b8b5a62ef7b9a699e7ff40d9ef351"
-
-[shell_environment_policy.set]
-BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,e13fd947e846d3d306e9249dd3c73d14931b6494803dbafb16cef85e6add9506"
-NODE_REPL_TRUSTED_CODE_PATHS = "/Users/rishi/.codex"

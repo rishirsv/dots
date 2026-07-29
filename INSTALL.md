@@ -35,9 +35,13 @@ outputs, or app runtime state.
 Preview and apply only the targets you want. For example:
 
 ```sh
-scripts/sync-configs.sh --dry-run --codex --claude --vscode --ghostty --cmux --starship --raycast --zsh --launchagents --karabiner
-scripts/sync-configs.sh --codex --claude --vscode --ghostty --cmux --starship --raycast --zsh --launchagents --karabiner
+scripts/sync-configs.sh --status --all
+scripts/sync-configs.sh --dry-run --codex --claude --vscode --ghostty --warp-preview --starship --raycast --zsh --karabiner
+scripts/sync-configs.sh --codex --claude --vscode --ghostty --warp-preview --starship --raycast --zsh --karabiner
 ```
+
+Apply is the default mode. `--status` compares targets without changing them,
+and `--dry-run` previews the backups and writes an apply would perform.
 
 Apply one target at a time:
 
@@ -57,8 +61,8 @@ scripts/sync-configs.sh --vscode
 scripts/sync-configs.sh --dry-run --ghostty
 scripts/sync-configs.sh --ghostty
 
-scripts/sync-configs.sh --dry-run --cmux
-scripts/sync-configs.sh --cmux
+scripts/sync-configs.sh --dry-run --warp-preview
+scripts/sync-configs.sh --warp-preview
 
 scripts/sync-configs.sh --dry-run --starship
 scripts/sync-configs.sh --starship
@@ -69,12 +73,36 @@ scripts/sync-configs.sh --raycast
 scripts/sync-configs.sh --dry-run --zsh
 scripts/sync-configs.sh --zsh
 
-scripts/sync-configs.sh --dry-run --launchagents
-scripts/sync-configs.sh --launchagents
-
 scripts/sync-configs.sh --dry-run --karabiner
 scripts/sync-configs.sh --karabiner
 ```
+
+### Codex ownership
+
+`~/.codex/config.toml` and `~/.codex-personal/config.toml` are mutable regular
+files with mode `0600`. Each contains a marked portable block sourced from
+`configs/codex/config.toml`. The sync preserves these machine-local settings
+outside that block:
+
+- `approval_policy`, `sandbox_mode`, and `notify`.
+- `apps._default`, projects, marketplaces, local MCP servers, model picker
+  state, hook state, and shell environment policy.
+
+`mcp_servers.openaiDeveloperDocs` is portable and comes from the tracked block.
+The sync replaces stale portable sections instead of retaining duplicate
+copies. Codex `AGENTS.md`, `keybindings.json`, and agent definitions remain
+symlinks to the repo.
+
+Applying `--codex` or `--codex-personal` backs up an existing config before
+migrating a symlink or changing the regular file. To intentionally promote
+edits from one live portable block back to the tracked source, run:
+
+```sh
+scripts/sync-configs.sh --capture --codex
+```
+
+`--capture` does not copy any machine-local content and accepts only `--codex`
+or `--codex-personal`.
 
 ## Sync Plugins
 
