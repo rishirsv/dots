@@ -5,7 +5,7 @@ approval_policy = "never"
 sandbox_mode = "danger-full-access"
 service_tier = "default"
 model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model_reasoning_effort = "medium"
 
 approvals_reviewer = "user"
 
@@ -99,6 +99,9 @@ enabled = true
 enabled = true
 
 [plugins."sites@openai-bundled"]
+enabled = true
+
+[plugins."warp@codex-warp"]
 enabled = true
 
 [projects."/Users/rishi/Code/agent"]
@@ -378,8 +381,26 @@ trust_level = "trusted"
 [projects."/Users/rishi/Documents/Codex/2026-07-27/realtime-voice-chat-3"]
 trust_level = "trusted"
 
+[projects."/Users/rishi/Documents/Codex/2026-07-27/realtime-voice-chat-4"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-27/rev"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-27/why-did-the-south-korean-stock"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-27/realtime-voice-chat-5"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-27/use-gmail-and-send-srushti-an"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-27/madrid-hotel-comparison"]
+trust_level = "trusted"
+
 [marketplaces.openai-bundled]
-last_updated = "2026-07-27T23:27:06Z"
+last_updated = "2026-07-29T03:00:45Z"
 source_type = "local"
 source = "/Users/rishi/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -392,6 +413,12 @@ source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/opena
 last_updated = "2026-07-27T00:23:26Z"
 source_type = "local"
 source = "/Users/rishi/Code/dots"
+
+[marketplaces.codex-warp]
+last_updated = "2026-07-29T03:21:04Z"
+last_revision = "f11334dc715d48f07d133db6046895cb45f4accb"
+source_type = "git"
+source = "https://github.com/warpdotdev/codex-warp.git"
 
 [mcp_servers.node_repl]
 args = []
@@ -429,7 +456,7 @@ keepRemoteControlAwakeWhilePluggedIn = true
 selected-avatar-id = "custom:patch"
 avatar-overlay-mascot-width-px = 138
 dock-icon-preference = "app-default"
-conversationDetailMode = "STEPS_COMMANDS"
+conversationDetailMode = "STEPS_PROSE"
 preventSleepWhileRunning = true
 defaultTerminalLocation = "right"
 git-branch-prefix = ""
@@ -495,7 +522,22 @@ skill = "#ad7bf9"
 [hooks.state]
 
 [hooks.state."/Users/rishi/Code/dots/.codex/hooks.json:pre_tool_use:0:0"]
-trusted_hash = "sha256:6fb9793747b2f83b1a81960ed54db6b7bd844a03e9b2a06d44e1736f65614540"
+trusted_hash = "sha256:b09e4381778bd6404d2b1d1e948cf723e726593a43395f8808a5845fa82d5bc6"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:permission_request:0:0"]
+trusted_hash = "sha256:a5f8b0ebc36bb459328ffeb5f62ff146dfb74e3d88d4c369cf0280f7b354e388"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:post_tool_use:0:0"]
+trusted_hash = "sha256:be77e14a9094af2f521258e2bff1f5d777249bc50ce8eb0574a85bea9bd79e7f"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:91587043033e7831d4d154fdef2e495f3113c3552a4529d8013f5546ffb2c140"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:user_prompt_submit:0:0"]
+trusted_hash = "sha256:2480a7db650a36e05d8005aabca58b9d106f3b7a46f7094d7747d0d77773f75c"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:stop:0:0"]
+trusted_hash = "sha256:6a3b3af655efa426e920425de93a830fe25b8b5a62ef7b9a699e7ff40d9ef351"
 
 [shell_environment_policy.set]
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"

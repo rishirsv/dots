@@ -85,6 +85,7 @@ input_mode = "pinned_to_bottom"
 [appearance.window]
 override_blur = 0
 override_opacity = 100
+zoom_level = 125
 
 [appearance.panes]
 focus_pane_on_hover = true
@@ -108,6 +109,9 @@ selected_system_themes = { dark = "dark", light = "light" }
 enabled = true
 view_mode = "compact"
 
+[appearance.icon]
+app_icon = "neon"
+
 [terminal.input]
 ai_auto_detection_enabled = false
 completions_open_while_typing = false
@@ -120,6 +124,7 @@ show_ignore_button = false
 
 [code.editor]
 auto_open_code_review_pane_on_first_agent_change = false
+prefer_markdown_viewer = true
 show_code_review_button = true
 show_project_explorer = true
 
