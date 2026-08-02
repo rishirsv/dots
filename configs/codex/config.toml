@@ -1,23 +1,19 @@
 # Portable Codex defaults managed by Dots.
 # Machine-local permissions and runtime state remain in ~/.codex/config.toml.
 
-service_tier = "default"
 model = "gpt-5.6-sol"
 model_reasoning_effort = "medium"
-approvals_reviewer = "user"
 
 [tools]
 view_image = true
 
 [features]
-apps = true
-hooks = true
+default_mode_request_user_input = true
 memories = true
-multi_agent = true
 prevent_idle_sleep = true
 
 [agents]
-max_threads = 12
+max_concurrent_threads_per_session = 12
 max_depth = 1
 
 [apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.create_branch"]
