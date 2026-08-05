@@ -331,8 +331,8 @@ artifacts/
 ```
 
 Why it wins: it balances cross-context identity, report continuity, messaging,
-auditability, privacy, portability, and direct human editing. It combines the
-best traits of Dots Chief of Staff, Self Improve, and Meta-Skill.
+auditability, privacy, portability, and direct human editing. It combines
+file-backed working state with traits from Self Improve and Meta-Skill.
 
 What it loses: it needs deterministic scope resolution and simple
 single-writer or locking discipline. Personal and artifact state must be joined
@@ -413,8 +413,6 @@ hypothesis, and validate whether some contexts require independent profiles.
 
 Local precedents:
 
-- `plugins/dots/skills/chief-of-staff/` for layered Markdown state, one writer,
-  and recovery.
 - `plugins/dots/skills/self-improve/` for evidence, proposals, approval, and
   closest-scope rules.
 - `plugins/meta-skill/references/run-layout.md` for immutable inputs,

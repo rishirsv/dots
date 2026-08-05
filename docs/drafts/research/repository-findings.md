@@ -7,19 +7,6 @@ supersede preliminary packaging recommendations in this snapshot.
 
 ## Existing State Precedents
 
-Chief of Staff is the strongest project-scoped precedent. It maintains
-`.agents/chief-of-staff/{STAFF.md,BOARD.md,work/*.md}`, separates stable contract
-from current board and temporary recovery state, and enforces a single writer:
-
-- `wip/chief-of-staff/SKILL.md:19`
-- `wip/chief-of-staff/SKILL.md:35`
-- `wip/chief-of-staff/references/onboarding.md:34`
-- `wip/chief-of-staff/references/recovery.md:6`
-
-This proves that a Dots skill can own file-backed, resumable local state with an
-explicit lifecycle. It does not establish cross-context personal identity or
-cross-device synchronization.
-
 Self Improve is the closest user-adaptation precedent. It separates facts,
 inferences, contradictions, and evidence strength; deduplicates support; and
 records settled decisions so rejected proposals do not recur:
