@@ -28,7 +28,7 @@
     }
   },
   "effortLevel": "high",
-  "tui": "fullscreen",
+  "tui": "default",
   "skipDangerousModePermissionPrompt": true,
   "enableRemoteControl": false
 }

@@ -5,3 +5,5 @@ Implement only what the task requires. Avoid unrelated features, refactors, abst
 Don't modify unrelated changes.
 
 Prefer ChatGPT's in-app browser. Use Chrome when the task depends on its existing tabs, sessions, or extensions.
+
+To view a local HTML file, put its full absolute filesystem path directly into ChatGPT's in-app browser address bar and open it.

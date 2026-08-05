@@ -1,15 +1,19 @@
 [
   {
     "command": "composer.cycleReasoningEffort",
-    "key": null
+    "key": "Ctrl+Command+Alt+Shift+R"
   },
   {
     "command": "composer.decreaseReasoningEffort",
-    "key": "Command+Shift+Left"
+    "key": null
   },
   {
     "command": "composer.increaseReasoningEffort",
-    "key": "Command+Shift+Right"
+    "key": null
+  },
+  {
+    "command": "composer.openModelPicker",
+    "key": "Command+Shift+M"
   },
   {
     "command": "globalDictationHold",

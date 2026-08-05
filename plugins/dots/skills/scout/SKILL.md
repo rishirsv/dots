@@ -1,46 +1,52 @@
 ---
 name: scout
-description: "Grills a fuzzy feature, design, architecture, workflow, or knowledge-work idea into a decision snapshot through focused conversation, delegated research, option exploration, and prototypes. Explicit-only; not for implementation, formal planning, already-specified work, or one blocking clarification."
+description: "Interviews the user to shape and stress-test a fuzzy plan, decision, or idea into a decision snapshot. Explicit-only; use $scout when the user asks to be interviewed, challenged, or questioned; not for implementation, formal planning, already-specified work, or one blocking clarification."
 ---
 
 # Scout
 
-Think alongside the user until a fuzzy idea has a clear direction, settled
-vocabulary, explicit tradeoffs, and known open questions. Scout owns the
-conversation, recommendations, prototype-driven taste discovery, decisions,
-and final snapshot. Research workers perform every codebase, web, documentation,
-reference, and domain research task. Scout stops before formal planning or
-implementation.
+Interview the user until they confirm that you understand their thinking.
+Questions may depend on earlier answers or sub-agent findings. The **frontier**
+is every question ready to ask now—none depends on an answer or finding not yet
+received.
 
 ## Interactive Loop
 
-1. Start by briefly restating the current desire, audience, desired success,
-   constraints, and unresolved decisions so the user can correct the framing.
-2. Map dependencies among the unresolved decisions. Put a question on the
-   **decision frontier** only when the settled context is enough to answer it
-   and its answer does not depend on another open decision.
-3. Ask two or three frontier questions per round by default. Ask more when the
-   questions are short and independent and batching materially improves the
-   pace; ask one when it unlocks the next branch or deserves focused
-   deliberation. Prefer a coherent topic, but never treat related questions as
-   independent when one assumes another's answer.
-4. Recompute the frontier after each reply. Record settled decisions, preserve
-   open decisions, and use new answers or research findings to unlock the next
-   batch.
-5. Choose the move that resolves the current uncertainty:
-   - **Interview** for goals, users, constraints, current workarounds, and domain
-     meaning only the user can supply. When concepts or boundaries remain fuzzy,
-     test them with a concrete edge-case scenario.
-   - **Delegated research** for facts available from code, documents, the
-     web, references, or domain sources.
-   - **Brainstorm** when the user is anchored on one solution or the option
-     space is too narrow. Offer genuinely different directions, include an
-     inversion or removal when useful, and explain why weaker options lose.
-   - **Prototype probe** when the uncertainty is taste, composition, tone,
-     interaction feel, or another quality the user must react to directly.
-6. Converge when the user confirms the direction and desired success and the
-   remaining uncertainty would change neither. Produce the decision snapshot
-   and handoff.
+In each round, ask two or three questions from the frontier. Number them, offer
+mutually exclusive choices, and recommend an answer to each. Ask more when the
+questions are short and independent; ask only one when its answer will shape
+what follows. Then wait for the user's answers. Use those answers to update the
+frontier.
+
+Dispatch a sub-agent task as soon as its scope is clear. Keep asking questions
+from the frontier while sub-agents run; wait only when every remaining question
+depends on a pending result.
+
+Choose the next move according to what the frontier question needs:
+
+| Mode | Use when | Action |
+|---|---|---|
+| **Interview** | The answer requires the user's judgment, preference, experience, meaning, or private knowledge. | Scout asks the question directly. |
+| **Research** | The answer can be found in files, tools, documentation, the web, prior art, or another external source. | Dispatch the entire lookup to a sub-agent; do not ask the user for something a sub-agent can find. |
+| **Brainstorm** | The current options are too narrow. | Dispatch option generation to one or more independent sub-agents. |
+| **Prototype** | The user needs to react to something concrete. | Dispatch production to an artifact-capable sub-agent with an isolated output path. |
+
+Scout conducts the interview, synthesizes compact sub-agent reports, explains
+their implications, recommends an answer, and puts every decision to the user.
+Sub-agents do not question the user or settle decisions.
+
+Match the sub-agent to the task. Use a fast source-capable worker for direct
+retrieval, a stronger reasoning worker for ambiguous synthesis, conflicting
+evidence, or option generation with subtle trade-offs, and a domain- or
+artifact-capable worker for prototypes. Use a separate verification worker
+when a disputed claim could change the direction.
+
+The frontier is empty when every consequential branch has been answered,
+rejected, or explicitly deferred, and no pending sub-agent result could
+materially change the direction. When it is empty, present the Scout Snapshot
+and ask the user to confirm it. Scout is done only after that confirmation. If
+the user corrects the snapshot or reopens the frontier, update it and ask again.
+Do not plan, document, or implement the result before confirmation.
 
 Recommend, push back, and name assumptions instead of returning neutral option
 lists. Keep one term per concept and flag overloaded language before it produces
@@ -50,55 +56,21 @@ Keep every question discrete. When the user answers only part of a batch,
 surface each skipped consequential question again when it returns to the
 frontier or keep it open in the snapshot.
 
-Offer two or three mutually exclusive choices for each frontier question by
-default. Mark one choice as recommended and briefly explain why it wins. Use
-the host's interactive multiple-choice control when it is available; otherwise
-render the same choices in Markdown. Ask an open-ended question only when the
-answer space cannot be responsibly bounded without excluding a plausible
+Use the host's interactive multiple-choice control when it is available;
+otherwise render the choices in Markdown. Ask an open-ended question only when
+the answer space cannot be responsibly bounded without excluding a plausible
 direction.
 
 After a major correction, prototype choice, skipped batch, or topic or mode
 change, show a lightweight checkpoint with only **Settled**, **Still open**, and
 **Next frontier**. Do not repeat the checkpoint after ordinary answers.
 
-Use this compact shape for a normal batch:
-
-```md
-**Read:** <what changed and what this batch will settle>
-
-1. **<question>**
-   - **A — <recommended answer> (Recommended)** — <brief reason>
-   - B — <alternative>
-   - C — <alternative when useful>
-2. **<question>**
-   - **A — <recommended answer> (Recommended)** — <brief reason>
-   - B — <alternative>
-```
-
-Isolate a consequential fork with several viable directions as one frontier
-question and give it the space it needs:
-
-```md
-**Read:** <what you notice, what worries you, and why the recommendation wins>
-
-**Question:** <the one decision this settles>
-
-| Choice | Direction |
-|---|---|
-| A | <option> |
-| B | **<recommended option> (Recommended)** — <why it is the best default> |
-| C | <option> |
-
-**Context:** <plain-language consequences for choices that need explanation>
-```
-
 ## Delegated Research
 
-Delegate the entire research task whenever a decision depends on repository
-search, source files, web search, documentation, prior art, a named reference,
-current external behavior, or unfamiliar domain facts. This applies even to a
-small lookup. Scout defines the question and later explains the implications;
-it does not inspect the underlying sources itself.
+Dispatch every research task to a sub-agent, including a small lookup. This
+keeps source material and search trails out of Scout's interviewing context.
+Scout defines the bounded question and later explains the implications; it does
+not inspect the underlying sources itself.
 
 Give the worker:
 
@@ -115,27 +87,47 @@ Prefer source owners: repository source and tests, official documentation,
 specifications, and first-party APIs. Trace material claims back to them.
 
 Require a compact report rather than raw search trails, transcripts, page dumps,
-or broad file contents. Evaluate the report at the claim level. Delegate a
-focused follow-up or independent verification worker when a gap or disputed
-claim could change the direction.
+or broad file contents. Check whether the report answers the bounded question.
+Delegate a focused follow-up or independent verification worker when a gap or
+disputed claim could change the direction.
 
-If delegation is unavailable, keep the source-dependent point open and explain
-what research would resolve it. Do not research it directly in Scout.
+If delegation is unavailable or forbidden, keep the affected branch open and
+say what a sub-agent would need to return. Do not absorb the research into
+Scout's context.
+
+## Brainstorming
+
+Dispatch at least one independent sub-agent to generate options. When a wider
+scan could change the direction, dispatch several with distinct lenses and do
+not show them one another's ideas until generation is complete. Give each lens
+a meaningful axis such as mechanism, audience or setting, resource commitment,
+time horizon, risk posture, or cross-domain analogy.
+
+Require structurally different options, not restatements or cosmetic variants.
+Ask for one credible less-obvious direction and, when it changes the decision,
+one inversion or removal. Each option should name its distinctive premise,
+likely value, and main feasibility risk.
+
+When a broad slate or several workers produce overlap, dispatch a separate
+critic to remove near-duplicates and compare novelty, usefulness, and
+feasibility without erasing a meaningful high-novelty, high-risk direction.
+Scout explains the resulting trade-offs, recommends an answer, and asks the
+user to decide.
 
 ## Prototype Probes
 
-Use prototypes to extract criteria the user cannot yet articulate. Create a
-small set of deliberately different, disposable variations directly or through
-workers with disjoint output paths. Prototype production is not research unless
-it also requires source research.
+Use prototypes to extract criteria the user cannot yet articulate. Dispatch
+artifact-capable sub-agents to create a small set of deliberately different,
+disposable variations in disjoint output paths. Delegate any source research
+the production also requires.
 
 Establish the shared foundation before expanding the option set. Start with one
 conservative control that visibly preserves the controlling product surface or
 reference, plus at most two frontier alternatives. Confirm that shared
 foundation before generating more variations. If the user rejects every option
 for the same foundational reason, stop producing variants, return to the
-controlling references, and turn the rejection into a criterion for the next
-probe.
+controlling references through a research sub-agent, and turn the rejection
+into a criterion for the next probe.
 
 Show the actual variations to the user through the appropriate visual or
 artifact surface; do not replace presentation with a prose description. Ask
@@ -143,49 +135,55 @@ what feels right or wrong and translate the reaction into a reusable criterion.
 Iterate only while another variation could still change the direction. The
 criterion is durable; the probe is not the final product.
 
-## Decision Snapshot And Handoff
+## Scout Snapshot And Handoff
 
-Close with a compact snapshot in chat:
+Present this snapshot when the frontier is empty. **Shared understanding** and
+**Next mode** are required. Include the other sections only when they carry
+information that emerged during this Scout conversation.
 
 ```md
-**Decision Snapshot**
+**Scout Snapshot**
 
-| Field | Decision |
-|---|---|
-| Direction | <where the idea now points> |
-| Success | <what a good outcome must achieve> |
-| Settled vocabulary | <stable terms> |
-| Key trade-off | <trade-off that shaped the direction> |
-| Rejected branch | <important path not chosen, plus why> |
-| Assumption to test | <riskiest assumption or "none surfaced"> |
-| Non-goal | <what this should not become> |
-| Open decision | <remaining decision and what would resolve it> |
-| Next mode | <stop, research, plan, design, document, or build> |
+**🧭 Shared understanding**
+
+<In two to four sentences, state what Scout believes the user means. Preserve
+the user's language where it matters and do not introduce new framing.>
+
+**✅ Decisions**
+
+- **<plain-language question or label>** — <the user's answer>. <Why it won or
+  what trade-off the user accepted.>
+- **<question or label>** — Deferred. <What that prevents or leaves uncertain>;
+  revisit when <specific event or evidence>.
+
+**🔎 What shaped it**
+
+- **User:** <a direction-changing preference, criterion, example, or distinction>
+- **Evidence:** <a direction-changing finding and its implication, with citation>
+- **Prototype:** <a reaction-derived criterion and artifact link>
+
+**➡️ Next mode**
+
+<stop, research, plan, design, document, or build> — <why the result is ready
+for that mode without sequencing its work>
+
+**❓ Confirm**
+
+- **A — Confirm** — This captures my thinking accurately.
+- **B — Correct one part** — Keep the direction but revise something above.
+- **C — Reopen the frontier** — An important question or branch is still missing.
 ```
 
-Save a handoff only when the result must cross sessions, people, or skills, or
-the user requests one. Use the repository's handoff convention and make it
-self-contained enough that the recipient does not need the Scout conversation
-or completed research to continue. Read
-[handoff.md](references/handoff.md) when this durable handoff branch applies.
+Use the host's interactive multiple-choice control for confirmation when it is
+available; otherwise render the choices in Markdown. After confirmation, the
+accepted snapshot is the final Scout output.
 
-Recheck the frontier when the user asks to plan or build. Resolve or explicitly
-carry forward any open decision that could change the downstream work, then
-produce the snapshot and hand its context to Ultraplan or the active planning
-workflow. Scout does not sequence or enter implementation.
+Save a durable handoff only when the result must cross sessions, people, or
+skills, or the user requests one. Read [handoff.md](references/handoff.md) when
+this branch applies. Reuse the confirmed snapshot rather than creating a second
+schema.
 
-The last Scout response before another mode begins must contain the Decision
-Snapshot and the explicit line `Scout complete; next mode: <mode>`. Another mode
-may continue in the same task after that visible boundary, but Scout itself does
-not create implementation plans or tasks, edit product source or durable product
-documentation, or begin implementation.
-
-## Final Check
-
-- The user confirmed the direction and success, and all source research was
-  delegated.
-- Every question batch contained only decisions on the current frontier.
-- Skipped consequential questions were resurfaced or recorded as open.
-- Prototype probes produced reusable criteria rather than accidental final work.
-- The snapshot or handoff is sufficient for the next mode without repeating the
-  conversation or research.
+When the user asks to plan or build before the frontier is empty, show what is
+still pending and continue Scout. After the user confirms the completed
+snapshot, hand its context to Ultraplan or the active planning workflow. Scout
+does not sequence or enter implementation.

@@ -1,16 +1,8 @@
-# ==============================================
-# Oh My Zsh Configuration
-# ==============================================
-export ZSH="$HOME/.oh-my-zsh"
-
-zstyle ':omz:update' mode disabled
-DISABLE_AUTO_UPDATE="true"
-
-ZSH_THEME="robbyrussell"
-
-plugins=(git)
-
-source "$ZSH/oh-my-zsh.sh"
+# Load completion once, then retain Oh My Zsh's Git aliases without loading
+# the full framework. Starship owns the prompt below.
+autoload -Uz compinit
+compinit -C
+source "$HOME/.oh-my-zsh/plugins/git/git.plugin.zsh"
 
 # ==============================================
 # Custom Aliases
@@ -67,14 +59,13 @@ eval "$(fnm env --use-on-cd)"
 # ==============================================
 
 # Starship prompt
-eval "$(starship init zsh)"
+ZSH_INIT_CACHE="$HOME/.cache/zsh-init"
+[[ -d "$ZSH_INIT_CACHE" ]] || mkdir -p "$ZSH_INIT_CACHE"
 
-# ==============================================
-# Docker Completions
-# ==============================================
-
-autoload -Uz compinit
-compinit
+if [[ ! -s "$ZSH_INIT_CACHE/starship.zsh" || $commands[starship] -nt "$ZSH_INIT_CACHE/starship.zsh" ]]; then
+  starship init zsh >| "$ZSH_INIT_CACHE/starship.zsh"
+fi
+source "$ZSH_INIT_CACHE/starship.zsh"
 
 # ==============================================
 # Completion UX
@@ -123,7 +114,10 @@ export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#6e6e6e,italic"
 export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 # --- fzf Configuration ---
-source <(fzf --zsh)
+if [[ ! -s "$ZSH_INIT_CACHE/fzf.zsh" || $commands[fzf] -nt "$ZSH_INIT_CACHE/fzf.zsh" ]]; then
+  fzf --zsh >| "$ZSH_INIT_CACHE/fzf.zsh"
+fi
+source "$ZSH_INIT_CACHE/fzf.zsh"
 
 export FZF_DEFAULT_OPTS="
   --height 40%
@@ -143,10 +137,16 @@ if command -v fd >/dev/null 2>&1; then
 fi
 
 # --- zoxide Configuration ---
-eval "$(zoxide init zsh)"
+if [[ ! -s "$ZSH_INIT_CACHE/zoxide.zsh" || $commands[zoxide] -nt "$ZSH_INIT_CACHE/zoxide.zsh" ]]; then
+  zoxide init zsh >| "$ZSH_INIT_CACHE/zoxide.zsh"
+fi
+source "$ZSH_INIT_CACHE/zoxide.zsh"
 
 # --- Atuin Configuration ---
-eval "$(atuin init zsh)"
+if [[ ! -s "$ZSH_INIT_CACHE/atuin.zsh" || $commands[atuin] -nt "$ZSH_INIT_CACHE/atuin.zsh" ]]; then
+  atuin init zsh >| "$ZSH_INIT_CACHE/atuin.zsh"
+fi
+source "$ZSH_INIT_CACHE/atuin.zsh"
 
 # --- zsh-syntax-highlighting Configuration ---
 # Keep this last so every widget above gets highlighted correctly.

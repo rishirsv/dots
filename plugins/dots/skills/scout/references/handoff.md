@@ -1,43 +1,33 @@
 # Scout Handoff
 
-Use this structure when Scout's result must cross sessions, people, or skills.
-Include only sections that carry information the recipient needs, but preserve
-the intent, reasoning, evidence, and unresolved decisions required to continue
-without replaying the Scout conversation or completed research.
+Use the user's confirmed Scout Snapshot when the result must cross sessions,
+people, or skills. Keep **Shared understanding** and **Next mode**. Include the
+other sections only when they carry information the recipient needs. Add worker
+report paths, citations, and artifact links where they let the recipient verify
+direction-changing evidence without replaying the Scout conversation.
 
 ```md
 # Scout Handoff
 
-## Intent
-<what the user is trying to accomplish and why>
+## 🧭 Shared understanding
 
-## Success
-<what a good outcome must achieve>
+<the confirmed account of what the user means>
 
-## Decisions
-<settled decisions and their rationale>
+## ✅ Decisions
 
-## User Criteria
-<preferences, examples, vocabulary, and reaction-derived criteria>
+- **<plain-language question or label>** — <the user's answer and why it won>
+- **<question or label>** — Deferred. <Consequence and condition for revisiting>
 
-## Research Findings
-<only direction-changing findings, with citations or worker report paths>
+## 🔎 What shaped it
 
-## Constraints And Non-Goals
-<scope boundaries and requirements the next workflow must preserve>
+- **User:** <direction-changing preference, criterion, example, or distinction>
+- **Evidence:** <finding, implication, citation, and worker report path>
+- **Prototype:** <reaction-derived criterion and artifact link>
 
-## Rejected Directions
-<important alternatives rejected and why>
+## ➡️ Next mode
 
-## Risks And Assumptions
-<what remains unproven or could change the direction>
-
-## Open Decisions
-<each unresolved decision and what would settle it>
-
-## Recommended Next Mode
-<research, Ultraplan, design, documentation, or implementation, and why it is ready>
+<stop, research, plan, design, document, or build, and why the result is ready>
 ```
 
-The handoff records decisions and context; it does not sequence implementation
-tasks or replace a formal plan.
+The handoff records confirmed understanding and context. It does not sequence
+implementation tasks or replace a formal plan.

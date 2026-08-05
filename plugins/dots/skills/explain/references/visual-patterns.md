@@ -1,107 +1,85 @@
-# Visual Patterns
+# Visual patterns
 
-Ready skeletons for the visual ladder. Pick the pattern whose *question*
-matches, swap the labels, delete what the concept doesn't need. Every
-pattern answers one question — if none fits, prose was probably right.
+Select one pattern. If a part does not answer the user's question, delete it.
 
-## Before / After — "what changed?"
+## Change
+
+Use this pattern to show what changed:
 
 ```mermaid
 flowchart LR
   subgraph Before
-    A1[User] --> B1[Old step] --> C1[Result]
+    A1[Start] --> B1[Old step] --> C1[Result]
   end
   subgraph After
-    A2[User] --> C2[Result]
+    A2[Start] --> C2[Result]
   end
 ```
 
-Use for: refactors, process changes, product redesigns, policy changes.
-The payoff is the *deleted* box — make what disappeared obvious.
+## Flow
 
-## Data / Money / Information Flow — "how does it move?"
+Use this pattern to show how data, money, or information moves:
 
 ```mermaid
 flowchart LR
-  Source[Where it starts] -->|what moves| Middle[What transforms it]
-  Middle -->|what comes out| Sink[Where it lands]
-  Middle -.->|what can go wrong| Risk[Failure point]
+  A[Source] -->|item| B[Change]
+  B -->|result| C[Target]
+  B -.->|failure| D[Risk]
 ```
 
-Use for: system behavior, financial flows, approval chains, integrations.
-One label per arrow; name the failure point when the question is "why did
-it break" or "what's the risk".
+If the failure changes the answer, show the failure path.
 
-## Timeline — "when, and in what order?"
+## Sequence
+
+Use this pattern to show order or time:
 
 ```text
-Jan ─── Feb ─── Mar ─── Apr
- │       │       │       │
- kickoff draft   review  ship
-                 ▲ you are here
+Start ─── Step 1 ─── Step 2 ─── Result
+                      ▲ current point
 ```
 
-Use for: plans, histories, incident sequences. Always mark "you are here"
-or "the moment that matters".
+Mark the event or time that answers the question.
 
-## Decision Tree — "which one applies to me?"
+## Decision
+
+Use this pattern to show which option applies:
 
 ```mermaid
 flowchart TD
-  Q{The one deciding question} -->|yes| A[Option A: what you get]
+  Q{Main question} -->|yes| A[Option A]
   Q -->|no| Q2{Second question}
   Q2 -->|yes| B[Option B]
   Q2 -->|no| C[Option C]
 ```
 
-Use for: choices, eligibility, routing, "should I X or Y". Two levels max —
-a third level means the prose framing is wrong, not the tree.
+Use no more than two questions. If the decision needs more levels, use prose.
 
-## Comparison Table — "how do these differ?"
+## Comparison
+
+Use this pattern to compare two to four options:
 
 | | Option A | Option B |
 |---|---|---|
-| Best when | … | … |
-| Cost / effort | … | … |
-| The catch | … | … |
+| Best use | ... | ... |
+| Cost | ... | ... |
+| Limit | ... | ... |
 
-Use for: 2-4 alternatives. Rows are the *reader's* decision criteria, not
-the options' feature lists. Include "The catch" when a meaningful tradeoff
-would otherwise be easy to miss.
+Use criteria that affect the user's decision.
 
-## Concept Map — "how do these ideas relate?"
+## Relationship
+
+Use this pattern to show how ideas connect:
 
 ```mermaid
 flowchart TD
-  Core((The core idea)) --- P1[Part 1]
-  Core --- P2[Part 2]
-  P1 -->|depends on| P2
+  A((Main idea)) --- B[Part 1]
+  A --- C[Part 2]
+  B -->|depends on| C
 ```
 
-Use for: unfamiliar domains, jargon clusters, "how does X relate to Y".
-Five nodes maximum; a map that needs more should become two explanations.
+Use no more than five nodes. If the map needs more nodes, use prose.
 
-## Funnel / Losses — "where does it leak?"
+## Quantity
 
-```text
-100 started
- ├─ 62 completed step 1   (-38: where and why)
- ├─ 31 completed step 2   (-31: where and why)
- └─  9 finished           (the number that matters)
-```
-
-Use for: conversion, attrition, process losses. Annotate the biggest drop,
-not every step.
-
-## Layered "How X Works" — shareable artifact skeleton
-
-For a rendered HTML artifact, lead with the answer, then use the mechanism or
-implication sections that help the intended reader. Keep it self-contained and
-verify it per visual-proof before sharing.
-
-## Charts
-
-Quantities follow the local dataviz skill or method when one is available —
-form first, color by job, validate the palette, render and look. Reach for a
-chart only when the *magnitude or trend* is the point; if the point is a single
-number, a stat line in prose beats a chart.
+If size or trend is the main point, use a chart. If one number is the main point,
+use a text value.
