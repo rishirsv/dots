@@ -9,7 +9,7 @@ suppress_unstable_features_warning = true
 view_image = true
 
 [features]
-default_mode_request_user_input = true
+default_mode_request_user_input = false
 memories = true
 prevent_idle_sleep = true
 
