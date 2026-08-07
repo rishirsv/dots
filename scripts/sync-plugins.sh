@@ -53,8 +53,19 @@ fi
 
 CODEX_MARKETPLACE="$ROOT"
 CLAUDE_MARKETPLACE="$ROOT"
-PLUGIN_NAMES=("${(@f)$(
+CODEX_PLUGIN_NAMES=("${(@f)$(
   python3 - "$ROOT/.agents/plugins/marketplace.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+catalog = json.loads(Path(sys.argv[1]).read_text())
+for plugin in catalog.get("plugins", []):
+    print(plugin["name"])
+PY
+)}")
+CLAUDE_PLUGIN_NAMES=("${(@f)$(
+  python3 - "$ROOT/.claude-plugin/marketplace.json" <<'PY'
 import json
 import sys
 from pathlib import Path
@@ -77,12 +88,12 @@ sync_codex_home() {
   echo "Syncing Codex plugins for $label"
   if [[ -n "$home" ]]; then
     CODEX_HOME="$home" codex plugin marketplace add "$CODEX_MARKETPLACE"
-    for plugin in "${PLUGIN_NAMES[@]}"; do
+    for plugin in "${CODEX_PLUGIN_NAMES[@]}"; do
       CODEX_HOME="$home" codex plugin add "$plugin@dots"
     done
   else
     codex plugin marketplace add "$CODEX_MARKETPLACE"
-    for plugin in "${PLUGIN_NAMES[@]}"; do
+    for plugin in "${CODEX_PLUGIN_NAMES[@]}"; do
       codex plugin add "$plugin@dots"
     done
   fi
@@ -104,7 +115,7 @@ raise SystemExit(0 if any(plugin.get("id") == plugin_id for plugin in installed)
 
 sync_claude_plugins() {
   claude plugin marketplace add "$CLAUDE_MARKETPLACE" --scope user
-  for plugin in "${PLUGIN_NAMES[@]}"; do
+  for plugin in "${CLAUDE_PLUGIN_NAMES[@]}"; do
     local plugin_id="$plugin@dots"
     if claude_plugin_installed "$plugin_id"; then
       claude plugin update "$plugin_id" --scope user

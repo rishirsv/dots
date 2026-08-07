@@ -1,0 +1,25 @@
+{
+  "name": "pulse-reddit-mcp-server",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Read-only Reddit MCP server for Pulse",
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --charset=ascii --minify --platform=node --format=cjs --outfile=dist/index.cjs --banner:js=\"#!/usr/bin/env node\"",
+    "typecheck": "tsc --noEmit",
+    "start": "node dist/index.cjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "cheerio": "^1.1.2",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "esbuild": "^0.25.9",
+    "typescript": "^5.9.2"
+  }
+}

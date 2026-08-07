@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Pulse</title>
+  <desc id="desc">A black geometric P with an open signal channel and a live orange counter.</desc>
+  <rect width="256" height="256" fill="#FAF7F0"/>
+  <path
+    fill="#171717"
+    fill-rule="evenodd"
+    d="M48 28h78c51 0 86 32 86 78s-35 78-86 78H92v44H48V28Zm44 40v76h32c27 0 44-14 44-38S151 68 124 68H92Z"
+  />
+  <rect x="167" y="97" width="51" height="18" fill="#FAF7F0"/>
+  <circle cx="130" cy="106" r="13" fill="#FF4F1F"/>
+</svg>

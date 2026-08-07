@@ -1,0 +1,14 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "x-search",
+  "version": "1.0.0",
+  "description": "Read-only access to X (Twitter) through the official v2 API. Search posts, look up users, read timelines, and inspect threads.",
+  "author": {
+    "name": "Matt Palmer",
+    "email": "59450879+mattppal@users.noreply.github.com"
+  },
+  "homepage": "https://github.com/mattppal/agent-plugins/tree/main/plugins/x-search",
+  "repository": "https://github.com/mattppal/agent-plugins",
+  "license": "MIT",
+  "keywords": ["x", "twitter", "mcp", "search", "social", "read-only"]
+}

@@ -1,0 +1,10 @@
+interface:
+  display_name: "Pulse"
+  short_description: "Synthesize current Reddit and X social signal"
+  icon_small: "../../assets/icon.svg"
+  icon_large: "../../assets/icon.svg"
+  brand_color: "#FF4F1F"
+  default_prompt: "Use $pulse to synthesize current social signal from Reddit and X."
+
+policy:
+  allow_implicit_invocation: true
