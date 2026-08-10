@@ -43,6 +43,25 @@ If the worktree mixes unrelated changes, stop before staging and ask which
 paths or hunks belong. Never use `git add -A`, and preserve all unrelated
 changes.
 
+## Title Contract
+
+Unless repository rules or an explicit user title require otherwise, use a
+Conventional Commit-style pull-request title:
+
+```text
+<type>(<scope>): <concise outcome>
+```
+
+Omit the scope when no stable one applies. Choose `feat`, `fix`, `perf`,
+`refactor`, `docs`, `test`, `build`, `ci`, or `chore`; derive a lowercase scope
+from a stable product area or subsystem. Describe the resulting behavior, not
+the task performed, branch, plan, or commit list. Use no terminal punctuation
+and prefer 72 characters or fewer without sacrificing clarity.
+
+Build the title from the whole base-to-head change and name its unifying
+outcome. Nearby titles may establish repository vocabulary or required scopes,
+but inconsistent nearby titles do not override this default.
+
 ## Identity Gate
 
 Treat four identities as separate checks:
@@ -123,11 +142,11 @@ its draft state, report the exact gap instead of claiming the gate passed.
    characters; add a body only for rationale, constraints, or tradeoffs.
 5. Verify the staged scope again, commit, and push with an upstream when the
    branch lacks one. Never bypass hooks unless the user explicitly asks.
-6. Build the pull-request title and body from the base-to-head change, the
-   repository template, and actual validation. Read
+6. Build the pull-request title from the title contract and the body from the
+   base-to-head change, repository template, and actual validation. Read
    [pr-description.md](references/pr-description.md) and write the body as a
-   durable decision record and review guide, scaled to the change. Prepare any
-   required visual evidence before publishing.
+   concise merge brief scaled to the change. Prepare any required visual
+   evidence before publishing.
 7. Create a draft pull request unless the user explicitly requested ready.
    Upload required evidence after the pull request exists and satisfy the
    visual evidence gate before making it ready or treating creation as
