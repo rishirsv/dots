@@ -100,7 +100,6 @@ Use one compact structure and omit empty sections:
 
 ## Verdict And Scope
 - Mode, user goal, flow, and evidence limits
-- Design constitution score over evidenced principles
 
 ## Top Findings
 - Findings in descending severity

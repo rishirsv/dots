@@ -35,7 +35,7 @@ or one arrow would merely restate a sentence.
 
 - Keep an embedded diagram to about 4–9 nodes. Split a larger explanation into
   two diagrams or promote it to an architecture board.
-- Give only one or two elements accent treatment. Neutral structure should
+- Emphasize only one or two elements. Neutral structure should
   carry most of the drawing.
 - Remove connectors whose meaning is already obvious from placement.
 - Put important labels in HTML when a responsive SVG would shrink them below
@@ -76,4 +76,4 @@ relationship requires it.
 
 Before handoff, inspect the actual display width. A valid diagram has no
 overlapping labels, ambiguous crossings, clipped content, unreadable scaled
-text, or focal treatment on more than two elements.
+text, or strong emphasis on more than two elements.

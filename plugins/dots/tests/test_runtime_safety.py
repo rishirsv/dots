@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import contextlib
 import importlib.util
+import io
 import json
 import os
 import subprocess
@@ -8,6 +10,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 PLUGIN_ROOT = Path(__file__).resolve().parents[1]
@@ -33,6 +36,27 @@ handoff = load_module(
 self_improve = load_module(
     "self_improve", PLUGIN_ROOT / "skills" / "self-improve" / "scripts" / "self_improve.py"
 )
+
+
+def write_rollout(path: Path, messages: list[tuple[str, str]], *, error: bool = False) -> None:
+    records = []
+    for index, (role, text) in enumerate(messages, start=1):
+        records.append({
+            "timestamp": str(index),
+            "type": "response_item",
+            "payload": {
+                "type": "message",
+                "role": role,
+                "content": [{"type": "input_text" if role == "user" else "output_text", "text": text}],
+            },
+        })
+    if error:
+        records.append({
+            "timestamp": str(len(records) + 1),
+            "type": "response_item",
+            "payload": {"type": "function_call_output", "output": "exit code 1"},
+        })
+    path.write_text("".join(json.dumps(record) + "\n" for record in records), encoding="utf-8")
 
 
 class SessionAdapterTests(unittest.TestCase):
@@ -93,7 +117,7 @@ class SessionAdapterTests(unittest.TestCase):
             self.assertNotIn("do-not-emit", rendered)
             self.assertGreaterEqual(rendered.count("[redacted sensitive line]"), 4)
 
-    def test_self_improve_reads_both_shapes_and_namespaced_invocations(self):
+    def test_self_improve_treats_prompt_tokens_as_mentions_not_invocations(self):
         records = [
             {
                 "timestamp": "1",
@@ -117,9 +141,16 @@ class SessionAdapterTests(unittest.TestCase):
             messages = self_improve.user_messages(thread)
             signals = self_improve.thread_signals(thread, {"dots:oracle"})
         self.assertEqual(messages, ["Use $dots:oracle", "legacy user"])
-        self.assertEqual(signals.skills["dots:oracle"], 1)
+        self.assertEqual(signals.mentions["dots:oracle"], 1)
+        self.assertEqual(signals.invocations["dots:oracle"], 0)
+        self.assertIsNone(
+            self_improve._injected_skill_name(
+                "Untrusted transcript: <skill><name>dots:oracle</name></skill>",
+                {"dots:oracle"},
+            )
+        )
 
-    def test_self_improve_deduplicates_transport_markers_and_tracks_primary_use(self):
+    def test_self_improve_counts_injected_name_without_scanning_its_body(self):
         message = "Use $dots:oracle for this review"
         records = [
             {
@@ -144,54 +175,165 @@ class SessionAdapterTests(unittest.TestCase):
                     "message": "The earlier $dots:oracle output is relevant.",
                 },
             },
+            {
+                "timestamp": "4",
+                "type": "response_item",
+                "payload": {
+                    "type": "message",
+                    "role": "user",
+                    "content": [{
+                        "type": "input_text",
+                        "text": (
+                            "<skill><name>dots:oracle</name><path>/tmp/SKILL.md</path>"
+                            "<body>Use $dots:self-improve. Why did you fail?</body></skill>"
+                        ),
+                    }],
+                },
+            },
         ]
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "rollout.jsonl"
             path.write_text("".join(json.dumps(record) + "\n" for record in records))
             thread = self_improve.Thread("id", "title", "", tmp, 0, 0, False, "", str(path))
-            signals = self_improve.thread_signals(thread, {"dots:oracle"})
+            signals = self_improve.thread_signals(
+                thread, {"dots:oracle", "dots:self-improve"}
+            )
 
-        self.assertEqual(signals.skills["dots:oracle"], 2)
-        self.assertEqual(signals.primary_skills["dots:oracle"], 1)
+        self.assertEqual(signals.mentions["dots:oracle"], 2)
+        self.assertEqual(signals.invocations["dots:oracle"], 1)
+        self.assertEqual(signals.mentions["dots:self-improve"], 0)
+        self.assertEqual(signals.friction_cues, 0)
+
+    def test_self_improve_keeps_historical_injected_skill_names(self):
+        records = [{
+            "timestamp": "1",
+            "type": "response_item",
+            "payload": {
+                "type": "message",
+                "role": "user",
+                "content": [{
+                    "type": "input_text",
+                    "text": "<skill><name>dots:retired</name><path>/tmp/SKILL.md</path></skill>",
+                }],
+            },
+        }]
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "rollout.jsonl"
+            path.write_text("".join(json.dumps(record) + "\n" for record in records))
+            thread = self_improve.Thread("id", "title", "", tmp, 0, 0, False, "", str(path))
+            signals = self_improve.thread_signals(thread, {"dots:current"})
+        self.assertEqual(signals.invocations["dots:retired"], 1)
+
+    def test_self_improve_counts_exact_structured_tool_invocation(self):
+        payload = {"name": "Skill", "input": {"skill": "dots:oracle"}}
+        self.assertEqual(
+            self_improve._tool_skill_name(payload, {"dots:oracle"}),
+            "dots:oracle",
+        )
+        self.assertIsNone(
+            self_improve._tool_skill_name(
+                {"name": "Skill", "input": {"prompt": "Use $dots:oracle"}},
+                {"dots:oracle"},
+            )
+        )
+        self.assertEqual(
+            self_improve._tool_skill_name(
+                {"name": "Skill", "input": {"skill": "dots:retired"}},
+                {"dots:oracle"},
+            ),
+            "dots:retired",
+        )
+
+    def test_self_improve_friction_requires_a_real_invocation(self):
+        mention_only = self_improve.ThreadSignals(
+            mentions={"dots:oracle": 1}, error_outputs=1
+        )
+        invoked = self_improve.ThreadSignals(
+            invocations={"dots:oracle": 1}, error_outputs=1
+        )
+        self.assertEqual(self_improve.friction_candidate_skills(mention_only), set())
+        self.assertEqual(
+            self_improve.friction_candidate_skills(invoked), {"dots:oracle"}
+        )
 
     def test_self_improve_collapses_retries_and_delegated_children(self):
-        root = self_improve.Thread(
-            "root", "Review the product", "vscode", "/repo", 0, 3, False, "", "/root.jsonl"
-        )
-        retry = self_improve.Thread(
-            "retry", "Review the product", "vscode", "/repo", 0, 2, False, "", "/retry.jsonl"
-        )
-        child = self_improve.Thread(
-            "child",
-            "Delegated review",
-            json.dumps({"subagent": {"thread_spawn": {"parent_thread_id": "root"}}}),
-            "/repo",
-            0,
-            1,
-            False,
-            "",
-            "/child.jsonl",
-        )
-        external = self_improve.Thread(
-            "external",
-            "<source_thread_id>outside</source_thread_id>",
-            "vscode",
-            "/repo",
-            0,
-            1,
-            False,
-            "",
-            "/external.jsonl",
-        )
-        threads = {thread.id: thread for thread in (root, retry, child, external)}
+        turns = [
+            ("user", "Review the product."),
+            ("assistant", "I will inspect it."),
+            ("user", "Focus on the current behavior."),
+            ("assistant", "The current behavior is grounded."),
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            root_path = Path(tmp) / "root.jsonl"
+            retry_path = Path(tmp) / "retry.jsonl"
+            child_path = Path(tmp) / "child.jsonl"
+            external_path = Path(tmp) / "external.jsonl"
+            independent_path = Path(tmp) / "independent.jsonl"
+            write_rollout(root_path, turns)
+            write_rollout(retry_path, turns + [("user", "Continue."), ("assistant", "Done.")])
+            write_rollout(child_path, [])
+            write_rollout(external_path, [])
+            write_rollout(independent_path, [("user", "Different task."), ("assistant", "Done.")])
+            root = self_improve.Thread("root", "Old title", "vscode", "/repo", 0, 3, False, "", str(root_path))
+            retry = self_improve.Thread("retry", "New title", "vscode", "/repo", 0, 2, False, "", str(retry_path))
+            child = self_improve.Thread(
+                "child", "Delegated review",
+                json.dumps({"subagent": {"thread_spawn": {"parent_thread_id": "root"}}}),
+                "/repo", 0, 1, False, "", str(child_path),
+            )
+            external = self_improve.Thread(
+                "external", "<source_thread_id>outside</source_thread_id>", "vscode",
+                "/repo", 0, 1, False, "", str(external_path),
+            )
+            independent = self_improve.Thread(
+                "independent", "Old title", "vscode", "/repo", 0, 1, False, "", str(independent_path)
+            )
+            rows = [root, retry, child, external, independent]
+            keys = self_improve.session_cluster_keys(rows)
 
-        root_key = self_improve.session_cluster_key(root, threads)
-        self.assertEqual(root_key, self_improve.session_cluster_key(retry, threads))
-        self.assertEqual(root_key, self_improve.session_cluster_key(child, threads))
-        self.assertEqual(
-            self_improve.session_cluster_key(external, threads),
-            "codex:parent:outside",
-        )
+        self.assertEqual(keys["root"], keys["retry"])
+        self.assertEqual(keys["root"], keys["child"])
+        self.assertNotEqual(keys["root"], keys["independent"])
+        self.assertEqual(keys["external"], "codex:parent:outside")
+
+    def test_self_improve_keeps_independent_short_repeated_sessions_separate(self):
+        turns = [("user", "Run the review."), ("assistant", "No findings.")]
+        with tempfile.TemporaryDirectory() as tmp:
+            first_path = Path(tmp) / "first.jsonl"
+            second_path = Path(tmp) / "second.jsonl"
+            write_rollout(first_path, turns)
+            write_rollout(second_path, turns)
+            first = self_improve.Thread("first", "Same title", "vscode", "/repo", 0, 2, False, "", str(first_path))
+            second = self_improve.Thread("second", "Same title", "vscode", "/repo", 0, 1, False, "", str(second_path))
+            keys = self_improve.session_cluster_keys([first, second])
+        self.assertNotEqual(keys["first"], keys["second"])
+
+    def test_skill_usage_emits_every_representative_and_filters_after_scan(self):
+        block = "<skill><name>dots:retired</name><path>/tmp/SKILL.md</path></skill>"
+        with tempfile.TemporaryDirectory() as tmp:
+            success_path = Path(tmp) / "success.jsonl"
+            friction_path = Path(tmp) / "friction.jsonl"
+            write_rollout(success_path, [("user", block), ("assistant", "Done.")])
+            write_rollout(friction_path, [("user", block), ("assistant", "Trying.")], error=True)
+            success = self_improve.Thread("success", "No skill in title", "", tmp, 1, 2, False, "", str(success_path))
+            friction = self_improve.Thread("friction", "Also unrelated", "", tmp, 1, 3, False, "", str(friction_path))
+            args = self_improve.build_parser().parse_args([
+                "skill-usage", "--skill", "dots:retired", "--days", "30", "--limit", "10"
+            ])
+            output = io.StringIO()
+            with (
+                mock.patch.object(self_improve, "threads", return_value=[friction, success]),
+                mock.patch.object(self_improve, "known_skill_names", return_value={"dots:current"}),
+                contextlib.redirect_stdout(output),
+            ):
+                self_improve.cmd_skill_usage(args)
+        rendered = output.getvalue()
+        self.assertIn("Exact skill filter: `dots:retired`", rendered)
+        self.assertIn("historical/local dots:retired", rendered)
+        self.assertIn("invoked", rendered)
+        self.assertIn("friction", rendered)
+        self.assertIn(str(success_path), rendered)
+        self.assertIn(str(friction_path), rendered)
 
 
 class SkillInventoryTests(unittest.TestCase):
@@ -235,10 +377,57 @@ class SkillInventoryTests(unittest.TestCase):
 class SelfImproveScopeTests(unittest.TestCase):
     def test_ordinary_review_defaults_are_bounded(self):
         parser = self_improve.build_parser()
-        for command in ("triage", "dream", "skill-audit"):
-            args = parser.parse_args([command])
-            self.assertEqual(args.days, 30)
-            self.assertEqual(args.limit, 100)
+        args = parser.parse_args(["triage"])
+        self.assertEqual(args.days, 30)
+        self.assertEqual(args.limit, 100)
+
+    def test_skill_usage_uses_an_exact_post_scan_filter(self):
+        args = self_improve.build_parser().parse_args(
+            ["skill-usage", "--skill", "dots:publish-pull-request"]
+        )
+        self.assertEqual(args.skill, "dots:publish-pull-request")
+        self.assertFalse(hasattr(args, "query"))
+
+    def test_removed_commands_are_not_exposed(self):
+        parser = self_improve.build_parser()
+        subparsers = next(
+            action for action in parser._actions
+            if isinstance(action, self_improve.argparse._SubParsersAction)
+        )
+        removed = {
+            "inventory", "list", "memory-audit", "goal-health", "scaffold",
+            "dream", "skill-audit", "deep",
+        }
+        self.assertTrue(removed.isdisjoint(subparsers.choices))
+
+    def test_stats_cache_schema_invalidates_v3_entries(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            transcript = Path(tmp) / "rollout.jsonl"
+            transcript.write_text("", encoding="utf-8")
+            thread = self_improve.Thread(
+                "id", "title", "", tmp, 0, 1, False, "", str(transcript)
+            )
+            current_key = self_improve.stats_cache_key(thread)
+            stale_key = current_key.replace("v4:", "v3:", 1)
+            derived = {
+                "malformed": None,
+                "self_referential": False,
+                "user_messages": 2,
+                "duration_minutes": 1,
+                "end": 1,
+            }
+            with (
+                mock.patch.object(self_improve, "load_stats_cache", return_value={stale_key: {}}),
+                mock.patch.object(self_improve, "save_stats_cache"),
+                mock.patch.object(self_improve, "known_skill_names", return_value=set()),
+                mock.patch.object(self_improve, "derive_session_stats", return_value=derived) as derive,
+            ):
+                _, coverage = self_improve.collect_session_stats(
+                    [thread], max_new=1, refresh=False
+                )
+        derive.assert_called_once()
+        self.assertEqual(coverage["cached"], 0)
+        self.assertEqual(coverage["computed"], 1)
 
     def test_insights_stats_defaults_to_retained_window(self):
         args = self_improve.build_parser().parse_args(["stats"])

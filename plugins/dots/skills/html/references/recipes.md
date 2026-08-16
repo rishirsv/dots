@@ -17,7 +17,7 @@ the source commits to one. `comparison-grid` helps with a small option set;
 
 ## Explainer
 
-**Answer → mental model → mechanism → implications**
+**Answer → how it works → mechanism → implications**
 
 Lead with the answer, give the reader a compact model, show how the parts work,
 then explain what follows from that mechanism. Use `process-steps` for a linear

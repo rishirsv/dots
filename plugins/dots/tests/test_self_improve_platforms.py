@@ -21,7 +21,11 @@ def load_module(name: str, path: Path):
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     sys.modules[name] = module
-    spec.loader.exec_module(module)
+    sys.path.insert(0, str(path.parent))
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.path.pop(0)
     return module
 
 
@@ -88,6 +92,11 @@ class PlatformSeamTests(unittest.TestCase):
             calls = [event.payload for event in events if event.kind == "function_call"]
             self.assertEqual(sum(call["name"] == "Read" for call in calls), 2)
             self.assertEqual(sum(call["name"] == "Skill" for call in calls), 1)
+            helper = load_module("self_improve_claude_fixture", SCRIPT)
+            skill_call = next(call for call in calls if call["name"] == "Skill")
+            self.assertEqual(
+                helper._tool_skill_name(skill_call, {"code-review"}), "code-review"
+            )
 
     def test_codex_source_never_discovers_claude_sessions(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -113,7 +122,7 @@ class PlatformSeamTests(unittest.TestCase):
             rows = source.list_sessions(limit=10, archived="all")
             self.assertEqual([(row.id, row.platform) for row in rows], [("codex-id", "codex")])
 
-    def test_cli_platforms_keep_decisions_and_instruction_roots_separate(self) -> None:
+    def test_platforms_keep_decisions_and_instruction_roots_separate(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             codex_home = root / ".codex"
@@ -128,14 +137,23 @@ class PlatformSeamTests(unittest.TestCase):
             )
             self.assertTrue((claude_home / "self_improve_decisions.json").exists())
             self.assertFalse((codex_home / "self_improve_decisions.json").exists())
-            inventory = subprocess.run(
-                [sys.executable, str(SCRIPT), "--platform", "claude", "inventory"],
-                check=True, capture_output=True, text=True, env=env,
-            ).stdout
-            self.assertIn(str(claude_home / "CLAUDE.md"), inventory)
-            self.assertNotIn(str(codex_home / "AGENTS.md"), inventory)
+            helper = load_module("self_improve_platform_paths", SCRIPT)
+            helper.CODEX_HOME = codex_home
+            helper.CLAUDE_HOME = claude_home
+            self.assertEqual(
+                helper.platform_paths("claude")["instructions"],
+                claude_home / "CLAUDE.md",
+            )
+            self.assertEqual(
+                helper.platform_paths("codex")["instructions"],
+                codex_home / "AGENTS.md",
+            )
+            helper.configure_platform("claude")
+            self.assertEqual(helper.DECISIONS_FILE, claude_home / "self_improve_decisions.json")
+            helper.configure_platform("codex")
+            self.assertEqual(helper.DECISIONS_FILE, codex_home / "self_improve_decisions.json")
 
-    def test_claude_cli_show_files_and_codex_only_stop(self) -> None:
+    def test_claude_cli_show_and_files(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             claude_home = root / ".claude"
@@ -162,15 +180,9 @@ class PlatformSeamTests(unittest.TestCase):
                 [sys.executable, str(SCRIPT), "--platform", "claude", "files", "session-2"],
                 check=True, capture_output=True, text=True, env=env,
             ).stdout
-            unsupported = subprocess.run(
-                [sys.executable, str(SCRIPT), "--platform", "claude", "goal-health"],
-                capture_output=True, text=True, env=env,
-            )
             self.assertIn("platform: `claude`", show)
             self.assertIn("Inspect the app.", show)
             self.assertIn(str(target), files)
-            self.assertNotEqual(unsupported.returncode, 0)
-            self.assertIn("Codex-only", unsupported.stderr)
 
     def test_malformed_claude_jsonl_names_file_and_line(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

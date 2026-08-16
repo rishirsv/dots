@@ -85,8 +85,7 @@ Lead with:
 2. what was compared and at which states or viewports;
 3. findings using the parent finding contract;
 4. the ordered implementation checklist when useful;
-5. material evidence limits;
-6. the constitution score only for a full acceptance review.
+5. material evidence limits.
 
 Finish when every required surface is covered or explicitly inapplicable, each
 finding has an acceptance check, and the result follows the rules above.

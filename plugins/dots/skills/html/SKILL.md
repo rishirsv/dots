@@ -1,131 +1,66 @@
 ---
 name: html
-description: "Creates persistent, self-contained HTML pages, reports, charts, static mocks, or embeddable fragments from supplied material and sources. Use for shareable static artifacts; not for exploratory or interactive visuals, product UI, or durable repository documentation."
+description: "Creates self-contained HTML pages, reports, charts, static mocks, or embeddable fragments from supplied material and sources. Use for HTML meant to be opened or shared; not for interactive visuals, product UI, or durable repository documentation."
 ---
 
-# html
+# HTML
 
-Create HTML artifacts for explanations, plans, reviews, reports, comparisons,
-status briefs, and static mocks — one self-contained `.html` file a reader can
-open, skim, navigate, and share. Read the source material, understand what
-matters for the intended reader, then write and display it clearly.
+Create one self-contained HTML page or one embeddable fragment that a reader can
+open, understand, and share. Keep confirmed facts, inference, and unknowns
+distinct.
 
-The system has four decisions, made in this order:
+Choose the output before writing:
 
-- **Identity** — the standard look, defined once as tokens in
-  [references/DESIGN.md](references/DESIGN.md) and compiled to
-  [assets/theme.css](assets/theme.css). Identity is constant; never restyle it
-  per artifact.
-- **Outcome** — the complete reading experience the job needs. Start with the
-  visual [outcome atlas](assets/outcomes/index.html), then inspect the closest
-  finished page. Outcome references teach judgment and reading order; they are
-  not templates or scaffolds.
-- **Form** — the document's shape, composed per content from the component
-  catalog shown in [assets/atlas.html](assets/atlas.html), with reusable source
-  in `assets/registry/`. The fragments remain portable implementation truth;
-  form follows the content's job.
-- **Treatment** — how much design the request calls for, read per artifact:
-  a quick working memo gets the plain column; a keeper explainer earns the
-  TOC rail, figures, and full motion.
+- **Page:** shell, theme, components, and optional behavior. Make no external
+  requests; use system fonts and embed visual assets.
+- **Fragment:** one scoped component with no shell or behavior dependency. Use
+  this for a chart or block that will be pasted into another surface. See
+  [fragment delivery](references/authoring.md#fragment-delivery).
 
-## Contract
+Read [authoring.md](references/authoring.md) before building.
 
-Start from the conversation and any sources the user identifies. Read the
-actual material needed to make the artifact accurate; when that material is
-code or a diff, inspect the relevant repository context rather than narrating
-file names. Form the understanding needed to write the artifact. Keep confirmed
-facts, inference, and unknowns distinct.
+## Build
 
-Output is a single `.html` file. Deliver through the platform's artifact
-tool when one is available (its design guidance defers to an existing token
-system — theme.css is that system and wins conflicts); otherwise write the
-file where the user asks and open it locally.
+1. **Understand the reader and source.** Decide what the reader must understand
+   or decide. Read the relevant sources, including code or a diff when the page
+   explains existing software.
+2. **Choose a reading order.** For a page, open the
+   [finished-page examples](assets/outcomes/index.html) and inspect the one
+   closest to the reader's need. Use its reading order, not its sample content
+   or exact section list. Skip this for a fragment. Preserve a strong order that
+   already exists in the source.
+3. **Use the smallest useful design.** Do not invent controls, KPI rows, cards,
+   legends, or secondary facts to make the page feel complete. If filtering,
+   simulation, or mutable state is the main job, use an interactive
+   visualization or product-UI workflow instead.
+4. **Build from the supplied visual system.** Use
+   [assets/theme.css](assets/theme.css) for every page. Choose components from
+   [assets/atlas.html](assets/atlas.html), copy their source from
+   `assets/registry/`, and replace all example content. Use
+   `scripts/assemble.mjs` for pages with several components. Custom CSS may use
+   only the existing design tokens.
+5. **Use real content.** Do not invent numbers, claims, or filler. Trace figures
+   to their sources and mark important gaps as "not verified." Include a sources
+   footer only when it helps the reader. Remove tool names, prompts, private
+   paths, scratch files, and generation details.
+6. **Review before delivery.** Apply the checks in
+   [authoring.md](references/authoring.md#before-delivery).
 
-Choose the delivery branch before assembly:
+Read only the guidance the page needs:
 
-- **Page** → shell + theme + components + optional behavior. Pages are
-  self-contained: make no external requests, use system fonts, and embed
-  visual assets as inline SVG or data URIs.
-- **Fragment** → one scoped component + no shell + no behavior dependency.
-  Use this for "just the chart" or a block the user will paste into another
-  surface. See
-  [references/authoring.md](references/authoring.md#fragment-delivery).
-
-## Building an artifact
-
-1. **Read the job and ground the content.** Decide who reads this and what
-   decision or understanding it drives. Read the relevant sources before
-   writing. Pick treatment from the reader's need — utilitarian by default;
-   editorial only when the artifact is a keeper.
-2. **Choose page or fragment.** Do not start with the page shell and strip it
-   back later; follow the selected branch in
-   [references/authoring.md](references/authoring.md).
-3. **Route a page by outcome.** Open
-   [assets/outcomes/index.html](assets/outcomes/index.html), compare the
-   complete-page previews, and inspect the one closest finished page. Use a
-   second only when the reader job is genuinely mixed. Borrow its narrative
-   logic, not its sample content or exact component sequence. For a fragment,
-   skip the outcome layer.
-4. **Choose the smallest composition that does the job.** Do not invent
-   controls, KPI rows, cards, legends, or secondary facts to make the artifact
-   feel complete. If filtering, simulation, or mutable state is the main job,
-   stop and use an interactive-visualization or product-UI workflow instead.
-5. **Choose the page width.** Use `article` for prose-led pages, `wide` when
-   parallel evidence is part of the first read, and `canvas` for visual
-   references. A canvas page keeps prose inside `.reading-column`.
-6. **Compose from the visual catalog.** Open
-   [assets/atlas.html](assets/atlas.html), choose only the visuals the content
-   earns, then inspect those named fragments in `assets/registry/`. Each source
-   states when to use it and carries scoped CSS plus copy-paste markup;
-   behavior entries provide optional scripts. Copy selected assets verbatim,
-   then replace example content with real content. For multi-component pages,
-   use `scripts/assemble.mjs` to package the chosen CSS once instead of
-   rebuilding the document wrapper by hand. Custom CSS is allowed only for
-   genuinely novel needs and may only consume existing tokens. For diagrams,
-   choose from the 18-template [diagram atlas](assets/diagrams.html) using
-   [references/diagrams.md](references/diagrams.md). When unsure how a complete
-   page should read, open the routed outcome.
-   When an original raster image would materially improve the artifact, use
-   the `imagegen` skill and follow the first-class integration workflow in
-   [references/generated-images.md](references/generated-images.md). Do not
-   generate diagrams, exact UI evidence, or decorative filler.
-7. **Write like it ships.** Real content everywhere — no lorem, no fake
-   numbers, no invented KPIs. Every figure traceable to its source; honest
-   gaps marked ("not verified") rather than smoothed over. Include a
-   reader-facing sources footer only when attribution helps the artifact.
-   Never expose tool names, sessions, prompts, private working paths, scratch
-   files, or generation metadata.
-8. **Review the delivered artifact before handoff.** Check the source, content
-   fidelity, self-contained delivery, and the applicable handoff points in
-   [references/authoring.md](references/authoring.md#handoff-review). Never run
-   automated HTML structural validation. Use browser or rendered review only
-   when the user asks for it or visual proof is the task; otherwise it is not a
-   delivery requirement.
-
-For charts of any kind, read [references/charts.md](references/charts.md)
-first — form follows the data's job, and some data should not be a chart.
-For a diagram, read [references/diagrams.md](references/diagrams.md) and choose
-the relationship before drawing.
-For a purpose-built generated photo, illustration, texture, or mockup, read
-[references/generated-images.md](references/generated-images.md), then use the
-`imagegen` skill before assembly.
-For page assembly details and treatment calibration, read
-[references/authoring.md](references/authoring.md). If a page's source material
-lacks a deliberate reading order, read
-[references/recipes.md](references/recipes.md).
-For a reviewer-facing pull-request walkthrough, inspect the PR, diff, and
-relevant repository context, then read
-[references/pr-walkthrough.md](references/pr-walkthrough.md).
-For a post-coding explanation, read
-[references/code-change-explainer.md](references/code-change-explainer.md),
-understand the completed change, and teach the meaningful before/after story
-without turning it into commit chronology.
+- [charts.md](references/charts.md) for charts;
+- [diagrams.md](references/diagrams.md) for diagrams;
+- [generated-images.md](references/generated-images.md) before using `imagegen`;
+- [recipes.md](references/recipes.md) when the source lacks a reading order;
+- [pr-walkthrough.md](references/pr-walkthrough.md) for a pull-request
+  walkthrough; and
+- [code-change-explainer.md](references/code-change-explainer.md) for an HTML
+  explanation of completed code changes.
 
 ## Boundaries
 
-Product and app UI, interactive editors, and anything with real form state
-belong to `design`; exploratory visualizations, simulations, and filter-driven
-analysis belong to an interactive-visualization workflow. Static artifact mocks
-without product state belong here. Durable repo documentation belongs to
-`docs-writer`. Slide decks are out of scope. Understand sources as deeply as
-the artifact requires.
+Product and app UI, interactive editors, and real form state belong to `design`.
+Exploratory visualizations, simulations, and filter-driven analysis belong to
+an interactive-visualization workflow. Static HTML mocks without product state
+belong here. Durable repository documentation belongs to `docs-writer`. Slide
+decks are out of scope.

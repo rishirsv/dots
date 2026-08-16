@@ -1,6 +1,5 @@
 # Focused prompt: path, git context, and a clean prompt symbol.
-# Colors are matched to the focused Ghostty profile while staying readable in
-# plain light terminals.
+# Colors stay readable in both light and dark terminals.
 
 format = """
 $directory$git_branch$git_status

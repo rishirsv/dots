@@ -11,6 +11,7 @@ skill is discovered, structured, or completed.
 - [Choose only useful sections](#choose-only-useful-sections)
 - [Design failure behavior](#design-failure-behavior)
 - [Build the information hierarchy](#build-the-information-hierarchy)
+- [Prune the runtime](#prune-the-runtime)
 - [Define completion](#define-completion)
 
 ## Design For Predictable Behavior
@@ -139,12 +140,29 @@ For a large reference, include a short contents map or search guidance so the
 agent can reach the relevant section without loading or wandering through the
 whole file.
 
+## Prune The Runtime
+
+Prune during design and validation.
+
+Treat the environment as an authoritative source: scripts, configuration,
+directory layout, schemas, and `--help` output already state facts an agent can
+inspect. A prose restatement is a cache; keep it only when the lookup is
+expensive or the runtime needs an unwritten convention, reason, or gotcha.
+
+Review every runtime line for current task relevance and freshness. Delete
+stale or unrelated sediment. Treat sprawl as a defect even when every sentence
+is live and unique; restore the common path by applying the information
+hierarchy above.
+
 ## Define Completion
 
 End each ordered step with a checkable completion criterion. Make it exhaustive
 when the step needs substantial legwork. Completion may require an artifact at
 a named path, findings ranked by impact, a passing validator, an explicit
 positive-null result, or a handoff that names the unresolved decision.
+
+For a reference-heavy skill without ordered steps, require every applicable
+rule to be applied before completion.
 
 Watch for premature completion between steps: describing intended work is not
 performing it; creating a file is not validating it; structural validation is

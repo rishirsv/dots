@@ -28,8 +28,28 @@
     "key": "Ctrl+`"
   },
   {
+    "command": "nextTab",
+    "key": "Ctrl+Tab"
+  },
+  {
+    "command": "nextTab",
+    "key": "Command+Alt+Right"
+  },
+  {
+    "command": "previousTab",
+    "key": "Ctrl+Shift+Tab"
+  },
+  {
+    "command": "previousTab",
+    "key": "Command+Alt+Left"
+  },
+  {
     "command": "realtimeVoice",
     "key": "Ctrl+1"
+  },
+  {
+    "command": "realtimeVoice.toggleMicrophoneMute",
+    "key": "Ctrl+Command+Alt+Shift+."
   },
   {
     "command": "switchToMode1",

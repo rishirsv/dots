@@ -1,19 +1,8 @@
 #!/usr/bin/env python3
-"""Mine Codex or Claude Code sessions for durable,
-evidence-backed improvement proposals.
+"""Surface session evidence for a Codex or Claude Code workflow review.
 
-Division of labor (keep this honest):
-- This script SURFACES candidates: it scans sessions for preference and correction
-  sentences, scores evidence strength, ranks threads, detects skill usage and
-  friction, derives quantitative usage statistics, flags unconsolidated memory
-  summaries, flags stale durable goals, and inspects a repo for missing
-  scaffolding.
-- The AGENT extracts the real evidence (expected vs actual behavior, the durable
-  correction) by reading the cited threads, and proposes the smallest change.
-
-The script never edits skills, instructions, memories, docs, scripts, or repos.
-It only reads, scores, and (with the `decide` command) records human decisions
-about proposals so future runs do not resurface settled items.
+The helper ranks evidence, distinguishes skill mentions from invocations,
+derives usage statistics, and records proposal decisions. It never edits source.
 """
 from __future__ import annotations
 
@@ -22,11 +11,10 @@ import hashlib
 import json
 import os
 import re
-import sqlite3
 import sys
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -49,18 +37,11 @@ from session_sources import (  # noqa: E402
 CODEX_HOME = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")).expanduser()
 CLAUDE_HOME = Path(os.environ.get("CLAUDE_CONFIG_DIR", Path.home() / ".claude")).expanduser()
 SOURCE_SKILLS_ROOT = Path(__file__).resolve().parents[2]
-STATE_DB = CODEX_HOME / "state_5.sqlite"
-SESSION_INDEX = CODEX_HOME / "session_index.jsonl"
-GLOBAL_AGENTS = CODEX_HOME / "AGENTS.md"
-MEMORIES_DIR = CODEX_HOME / "memories"
-MEMORY_MD = MEMORIES_DIR / "MEMORY.md"
-MEMORIES_DB = CODEX_HOME / "memories_1.sqlite"
-GOALS_DB = CODEX_HOME / "goals_1.sqlite"
 # Durable record of proposal decisions so weekly runs don't resurface settled items.
 DECISIONS_FILE = CODEX_HOME / "self_improve_decisions.json"
 # Derived per-session statistics, keyed by schema version + session id + mtime.
 STATS_CACHE_FILE = CODEX_HOME / "self_improve_stats_cache.json"
-STATS_SCHEMA = 3
+STATS_SCHEMA = 4
 PLATFORM = "codex"
 SESSION_SOURCE: SessionSource = CodexSource(CODEX_HOME, iter_session_events)
 
@@ -71,12 +52,6 @@ def platform_paths(platform: str) -> dict[str, Any]:
     return {
         "home": home,
         "instructions": home / ("AGENTS.md" if platform == "codex" else "CLAUDE.md"),
-        "memories": home / ("memories" if platform == "codex" else "projects"),
-        "memory": (
-            home / "memories" / "MEMORY.md"
-            if platform == "codex"
-            else home / "projects" / "<project>" / "memory" / "MEMORY.md"
-        ),
         "decisions": home / "self_improve_decisions.json",
         "stats_cache": home / "self_improve_stats_cache.json",
         "skill_roots": (home / "skills", Path.home() / ".agents" / "skills", SOURCE_SKILLS_ROOT, plugin_cache),
@@ -101,12 +76,9 @@ def resolve_platform(requested: str) -> str:
 
 def configure_platform(platform: str) -> None:
     global PLATFORM, SESSION_SOURCE
-    global GLOBAL_AGENTS, MEMORIES_DIR, MEMORY_MD, DECISIONS_FILE, STATS_CACHE_FILE, SKILL_ROOTS
+    global DECISIONS_FILE, STATS_CACHE_FILE, SKILL_ROOTS
     PLATFORM = platform
     paths = platform_paths(platform)
-    GLOBAL_AGENTS = paths["instructions"]
-    MEMORIES_DIR = paths["memories"]
-    MEMORY_MD = paths["memory"]
     DECISIONS_FILE = paths["decisions"]
     STATS_CACHE_FILE = paths["stats_cache"]
     SKILL_ROOTS = paths["skill_roots"]
@@ -114,46 +86,6 @@ def configure_platform(platform: str) -> None:
 
 
 configure_platform("codex")
-
-# Sentences that signal a durable preference (how the user wants work done).
-PREFERENCE_MARKERS = (
-    "always",
-    "default to",
-    "prefer",
-    "preserve",
-    "should",
-    "make sure",
-    "i want you to",
-    "keep ",
-    "from now on",
-    "going forward",
-)
-
-# Sentences that signal a correction (the agent did the wrong thing).
-CORRECTION_MARKERS = (
-    "do not",
-    "don't",
-    "never",
-    "instead of",
-    "instead,",
-    "not what i asked",
-    "that's wrong",
-    "thats wrong",
-    "stop doing",
-    "you keep",
-    "again",
-)
-
-# Strong, unambiguous directive cues that raise evidence strength.
-EXPLICIT_MARKERS = (
-    "always",
-    "never",
-    "do not",
-    "don't",
-    "must",
-    "from now on",
-    "going forward",
-)
 
 # Frustration / persistence cues — useful for thread triage, not for proposals.
 FRICTION_CUES = (
@@ -266,17 +198,6 @@ RESPONSE_GAP_BUCKETS: tuple[tuple[str, int], ...] = (
 # any gap longer than this, which bounds the total to plausible working time.
 IDLE_GAP_SECONDS = 15 * 60
 
-NOISY_RE = re.compile(
-    r"```|^#+\s|^[-+]{1,3}|^file:\s|^lines:\s|diff hunk|review findings",
-    re.IGNORECASE,
-)
-
-COMMON_WORDS = {
-    "about", "after", "again", "also", "because", "could", "doing", "have",
-    "instead", "please", "should", "that", "their", "there", "these", "thing",
-    "things", "this", "those", "using", "want", "would", "your",
-}
-
 TRIAGE_MARKERS = {
     "correction": ("not what i asked", "wrong", "instead", "don't", "do not", "never"),
     "preference": ("prefer", "always", "default to", "i want you to", "make sure"),
@@ -287,59 +208,18 @@ TRIAGE_MARKERS = {
     "workflow": ("workflow", "process", "mode", "handoff", "pr", "commit", "review"),
 }
 
-# A $token only counts as a skill use when it matches a known installed skill or
-# follows an explicit invocation marker. This avoids counting shell vars like $PATH.
+# A raw $token is only a mention. Actual invocations require host-structured
+# evidence so prompt drafts and pasted transcripts do not become usage.
 SKILL_TOKEN_RE = re.compile(
     r"\$([a-z][a-z0-9]*(?:[a-z0-9-]*[a-z0-9])?(?::[a-z][a-z0-9]*(?:[a-z0-9-]*[a-z0-9])?)?)"
 )
-SKILL_INVOKE_RE = re.compile(
-    r"(?:launching|invoking|using|loaded)\s+skill[:\s]+[`\"']?([a-z][a-z0-9-]*(?::[a-z][a-z0-9-]*)?)",
-    re.IGNORECASE,
+SKILL_BLOCK_RE = re.compile(
+    r"^\s*<skill>\s*<name>\s*([^<]+?)\s*</name>.*?</skill>\s*$",
+    re.IGNORECASE | re.DOTALL,
 )
-
-STRENGTH_ORDER = {"weak": 0, "medium": 1, "strong": 2}
-PROPOSAL_BUCKETS = (
-    "Skills",
-    "New Skills",
-    "Project Instructions",
-    "Personal Instructions",
-    "Memory Notes",
-    "Repo Docs",
-    "Scripts Or Harnesses",
-    "Validation Checks",
-    "Conflicts Or Deletions",
+SKILL_ID_RE = re.compile(
+    r"^[a-z][a-z0-9]*(?:[a-z0-9-]*[a-z0-9])?(?::[a-z][a-z0-9]*(?:[a-z0-9-]*[a-z0-9])?)?$"
 )
-
-
-@dataclass(frozen=True)
-class Evidence:
-    thread_id: str
-    platform: str
-    title: str
-    updated_at: int
-    rollout_path: str
-    cwd: str
-    cluster: str
-    kind: str  # "preference" or "correction"
-    explicit: bool
-
-
-def require_db() -> None:
-    if PLATFORM != "codex":
-        raise SystemExit("This command requires the Codex state database")
-    if not STATE_DB.exists():
-        raise SystemExit(f"Missing Codex state DB: {STATE_DB}")
-
-
-def sqlite_count(path: Path, table: str) -> int | None:
-    if not path.exists():
-        return None
-    try:
-        with sqlite3.connect(path) as conn:
-            row = conn.execute(f"SELECT count(*) FROM {table}").fetchone()
-    except sqlite3.Error:
-        return None
-    return int(row[0]) if row else None
 
 
 def utc(ts: int) -> str:
@@ -439,15 +319,40 @@ def _output_text(output: Any) -> str:
 class ThreadSignals:
     """Heuristic per-thread signals. Candidate detection, not conclusions."""
 
-    skills: Counter = field(default_factory=Counter)
-    primary_skills: Counter = field(default_factory=Counter)
+    mentions: Counter = field(default_factory=Counter)
+    invocations: Counter = field(default_factory=Counter)
     error_outputs: int = 0
     friction_cues: int = 0
     tool_calls: int = 0
 
 
+def _skill_name(value: Any) -> str | None:
+    name = str(value or "").strip().lower()
+    return name if SKILL_ID_RE.fullmatch(name) else None
+
+
+def _injected_skill_name(text: str, _known_skills: set[str] | None = None) -> str | None:
+    match = SKILL_BLOCK_RE.match(text)
+    if not match:
+        return None
+    return _skill_name(match.group(1))
+
+
+def _tool_skill_name(payload: dict[str, Any], known_skills: set[str]) -> str | None:
+    arguments = _arg_dict(payload)
+    invoked = _skill_name(arguments.get("skill"))
+    if invoked:
+        return invoked
+    name = str(payload.get("name") or "").strip().lower()
+    namespace = str(payload.get("namespace") or "").strip().lower()
+    for candidate in (name, namespace):
+        if candidate in known_skills:
+            return candidate
+    return None
+
+
 def thread_signals(thread: Thread, known_skills: set[str]) -> ThreadSignals:
-    """Scan the full rollout for skill usage, tool errors, and friction cues."""
+    """Scan one rollout for mentions, structured invocations, and friction leads."""
     sig = ThreadSignals()
     seen_messages: set[tuple[str, str]] = set()
     try:
@@ -462,41 +367,25 @@ def thread_signals(thread: Thread, known_skills: set[str]) -> ThreadSignals:
                 if message_key in seen_messages:
                     continue
                 seen_messages.add(message_key)
+                injected_skill = _injected_skill_name(text, known_skills)
+                if injected_skill:
+                    sig.invocations[injected_skill] += 1
+                    continue
+                if INJECTED_USER_RE.match(text):
+                    continue
                 lowered = text.lower()
                 for token in SKILL_TOKEN_RE.findall(text):
                     skill = token.lower()
-                    if skill not in known_skills:
-                        continue
-                    sig.skills[skill] += 1
-                    if event.role == "user":
-                        sig.primary_skills[skill] += 1
-                for match in SKILL_INVOKE_RE.findall(text):
-                    skill = match.lower()
-                    if skill not in known_skills:
-                        continue
-                    sig.skills[skill] += 1
-                    sig.primary_skills[skill] += 1
+                    if skill in known_skills:
+                        sig.mentions[skill] += 1
                 for cue in FRICTION_CUES:
                     if cue in lowered:
                         sig.friction_cues += 1
             elif kind == "function_call":
                 sig.tool_calls += 1
-                name = (payload.get("name") or "").lower()
-                namespace = (payload.get("namespace") or "").lower()
-                arguments = payload.get("arguments") or {}
-                if isinstance(arguments, str):
-                    try:
-                        arguments = json.loads(arguments)
-                    except json.JSONDecodeError:
-                        arguments = {}
-                invoked = str(arguments.get("skill") or "").lower() if isinstance(arguments, dict) else ""
-                if invoked in known_skills:
-                    sig.skills[invoked] += 1
-                    sig.primary_skills[invoked] += 1
-                for skill in known_skills:
-                    if skill == name or skill == namespace or f"/{skill}/" in namespace:
-                        sig.skills[skill] += 1
-                        sig.primary_skills[skill] += 1
+                invoked = _tool_skill_name(payload, known_skills)
+                if invoked:
+                    sig.invocations[invoked] += 1
             elif kind == "function_call_output":
                 text = _output_text(payload.get("output"))[:2000].lower()
                 if any(marker in text for marker in ERROR_MARKERS):
@@ -504,6 +393,12 @@ def thread_signals(thread: Thread, known_skills: set[str]) -> ThreadSignals:
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
     return sig
+
+
+def friction_candidate_skills(signals: ThreadSignals) -> set[str]:
+    if not (signals.error_outputs or signals.friction_cues):
+        return set()
+    return set(signals.invocations)
 
 
 SOURCE_THREAD_RE = re.compile(r"<source_thread_id>([^<]+)</source_thread_id>", re.IGNORECASE)
@@ -525,8 +420,8 @@ def parent_thread_id(thread: Thread) -> str | None:
     return match.group(1).strip() if match else None
 
 
-def session_cluster_key(thread: Thread, threads_by_id: dict[str, Thread]) -> str:
-    """Collapse delegated children and exact retry threads into one support unit."""
+def root_thread_id(thread: Thread, threads_by_id: dict[str, Thread]) -> str:
+    """Resolve an explicit parent chain without inferring one from prose or title."""
     current = thread
     visited: set[str] = set()
     while current.id not in visited:
@@ -536,79 +431,91 @@ def session_cluster_key(thread: Thread, threads_by_id: dict[str, Thread]) -> str
             break
         parent_thread = threads_by_id.get(parent)
         if not parent_thread:
-            return f"{thread.platform}:parent:{parent}"
+            return parent
         current = parent_thread
-
-    normalized_title = " ".join(current.title.lower().split())
-    identity = f"{current.platform}\0{current.cwd}\0{normalized_title or current.id}"
-    digest = hashlib.sha256(identity.encode("utf-8")).hexdigest()[:16]
-    return f"{current.platform}:thread:{digest}"
+    return current.id
 
 
-def split_sentences(message: str) -> Iterable[str]:
-    normalized = re.sub(r"\s+", " ", message).strip()
-    for chunk in re.split(r"(?<=[.!?])\s+|;\s+|\s+\|\s+", normalized):
-        chunk = chunk.strip(" \t\r\n\"'`")
-        if chunk:
-            yield chunk
+def conversation_turns(thread: Thread) -> tuple[tuple[str, str], ...]:
+    """Return unique human/agent turns suitable for retry and resume matching."""
+    turns: list[tuple[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    try:
+        for event in SESSION_SOURCE.events(thread):
+            if event.kind != "message" or event.role not in {"user", "assistant"}:
+                continue
+            text = " ".join(event.text.split())
+            if not text or _injected_skill_name(text) or INJECTED_USER_RE.match(text):
+                continue
+            turn = (event.role, text)
+            if turn in seen:
+                continue
+            seen.add(turn)
+            turns.append(turn)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    return tuple(turns)
 
 
-def sentence_kind(sentence: str) -> str | None:
-    """Classify a sentence as a preference, a correction, or neither."""
-    lowered = sentence.lower()
-    if len(sentence) < 14 or len(sentence) > 600:
-        return None
-    if NOISY_RE.search(sentence):
-        return None
-    if sentence.endswith("?") and not any(
-        token in lowered for token in ("prefer", "make sure", "default")
-    ):
-        return None
-    if any(marker in lowered for marker in CORRECTION_MARKERS):
-        return "correction"
-    if any(marker in lowered for marker in PREFERENCE_MARKERS):
-        return "preference"
-    return None
+def _is_resume_copy(left: tuple[tuple[str, str], ...], right: tuple[tuple[str, str], ...]) -> bool:
+    """Match meaningful transcript copies while preserving independent short runs."""
+    shorter, longer = sorted((left, right), key=len)
+    roles = {role for role, _ in shorter}
+    return (
+        len(shorter) >= 4
+        and roles == {"user", "assistant"}
+        and longer[: len(shorter)] == shorter
+    )
 
 
-def is_explicit(sentence: str) -> bool:
-    lowered = sentence.lower()
-    return any(marker in lowered for marker in EXPLICIT_MARKERS)
+def session_cluster_keys(rows: list[Thread]) -> dict[str, str]:
+    """Collapse explicit children and substantive transcript retry/resume copies."""
+    threads_by_id = {thread.id: thread for thread in rows}
+    roots = {thread.id: root_thread_id(thread, threads_by_id) for thread in rows}
+    root_threads = {
+        root_id: threads_by_id[root_id]
+        for root_id in set(roots.values())
+        if root_id in threads_by_id
+    }
+    parent = {root_id: root_id for root_id in root_threads}
+
+    def find(thread_id: str) -> str:
+        while parent[thread_id] != thread_id:
+            parent[thread_id] = parent[parent[thread_id]]
+            thread_id = parent[thread_id]
+        return thread_id
+
+    def union(left: str, right: str) -> None:
+        left_root, right_root = find(left), find(right)
+        if left_root != right_root:
+            parent[max(left_root, right_root)] = min(left_root, right_root)
+
+    turns = {thread_id: conversation_turns(thread) for thread_id, thread in root_threads.items()}
+    comparable: dict[tuple[str, str], list[str]] = defaultdict(list)
+    for thread_id, thread in root_threads.items():
+        comparable[(thread.platform, thread.cwd)].append(thread_id)
+    for thread_ids in comparable.values():
+        for index, left in enumerate(thread_ids):
+            for right in thread_ids[index + 1:]:
+                if _is_resume_copy(turns[left], turns[right]):
+                    union(left, right)
+
+    keys: dict[str, str] = {}
+    for thread in rows:
+        root_id = roots[thread.id]
+        if root_id not in root_threads:
+            keys[thread.id] = f"{thread.platform}:parent:{root_id}"
+            continue
+        canonical = find(root_id)
+        identity = f"{thread.platform}\0{thread.cwd}\0{canonical}"
+        digest = hashlib.sha256(identity.encode("utf-8")).hexdigest()[:16]
+        keys[thread.id] = f"{thread.platform}:thread:{digest}"
+    return keys
 
 
-def normalize_suggestion(sentence: str) -> str:
-    value = sentence.strip()
-    value = re.sub(r"^(okay|ok|yeah|and then)[, ]+", "", value, flags=re.IGNORECASE)
-    value = re.sub(r"^(can you|could you)\s+(please\s+)?", "", value, flags=re.IGNORECASE)
-    value = re.sub(r"^make sure\s+(that\s+)?", "", value, flags=re.IGNORECASE)
-    value = re.sub(r"^i want you to\s+", "", value, flags=re.IGNORECASE)
-    value = re.sub(r"\s+", " ", value).strip(" .!?")
-    if not value:
-        return ""
-    value = value[0].upper() + value[1:]
-    if not value.endswith("."):
-        value += "."
-    return value
-
-
-def token_key(value: str) -> str:
-    tokens = [
-        token
-        for token in re.findall(r"[a-z0-9]+", value.lower())
-        if token not in COMMON_WORDS
-    ]
-    return "-".join(tokens[:12])
-
-
-def cluster_key(thread: Thread, target: str) -> str:
-    day = datetime.fromtimestamp(thread.updated_at, tz=timezone.utc).strftime("%Y-%m-%d")
-    title = token_key(thread.title) or token_key(thread.cwd) or thread.id
-    return f"{thread.platform}::{target}::{title}::{day}"
-
-
-def proposal_key(bucket: str, target: str, suggestion: str) -> str:
-    digest = hashlib.sha1(f"{PLATFORM}|{bucket}|{target}|{suggestion}".encode("utf-8")).hexdigest()
-    return digest[:12]
+def session_cluster_key(thread: Thread, threads_by_id: dict[str, Thread]) -> str:
+    """Compatibility wrapper for callers that already hold a thread mapping."""
+    return session_cluster_keys(list(threads_by_id.values()))[thread.id]
 
 
 def skill_paths() -> list[Path]:
@@ -647,161 +554,6 @@ def known_skill_names() -> set[str]:
     return {skill_id for path in skill_paths() for skill_id in skill_ids(path)}
 
 
-def infer_project_instructions(cwd: str) -> str:
-    path = Path(cwd).expanduser()
-    names = ("AGENTS.override.md", "AGENTS.md") if PLATFORM == "codex" else ("CLAUDE.md",)
-    for candidate in [path, *path.parents]:
-        if candidate == Path.home():
-            break
-        for name in names:
-            if (candidate / name).exists():
-                return str(candidate / name)
-        if (candidate / ".git").exists():
-            return str(candidate / names[-1])
-    return str(path / names[-1])
-
-
-def infer_skill_target(sentence: str, cwd: str) -> str:
-    lowered = sentence.lower()
-    for skill in skill_paths():
-        name = skill.parent.name.lower()
-        if name in lowered or str(skill.parent).lower() in lowered:
-            return str(skill)
-    cwd_path = Path(cwd).expanduser()
-    for skill in skill_paths():
-        try:
-            cwd_path.relative_to(skill.parent)
-            return str(skill)
-        except ValueError:
-            pass
-    return str(platform_paths(PLATFORM)["home"] / "skills" / "<new-skill>" / "SKILL.md")
-
-
-def classify(sentence: str, thread: Thread) -> tuple[str, str]:
-    """Route a sentence to a proposal bucket. This is a HINT for the agent, not a
-    verified destination — keyword routing is lossy, so the agent should confirm
-    the bucket by reading the cited thread."""
-    lowered = sentence.lower()
-    if "new skill" in lowered or "create skill" in lowered:
-        return "New Skills", str(platform_paths(PLATFORM)["home"] / "skills" / "<new-skill>" / "SKILL.md")
-    if "skill" in lowered or "skill.md" in lowered or "/skills/" in lowered:
-        return "Skills", infer_skill_target(sentence, thread.cwd)
-    if any(token in lowered for token in ("memory", "remember", "forget", "chronicle")):
-        return "Memory Notes", str(MEMORY_MD)
-    if any(token in lowered for token in ("script", "harness", "tool", "cli")):
-        return "Scripts Or Harnesses", str(Path(thread.cwd or Path.cwd()) / "<script-or-harness>")
-    if any(token in lowered for token in ("validation", "test", "verify", "check")):
-        return "Validation Checks", str(Path(thread.cwd or Path.cwd()) / "<validation>")
-    if any(token in lowered for token in ("readme", "docs", "documentation", "runbook")):
-        return "Repo Docs", str(Path(thread.cwd or Path.cwd()) / "<doc>")
-    if any(token in lowered for token in ("conflict", "contradict", "delete", "remove")):
-        return "Conflicts Or Deletions", "<resolve-conflict-or-delete-stale-guidance>"
-    if any(token in lowered for token in ("globally", "all repos", "across repos", "for any repo")):
-        return "Personal Instructions", str(GLOBAL_AGENTS)
-    if thread.cwd and thread.cwd != str(Path.home()):
-        return "Project Instructions", infer_project_instructions(thread.cwd)
-    return "Personal Instructions", str(GLOBAL_AGENTS)
-
-
-def strength_label(evidence: list[Evidence]) -> str:
-    """Honest, multi-factor evidence strength — NOT a probability.
-
-    Factors: deduped support (thread clusters), explicit directive language,
-    cross-repo spread, and whether a correction (not just a preference) was seen.
-    """
-    support = len({item.cluster for item in evidence})
-    explicit = any(item.explicit for item in evidence)
-    spread = len({item.cwd for item in evidence if item.cwd}) >= 2
-    has_correction = any(item.kind == "correction" for item in evidence)
-
-    score = 0
-    if support >= 3:
-        score += 2
-    elif support == 2:
-        score += 1
-    if explicit:
-        score += 1
-    if spread:
-        score += 1
-    if has_correction:
-        score += 1
-
-    if score >= 3:
-        return "strong"
-    if score == 2:
-        return "medium"
-    return "weak"
-
-
-def collect(
-    rows: list[Thread],
-    min_support: int,
-    min_strength: str,
-    *,
-    decided: dict[str, dict[str, Any]] | None = None,
-    include_decided: bool = False,
-) -> list[dict[str, Any]]:
-    decided = decided or {}
-    grouped: dict[tuple[str, str, str], list[Evidence]] = defaultdict(list)
-    for thread in rows:
-        for message in user_messages(thread):
-            if len(message) > 5000:
-                continue
-            for sentence in split_sentences(message):
-                kind = sentence_kind(sentence)
-                if kind is None:
-                    continue
-                suggestion = normalize_suggestion(sentence)
-                if len(suggestion) < 25:
-                    continue
-                bucket, target = classify(sentence, thread)
-                grouped[(bucket, target, suggestion)].append(
-                    Evidence(
-                        thread_id=thread.id,
-                        platform=thread.platform,
-                        title=thread.title,
-                        updated_at=thread.updated_at,
-                        rollout_path=thread.rollout_path,
-                        cwd=thread.cwd,
-                        cluster=cluster_key(thread, target),
-                        kind=kind,
-                        explicit=is_explicit(sentence),
-                    )
-                )
-
-    proposals: list[dict[str, Any]] = []
-    min_rank = STRENGTH_ORDER[min_strength]
-    for (bucket, target, suggestion), evidence in grouped.items():
-        support = len({item.cluster for item in evidence})
-        if support < min_support:
-            continue
-        strength = strength_label(evidence)
-        if STRENGTH_ORDER[strength] < min_rank:
-            continue
-        key = proposal_key(bucket, target, suggestion)
-        decision = decided.get(key, {}).get("decision")
-        if decision in {"rejected", "applied"} and not include_decided:
-            continue
-        kinds = {item.kind for item in evidence}
-        proposals.append(
-            {
-                "key": key,
-                "bucket": bucket,
-                "target": target,
-                "suggestion": suggestion,
-                "support": support,
-                "strength": strength,
-                "kind": "correction" if "correction" in kinds else "preference",
-                "decision": decision,
-                "evidence": evidence,
-            }
-        )
-    return sorted(
-        proposals,
-        key=lambda x: (x["bucket"], -STRENGTH_ORDER[x["strength"]], -x["support"], x["target"]),
-    )
-
-
 def triage_thread(thread: Thread) -> dict[str, Any]:
     text = all_messages(thread).lower()
     reasons: list[str] = []
@@ -822,13 +574,6 @@ def triage_thread(thread: Thread) -> dict[str, Any]:
         "score": max(0, score),
         "reasons": sorted(set(reasons)),
     }
-
-
-def memory_files(limit: int = 12) -> list[Path]:
-    if not MEMORIES_DIR.exists():
-        return []
-    files = [path for path in MEMORIES_DIR.rglob("*.md") if path.is_file()]
-    return sorted(files, key=lambda path: path.stat().st_mtime, reverse=True)[:limit]
 
 
 # --- proposal decision state -------------------------------------------------
@@ -951,6 +696,11 @@ def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, An
                 previous_ts = stamp
             if event.kind == "message":
                 if event.role == "user":
+                    injected_skill = _injected_skill_name(event.text, known_skills)
+                    if injected_skill:
+                        skills[injected_skill] += 1
+                        injected_messages += 1
+                        continue
                     if INJECTED_USER_RE.match(event.text):
                         injected_messages += 1
                         continue
@@ -962,9 +712,6 @@ def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, An
                         friction_cues += 1
                     if _is_interruption(event.text):
                         interruptions += 1
-                    for token in SKILL_TOKEN_RE.findall(event.text):
-                        if token.lower() in known_skills:
-                            skills[token.lower()] += 1
                     if stamp is not None:
                         hours[stamp // 3600 % 24] += 1
                         if last_assistant_ts is not None and stamp >= last_assistant_ts:
@@ -995,8 +742,8 @@ def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, An
                         commits += 1
                     if "git push" in lowered:
                         pushes += 1
-                invoked = str(arguments.get("skill") or "").lower()
-                if invoked in known_skills:
+                invoked = _tool_skill_name(payload, known_skills)
+                if invoked:
                     skills[invoked] += 1
             elif event.kind == "function_call_output":
                 text = _output_text(payload.get("output"))[:2000].lower()
@@ -1162,79 +909,7 @@ def aggregate_session_stats(entries: list[dict[str, Any]]) -> dict[str, Any]:
 
 # --- printers ----------------------------------------------------------------
 
-def print_thread_table(rows: list[Thread]) -> None:
-    print("Updated UTC         St Source       Model           CWD                              Title                            Thread")
-    print("------------------- -- ------------ --------------- -------------------------------- -------------------------------- ------------------------------------")
-    for row in rows:
-        state = "AR" if row.archived else "AC"
-        print(
-            f"{utc(row.updated_at):<19} {state:<2} {shorten(row.source, 12):<12} "
-            f"{shorten(row.model, 15):<15} {shorten(row.cwd, 32):<32} "
-            f"{shorten(row.title, 32):<32} {row.id}"
-        )
-
-
-def print_proposals(proposals: list[dict[str, Any]], *, emit_patch: bool) -> None:
-    if not proposals:
-        print("No proposals met the support/strength thresholds.")
-        return
-    print("## Change Candidates\n")
-    for bucket in PROPOSAL_BUCKETS:
-        bucket_items = [item for item in proposals if item["bucket"] == bucket]
-        if not bucket_items:
-            continue
-        print(f"### {bucket}\n")
-        for item in bucket_items:
-            decided = f" [decision: {item['decision']}]" if item.get("decision") else ""
-            print(f"- Target: `{item['target']}`  (key `{item['key']}`){decided}")
-            print(f"  Suggestion: {item['suggestion']}")
-            print(f"  Kind: {item['kind']}")
-            print(f"  Support: {item['support']}")
-            print(f"  Strength: {item['strength']}")
-            print("  Evidence:")
-            for evidence in item["evidence"][:5]:
-                print(
-                    f"  - `{evidence.platform}:{evidence.thread_id}` ({evidence.kind}) updated "
-                    f"{utc(evidence.updated_at)} at `{evidence.rollout_path}`"
-                )
-            if emit_patch:
-                print("  Draft patch note: propose this edit; do not apply without approval.")
-            print()
-
-
 # --- commands ----------------------------------------------------------------
-
-def cmd_inventory(args: argparse.Namespace) -> None:
-    print(f"## Self-Improve Sources ({PLATFORM})\n")
-    if PLATFORM == "codex":
-        session_count = sqlite_count(STATE_DB, "threads")
-        print(f"- Codex state DB: `{STATE_DB}` ({session_count if session_count is not None else 'unreadable'} threads)")
-        print(f"- Sessions dir: `{CODEX_HOME / 'sessions'}` ({'present' if (CODEX_HOME / 'sessions').exists() else 'missing'})")
-        print(f"- Archived sessions dir: `{CODEX_HOME / 'archived_sessions'}` ({'present' if (CODEX_HOME / 'archived_sessions').exists() else 'missing'})")
-        print(f"- Session index: `{SESSION_INDEX}` ({'present' if SESSION_INDEX.exists() else 'missing'}; convenience only)")
-        memory_count = sqlite_count(MEMORIES_DB, "stage1_outputs")
-        print(f"- Memory DB: `{MEMORIES_DB}` ({memory_count if memory_count is not None else 'unreadable or missing'} rollup rows)")
-    else:
-        print(f"- Claude projects: `{CLAUDE_HOME / 'projects'}` ({'present' if (CLAUDE_HOME / 'projects').exists() else 'missing'})")
-        print(f"- Prompt history: `{CLAUDE_HOME / 'history.jsonl'}` ({'present' if (CLAUDE_HOME / 'history.jsonl').exists() else 'missing'}; discovery only)")
-        print("- Session retention: transcript absence is not evidence that older work never happened")
-    print(f"- Personal instructions: `{GLOBAL_AGENTS}` ({'present' if GLOBAL_AGENTS.exists() else 'missing'})")
-    print(f"- Memory root: `{MEMORIES_DIR}` ({'present' if MEMORIES_DIR.exists() else 'missing'})")
-    print(f"- Decision log: `{DECISIONS_FILE}` ({len(load_decisions())} recorded decisions)")
-    print(f"- Statistics cache: `{STATS_CACHE_FILE}` ({len(load_stats_cache())} cached sessions)")
-    print("- Skill roots:")
-    for root in SKILL_ROOTS:
-        count = (
-            len(list(root.glob("*/*/*/skills/*/SKILL.md")))
-            if root == platform_paths(PLATFORM)["plugin_cache"] and root.exists()
-            else len(list(root.glob("*/SKILL.md"))) if root.exists() else 0
-        )
-        print(f"  - `{root}` ({count} skills)")
-    if args.memories:
-        print("\n## Recent Memory Files\n")
-        for path in memory_files(args.memories):
-            print(f"- `{path}`")
-
 
 def cmd_triage(args: argparse.Namespace) -> None:
     rows = threads(
@@ -1255,140 +930,6 @@ def cmd_triage(args: argparse.Namespace) -> None:
             f"{shorten(','.join(item['reasons']), 31):<31} {shorten(thread.cwd, 32):<32} "
             f"{shorten(thread.title, 32):<32} {thread.id}"
         )
-
-
-def stage1_status(limit: int) -> tuple[int | None, int | None, list[sqlite3.Row]]:
-    """Return (total summaries, unconsolidated count, unconsolidated rows).
-
-    A `stage1_outputs` row is unconsolidated when `selected_for_phase2 = 0` —
-    Codex generated a per-thread rollout summary but never promoted it into
-    `MEMORY.md`. These are candidates for a proposed Memory Notes entry.
-    """
-    if not MEMORIES_DB.exists():
-        return None, None, []
-    try:
-        with sqlite3.connect(MEMORIES_DB) as conn:
-            conn.row_factory = sqlite3.Row
-            total = conn.execute("SELECT count(*) FROM stage1_outputs").fetchone()[0]
-            unconsolidated = conn.execute(
-                "SELECT count(*) FROM stage1_outputs WHERE selected_for_phase2 = 0"
-            ).fetchone()[0]
-            rows = conn.execute(
-                "SELECT thread_id, rollout_slug, source_updated_at, usage_count "
-                "FROM stage1_outputs WHERE selected_for_phase2 = 0 "
-                "ORDER BY source_updated_at DESC LIMIT ?",
-                (limit,),
-            ).fetchall()
-    except sqlite3.Error:
-        return None, None, []
-    return total, unconsolidated, rows
-
-
-def cmd_memory_audit(args: argparse.Namespace) -> None:
-    print("## Memory Audit\n")
-    if PLATFORM == "claude":
-        print(f"- Project memory root: `{MEMORIES_DIR}` ({'present' if MEMORIES_DIR.exists() else 'missing'})")
-        print("- Claude Code auto-memory is supporting context, not an instruction source.")
-        print("- Propose additions or deletions for review; never rewrite generated memory silently.\n")
-        print("## Recent Project Memory Files\n")
-        for path in memory_files(args.limit):
-            if "memory" in path.parts:
-                print(f"- `{path}`")
-        return
-    print(f"- Memory file: `{MEMORY_MD}` ({'present' if MEMORY_MD.exists() else 'missing'})")
-    print(f"- Memory DB: `{MEMORIES_DB}` ({'present' if MEMORIES_DB.exists() else 'missing'})")
-    print(f"- Raw memories: `{MEMORIES_DIR / 'raw_memories.md'}` ({'present' if (MEMORIES_DIR / 'raw_memories.md').exists() else 'missing'})")
-    print(
-        "\nThis command lists memory sources. It does not itself compare memory to "
-        "session evidence — read the recent memory files below, then verify each "
-        "claim against the cited transcripts before proposing a memory note.\n"
-    )
-    total, unconsolidated, rows = stage1_status(args.limit)
-    if total is not None:
-        print(
-            f"- Stage1 summaries: {total} total, {unconsolidated} not yet consolidated "
-            f"into `{MEMORY_MD}` (`selected_for_phase2 = 0`)\n"
-        )
-        if rows:
-            print("## Unconsolidated Summaries (memory-promotion candidates)\n")
-            for row in rows:
-                print(
-                    f"- `{row['thread_id']}` ({row['rollout_slug'] or 'no-slug'}) "
-                    f"updated {utc(row['source_updated_at'])}, used {row['usage_count'] or 0}x — "
-                    "read its rollout_summary in the DB, verify it against the transcript, then "
-                    "propose a promoted Memory Notes entry if it is durable."
-                )
-            print()
-    print("## Recent Memory Files\n")
-    for path in memory_files(args.limit):
-        print(f"- `{path}`")
-
-
-def goal_health_rows(stale_days: int) -> list[dict[str, Any]]:
-    """Flag durable goals stuck in a non-terminal, non-active state."""
-    if not GOALS_DB.exists():
-        return []
-    cutoff_ms = int((datetime.now(tz=timezone.utc) - timedelta(days=stale_days)).timestamp() * 1000)
-    try:
-        with sqlite3.connect(GOALS_DB) as conn:
-            conn.row_factory = sqlite3.Row
-            rows = conn.execute(
-                "SELECT thread_id, goal_id, objective, status, updated_at_ms FROM thread_goals "
-                "WHERE status IN ('blocked', 'paused', 'usage_limited', 'budget_limited') "
-                "ORDER BY updated_at_ms ASC"
-            ).fetchall()
-    except sqlite3.Error:
-        return []
-    return [{**dict(row), "stale": row["updated_at_ms"] < cutoff_ms} for row in rows]
-
-
-def cmd_goal_health(args: argparse.Namespace) -> None:
-    if PLATFORM != "codex":
-        raise SystemExit("goal-health is Codex-only: Claude Code has no equivalent durable goals database")
-    print("## Goal Health\n")
-    print(f"- Goals DB: `{GOALS_DB}` ({'present' if GOALS_DB.exists() else 'missing'})")
-    if not GOALS_DB.exists():
-        return
-    try:
-        with sqlite3.connect(GOALS_DB) as conn:
-            counts = conn.execute(
-                "SELECT status, count(*) FROM thread_goals GROUP BY status"
-            ).fetchall()
-    except sqlite3.Error:
-        print("Goals DB is unreadable.")
-        return
-    print("\n## Status Counts\n")
-    for status, count in counts:
-        print(f"- {status}: {count}")
-    rows = goal_health_rows(args.stale_days)
-    if not rows:
-        print("\nNo blocked, paused, or limited goals found.")
-        return
-    print(f"\n## Needs Attention (stale threshold {args.stale_days}d)\n")
-    for row in rows:
-        flag = "STALE" if row["stale"] else "recent"
-        print(
-            f"- [{flag}] `{row['goal_id']}` ({row['status']}) — {shorten(row['objective'], 90)}\n"
-            f"  thread `{row['thread_id']}`, last updated {utc(row['updated_at_ms'] // 1000)}"
-        )
-    print(
-        "\nThis command only surfaces status; it does not revive, resume, or close "
-        "goals. For each stale entry, read the thread (`show <thread_id>`) and propose "
-        "revive (unblock, resume) or close (mark complete, abandon) — ultra-goal owns "
-        "applying the goal-execution change."
-    )
-
-
-def cmd_list(args: argparse.Namespace) -> None:
-    print_thread_table(
-        threads(
-            limit=args.limit,
-            archived=args.archived,
-            days=args.days,
-            query=args.query,
-            cwd=args.cwd,
-        )
-    )
 
 
 def cmd_show(args: argparse.Namespace) -> None:
@@ -1470,74 +1011,85 @@ def cmd_files(args: argparse.Namespace) -> None:
 
 
 def cmd_skill_usage(args: argparse.Namespace) -> None:
-    """Increment 2: which skills ran, how often, and where they hit friction.
-
-    Heuristic and honest: skill use is detected from `$skill` tokens that match a
-    known installed skill, explicit invocation markers, and matching tool-call
-    names. Friction is co-occurring tool errors and frustration cues in the same
-    thread. These are CANDIDATES for review, not verdicts."""
-    rows = threads(limit=args.limit, archived=args.archived, days=args.days, query=args.query, cwd=args.cwd)
+    """Separate prose mentions, structured invocations, and friction leads."""
+    cutoff = int(datetime.now(tz=timezone.utc).timestamp())
+    rows = threads(limit=None, archived=args.archived, days=args.days, cwd=args.cwd)
+    rows = [thread for thread in rows if thread.updated_at <= cutoff]
+    if args.limit is not None:
+        rows = rows[: args.limit]
     known = known_skill_names()
-    if not known:
-        print("No installed skills found under the configured skill roots.")
-        return
+    selected = _skill_name(args.skill) if args.skill else None
+    if args.skill and not selected:
+        raise SystemExit(f"Invalid skill id: {args.skill}")
+    mention_names = known | ({selected} if selected else set())
 
-    threads_by_id = {thread.id: thread for thread in rows}
-    per_skill_threads: dict[str, set[str]] = defaultdict(set)
-    per_skill_markers: Counter = Counter()
-    per_skill_clusters: dict[str, set[str]] = defaultdict(set)
+    cluster_keys = session_cluster_keys(rows)
+    per_skill_mentions: Counter = Counter()
+    per_skill_clusters: dict[str, dict[str, Thread]] = defaultdict(dict)
     per_skill_friction: dict[str, dict[str, Thread]] = defaultdict(dict)
     scanned = 0
     for thread in rows:
         if not Path(thread.rollout_path).exists():
             continue
         scanned += 1
-        sig = thread_signals(thread, known)
-        has_friction = sig.error_outputs > 0 or sig.friction_cues > 0
-        for skill, count in sig.skills.items():
-            per_skill_threads[skill].add(thread.id)
-            per_skill_markers[skill] += count
-        cluster = session_cluster_key(thread, threads_by_id)
-        for skill in sig.primary_skills:
-            per_skill_clusters[skill].add(cluster)
-            if has_friction:
+        sig = thread_signals(thread, mention_names)
+        per_skill_mentions.update(sig.mentions)
+        cluster = cluster_keys[thread.id]
+        for skill in sig.invocations:
+            representative = per_skill_clusters[skill].get(cluster)
+            if representative is None or thread.updated_at > representative.updated_at:
+                per_skill_clusters[skill][cluster] = thread
+            if skill in friction_candidate_skills(sig):
                 per_skill_friction[skill].setdefault(cluster, thread)
 
-    print(f"## Skill Usage ({scanned} rollouts scanned, last {args.days} days)\n")
-    if not per_skill_markers:
-        print("No skill invocations detected in the scanned rollouts.")
+    window = f"last {args.days} days" if args.days is not None else "whole retained window"
+    print(f"## Skill Usage ({scanned} rollouts scanned, {window})\n")
+    print(f"- Cohort cutoff: `{utc(cutoff)}`")
+    print(f"- Requested limit: `{args.limit if args.limit is not None else 'none'}`")
+    if selected:
+        print(f"- Exact skill filter: `{selected}`")
+    print()
+    reported = set(per_skill_mentions) | set(per_skill_clusters)
+    if selected:
+        reported &= {selected}
+    if not reported:
+        print("No skill mentions or invocations detected in the scanned rollouts.")
         return
-    print("Markers Threads Organic Friction Skill")
-    print("------- ------- ------- -------- --------------------------------")
-    for skill, markers in per_skill_markers.most_common():
-        n_threads = len(per_skill_threads[skill])
-        n_clusters = len(per_skill_clusters[skill])
+    print("Mentions Invoked Friction candidates Resolution Skill")
+    print("-------- ------- ------------------- ---------- --------------------------------")
+    ordered = sorted(reported, key=lambda skill: (-len(per_skill_clusters[skill]), -per_skill_mentions[skill], skill))
+    for skill in ordered:
         n_friction = len(per_skill_friction[skill])
-        print(f"{markers:<7} {n_threads:<7} {n_clusters:<7} {n_friction:<8} {skill}")
+        resolution = "current" if skill in known else "historical/local"
+        print(
+            f"{per_skill_mentions[skill]:<8} {len(per_skill_clusters[skill]):<7} "
+            f"{n_friction:<19} {resolution:<10} {skill}"
+        )
 
     print(
-        "\nMarkers are deduplicated transcript mentions. Organic counts explicit "
-        "user or tool invocations after collapsing delegated children and exact "
-        "retry threads into parent-session clusters.\n"
+        "\nInvoked counts host-injected skill blocks and exact structured tool "
+        "calls after collapsing delegated children and retries. Friction candidates "
+        "are thread-level co-occurrences, not causal findings.\n"
     )
 
-    print("\n## Recurring Friction To Understand\n")
-    any_friction = False
-    for skill in sorted(per_skill_friction, key=lambda s: -len(per_skill_friction[s])):
-        friction_clusters = per_skill_friction[skill]
-        if not friction_clusters:
-            continue
-        any_friction = True
-        print(f"### `{skill}` — {len(friction_clusters)} friction cluster(s)\n")
-        for thread in sorted(friction_clusters.values(), key=lambda t: -t.updated_at)[:5]:
-            print(f"- `{thread.id}` updated {utc(thread.updated_at)} at `{thread.rollout_path}`")
-        print()
-    if not any_friction:
-        print("No co-occurring friction detected. Read the highest-organic-use skills anyway.\n")
+    print("## Invocation Ledger\n")
+    print("Status Resolution Skill Representative Updated UTC Rollout")
+    print("------ ---------- ----- -------------- ----------- -------")
+    for skill in ordered:
+        for cluster, thread in sorted(
+            per_skill_clusters[skill].items(), key=lambda item: -item[1].updated_at
+        ):
+            status = "friction" if cluster in per_skill_friction[skill] else "invoked"
+            resolution = "current" if skill in known else "historical/local"
+            print(
+                f"{status:<8} {resolution:<10} {skill} {thread.id} "
+                f"{utc(thread.updated_at)} {thread.rollout_path}"
+            )
+    print()
     print(
-        "Next: read representative successful clusters and the cited friction "
-        "clusters. Explain what this usage says about the user's workflow before "
-        "proposing any skill change."
+        "Next: use this frozen representative ledger to read every invocation. "
+        "Explain what the successful and friction clusters say about the user's "
+        "workflow before proposing any skill change."
     )
 
 
@@ -1631,176 +1183,6 @@ def cmd_stats(args: argparse.Namespace) -> None:
     print("- Retention: absence of an older session is not evidence the work never happened.")
 
 
-def _detect_stack(root: Path) -> dict[str, bool]:
-    def has(*names: str) -> bool:
-        return any((root / name).exists() for name in names)
-
-    def glob_any(pattern: str) -> bool:
-        return any(True for _ in root.glob(pattern))
-
-    return {
-        "git": (root / ".git").exists(),
-        "node": has("package.json"),
-        "python": has("pyproject.toml", "setup.py", "requirements.txt"),
-        "rust": has("Cargo.toml"),
-        "go": has("go.mod"),
-        "swift": has("Package.swift") or glob_any("*.xcodeproj"),
-        "agents_md": has("AGENTS.md"),
-        "agents_override": has("AGENTS.override.md"),
-        "claude_md": has("CLAUDE.md"),
-        "claude_rules": (root / ".claude" / "rules").is_dir(),
-        "readme": has("README.md", "README.rst", "readme.md"),
-        "ci_github": (root / ".github" / "workflows").is_dir(),
-        "ci_gitlab": has(".gitlab-ci.yml"),
-        "ci_circle": (root / ".circleci").is_dir(),
-        "tests_dir": (root / "tests").is_dir() or (root / "test").is_dir(),
-        "linter_ruff": has("ruff.toml", ".ruff.toml"),
-        "linter_eslint": has(".eslintrc", ".eslintrc.json", ".eslintrc.js", "eslint.config.js"),
-        "prettier": has(".prettierrc", ".prettierrc.json", "prettier.config.js"),
-        "precommit": has(".pre-commit-config.yaml"),
-        "editorconfig": has(".editorconfig"),
-    }
-
-
-def cmd_scaffold(args: argparse.Namespace) -> None:
-    """Increment 3: inspect a repo and surface missing scaffolding + a research handoff.
-
-    The script DETECTS presence/absence. It does not decide the recommendation —
-    it emits a research handoff so the agent can run a follow-on pass (e.g. via the
-    research skill with subagents) to choose CI/CD steps and matching skills."""
-    root = Path(args.path or Path.cwd()).expanduser().resolve()
-    if not root.is_dir():
-        raise SystemExit(f"Not a directory: {root}")
-    stack = _detect_stack(root)
-    print(f"## Scaffolding Scan: `{root}`\n")
-
-    languages = [lang for lang in ("node", "python", "rust", "go", "swift") if stack[lang]]
-    print(f"- Detected stack: {', '.join(languages) or 'unknown'}")
-    print(f"- Git repo: {'yes' if stack['git'] else 'no'}")
-    if PLATFORM == "codex":
-        print(f"- AGENTS.md: {'present' if stack['agents_md'] else 'MISSING'}"
-              f"{' (+ AGENTS.override.md)' if stack['agents_override'] else ''}")
-        instructions_present = stack["agents_md"]
-        instruction_name = "AGENTS.md"
-    else:
-        print(f"- CLAUDE.md: {'present' if stack['claude_md'] else 'MISSING'}"
-              f"{' (+ .claude/rules)' if stack['claude_rules'] else ''}")
-        instructions_present = stack["claude_md"] or stack["claude_rules"]
-        instruction_name = "CLAUDE.md or .claude/rules"
-    print(f"- README: {'present' if stack['readme'] else 'MISSING'}")
-
-    ci = [name.split('_', 1)[1] for name in ("ci_github", "ci_gitlab", "ci_circle") if stack[name]]
-    print(f"- CI/CD: {', '.join(ci) if ci else 'MISSING'}")
-    print(f"- Tests: {'present' if stack['tests_dir'] else 'MISSING'}")
-    linters = [n.split('_', 1)[-1] for n in ("linter_ruff", "linter_eslint", "prettier", "precommit") if stack[n]]
-    print(f"- Lint/format: {', '.join(linters) if linters else 'MISSING'}")
-
-    gaps = []
-    if not instructions_present:
-        gaps.append(f"No {instruction_name} — the selected host has no checked-in guidance. See references/instructions.md.")
-    if not (stack["ci_github"] or stack["ci_gitlab"] or stack["ci_circle"]):
-        gaps.append("No CI/CD — no automated verification gate on changes.")
-    if not stack["tests_dir"]:
-        gaps.append("No test directory detected — no automated correctness signal.")
-    if not linters:
-        gaps.append("No linter/formatter config — mechanical quality is unenforced.")
-
-    print("\n## Gaps\n")
-    if gaps:
-        for gap in gaps:
-            print(f"- {gap}")
-    else:
-        print("- No top-level scaffolding gaps detected.")
-
-    print("\n## Research Handoff (for the agent)\n")
-    print("The script only detects presence/absence. Run a bounded research pass to decide:")
-    print(f"- Which CI/CD verification steps fit a {', '.join(languages) or 'this'} repo "
-          "(test command, lint, type-check, build) and how to wire them.")
-    print("- Which installed skills fit this repo's stack and workflow "
-          "(compare detected stack to the skill roots listed by `inventory`).")
-    print(f"- Which {PLATFORM} automation or review hooks are supported by the active host.")
-    print(f"- Whether {instruction_name} should be created or tightened (see references/instructions.md).")
-    print("\nDo not invent recommendations from this scan alone; verify against the repo and current docs.")
-
-
-def cmd_dream(args: argparse.Namespace) -> None:
-    rows = threads(limit=args.limit, archived=args.archived, days=args.days, query=args.query)
-    decided = load_decisions()
-    proposals = collect(
-        rows, args.min_support, args.min_strength,
-        decided=decided, include_decided=args.include_decided,
-    )
-    print_proposals(proposals, emit_patch=args.emit_patch)
-
-
-def cmd_skill_audit(args: argparse.Namespace) -> None:
-    rows = threads(limit=args.limit, archived=args.archived, days=args.days, query=args.query)
-    decided = load_decisions()
-    proposals = [
-        proposal
-        for proposal in collect(
-            rows, args.min_support, args.min_strength,
-            decided=decided, include_decided=args.include_decided,
-        )
-        if proposal["bucket"] in {"Skills", "New Skills"}
-    ]
-    print_proposals(proposals, emit_patch=args.emit_patch)
-
-
-def cmd_deep(args: argparse.Namespace) -> None:
-    """The flagship everything pass: orchestrates the other modes into one report."""
-    print(f"# Your Agent Usage Review ({PLATFORM})\n")
-    print("Start with how the user works: recurring skills, successful patterns, and")
-    print("friction worth understanding. Read representative threads, explain the")
-    print("user-level pattern, and only then propose a durable change when justified.\n")
-
-    print("---\n")
-    cmd_skill_usage(argparse.Namespace(
-        limit=args.limit, archived=args.archived, days=args.days, query=args.query, cwd=None,
-    ))
-
-    print("\n---\n## Representative Threads To Understand\n")
-    rows = threads(limit=args.limit, archived=args.archived, days=args.days, query=args.query, cwd=None)
-    ranked = [item for item in (triage_thread(t) for t in rows) if item["score"] >= 2]
-    ranked.sort(key=lambda item: (-item["score"], -item["thread"].updated_at))
-    if ranked:
-        print("Score Updated UTC         Reasons                         Title                            Thread")
-        print("----- ------------------- ------------------------------- -------------------------------- ------------------------------------")
-        for item in ranked[: args.top]:
-            t = item["thread"]
-            print(f"{item['score']:<5} {utc(t.updated_at):<19} "
-                  f"{shorten(','.join(item['reasons']), 31):<31} {shorten(t.title, 32):<32} {t.id}")
-    else:
-        print("No high-signal threads in range.")
-
-    print("\n---\n")
-    cmd_inventory(argparse.Namespace(memories=args.memories))
-
-    print("\n---\n")
-    decided = load_decisions()
-    proposals = collect(
-        rows, args.min_support, args.min_strength,
-        decided=decided, include_decided=args.include_decided,
-    )
-    print("## Durable Change Candidates\n")
-    print("These are implementation candidates, not the usage analysis. Verify them")
-    print("against representative threads and connect each one to a user-level pattern.\n")
-    print_proposals(proposals, emit_patch=args.emit_patch)
-
-    if args.path:
-        print("\n---\n")
-        cmd_scaffold(argparse.Namespace(path=args.path))
-
-    print("\n---\n")
-    cmd_memory_audit(argparse.Namespace(limit=args.memories or 12))
-
-    print("\n---\n")
-    if PLATFORM == "codex":
-        cmd_goal_health(argparse.Namespace(stale_days=7))
-    else:
-        print("## Goal Health\n\nNot available: Claude Code has no equivalent durable goals database.")
-
-
 def cmd_decide(args: argparse.Namespace) -> None:
     decided = load_decisions()
     if args.action == "status":
@@ -1825,34 +1207,10 @@ def cmd_decide(args: argparse.Namespace) -> None:
 
 # --- parser ------------------------------------------------------------------
 
-def _add_mining_args(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--limit", type=int, default=100)
-    parser.add_argument("--archived", choices=("active", "archived", "all"), default="all")
-    parser.add_argument("--days", type=int, default=30)
-    parser.add_argument("--query")
-    parser.add_argument("--min-support", type=int, default=2)
-    parser.add_argument("--min-strength", choices=("weak", "medium", "strong"), default="medium")
-    parser.add_argument("--include-decided", action="store_true",
-                        help="include proposals previously rejected or applied")
-    parser.add_argument("--emit-patch", action="store_true")
-
-
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Mine Codex or Claude Code sessions for durable improvement proposals.")
     parser.add_argument("--platform", choices=("auto", "codex", "claude"), default="auto")
     sub = parser.add_subparsers(dest="cmd", required=True)
-
-    inventory_p = sub.add_parser("inventory", help="List session, memory, instruction, skill, and decision sources")
-    inventory_p.add_argument("--memories", type=int, default=0, help="also list this many recent memory files")
-    inventory_p.set_defaults(func=cmd_inventory)
-
-    list_p = sub.add_parser("list", help="List sessions from the selected platform")
-    list_p.add_argument("--limit", type=int, default=25)
-    list_p.add_argument("--archived", choices=("active", "archived", "all"), default="active")
-    list_p.add_argument("--days", type=int)
-    list_p.add_argument("--query")
-    list_p.add_argument("--cwd")
-    list_p.set_defaults(func=cmd_list)
 
     triage_p = sub.add_parser("triage", help="Rank threads likely to contain self-improvement evidence")
     triage_p.add_argument("--limit", type=int, default=100)
@@ -1873,19 +1231,11 @@ def build_parser() -> argparse.ArgumentParser:
     files_p.add_argument("thread_id", help="exact session id, id prefix, or 'latest'")
     files_p.set_defaults(func=cmd_files)
 
-    memory_p = sub.add_parser("memory-audit", help="List memory sources and flag unconsolidated summaries")
-    memory_p.add_argument("--limit", type=int, default=20)
-    memory_p.set_defaults(func=cmd_memory_audit)
-
-    goal_p = sub.add_parser("goal-health", help="Flag blocked/paused/stale durable goals for revive-or-close review")
-    goal_p.add_argument("--stale-days", type=int, default=7)
-    goal_p.set_defaults(func=cmd_goal_health)
-
     usage_p = sub.add_parser("skill-usage", help="Report which skills ran, how often, and where they hit friction")
     usage_p.add_argument("--limit", type=int, default=250)
     usage_p.add_argument("--archived", choices=("active", "archived", "all"), default="all")
     usage_p.add_argument("--days", type=int, default=7)
-    usage_p.add_argument("--query")
+    usage_p.add_argument("--skill", help="filter the completed scan by exact skill id")
     usage_p.add_argument("--cwd")
     usage_p.set_defaults(func=cmd_skill_usage)
 
@@ -1902,30 +1252,11 @@ def build_parser() -> argparse.ArgumentParser:
     stats_p.add_argument("--json", action="store_true", help="emit the full structured profile")
     stats_p.set_defaults(func=cmd_stats)
 
-    scaffold_p = sub.add_parser("scaffold", help="Inspect a repo for missing scaffolding + emit a research handoff")
-    scaffold_p.add_argument("--path", help="repo directory to inspect (default: cwd)")
-    scaffold_p.set_defaults(func=cmd_scaffold)
-
     decide_p = sub.add_parser("decide", help="Record a human decision on a proposal so it stops resurfacing")
     decide_p.add_argument("action", choices=("accept", "reject", "apply", "status"))
     decide_p.add_argument("key", nargs="?", help="proposal key from a proposals report")
     decide_p.add_argument("--note")
     decide_p.set_defaults(func=cmd_decide)
-
-    dream_p = sub.add_parser("dream", help="Mine sessions for improvement proposals across all buckets")
-    _add_mining_args(dream_p)
-    dream_p.set_defaults(func=cmd_dream)
-
-    audit_p = sub.add_parser("skill-audit", help="Mine sessions for skill-only improvement proposals")
-    _add_mining_args(audit_p)
-    audit_p.set_defaults(func=cmd_skill_audit)
-
-    deep_p = sub.add_parser("deep", help="Flagship everything pass: orchestrate all modes into one report")
-    _add_mining_args(deep_p)
-    deep_p.add_argument("--top", type=int, default=15)
-    deep_p.add_argument("--memories", type=int, default=10)
-    deep_p.add_argument("--path", help="optional repo directory to also run a scaffolding scan on")
-    deep_p.set_defaults(func=cmd_deep)
 
     return parser
 

@@ -1,21 +1,17 @@
-# Authoring an artifact
+# Build a page or fragment
 
-How to turn source material into a finished page or fragment. Read this when
-assembling; the visual identity and global component rules live in
+Use this when turning source material into a finished page or fragment. The
+visual style and shared component rules live in
 [DESIGN.md](DESIGN.md).
 
-## Treatment calibration
+## Choose the level of polish
 
-Read the request, not the content size. Utilitarian is the default: title,
-dek, sections, the components the content needs, no more. Editorial treatment
-— TOC rail, figures, pull-quote, full motion, theme toggle — is earned by
-artifacts that will be kept, shared, or presented. When unsure, build
-utilitarian; a well-composed plain page is never wrong, an over-designed one
-sometimes is. Signals for editorial: the user says "beautiful", "shareable",
-"for the team"; the content is a keeper explainer or a decision brief going
-to an audience; the request calls for a showcase.
+Use a simple title, introduction, sections, and only the components the content
+needs by default. Add a table of contents, figures, pull quotes, motion, or a
+theme toggle only when the page will be kept, shared, presented, or explicitly
+needs stronger presentation. When unsure, choose the simpler page.
 
-## Composition restraint
+## Keep the page focused
 
 Choose the smallest composition that answers the reader's question. Start with
 the primary argument or dominant visual; add a component only when it carries
@@ -34,51 +30,45 @@ meaning the reader would otherwise miss.
   when the subject is not intrinsically square.
 - Keep presentation-only interaction local and optional. If filtering,
   simulation, drill-down, mutable form state, or step-through control is the
-  artifact's main value, use an interactive-visualization or product-UI
+  page's main value, use an interactive-visualization or product-UI
   workflow instead of building a half-interactive document.
 
-## Spec-loading tiers
+## Read only what applies
 
-Load only the guidance needed for the work in front of you:
-
-| Work | Read |
-|---|---|
-| Small edit to an existing artifact | The artifact, its named component source in `assets/registry/`, and the verification section below |
-| Standard page | The visual outcome atlas, one routed outcome, this reference, and the visual component atlas |
-| Chart, diagram, generated image, PR walkthrough, or code explainer | The standard-page set plus only that visual or outcome reference |
-| Novel canvas or high-stakes keeper | The relevant set above plus `DESIGN.md`, then prove the exact output with actual-page screenshots |
-
-Do not load every reference pre-emptively. Escalate when the composition uses a
-specialized visual, breaks established anatomy, or carries evidence whose loss
-would make a polished page misleading.
+For a small edit, read the page and the source for its named component. For a
+new page, also use the finished-page examples and component catalog. For a novel
+canvas or important long-lived page, read `DESIGN.md` and check the result with
+actual-page screenshots. Read specialized references only when the page uses
+them.
 
 ## Page assembly
 
-1. Open [the visual outcome atlas](../assets/outcomes/index.html), choose the
-   closest reader job from its complete-page previews, and inspect that one
-   page. Outcome pages calibrate hierarchy, pacing, and proof; they never
-   dictate an exact section list. If the job is genuinely mixed, inspect one
-   adjacent outcome after naming what the first page does not cover.
-2. Start from `page-shell` — it owns the context line, title (+ one status chip
-   only if the document has a real status), dek, footer, and width mode. Choose
+1. Open [the finished-page examples](../assets/outcomes/index.html), choose the
+   preview closest to the reader's need, and inspect that page. It shows useful
+   reading order, density, and use of evidence; it does not dictate an exact
+   section list. Inspect a second example only when the first misses a distinct
+   part of the request.
+2. Start from `page-shell` — it owns the context line, title, short introduction
+   (`dek`), footer, width mode, and one status chip when the page has a real
+   status. Choose
    `article` for prose-led work, `wide` for parallel evidence, and `canvas` for
    visual references. Keep canvas prose inside `.reading-column`. Inline
    `theme.css` verbatim before component CSS; never edit its tokens or add
    colors inline.
 3. Preserve a strong reading order already present in the source material. If
-   it has none, use the routed outcome or choose the closest narrative job from
+   it has none, use the selected example or choose the closest reading order from
    [recipes.md](recipes.md); neither may supply missing claims or evidence.
    Outline sections before styling. Each
    `<section id="...">` gets an `<h2>`; ids are short and stable. Add
    `toc-rail` for six or more sections, or when a long reference page benefits
-   from non-linear lookup. Omit it from short utilitarian pages; on narrow
-   screens the component becomes a compact native disclosure.
+   from non-linear lookup. Omit it from short, simple pages; on narrow
+   screens the component becomes a compact collapsible section.
 4. Lead with `stat-tiles` only when supplied headline measures summarize the
    story; otherwise lead with the argument or the visual that answers the
    reader's question. Never lead with a figure the reader cannot parse yet.
-5. Choose components visually in [the component atlas](../assets/atlas.html),
-   then read the selected source files in `assets/registry/`; each header
-   comment states when to use it. For a page with several components, use
+5. Choose components in [the component atlas](../assets/atlas.html), then read
+   their source files in `assets/registry/`; each header comment states when to
+   use it. For a page with several components, use
    `scripts/assemble.mjs` to inline the theme and each selected component's CSS
    once around a real body fragment. For a small page, copying remains fine:
    copy the fragment's CSS into the page `<style>` (after theme.css) and the
@@ -98,7 +88,7 @@ would make a polished page misleading.
    complete.
    Generate the forms supported by `scripts/chart.mjs`; author other forms
    directly against the same tokens and accessibility contract. See
-   [charts.md](charts.md#generate-supported-forms-author-others).
+   [charts.md](charts.md#generate-supported-charts-build-others).
 7. Close with `recommendation` when the document commits to something, then
    the sources footer. Appendix material (raw data, full logs, candidate
    configs) goes in `disclosure` blocks after the footer, never before the
@@ -123,57 +113,56 @@ node scripts/assemble.mjs \
 Add `--status`, `--footer`, or `page-behavior` in `--components` only when the
 content calls for them. `--layout` accepts `article`, `wide`, or `canvas` and
 defaults to `article`. The assembler packages chosen CSS and behavior; it does
-not select outcomes, components, content, or section order.
+not select examples, components, content, or section order.
 
-### Working source and assembled output
+### Working source and finished page
 
-Treat the body fragment as the canonical working source while constructing an
+Treat the body fragment as the main working source while constructing an
 assembled page. Edit it and rerun the assembler rather than hand-editing copied
-theme or component CSS. Keep the fragment in scratch state by default; preserve
+theme or component CSS. Keep the fragment temporary by default; preserve
 it beside the output only when the user requests continued source editing. The
 single self-contained `.html` remains the deliverable.
 
-## Editing an existing artifact
+## Editing an existing page
 
-Rendered artifacts are machine-editable: every component instance carries
+Every component instance carries
 `data-component="<name>"` on its root. To modify one, find the block by
 attribute, open the same-named source in `assets/registry/`, and edit against
-that fragment's anatomy — never guess structure from the markup. Keep the
-attribute when copying fragments and when adding instances; an artifact
-whose blocks have lost their names is opaque to the next editor.
+that fragment's structure. Keep the attribute when copying or adding components
+so the next editor can find their source.
 When the original body fragment is available, edit that source and reassemble;
 use component-level editing of the finished file when it is the only source.
 
 ## Fragment delivery
 
 A fragment is one component shipped for embedding in a surface we don't
-control — a Notion doc, a PR description, an email. The packaging rules
-invert from page mode:
+control — a Notion doc, a PR description, an email. Package it differently from
+a full page:
 
 - Wrap the component in `<div class="dots-block" data-component="...">` and
   scope the tokens to that wrapper instead of `:root`: copy the token block
   from theme.css into `.dots-block { ... }` plus
   `background: var(--background); color: var(--foreground); font-family:
   var(--font-sans);` and the component's own CSS rewritten under
-  `.dots-block`. The fragment carries its own ground — it should read as a
-  card from our world sitting in the host's, not half-inherit the host's
-  fonts and break the alpha ladder.
-- No script, no reveals: the host owns behavior. Ship static — if the
+  `.dots-block`. The fragment carries its own background and text style, so it
+  reads as a complete block instead of partly inheriting the destination's fonts.
+- No script, no reveals: the destination owns behavior. Ship static — if the
   component's markup has `class="reveal"`, drop it (or add `is-in`);
   nothing may depend on our JS.
 - No TOC and no general footer. One quiet caption line may name an
   authoritative reader-facing source when attribution helps. Never expose
   tool names, sessions, prompts, private paths, or scratch files.
-- Dark mode: pick the variant matching the destination, or ship the light
-  ground — scoped tokens mean the host's theme can't flip ours.
+- Dark mode: pick the variant matching the destination, or use the light
+  background. Wrapper-scoped styles prevent the destination's theme from
+  changing it.
 
-The design system, real-content rule, and token discipline apply unchanged.
+The same visual style and real-content rules apply.
 
 ## Delivery
 
-Prefer the platform artifact tool when present. Otherwise write to the location
-the user named — or ask where when it's a keeper — and open it in the browser
-for them. Name files for the content (`sync-rollout-brief.html`), not the skill.
+Prefer the platform's HTML creation tool when present. Otherwise write to the
+location the user named — or ask where when it will be kept — and open it in
+the browser. Name files for the content (`sync-rollout-brief.html`), not the skill.
 
 Treat delivery states precisely:
 
@@ -184,23 +173,24 @@ Treat delivery states precisely:
 - If publishing is unavailable or fails, return the standalone file and state
   that it was not published. Never infer publication from file creation.
 
-## Handoff review
+## Before delivery
 
 Never run automated HTML structural validation.
 
-Review the source before handoff:
+Review the source before delivery:
 
-- Preserve the source material's claims, decisions, and uncertainty; trace
-  figures to their sources and mark unverified gaps.
+- Preserve the reasoning the reader needs. For each material finding, keep the
+  current behavior, consequence, recommendation, and proof gap. Trace figures
+  to their sources.
 - Keep a page self-contained with no external requests. Keep a fragment scoped
   to one root with no page shell, document footer, script, reveal state, or
   dependency on host behavior.
 - Use the design system and semantic HTML. Preserve native tab order and visible
   focus, label controls, provide equivalent text for informative figures, and
-  pair color with text, shape, or line treatment.
+  pair color with text, shape, or line style.
 - Ensure generated assets have a reader purpose, accurate alt text, useful
   context when needed, and no claim to be observed evidence.
-- Remove internal provenance, prompts, private paths, scratch files, and
+- Remove internal working details, prompts, private paths, scratch files, and
   generation metadata.
 
 Use browser or rendered review only when the user asks for it or when visual

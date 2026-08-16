@@ -1,10 +1,8 @@
 # Image To Code
 
-Read this when translating a selected image, screenshot, mockup, or Image Gen
-reference into an interactive web or native app surface.
-
-You're tasked with recreating the selected visual target as an interactive
-product surface.
+Read this when translating a selected image, screenshot, mockup, approved HTML
+prototype, live surface, or Image Gen reference into an interactive web or
+native app surface.
 
 ## User Context
 
@@ -37,10 +35,11 @@ Use this checklist in proportion to the accepted target and requested surface.
 0. Start from a brief grounded per [grounding.md](grounding.md), using repository
    evidence and explicit assumptions.
 
-1. Do not start unless you have a selected image, screenshot, mockup, or Image
-   Gen result to recreate. A written brief is not enough.
+1. Do not start unless you have a selected image, screenshot, mockup, approved
+   HTML prototype, live surface, or Image Gen result to recreate. A written
+   brief is not enough.
 
-2. Treat the provided image as the design to recreate.
+2. Treat the selected target as the design to recreate.
 
 3. Implement for the established platform. Treat the reference dimensions as
    the target viewport; do not infer native app, mobile web, or desktop platform
@@ -82,6 +81,12 @@ Use this checklist in proportion to the accepted target and requested surface.
 5. Define all screens, regions, or sections in the target. For each one, record
    the visible layout, spacing, element sizes, and alignment relationships
    needed to recreate it.
+
+   When changing an existing product, map each visible region, interaction,
+   existing behavior, and state to the part of the current product that owns
+   it. Reuse those owners. Do not create a second screen, data model, state
+   store, or persistence path for behavior the product already owns unless the
+   user explicitly authorizes replacement.
 
 6. Find freely available fonts that match the target design.
 

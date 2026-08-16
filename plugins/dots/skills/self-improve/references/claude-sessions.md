@@ -57,18 +57,17 @@ supporting context and propose changes for review; do not silently edit it.
 For a plugin install, the Claude invocation is `/dots:self-improve`.
 
 ```bash
-python3 scripts/self_improve.py --platform claude inventory
 python3 scripts/self_improve.py --platform claude triage --days 30
 python3 scripts/self_improve.py --platform claude show "${CLAUDE_SESSION_ID}"
 python3 scripts/self_improve.py --platform claude files "${CLAUDE_SESSION_ID}"
+python3 scripts/self_improve.py --platform claude skill-usage --skill dots:publish-pull-request --days 30
 python3 scripts/self_improve.py --platform claude stats --json
 ```
 
 `stats` reads the same transcripts under the direct-JSONL boundary above. Session
 entries carry a `timestamp`, so response-gap and hour-of-day distributions are
 available here. It defaults to the whole retained window for the explicit
-insights route. Run `deep` only when the user explicitly asks for the combined
-multi-analysis report.
+insights route.
 
 Transcripts and history are plaintext and may contain file contents, command
 output, pasted text, or credentials. Restrict every review to the minimum

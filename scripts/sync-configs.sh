@@ -9,7 +9,7 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--status|--capture] [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--claude|--vscode|--ghostty|--warp-preview|--starship|--raycast|--zsh|--karabiner ...]
+Usage: scripts/sync-configs.sh [--status|--capture] [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--claude|--vscode|--warp-preview|--starship|--raycast|--zsh|--karabiner ...]
 
 Installs repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
@@ -27,7 +27,7 @@ EOF
 add_target() {
   local target="$1"
   if [[ "$target" == "all" ]]; then
-    TARGETS=(codex codex-personal claude vscode ghostty warp-preview starship raycast zsh karabiner)
+    TARGETS=(codex codex-personal claude vscode warp-preview starship raycast zsh karabiner)
     return
   fi
   TARGETS+=("$target")
@@ -69,9 +69,6 @@ while (( $# )); do
       ;;
     --vscode)
       add_target vscode
-      ;;
-    --ghostty)
-      add_target ghostty
       ;;
     --warp-preview)
       add_target warp-preview
@@ -289,11 +286,6 @@ sync_vscode() {
   local user_dir="$HOME/Library/Application Support/Code/User"
   install_file "$ROOT/configs/vscode/settings.json" "$user_dir/settings.json"
   install_file "$ROOT/configs/vscode/keybindings.json" "$user_dir/keybindings.json"
-  install_file "$ROOT/configs/vscode/extensions.json" "$user_dir/extensions.json"
-}
-
-sync_ghostty() {
-  install_file "$ROOT/configs/ghostty/config" "$HOME/.config/ghostty/config"
 }
 
 sync_warp_preview() {
@@ -324,7 +316,6 @@ for target in "${TARGETS[@]}"; do
     codex-personal) sync_codex_personal ;;
     claude) sync_claude ;;
     vscode) sync_vscode ;;
-    ghostty) sync_ghostty ;;
     warp-preview) sync_warp_preview ;;
     starship) sync_starship ;;
     raycast) sync_raycast ;;

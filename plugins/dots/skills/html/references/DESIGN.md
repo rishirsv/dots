@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: dots
-description: Cool-technical document identity for dots HTML artifacts.
+description: Visual style for Dots HTML pages.
 colors:
   background: "#fbfbfa"
   foreground: "#0d0d0d"
@@ -90,11 +90,11 @@ x-motion:
   stagger-step: 60ms
 ---
 
-# dots artifact identity
+# Dots HTML visual style
 
 ## Overview
 
-Cool and technical. One flat page ground, warm-white in light mode and
+Cool and technical. One flat page background, warm-white in light mode and
 near-black in dark, carrying confident grotesque type with tight negative
 tracking. Hierarchy comes from weight, size, and an ink-alpha ladder — not
 from boxes, tints, or decoration. A single desaturated blue is the only
@@ -104,10 +104,10 @@ rules, numbers that line up, motion that happens once and gets out of the way.
 
 ## Colors
 
-`background` and `foreground` are the only grounds. All grays use an alpha
+`background` and `foreground` define the page colors. All grays use an alpha
 ladder (`--a4` … `--a70`) derived from `foreground` at the `x-alpha-steps`
 opacities, so every border, muted label, and track reads correctly on both
-grounds without a second palette. Borders sit at `--a12` (felt, not seen);
+themes without a second palette. Borders sit at `--a12` (felt, not seen);
 strong rules at `--a20`. Normal-sized secondary text uses the semantic
 `--text-muted` role (`--a60`) so it stays above 4.5:1 in both themes; lower
 alpha steps remain for borders, fills, and non-text marks. Primary-but-quiet
@@ -133,7 +133,7 @@ tabular-nums`. Headings get `text-wrap: balance`.
 
 ## Layout
 
-Pages use one of three maximum widths on the same flat ground:
+Pages use one of three maximum widths on the same flat background:
 
 - `article` (`spacing.article`, 720px) for prose-led explanations, status,
   incidents, and plans.
@@ -156,10 +156,10 @@ declare their item count and may not expose empty tracks.
 
 ## Elevation & Depth
 
-The identity is flat. Hierarchy comes from spacing, type, ink contrast, and
+The visual style is flat. Hierarchy comes from spacing, type, ink contrast, and
 hairline rules rather than shadows or layered surfaces. A component may use a
 faint semantic tint when meaning requires it, but it never creates a second
-page ground or simulated elevation.
+page background or simulated elevation.
 
 ## Shapes
 
@@ -171,7 +171,7 @@ alpha ladder.
 ## Components
 
 Components consume the design tokens rather than introducing local palettes or
-shape systems. Their finished anatomy lives in the component catalog; this file
+shape systems. Their finished structure lives in the component catalog; this file
 defines the shared visual rules that apply across that catalog.
 
 Use semantic HTML and native controls. Preserve native tab order and the shared

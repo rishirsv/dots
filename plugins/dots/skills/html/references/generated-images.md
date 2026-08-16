@@ -1,7 +1,7 @@
-# Generated images in HTML artifacts
+# Generated images in HTML pages
 
-Read this when an original raster image would materially improve a page. This
-is the HTML integration contract; the `imagegen` skill owns generation mode,
+Read this when an original raster image would materially improve a page. These
+are the HTML integration instructions; the `imagegen` skill owns generation mode,
 prompting, editing, transparency, save paths, and image-level validation.
 
 ## Decide whether an image earns its place
@@ -30,10 +30,10 @@ Before generating, write a short visual brief:
 2. Generate for the intended placement rather than creating a generic image
    first and trying to crop it into the page later.
 3. Inspect the result for subject accuracy, composition, unwanted text or
-   marks, and consistency with the artifact's calm, restrained identity.
+   marks, and consistency with the page's calm, restrained visual style.
    Iterate with one targeted change when needed.
 4. Copy the selected final into the workspace beside the body fragment or in a
-   workspace-owned artifact-assets directory. A project-bound image must not
+   workspace-owned image directory. A project-bound image must not
    remain only in the generator's default output location.
 5. Resize or optimize near the largest rendered size before embedding. Prefer
    one decisive image over several large variants; do not embed a 4K source
@@ -53,7 +53,7 @@ it with a data URI and removes the local path from the final page.
 ```html
 <figure data-component="wide-figure" class="wide-figure">
   <img
-    data-embed-src="./artifact-assets/focal.webp"
+    data-embed-src="./page-images/focal.webp"
     alt="A field researcher organizing interview notes at a quiet desk"
     decoding="async"
     loading="lazy">
@@ -83,7 +83,7 @@ node scripts/assemble.mjs \
 - The crop, focal point, caption, and alt text still make sense at 1280, 768,
   360, and 320px in light and dark modes.
 - The image does not contain invented evidence, broken text, logos, watermarks,
-  or unintended generator artifacts.
+  or unintended generated defects.
 - Its decoded dimensions and encoded size are proportionate to the rendered
   role; the first useful content is not delayed by a decorative asset.
 - The page remains complete with JavaScript disabled and honors reduced motion.

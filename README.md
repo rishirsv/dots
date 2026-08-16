@@ -30,7 +30,6 @@ scripts/sync-configs.sh --codex
 scripts/sync-configs.sh --codex-personal
 scripts/sync-configs.sh --claude
 scripts/sync-configs.sh --vscode
-scripts/sync-configs.sh --ghostty
 scripts/sync-configs.sh --warp-preview
 scripts/sync-configs.sh --starship
 scripts/sync-configs.sh --raycast

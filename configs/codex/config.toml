@@ -1,9 +1,29 @@
 # Portable Codex defaults managed by Dots.
-# Machine-local permissions and runtime state remain in ~/.codex/config.toml.
+# Machine-local notification and runtime state remain in ~/.codex/config.toml.
+
+# Keep both Codex homes on the broadest named permission profile with no
+# approval prompts. The desktop app exposes this as Custom (config.toml).
+approval_policy = { granular = { sandbox_approval = true, rules = true, mcp_elicitations = true, request_permissions = true, skill_approval = true } }
+approvals_reviewer = "auto_review"
+default_permissions = "Custom"
 
 model = "gpt-5.6-sol"
 model_reasoning_effort = "medium"
 suppress_unstable_features_warning = true
+
+[permissions."Custom"]
+description = "Unrestricted filesystem, public and local network, and Unix sockets."
+
+[permissions."Custom".filesystem]
+":root" = "write"
+
+[permissions."Custom".network]
+enabled = true
+allow_local_binding = true
+dangerously_allow_all_unix_sockets = true
+
+[permissions."Custom".network.domains]
+"*" = "allow"
 
 [tools]
 view_image = true
@@ -16,6 +36,13 @@ prevent_idle_sleep = true
 [agents]
 max_concurrent_threads_per_session = 12
 max_depth = 1
+
+[apps._default]
+enabled = true
+default_tools_enabled = true
+default_tools_approval_mode = "approve"
+open_world_enabled = true
+destructive_enabled = true
 
 [apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.create_branch"]
 approval_mode = "approve"

@@ -9,7 +9,6 @@ source "$HOME/.oh-my-zsh/plugins/git/git.plugin.zsh"
 # ==============================================
 export CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1
 export CLAUDE_CODE_DISABLE_MOUSE=1
-export DRAFTS_STYLE_HOME="${DRAFTS_STYLE_HOME:-$HOME/Code/dots/configs/drafts/styles}"
 
 alias claude='command claude'
 alias cc='claude --dangerously-skip-permissions'
@@ -34,9 +33,6 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # uv tools
 export PATH="$HOME/.local/bin:$PATH"
-
-# maestro-runner
-export PATH="$HOME/.maestro-runner/bin:$PATH"
 
 # ==============================================
 # Version Managers
@@ -90,9 +86,7 @@ bindkey '^[[Z' reverse-menu-complete
 bindkey '^[[A' up-line-or-beginning-search
 bindkey '^[[B' down-line-or-beginning-search
 
-# Ghostty sends standard Mac text-field shortcuts directly:
-# Cmd-Left/Cmd-Right jump to line start/end, Cmd-Backspace clears the line,
-# and Option-Left/Option-Right move by word.
+# Support Shift-Enter as a literal newline in terminals that emit these sequences.
 shift-enter-newline() {
   LBUFFER+=$'\n'
 }
@@ -173,20 +167,6 @@ ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=#40c977'
 ZSH_HIGHLIGHT_STYLES[redirection]='fg=#ad7bf9'
 ZSH_HIGHLIGHT_STYLES[arg0]='fg=#339cff,bold'
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# ==============================================
-# Ghostty Configuration Aliases
-# ==============================================
-
-alias gconfig="$HOME/.config/ghostty/gconfig"
-alias ghostty-warp="$HOME/.config/ghostty/interactive-config.sh"
-alias gconfig-interactive="$HOME/.config/ghostty/interactive-config.sh"
-alias gconfig-switch="$HOME/.config/ghostty/switch-config.sh"
-
-alias gcyber="$HOME/.config/ghostty/gconfig cyber"
-alias gminimal="$HOME/.config/ghostty/gconfig minimal"
-alias gcozy="$HOME/.config/ghostty/gconfig cozy"
-alias gpro="$HOME/.config/ghostty/gconfig pro"
 
 # ==============================================
 # Local Secrets And Machine Overrides

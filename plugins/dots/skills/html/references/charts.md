@@ -1,10 +1,10 @@
 # Charts
 
-Read this before building any chart. Charts here are right by construction,
-not by taste: the data's job picks the form, tokens pick every color, and
-fixed mark specs pick every size.
+Read this before building any chart. The reader's question determines the chart,
+design tokens determine the colors, and the fixed sizes below keep charts
+consistent.
 
-## Generate supported forms, author others
+## Generate supported charts, build others
 
 Use `scripts/chart.mjs` for bar charts and sparklines. It computes every
 coordinate and emits a finished catalog fragment (`data-component`, title,
@@ -27,17 +27,17 @@ To edit an existing chart, never touch coordinates: read its `chart-spec`
 comment, change the spec, then run `node scripts/chart.mjs --from-fragment
 <file>`. The command rewrites that fragment file in place.
 
-Author forms the script does not support when they make the data easier to
+Build chart types the script does not support when they make the data easier to
 understand. Follow the mark specs and accessibility contract below, use only
 the `x-chart` roles in [DESIGN.md](DESIGN.md), and preserve the closest registry
-component's anatomy where it applies.
+component's structure where it applies.
 
 CSS: `bar` needs `bar-chart.html` on the page; `sparkline` needs
 `sparkline.html`. Colors flow through the `--chart-*` tokens — emphasis is
 accent, everything else neutral, and themes can re-point chart color without
 touching the script.
 
-## Form follows the data's job
+## Choose the chart from the reader's question
 
 | The reader needs to… | Form |
 |---|---|
@@ -83,11 +83,11 @@ Never introduce raw hex in a chart. If two series can't be told apart with
 the ladder, that's the signal to split into small multiples, not to add
 color.
 
-Keep each encoding stable throughout the artifact. Apply a category or series
+Keep each encoding stable throughout the page. Apply a category or series
 encoding to its marks, not its text labels, and pair emphasis with a direct
 label, shape, position, or line treatment so color never carries meaning alone.
 
-## Mark specs (fixed, not per-artifact taste)
+## Fixed sizes
 
 - Bars: 18px tall, 4px radius, 10px row gap; value labels right-aligned,
   tabular-nums, 12px.
@@ -109,4 +109,4 @@ is adjacent text or a table carrying the same numbers. If the numbers appear
 only in the SVG, the chart is wrong. Bars animate via the shared `.reveal`
 pattern (grow once); with reduced motion or no JS they render at full width.
 Use no network-loaded chart library: author inline SVG or generate a supported
-form locally so the final artifact remains self-contained.
+chart locally so the final page remains self-contained.

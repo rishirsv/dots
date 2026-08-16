@@ -36,8 +36,8 @@ Preview and apply only the targets you want. For example:
 
 ```sh
 scripts/sync-configs.sh --status --all
-scripts/sync-configs.sh --dry-run --codex --claude --vscode --ghostty --warp-preview --starship --raycast --zsh --karabiner
-scripts/sync-configs.sh --codex --claude --vscode --ghostty --warp-preview --starship --raycast --zsh --karabiner
+scripts/sync-configs.sh --dry-run --codex --claude --vscode --warp-preview --starship --raycast --zsh --karabiner
+scripts/sync-configs.sh --codex --claude --vscode --warp-preview --starship --raycast --zsh --karabiner
 ```
 
 Apply is the default mode. `--status` compares targets without changing them,
@@ -57,9 +57,6 @@ scripts/sync-configs.sh --claude
 
 scripts/sync-configs.sh --dry-run --vscode
 scripts/sync-configs.sh --vscode
-
-scripts/sync-configs.sh --dry-run --ghostty
-scripts/sync-configs.sh --ghostty
 
 scripts/sync-configs.sh --dry-run --warp-preview
 scripts/sync-configs.sh --warp-preview

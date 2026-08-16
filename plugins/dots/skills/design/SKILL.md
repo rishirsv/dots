@@ -57,7 +57,8 @@ Choose the path before loading references:
 - Read [imagegen-concepts.md](references/imagegen-concepts.md) when concepting
   with Image Gen or generating visual assets.
 - Read [image-to-code.md](references/image-to-code.md) when implementing a
-  selected screenshot, mockup, reference image, or accepted Image Gen concept.
+  selected screenshot, mockup, approved HTML prototype, live surface,
+  reference image, or accepted Image Gen concept.
 - Read [surface-gates.md](references/surface-gates.md) when the UI type has
   specific preservation rules such as dashboards, games, media surfaces, forms,
   canvas tools, or landing pages.
@@ -80,10 +81,11 @@ and any material unresolved decision are explicit.
 
 #### Accepted target
 
-For a selected screenshot, mockup, reference image, or accepted Image Gen
-concept, read [image-to-code.md](references/image-to-code.md) and follow its
-target-recreation workflow through design-system extraction, asset and state
-verification, rendered comparison, and fidelity verification.
+For a selected screenshot, mockup, approved HTML prototype, live surface,
+reference image, or accepted Image Gen concept, read
+[image-to-code.md](references/image-to-code.md) and follow its target-recreation
+workflow through design-system extraction, asset and state verification,
+rendered comparison, and fidelity verification.
 
 Treat the accepted target as the production design spec. Do not reinterpret
 layout, visible copy, hierarchy, styling, imagery, density, sections, or

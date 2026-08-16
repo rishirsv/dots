@@ -1,0 +1,10 @@
+interface:
+  display_name: "Publish Pull Request"
+  short_description: "Commit, push, and publish a ready pull request"
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
+  brand_color: "#3B82F6"
+  default_prompt: "Use $publish-pull-request to commit and push the intended changes, then update the branch's pull request or open it ready for review."
+
+policy:
+  allow_implicit_invocation: true

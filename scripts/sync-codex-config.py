@@ -16,9 +16,8 @@ from typing import List, Optional, Sequence, Tuple
 BEGIN_MARKER = "# >>> Dots portable Codex config >>>"
 END_MARKER = "# <<< Dots portable Codex config <<<"
 
-LOCAL_TOP_LEVEL_KEYS = {"approval_policy", "sandbox_mode", "notify"}
+LOCAL_TOP_LEVEL_KEYS = {"notify", "service_tier"}
 LOCAL_TABLE_PREFIXES = (
-    ("apps", "_default"),
     ("projects",),
     ("marketplaces",),
     ("mcp_servers",),
@@ -27,6 +26,8 @@ LOCAL_TABLE_PREFIXES = (
     ("shell_environment_policy",),
 )
 PORTABLE_TABLE_EXCEPTIONS = (("mcp_servers", "openaiDeveloperDocs"),)
+APP_RUNTIME_TABLE_KEYS = {("features",): {"js_repl"}}
+APP_MOVED_TABLE_PREFIXES = (("desktop",),)
 
 ASSIGNMENT_RE = re.compile(r"^([A-Za-z0-9_-]+)\s*=")
 
@@ -66,7 +67,23 @@ def extract_marker(text: str) -> Optional[str]:
     return canonical_portable("".join(lines[begin + 1 : end]))
 
 
-def remove_marker(text: str) -> str:
+def unwrap_marker(text: str) -> str:
+    """Return config content without marker lines, retaining its body.
+
+    Codex Desktop can append its runtime tables inside the portable block when
+    it updates. Keep those tables available to the local-state extractor so a
+    subsequent Dots sync does not discard them.
+    """
+    lines = text.splitlines(keepends=True)
+    indexes = marker_indexes(lines)
+    if indexes is None:
+        return text
+    begin, end = indexes
+    return "".join(lines[:begin] + lines[begin + 1 : end] + lines[end + 1 :])
+
+
+def outside_marker(text: str) -> str:
+    """Return only content that sits outside the Dots marker block."""
     lines = text.splitlines(keepends=True)
     indexes = marker_indexes(lines)
     if indexes is None:
@@ -138,6 +155,46 @@ def split_toml(text: str) -> Tuple[List[str], List[Tuple[Tuple[str, ...], List[s
     return root, tables
 
 
+def strip_app_runtime_keys(text: str) -> str:
+    """Ignore settings Codex Desktop writes into the portable marker block."""
+    root, tables = split_toml(text)
+    parts = list(root)
+    for path, lines in tables:
+        runtime_keys = APP_RUNTIME_TABLE_KEYS.get(path, set())
+        parts.extend(
+            line
+            for line in lines
+            if not (
+                (match := ASSIGNMENT_RE.match(line))
+                and match.group(1) in runtime_keys
+            )
+        )
+    return canonical_portable("".join(parts))
+
+
+def effective_portable(text: str) -> Optional[str]:
+    """Rebuild the portable config after Codex Desktop normalizes its layout."""
+    marked = extract_marker(text)
+    if marked is None:
+        return None
+
+    _, marked_tables = split_toml(marked)
+    marked_paths = {path for path, _ in marked_tables}
+    _, outside_tables = split_toml(outside_marker(text))
+    moved = [
+        "".join(lines).rstrip() + "\n"
+        for path, lines in outside_tables
+        if path not in marked_paths
+        and any(starts_with(path, prefix) for prefix in APP_MOVED_TABLE_PREFIXES)
+    ]
+    rebuilt = marked
+    if moved:
+        rebuilt = rebuilt.rstrip() + "\n\n" + "\n\n".join(
+            table.rstrip() for table in moved
+        ) + "\n"
+    return strip_app_runtime_keys(rebuilt)
+
+
 def starts_with(path: Tuple[str, ...], prefix: Tuple[str, ...]) -> bool:
     return path[: len(prefix)] == prefix
 
@@ -159,12 +216,18 @@ def local_root_chunks(root_lines: Sequence[str]) -> List[str]:
     for position, (start, key) in enumerate(starts):
         end = starts[position + 1][0] if position + 1 < len(starts) else len(root_lines)
         if key in LOCAL_TOP_LEVEL_KEYS:
-            chunks.append("".join(root_lines[start:end]).rstrip() + "\n")
+            chunk = "".join(
+                line
+                for line in root_lines[start:end]
+                if not line.lstrip().startswith("#")
+            ).rstrip()
+            if chunk:
+                chunks.append(chunk + "\n")
     return chunks
 
 
 def local_content(text: str) -> Tuple[List[str], List[str]]:
-    root, tables = split_toml(remove_marker(text))
+    root, tables = split_toml(unwrap_marker(text))
     roots = local_root_chunks(root)
     local_tables = [
         "".join(lines).rstrip() + "\n"
@@ -294,7 +357,7 @@ def status(source: Path, target: Path) -> int:
         return 1
 
     live = read_target(target)
-    marked = extract_marker(live)
+    marked = effective_portable(live)
     if marked is None:
         print("Drift {} has no portable marker block".format(target))
         return 1
@@ -317,7 +380,7 @@ def capture(source: Path, target: Path) -> int:
     if target.is_symlink() or not target.is_file():
         raise ConfigError("capture requires a regular live config: {}".format(target))
 
-    marked = extract_marker(read_target(target))
+    marked = effective_portable(read_target(target))
     if marked is None:
         raise ConfigError("live config has no portable marker block: {}".format(target))
     validate_portable_source(marked)

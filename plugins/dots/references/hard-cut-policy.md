@@ -1,58 +1,46 @@
 # Hard-Cut Policy
 
-Read this for architecture reviews and refactors. Architecture Review treats
-hard-cut as the default posture. Other workflows establish that a hard cut is
-eligible before applying this cleanup policy.
+Apply a hard cut when a change establishes one current schema, contract,
+persisted shape, route, configuration, feature-flag state, value set, or
+architecture. Keep one canonical path. Remove old-shape handling unless a real
+external compatibility boundary requires it.
 
-## Eligibility
+Treat previous shapes as internal drafts unless they are already persisted user
+data, on-disk state that must load, a cross-system wire format, a documented
+public contract, or actively used outside the refactor boundary. Existing old
+code is not evidence that compatibility is required.
 
-Apply a hard cut to changes that alter schemas, contracts, persisted state,
-routing, configuration, feature flags, enum/value sets, or architecture unless
-there is concrete evidence of a real external compatibility boundary.
+## Replace The Old Shape
 
-Treat previous shapes as internal draft shapes unless they are already:
+1. Identify the canonical target.
+2. Trace every producer and consumer.
+3. Update live code, fixtures, test data, builders, snapshots, documentation,
+   migrations, generated files, previews, presentation modifiers, helper names,
+   comments, and enforcement to use only that target.
+4. Delete legacy branches, fallbacks, shims, adapters, coercions, aliases,
+   translation helpers, and dual-shape support.
+5. Delete migrations, backfills, restore translation, and resync paths whose
+   only purpose is recognizing or preserving the retired shape.
+6. Do not add, and delete existing, guards or tests whose only purpose is
+   recognizing or rejecting the retired shape.
+7. Keep validation only for malformed input in the current contract.
+8. Search the entire declared scope for every retired name and path before
+   calling the cut complete.
 
-- persisted external or user data
-- on-disk or database state that must still load
-- a wire format used across process or service boundaries
-- a documented or publicly supported contract
-- actively depended on outside the refactor boundary
+Prefer replacing and deleting over layering. Apply the deletion test to an
+adapter or compatibility module: if removing it makes only obsolete behavior
+disappear, delete it. If its complexity reappears at a real external boundary,
+isolate it there.
 
-Mere existence of old code is not proof of a compatibility obligation.
+## Exception
 
-## Canonical Path
+Make an exception only for persisted external or user data, on-disk state that
+must still load, a cross-system wire format, or a real public contract. Name the
+exact file, function, dependency, and reason. Limit compatibility to that
+boundary and do not create another compatibility owner elsewhere.
 
-Once the hard cut is eligible, keep one canonical codepath and remove old-shape
-handling. Do not preserve, translate, or specifically reject a shape merely
-because it once existed.
+## Completion
 
-- Do not add fallback behavior, compatibility branches, shims, adapters,
-  coercions, aliases, or dual-shape support.
-- Do not add fail-fast guards or tests whose purpose is to detect or reject old
-  shapes.
-- Update producers, consumers, fixtures, tests, docs, migrations, generated
-  files, previews, helper names, and comments to use only the canonical shape.
-- Remove dead code, dead conditionals, obsolete comments, and translation
-  helpers related to old shapes.
-- Keep validation only for the current canonical contract. It may reject
-  malformed current-shape input, but must not branch on legacy discriminators,
-  old field names, aliases, old enum members, or draft formats.
-- Keep one owner for the canonical contract.
-- Search for retired names across code, tests, docs, fixtures, generated project
-  files, and specs before calling the cleanup complete.
-
-When choosing between backward compatibility and simplification inside an
-eligible hard cut, choose simplification.
-
-## Exception Rule
-
-Make an exception only when removing the old shape would break persisted
-external or user data, on-disk or database state, a cross-boundary wire format,
-or a real public contract.
-
-When such a boundary exists:
-
-- name the exact file and function
-- describe the concrete persisted or public dependency
-- limit compatibility to that boundary
-- do not invent new compatibility layers elsewhere
+A hard cut is complete only when producers, consumers, tests, fixtures, docs,
+generated artifacts, and enforcement use one canonical shape and no runtime
+logic exists solely for a retired form.

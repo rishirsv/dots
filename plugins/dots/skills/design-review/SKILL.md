@@ -48,11 +48,9 @@ Use these principles as judgment prompts:
 7. **Craft:** type, color, spacing, assets, states, and motion form one system.
 8. **Delight:** the intended feeling emerges from the other principles, not decoration.
 
-For a focused review, mention only principles that explain a material finding or
-strength. For a full acceptance or experience review, score each evidenced
-principle `0` (contradicted), `1` (mixed), or `2` (strong); mark the rest `not
-evidenced` and exclude them from the denominator. Report `/16` only when all
-eight are evidenced.
+Use these principles as judgment prompts, not a scorecard. Mention only
+principles that explain a material finding or strength. Give a numeric score
+only when the user asks for one, and explain the rubric and evidence limits.
 
 ## Use Evidence Precisely
 

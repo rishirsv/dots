@@ -34,7 +34,7 @@ the whole discovery contract.
   from the descriptions alone? If two descriptions both plausibly claim a
   request, both need boundary clauses.
 - **Idiom test**: do the trigger tokens match how the user actually invokes
-  it (check session history — e.g. "ultraplan", not just "ultra-plan")?
+  it (check session history — e.g. "review-code", not just "code review")?
 - **Vagueness test**: "Helps with documents", "Processes data" and any
   description that names a category instead of an action fails.
 - **Invocation-mode legibility**: explicit-only skills say so and name the

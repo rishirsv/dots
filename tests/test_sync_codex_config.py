@@ -18,11 +18,34 @@ SPEC.loader.exec_module(SYNC_CODEX_CONFIG)
 
 
 PORTABLE = """\
-service_tier = "default"
+approval_policy = { granular = { sandbox_approval = true, rules = true, mcp_elicitations = true, request_permissions = true, skill_approval = true } }
+approvals_reviewer = "auto_review"
+default_permissions = "Custom"
 model = "portable-model"
+
+[permissions."Custom"]
+description = "Unrestricted filesystem, public and local network, and Unix sockets."
+
+[permissions."Custom".filesystem]
+":root" = "write"
+
+[permissions."Custom".network]
+enabled = true
+allow_local_binding = true
+dangerously_allow_all_unix_sockets = true
+
+[permissions."Custom".network.domains]
+"*" = "allow"
 
 [features]
 apps = true
+
+[apps._default]
+enabled = true
+default_tools_enabled = true
+default_tools_approval_mode = "approve"
+open_world_enabled = true
+destructive_enabled = true
 
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
@@ -32,8 +55,8 @@ defaultTerminalLocation = "right"
 """
 
 LEGACY = """\
-approval_policy = "never"
-sandbox_mode = "danger-full-access"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
 service_tier = "old"
 notify = [
   "/machine/notifier",
@@ -109,8 +132,16 @@ class CodexConfigHelperTests(unittest.TestCase):
                 SYNC_CODEX_CONFIG.extract_marker(live),
                 SYNC_CODEX_CONFIG.canonical_portable(PORTABLE),
             )
-            self.assertIn('approval_policy = "never"', live)
+            self.assertIn("approval_policy = { granular =", live)
+            self.assertIn('approvals_reviewer = "auto_review"', live)
+            self.assertNotIn('approval_policy = "on-request"', live)
+            self.assertNotIn('sandbox_mode = "workspace-write"', live)
+            self.assertIn('default_permissions = "Custom"', live)
+            self.assertIn('[permissions."Custom".filesystem]', live)
+            self.assertIn('":root" = "write"', live)
+            self.assertIn('service_tier = "old"', live)
             self.assertIn('[apps._default]', live)
+            self.assertIn('default_tools_approval_mode = "approve"', live)
             self.assertIn('[projects."/tmp/work"]', live)
             self.assertIn("[marketplaces.local]", live)
             self.assertIn("[mcp_servers.node_repl]", live)
@@ -159,7 +190,7 @@ class CodexConfigHelperTests(unittest.TestCase):
             target = root / "config.toml"
             source.write_text(PORTABLE)
             target.write_text(
-                'approval_policy = "never"\n\n'
+                'notify = ["/machine/notifier", "turn-ended"]\n\n'
                 + SYNC_CODEX_CONFIG.BEGIN_MARKER
                 + "\nmodel = \"captured\"\n"
                 + SYNC_CODEX_CONFIG.END_MARKER
@@ -170,7 +201,7 @@ class CodexConfigHelperTests(unittest.TestCase):
 
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(source.read_text(), 'model = "captured"\n')
-            self.assertNotIn("approval_policy", source.read_text())
+            self.assertNotIn("notify", source.read_text())
             self.assertNotIn("projects", source.read_text())
 
     def test_status_reports_portable_drift_without_writing(self):
@@ -192,6 +223,56 @@ class CodexConfigHelperTests(unittest.TestCase):
             self.assertEqual(result.returncode, 1)
             self.assertIn("portable block differs", result.stdout)
             self.assertEqual(target.read_bytes(), before)
+
+    def test_status_and_capture_ignore_app_runtime_feature_writeback(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.toml"
+            target = root / "config.toml"
+            source.write_text(PORTABLE)
+            runtime_portable = PORTABLE.replace(
+                "apps = true\n", "apps = true\njs_repl = false\n"
+            )
+            target.write_text(
+                SYNC_CODEX_CONFIG.BEGIN_MARKER
+                + "\n"
+                + runtime_portable
+                + SYNC_CODEX_CONFIG.END_MARKER
+                + "\n"
+            )
+            os.chmod(target, 0o600)
+
+            status_result = self.run_helper("status", source, target)
+            self.assertEqual(status_result.returncode, 0, status_result.stdout)
+
+            capture_result = self.run_helper("capture", source, target)
+            self.assertEqual(capture_result.returncode, 0, capture_result.stderr)
+            self.assertEqual(source.read_text(), PORTABLE)
+
+    def test_status_and_capture_rebuild_desktop_tables_moved_outside_marker(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.toml"
+            target = root / "config.toml"
+            source.write_text(PORTABLE)
+            portable_without_desktop, desktop = PORTABLE.split("\n[desktop]\n")
+            target.write_text(
+                SYNC_CODEX_CONFIG.BEGIN_MARKER
+                + "\n"
+                + portable_without_desktop
+                + "\n"
+                + SYNC_CODEX_CONFIG.END_MARKER
+                + "\n\n[desktop]\n"
+                + desktop
+            )
+            os.chmod(target, 0o600)
+
+            status_result = self.run_helper("status", source, target)
+            self.assertEqual(status_result.returncode, 0, status_result.stdout)
+
+            capture_result = self.run_helper("capture", source, target)
+            self.assertEqual(capture_result.returncode, 0, capture_result.stderr)
+            self.assertEqual(source.read_text(), PORTABLE)
 
     def test_portable_source_rejects_machine_local_sections(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -227,6 +308,17 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             self.assertTrue(config.is_file())
             self.assertFalse(config.is_symlink())
             self.assertEqual(stat.S_IMODE(config.stat().st_mode), 0o600)
+            live_config = config.read_text()
+            self.assertIn("approval_policy = { granular =", live_config)
+            self.assertIn('approvals_reviewer = "auto_review"', live_config)
+            self.assertIn('default_permissions = "Custom"', live_config)
+            self.assertIn('[permissions."Custom".filesystem]', live_config)
+            self.assertIn('":root" = "write"', live_config)
+            self.assertIn('[apps._default]', live_config)
+            self.assertIn('default_tools_enabled = true', live_config)
+            self.assertIn('default_tools_approval_mode = "approve"', live_config)
+            self.assertIn('open_world_enabled = true', live_config)
+            self.assertIn('destructive_enabled = true', live_config)
             agents = home / ".codex" / "AGENTS.md"
             self.assertTrue(agents.is_symlink())
             self.assertEqual(

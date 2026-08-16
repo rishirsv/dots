@@ -37,18 +37,16 @@ and line number when a JSONL line is malformed.
 ## Helper examples
 
 ```bash
-python3 scripts/self_improve.py --platform codex inventory
 python3 scripts/self_improve.py --platform codex triage --days 30 --cwd "$PWD"
 python3 scripts/self_improve.py --platform codex show <thread-id>
 python3 scripts/self_improve.py --platform codex files <thread-id>
+python3 scripts/self_improve.py --platform codex skill-usage --skill dots:publish-pull-request --days 30
 python3 scripts/self_improve.py --platform codex stats --json
 ```
 
 `stats` reads rollout events through the same normalized stream. Rollout records
 carry a `timestamp`, so response-gap and hour-of-day distributions are available
 here. It defaults to the whole retained window for the explicit insights route.
-Run `deep` only when the user explicitly asks for the combined multi-analysis
-report.
 
 The helper defaults to `CODEX_HOME` or `~/.codex`. Its transcript rendering is
 an evidence aid, not a substitute for live thread tools when those tools expose

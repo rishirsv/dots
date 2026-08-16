@@ -14,6 +14,7 @@ except where persisted data or an external contract requires compatibility.
 
 - Read [architecture-language.md](references/architecture-language.md) before naming architecture problems. Use its terms when they sharpen the finding, while preserving the repository's established vocabulary.
 - Read [architecture-ownership.md](references/architecture-ownership.md) when a finding involves code placement, runtime ownership, duplicate policy, or canonical long-term ownership.
+- Read [duplicate-ownership.md](../../references/duplicate-ownership.md) when a finding involves a second source of truth, copied policy, normalization, or competing rule owners.
 - Read [test-consolidation.md](references/test-consolidation.md) when a refactor changes test placement, duplicates tests, or creates a new test surface.
 - Read [hard-cut-policy.md](../../references/hard-cut-policy.md) for every architecture review or refactor. It defines the default hard-cut posture, exception rule, and cleanup checklist.
 - Read [interface-design.md](references/interface-design.md) only after the user selects a candidate and wants alternative interface designs.
@@ -29,7 +30,7 @@ Keep only repo guidance that changes the recommendation; higher-priority instruc
 If docs are incomplete, infer the current layer model from the code and state the assumption.
 
 Architecture Review owns architecture-primary scans: structural candidates,
-ownership, seams, and interface shape. Code Review may report architecture
+ownership, seams, and interface shape. Review Code may report architecture
 evidence found while reviewing a diff or broad quality audit, but routes a
 primarily structural candidate search here.
 

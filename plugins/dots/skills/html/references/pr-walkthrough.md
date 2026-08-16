@@ -17,41 +17,41 @@ needed to understand its consequences. A file list or diff summary is not an
 explanation. Separate what the source confirms from what you infer, and mark
 what remains unknown.
 
-Build a change inventory that distinguishes:
+List every meaningful change before writing. Distinguish:
 
 - user-visible behavior and workflows
-- product rules and affected surfaces
+- product rules and affected screens or areas
 - data, persistence, migrations, and removed behavior
-- external services, datasets, permissions, privacy, and operational effects
+- external services, datasets, permissions, privacy, and effects on running the product
 - architecture or ownership changes that alter how the system works
 - validation evidence, limitations, unknowns, and unfinished work
-- mechanical, generated, fixture, documentation, and test-only changes
+- generated, documentation, test-only, and other supporting changes
 
-Preserve every meaningful change the investigation identifies and distinguish
-it from supporting mechanics. A meaningful change alters behavior, capability,
-product truth, stored facts, system boundaries, risk, or future operation. It
-belongs in the teaching narrative. Summarize supporting mechanics compactly
+Preserve every meaningful change and distinguish it from supporting details. A
+meaningful change alters behavior, capability, rules or data people rely on,
+stored facts, responsibility, risk, or future operation. It belongs in the
+walkthrough. Summarize supporting implementation details compactly
 unless they carry their own consequence. If a narrative gap matters, inspect
 the relevant source; if the evidence remains unavailable or inconclusive, name
 the unknown rather than smoothing it over.
 
 ## Build a teaching story
 
-Choose sections from the PR's conceptual shape. Do not turn the inventory into
+Choose sections from the PR's content. Do not turn the list into
 a standard set of headings, force empty sections, or organize the page by file
 or commit order. Name sections in product language.
 
-Every walkthrough needs this narrative spine, although adjacent parts may be
+Every walkthrough needs this order, although adjacent parts may be
 combined when the change is small:
 
 1. **Outcome.** Lead with what is now meaningfully different and why it matters
    to users, the product, or the team. Use plain language and present the
    concrete result before repository terminology.
 2. **Before and after.** Give only the prior context needed to understand the
-   change, then state the new mental model. Contrast behavior and responsibility,
-   not lists of old and new files.
+   change, then explain how the system works now. Contrast behavior and
+   responsibility, not lists of old and new files.
 3. **Complete change tour.** Explain every meaningful change, grouped by product
-   responsibility, user journey, or causal dependency. Connect each group to the
+   responsibility, user journey, or dependency. Connect each group to the
    central idea and its consequence.
 4. **Evidence and status.** Explain what proves the important behavior, what is
    not verified, what remains unfinished, and any decision the reader still
@@ -59,11 +59,11 @@ combined when the change is small:
 
 Add teaching sections only when the change calls for them:
 
-| Signal in the change | Useful section or treatment |
+| Signal in the change | Useful section or format |
 |---|---|
 | A new or changed user flow | Walk one realistic user journey from start to observable result. |
-| One concept affects several surfaces | Map the affected surfaces and explain what changes at each one. |
-| A shared abstraction or architecture changed | Introduce one mental model or diagram, tied to product consequences. |
+| One concept affects several product areas | Map those areas and explain what changes in each one. |
+| A shared abstraction or architecture changed | Explain how the system works now or use a diagram tied to product consequences. |
 | Stored data or persistence changed | Explain which facts existed before, which exist now, and why the distinction matters. |
 | A migration, deletion, or hard cut occurred | State what was removed, what replaces it, and what cannot continue unchanged. |
 | An external service or dataset is involved | Separate what is shipping, what is only prepared, and the concrete adoption work remaining. |
@@ -72,13 +72,13 @@ Add teaching sections only when the change calls for them:
 | Performance or reliability changed | Name the former bottleneck or failure, the mechanism that changed, and the measured result. |
 | Developer infrastructure changed | Explain the downstream product capability or operating improvement it enables. |
 | A consequential tradeoff was recorded | Explain the decision, credible alternative, and consequence without inventing rationale. |
-| The diff is broad but partly mechanical | Teach the meaningful changes and finish with compact supporting coverage. |
+| The diff is broad but includes many supporting changes | Teach the meaningful changes and finish with compact supporting coverage. |
 
 For a substantial or cross-cutting PR, use one concrete example early and carry
 it through the system. Show how a realistic input, action, or state becomes an
-observable result. Generalize only after the example establishes the mental
-model. For a small fix, a short before, cause, after, and evidence story may be
-the complete walkthrough.
+observable result. Generalize only after the example establishes the
+explanation. For a small fix, a short before, cause, after, and evidence story
+may be the complete walkthrough.
 
 ## Teach at the reader's level
 
@@ -105,7 +105,7 @@ example over several abstract labels.
 
 Use visuals only when they replace prose:
 
-- `comparison-grid` for a genuine before/after mental model
+- `comparison-grid` for a genuine before/after explanation
 - `process-steps` for one linear causal or end-to-end path
 - `flow-diagram` only when the path branches or rejoins
 - `data-table` for repeated mappings such as product surface to changed behavior
@@ -126,10 +126,10 @@ involved:
   not active yet.
 - **Remaining:** specific work or evidence still required.
 
-Separate confirmed facts, source-supported rationale, inference, and unknowns.
+Separate confirmed facts, reasons recorded in the source, inference, and unknowns.
 Do not smooth over a gap because the surrounding implementation is complete.
 
-## Completion check
+## Before delivery
 
 Before the general HTML verification, imagine the reader never opens GitHub, a
 source file, or the diff. The walkthrough is complete only when they can
@@ -138,12 +138,12 @@ accurately explain:
 - what changed and why it matters
 - how the important behavior or system now works
 - what the relevant before/after distinction is
-- which product surfaces, stored facts, and external boundaries are affected
+- which product areas, stored facts, and outside services are affected
 - what was removed, prepared but not delivered, or left unfinished
 - what evidence supports the result and what remains unverified
 
-Confirm that every meaningful change from the inventory appears in the
-teaching narrative and every supporting change is accounted for without being
-given equal weight. Remove code-reading instructions such as “start with this
+Confirm that every meaningful change from the list appears in the walkthrough
+and every supporting change is accounted for without being given equal weight.
+Remove code-reading instructions such as “start with this
 file,” “review this module,” or “follow this test.” If the reader still needs a
 separate explanation to understand the page, the walkthrough is not finished.

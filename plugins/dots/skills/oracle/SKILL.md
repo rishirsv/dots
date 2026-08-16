@@ -48,11 +48,10 @@ Match altitude to the task type with
 skill-improvement run ships the whole skill directory, not one file.
 
 Exclude dependency folders, build artifacts, credentials, and `.env` files
-unless the user explicitly approves a narrow redacted excerpt. For
-code-quality requests, include
-the relevant `../code-review/references/lane-*.md` checklists
-(and [../../references/hard-cut-policy.md](../../references/hard-cut-policy.md)
-when hard cuts are in scope) so the advisory request stands alone.
+unless the user explicitly approves a narrow redacted excerpt. For code-review
+requests, include [Review Code](../review-code/SKILL.md) and, when hard cuts are
+in scope, [Hard-Cut Policy](../../references/hard-cut-policy.md) so the advisory
+request stands alone.
 
 ## Packages
 

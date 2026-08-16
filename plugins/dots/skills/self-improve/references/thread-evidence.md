@@ -39,7 +39,10 @@ Before proposing a skill change:
 
 Reject or narrow the proposal when it cannot pass all four checks. A direct
 user correction can establish the need for a rule, but the correction's
-surface form is not automatically the portable rule.
+surface form is not automatically the portable rule. When the user explicitly
+requests an exact durable behavior, preserve it at that scope. Generalize only
+around it; do not weaken, reinterpret, or replace the requested rule with a
+broader abstraction.
 
 ## File references
 

@@ -1,7 +1,7 @@
 {
-  "model": "fable",
+  "model": "sonnet",
+  "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
-    "build-ios-apps@steady-app": true,
     "codex@openai-codex": true,
     "dots@dots": true,
     "meta-skill@dots": true,
@@ -12,12 +12,6 @@
       "source": {
         "source": "directory",
         "path": "/Users/rishi/Code/dots"
-      }
-    },
-    "steady-app": {
-      "source": {
-        "source": "directory",
-        "path": "/Users/rishi/.claude/plugins/local-marketplaces/steady-app"
       }
     },
     "claude-code-warp": {
