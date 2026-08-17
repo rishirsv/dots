@@ -61,6 +61,10 @@ Codex tasks show **Dots** in the permissions picker.
   opt-in. If collection stops, use **Settings > Computer history > Resume**.
 - macOS Screen Recording, Accessibility, Computer Use app approvals, and
   Computer History consent remain per-machine choices.
+- Dots enables the Computer Use helper's undocumented
+  `ComputerUseAllowForbiddenTargets` default so it can target ChatGPT, Codex,
+  and terminal-class apps. Config sync fails if an installed helper no longer
+  ships that override; it never writes the key into `config.toml`.
 - ChatGPT's startup surface is app runtime state, not a documented Codex config
   key; Dots does not write it.
 - Keep secrets and machine-local shell overrides in `~/.zshrc.local`.

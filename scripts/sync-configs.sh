@@ -263,6 +263,13 @@ sync_codex() {
   if ! python3 "$ROOT/scripts/sync-codex-desktop-permissions.py" "${state_args[@]}"; then
     STATUS=1
   fi
+  local computer_use_args=("$MODE")
+  if (( DRY_RUN )); then
+    computer_use_args+=(--dry-run)
+  fi
+  if ! python3 "$ROOT/scripts/sync-codex-computer-use.py" "${computer_use_args[@]}"; then
+    STATUS=1
+  fi
   install_symlink "$ROOT/configs/codex/keybindings.json" "$HOME/.codex/keybindings.json"
   install_symlink "$ROOT/plugins/dots/agents" "$HOME/.codex/agents"
 }
