@@ -1,6 +1,6 @@
 ---
 name: scout
-description: "Use only when the user asks to be interviewed, grilled, challenged, or questioned about a fuzzy plan, decision, or idea. Builds shared understanding before planning or implementation; not for the minimum clarification needed to perform an otherwise specified task."
+description: "Interviews the user to settle a fuzzy plan, decision, or idea before planning or implementation. Use when the user asks to be interviewed, grilled, or challenged."
 ---
 
 # Scout
@@ -32,8 +32,7 @@ merely because they can technically be answered independently.
 Questions are consequential when their answers change the direction,
 architecture, ownership, scope, or another decision.
 
-Put the question first, then give it enough context to be understood. Use
-whatever length the decision needs.
+Put the question first, then give it enough context to be understood.
 
 Use one meaningful emoji in a question heading when it improves scanning;
 otherwise leave it out. Let the subject choose the emoji rather than using a
@@ -114,9 +113,9 @@ plain, concrete language and only the detail that helps the user decide.
 
 ## Finish
 
-The completion criterion is every consequential decision answered, rejected,
-or explicitly deferred. Finish with a short Scout Snapshot that lets someone
-continue later without reopening settled decisions:
+Finish when every consequential decision is answered, rejected, or explicitly
+deferred. Return a short Scout Snapshot that lets someone continue later
+without reopening settled decisions:
 
 - what the interview was trying to settle;
 - the decisions made, exact non-negotiables, and why each choice won;
