@@ -204,7 +204,7 @@ def effective_portable(text: str) -> Optional[str]:
         rebuilt = rebuilt.rstrip() + "\n\n" + "\n\n".join(
             table.rstrip() for table in moved
         ) + "\n"
-    return strip_app_runtime_keys(rebuilt)
+    return strip_app_runtime_keys(strip_local_content(rebuilt))
 
 
 def starts_with(path: Tuple[str, ...], prefix: Tuple[str, ...]) -> bool:
@@ -236,6 +236,28 @@ def local_root_chunks(root_lines: Sequence[str]) -> List[str]:
             if chunk:
                 chunks.append(chunk + "\n")
     return chunks
+
+
+def strip_local_content(text: str) -> str:
+    root, tables = split_toml(text)
+    starts: List[Tuple[int, str]] = []
+    for index, line in enumerate(root):
+        match = ASSIGNMENT_RE.match(line)
+        if match:
+            starts.append((index, match.group(1)))
+
+    parts = list(root[: starts[0][0]]) if starts else list(root)
+    for position, (start, key) in enumerate(starts):
+        end = starts[position + 1][0] if position + 1 < len(starts) else len(root)
+        if key not in LOCAL_TOP_LEVEL_KEYS:
+            parts.extend(root[start:end])
+    parts.extend(
+        line
+        for path, lines in tables
+        if not is_local_table(path)
+        for line in lines
+    )
+    return canonical_portable("".join(parts))
 
 
 def local_content(text: str) -> Tuple[List[str], List[str]]:

@@ -224,7 +224,9 @@ class CodexConfigHelperTests(unittest.TestCase):
                 'dock-icon-preference = "app-default"\n'
                 'open-link-in-target-preference = "in-app-browser"\n'
                 'realtimeVoiceScreenContextEnabled = true\n'
-                'show-ultra-in-model-picker-slider = false\n',
+                'show-ultra-in-model-picker-slider = false\n'
+                '\n[marketplaces.dots]\n'
+                'source = "/machine/dots"\n',
             )
             target.write_text(
                 SYNC_CODEX_CONFIG.BEGIN_MARKER
