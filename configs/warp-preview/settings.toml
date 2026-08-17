@@ -36,6 +36,9 @@ custom_secret_regex_list = [
   { name = "Fireworks API Key", pattern = '\bfw_[a-zA-Z0-9]{24}\b' },
 ]
 
+[agents]
+cloud_conversation_storage_enabled = true
+
 [agents.warp_agent]
 is_any_ai_enabled = false
 
@@ -85,7 +88,7 @@ input_mode = "pinned_to_bottom"
 [appearance.window]
 override_blur = 0
 override_opacity = 100
-zoom_level = 125
+zoom_level = 100
 
 [appearance.panes]
 focus_pane_on_hover = true
