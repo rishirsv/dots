@@ -45,17 +45,24 @@ and Claude before syncing plugins.
    claude plugin list
    ```
 
-Installation is complete when all three commands exit successfully.
+Installation is complete when all three commands exit successfully and new
+Codex tasks show **Dots** in the permissions picker.
 
 ## Boundaries
 
 - Config sync creates timestamped backups before replacing existing files.
-- Codex config sync validates `configs/codex/config.toml` with the installed
-  strict schema before writing either Codex home.
+- Codex config sync validates the complete result with the installed Codex
+  strict schema before writing either Codex home, then selects the documented
+  `Dots` permission profile in ChatGPT's local desktop state.
 - If Codex permission state must change while ChatGPT is running, quit ChatGPT
   and rerun `scripts/sync-configs.sh --codex`.
-- macOS Screen Recording, Accessibility, and Computer History consent remain
-  per-machine choices.
+- Computer History is not a `config.toml` setting. Its plugin and Memories are
+  enabled by Dots, but each Mac still requires the app's Computer History
+  opt-in. If collection stops, use **Settings > Computer history > Resume**.
+- macOS Screen Recording, Accessibility, Computer Use app approvals, and
+  Computer History consent remain per-machine choices.
+- ChatGPT's startup surface is app runtime state, not a documented Codex config
+  key; Dots does not write it.
 - Keep secrets and machine-local shell overrides in `~/.zshrc.local`.
 
 Run `scripts/sync-configs.sh --help` or `scripts/sync-plugins.sh --help` only

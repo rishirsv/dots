@@ -34,13 +34,22 @@ class StateError(Exception):
 def read_default_permissions(source: Path) -> str:
     match = DEFAULT_PERMISSIONS_RE.search(source.read_text(encoding="utf-8"))
     profile = match.group(1) if match else None
-    if profile not in BUILTIN_SELECTIONS:
-        raise StateError(
-            "default_permissions must be one of: {}".format(
-                ", ".join(BUILTIN_SELECTIONS)
-            )
-        )
+    if profile is None:
+        raise StateError("default_permissions is missing")
     return profile
+
+
+def desired_selection(profile: str) -> dict:
+    return BUILTIN_SELECTIONS.get(
+        profile,
+        {"kind": "profile", "profileId": profile},
+    )
+
+
+def selection_label(selection: dict) -> str:
+    if selection.get("kind") == "profile":
+        return selection["profileId"]
+    return selection["agentMode"]
 
 
 def read_state(path: Path) -> dict:
@@ -94,7 +103,7 @@ def run(
     dry_run: bool,
     desktop_running: bool,
 ) -> int:
-    desired = BUILTIN_SELECTIONS[read_default_permissions(source)]
+    desired = desired_selection(read_default_permissions(source))
     if not state_path.exists():
         print("No Codex Desktop permission state")
         return 0
@@ -111,7 +120,7 @@ def run(
     if dry_run:
         print(
             "Would align Codex Desktop permission selection to {}".format(
-                desired["agentMode"]
+                selection_label(desired)
             )
         )
         return 0
@@ -130,7 +139,7 @@ def run(
     print("Backed up {} -> {}".format(state_path, backup))
     print(
         "Aligned Codex Desktop permission selection to {}".format(
-            desired["agentMode"]
+            selection_label(desired)
         )
     )
     return 0

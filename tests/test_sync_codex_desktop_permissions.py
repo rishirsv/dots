@@ -27,7 +27,7 @@ class CodexDesktopPermissionSyncTests(unittest.TestCase):
             capture_output=True,
         )
 
-    def write_source(self, root, profile=":danger-full-access"):
+    def write_source(self, root, profile="Dots"):
         source = root / "config.toml"
         source.write_text('default_permissions = "{}"\n'.format(profile))
         return source
@@ -57,7 +57,7 @@ class CodexDesktopPermissionSyncTests(unittest.TestCase):
             self.assertIn("No Codex Desktop permission state", result.stdout)
             self.assertFalse(state.exists())
 
-    def test_apply_aligns_selection_to_builtin_and_backs_up(self):
+    def test_apply_aligns_selection_to_named_profile_and_backs_up(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = self.write_source(root)
@@ -71,7 +71,7 @@ class CodexDesktopPermissionSyncTests(unittest.TestCase):
             atoms = parsed["electron-persisted-atom-state"]
             self.assertEqual(
                 atoms["permission-selection-by-host-id:local"],
-                {"kind": "agent-mode", "agentMode": "full-access"},
+                {"kind": "profile", "profileId": "Dots"},
             )
             self.assertEqual(parsed["unrelated"], {"keep": True})
             self.assertEqual(stat.S_IMODE(state.stat().st_mode), 0o600)
@@ -104,10 +104,25 @@ class CodexDesktopPermissionSyncTests(unittest.TestCase):
             drift = self.run_helper("status", source, state)
             self.assertEqual(drift.returncode, 1)
             self.write_state(
-                root, {"kind": "agent-mode", "agentMode": "full-access"}
+                root, {"kind": "profile", "profileId": "Dots"}
             )
             current = self.run_helper("status", source, state)
             self.assertEqual(current.returncode, 0, current.stdout)
+
+    def test_apply_still_supports_documented_builtin_profile(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = self.write_source(root, ":danger-full-access")
+            state = self.write_state(
+                root, {"kind": "agent-mode", "agentMode": "read-only"}
+            )
+            result = self.run_helper("apply", source, state)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            atoms = json.loads(state.read_text())["electron-persisted-atom-state"]
+            self.assertEqual(
+                atoms["permission-selection-by-host-id:local"],
+                {"kind": "agent-mode", "agentMode": "full-access"},
+            )
 
     def test_dry_run_reports_alignment_without_writing(self):
         with tempfile.TemporaryDirectory() as directory:
