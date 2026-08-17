@@ -18,31 +18,14 @@ SPEC.loader.exec_module(SYNC_CODEX_CONFIG)
 
 
 PORTABLE = """\
-approval_policy = { granular = { sandbox_approval = true, rules = true, mcp_elicitations = true, request_permissions = true, skill_approval = true } }
-approvals_reviewer = "auto_review"
-default_permissions = "Custom"
+approval_policy = "never"
+default_permissions = ":danger-full-access"
 model = "portable-model"
-
-[permissions."Custom"]
-description = "Unrestricted filesystem, public and local network, and Unix sockets."
-
-[permissions."Custom".filesystem]
-":root" = "write"
-
-[permissions."Custom".network]
-enabled = true
-allow_local_binding = true
-dangerously_allow_all_unix_sockets = true
-
-[permissions."Custom".network.domains]
-"*" = "allow"
 
 [features]
 apps = true
 
 [apps._default]
-enabled = true
-default_tools_enabled = true
 default_tools_approval_mode = "approve"
 open_world_enabled = true
 destructive_enabled = true
@@ -132,13 +115,12 @@ class CodexConfigHelperTests(unittest.TestCase):
                 SYNC_CODEX_CONFIG.extract_marker(live),
                 SYNC_CODEX_CONFIG.canonical_portable(PORTABLE),
             )
-            self.assertIn("approval_policy = { granular =", live)
-            self.assertIn('approvals_reviewer = "auto_review"', live)
+            self.assertIn('approval_policy = "never"', live)
             self.assertNotIn('approval_policy = "on-request"', live)
             self.assertNotIn('sandbox_mode = "workspace-write"', live)
-            self.assertIn('default_permissions = "Custom"', live)
-            self.assertIn('[permissions."Custom".filesystem]', live)
-            self.assertIn('":root" = "write"', live)
+            self.assertIn(
+                'default_permissions = ":danger-full-access"', live
+            )
             self.assertIn('service_tier = "old"', live)
             self.assertIn('[apps._default]', live)
             self.assertIn('default_tools_approval_mode = "approve"', live)
@@ -224,14 +206,25 @@ class CodexConfigHelperTests(unittest.TestCase):
             self.assertIn("portable block differs", result.stdout)
             self.assertEqual(target.read_bytes(), before)
 
-    def test_status_and_capture_ignore_app_runtime_feature_writeback(self):
+    def test_status_and_capture_ignore_app_runtime_defaults(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "source.toml"
             target = root / "config.toml"
             source.write_text(PORTABLE)
             runtime_portable = PORTABLE.replace(
-                "apps = true\n", "apps = true\njs_repl = false\n"
+                "apps = true\n",
+                "apps = true\n"
+                "chronicle = true\n"
+                "default_mode_request_user_input = false\n"
+                "js_repl = false\n",
+            ).replace(
+                'defaultTerminalLocation = "right"\n',
+                'defaultTerminalLocation = "right"\n'
+                'dock-icon-preference = "app-default"\n'
+                'open-link-in-target-preference = "in-app-browser"\n'
+                'realtimeVoiceScreenContextEnabled = true\n'
+                'show-ultra-in-model-picker-slider = false\n',
             )
             target.write_text(
                 SYNC_CODEX_CONFIG.BEGIN_MARKER
@@ -287,6 +280,26 @@ class CodexConfigHelperTests(unittest.TestCase):
             self.assertIn("machine-local settings", result.stderr)
             self.assertFalse(target.exists())
 
+    def test_apply_rejects_invalid_merged_schema_before_writing(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.toml"
+            target = root / "config.toml"
+            source.write_text(PORTABLE)
+            target.write_text(
+                '[projects."/tmp/work"]\n'
+                'trust_level = "trusted"\n'
+                'unknown_project_setting = true\n'
+            )
+            before = target.read_bytes()
+
+            result = self.run_helper("apply", source, target)
+
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("strict schema validation failed", result.stderr)
+            self.assertEqual(target.read_bytes(), before)
+            self.assertEqual(list(root.glob("config.toml.bak.*")), [])
+
 
 class SyncConfigsIntegrationTests(unittest.TestCase):
     def test_codex_apply_and_status_keep_owned_files_as_symlinks(self):
@@ -309,13 +322,13 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             self.assertFalse(config.is_symlink())
             self.assertEqual(stat.S_IMODE(config.stat().st_mode), 0o600)
             live_config = config.read_text()
-            self.assertIn("approval_policy = { granular =", live_config)
-            self.assertIn('approvals_reviewer = "auto_review"', live_config)
-            self.assertIn('default_permissions = "Custom"', live_config)
-            self.assertIn('[permissions."Custom".filesystem]', live_config)
-            self.assertIn('":root" = "write"', live_config)
+            self.assertIn('approval_policy = "never"', live_config)
+            self.assertIn(
+                'default_permissions = ":danger-full-access"', live_config
+            )
+            self.assertNotIn("approvals_reviewer", live_config)
+            self.assertNotIn("[permissions.", live_config)
             self.assertIn('[apps._default]', live_config)
-            self.assertIn('default_tools_enabled = true', live_config)
             self.assertIn('default_tools_approval_mode = "approve"', live_config)
             self.assertIn('open_world_enabled = true', live_config)
             self.assertIn('destructive_enabled = true', live_config)
@@ -326,7 +339,22 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
                 ROOT / "configs" / "agents" / "AGENTS.md",
             )
             self.assertTrue((home / ".codex" / "keybindings.json").is_symlink())
-            self.assertTrue((home / ".codex" / "agents").is_symlink())
+            agent_profiles = home / ".codex" / "agents"
+            self.assertTrue(agent_profiles.is_symlink())
+            self.assertEqual(
+                agent_profiles.resolve(),
+                ROOT / "plugins" / "dots" / "agents",
+            )
+            self.assertEqual(
+                {path.name for path in agent_profiles.glob("*.toml")},
+                {
+                    "adversary.toml",
+                    "explorer.toml",
+                    "leaf.toml",
+                    "planner.toml",
+                    "worker.toml",
+                },
+            )
 
             status_result = subprocess.run(
                 ["zsh", str(SYNC), "--status", "--codex"],

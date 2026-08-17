@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import shutil
 import stat
+import subprocess
 import sys
 import tempfile
 from typing import List, Optional, Sequence, Tuple
@@ -26,10 +27,20 @@ LOCAL_TABLE_PREFIXES = (
     ("shell_environment_policy",),
 )
 PORTABLE_TABLE_EXCEPTIONS = (("mcp_servers", "openaiDeveloperDocs"),)
-APP_RUNTIME_TABLE_KEYS = {("features",): {"js_repl"}}
+APP_RUNTIME_TABLE_KEYS = {("features",): {"chronicle", "js_repl"}}
+APP_RUNTIME_DEFAULT_VALUES = {
+    ("features",): {"default_mode_request_user_input": "false"},
+    ("desktop",): {
+        "dock-icon-preference": '"app-default"',
+        "open-link-in-target-preference": '"in-app-browser"',
+        "realtimeVoiceScreenContextEnabled": "true",
+        "show-ultra-in-model-picker-slider": "false",
+    },
+}
 APP_MOVED_TABLE_PREFIXES = (("desktop",),)
 
 ASSIGNMENT_RE = re.compile(r"^([A-Za-z0-9_-]+)\s*=")
+ASSIGNMENT_VALUE_RE = re.compile(r"^([A-Za-z0-9_-]+)\s*=\s*(.*?)\s*$")
 
 
 class ConfigError(Exception):
@@ -161,14 +172,15 @@ def strip_app_runtime_keys(text: str) -> str:
     parts = list(root)
     for path, lines in tables:
         runtime_keys = APP_RUNTIME_TABLE_KEYS.get(path, set())
-        parts.extend(
-            line
-            for line in lines
-            if not (
-                (match := ASSIGNMENT_RE.match(line))
-                and match.group(1) in runtime_keys
-            )
-        )
+        runtime_defaults = APP_RUNTIME_DEFAULT_VALUES.get(path, {})
+        for line in lines:
+            match = ASSIGNMENT_VALUE_RE.match(line)
+            if match and (
+                match.group(1) in runtime_keys
+                or runtime_defaults.get(match.group(1)) == match.group(2)
+            ):
+                continue
+            parts.append(line)
     return canonical_portable("".join(parts))
 
 
@@ -317,11 +329,42 @@ def atomic_write(path: Path, text: str, mode: int) -> None:
             os.unlink(temporary_name)
 
 
+def validate_codex_schema(text: str) -> None:
+    executable = shutil.which("codex")
+    if executable is None:
+        raise ConfigError("cannot validate config because codex is not installed")
+
+    with tempfile.TemporaryDirectory(prefix="dots-codex-schema-") as directory:
+        home = Path(directory)
+        config = home / "config.toml"
+        config.write_text(text, encoding="utf-8")
+        config.chmod(0o600)
+        environment = os.environ.copy()
+        environment["CODEX_HOME"] = str(home)
+        result = subprocess.run(
+            [
+                executable,
+                "app-server",
+                "--strict-config",
+                "--listen",
+                "stdio://",
+            ],
+            input="",
+            text=True,
+            capture_output=True,
+            env=environment,
+        )
+    if result.returncode != 0:
+        details = (result.stderr or result.stdout).strip()
+        raise ConfigError("Codex strict schema validation failed:\n{}".format(details))
+
+
 def apply(source: Path, target: Path, dry_run: bool) -> int:
     portable = canonical_portable(source.read_text(encoding="utf-8"))
     validate_portable_source(portable)
     existing = read_target(target) if path_exists(target) else ""
     desired = compose_live(portable, existing)
+    validate_codex_schema(desired)
     is_regular = target.is_file() and not target.is_symlink()
     current_mode = stat.S_IMODE(target.stat().st_mode) if is_regular else None
 
@@ -357,6 +400,8 @@ def status(source: Path, target: Path) -> int:
         return 1
 
     live = read_target(target)
+    desired = compose_live(portable, live)
+    validate_codex_schema(desired)
     marked = effective_portable(live)
     if marked is None:
         print("Drift {} has no portable marker block".format(target))
@@ -384,6 +429,7 @@ def capture(source: Path, target: Path) -> int:
     if marked is None:
         raise ConfigError("live config has no portable marker block: {}".format(target))
     validate_portable_source(marked)
+    validate_codex_schema(marked)
 
     existing_mode = (
         stat.S_IMODE(source.stat().st_mode) if source.exists() else 0o644

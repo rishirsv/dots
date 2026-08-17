@@ -1,0 +1,8 @@
+interface:
+  display_name: "Orchestrate"
+  short_description: "Coordinate a small Codex team"
+  brand_color: "#3B82F6"
+  default_prompt: "Use $orchestrate to choose a small Codex team, give each agent clear ownership, and verify the combined result."
+
+policy:
+  allow_implicit_invocation: true

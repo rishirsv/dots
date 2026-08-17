@@ -13,7 +13,7 @@
   },
   {
     "command": "composer.openModelPicker",
-    "key": "Command+Shift+M"
+    "key": "Ctrl+Command+Alt+Shift+M"
   },
   {
     "command": "globalDictationHold",

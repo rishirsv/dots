@@ -1,45 +1,28 @@
 # Portable Codex defaults managed by Dots.
 # Machine-local notification and runtime state remain in ~/.codex/config.toml.
 
-# Keep both Codex homes on Codex's broadest built-in permission profile.
-# This avoids a redundant user-defined Custom profile in the desktop picker.
-approval_policy = { granular = { sandbox_approval = true, rules = true, mcp_elicitations = true, request_permissions = true, skill_approval = true } }
-approvals_reviewer = "auto_review"
+# Default to non-interactive execution with Codex's broadest built-in
+# permission profile. Host-managed restrictions still take precedence.
+approval_policy = "never"
 default_permissions = ":danger-full-access"
 
 model = "gpt-5.6-sol"
 model_reasoning_effort = "medium"
 suppress_unstable_features_warning = true
 
-[tools]
-view_image = true
-
 [features]
-default_mode_request_user_input = false
 memories = true
 prevent_idle_sleep = true
 
-[agents]
-max_concurrent_threads_per_session = 12
-max_depth = 1
-
 [apps._default]
-enabled = true
-default_tools_enabled = true
 default_tools_approval_mode = "approve"
 open_world_enabled = true
 destructive_enabled = true
 
-[apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.create_branch"]
-approval_mode = "approve"
-
-[apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.create_file"]
-approval_mode = "approve"
-
-[apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.create_pull_request"]
-approval_mode = "approve"
-
 [plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."computer-history@openai-bundled"]
 enabled = true
 
 [plugins."build-ios-apps@steady-app"]
@@ -95,7 +78,6 @@ followUpQueueMode = "queue"
 keepRemoteControlAwakeWhilePluggedIn = true
 selected-avatar-id = "custom:patch"
 avatar-overlay-mascot-width-px = 138
-dock-icon-preference = "app-default"
 conversationDetailMode = "STEPS_PROSE"
 preventSleepWhileRunning = true
 defaultTerminalLocation = "right"
@@ -122,11 +104,8 @@ Write the smallest reviewer-facing body that supports the merge decision. Lead w
 Re-query the PR for merge state, checks, review decision, and review threads. UI or visual changes require real screenshot or clip embeds in the live body; keep the PR draft while required evidence is missing. Never stage unrelated changes or push without confirmed scope, and stop if no accessible GitHub remote exists. Summarize the branch, commit, PR URL, validation, PR health, and remaining confirmations.
 """
 reviewDelivery = "detached"
-open-link-in-target-preference = "in-app-browser"
 show-context-window-usage = true
-show-ultra-in-model-picker-slider = false
 enabled-reasoning-efforts = ["low", "medium", "high", "xhigh", "ultra", "max"]
-realtimeVoiceScreenContextEnabled = true
 git-pull-request-merge-method = "squash"
 
 [desktop.appearanceLightChromeTheme]
