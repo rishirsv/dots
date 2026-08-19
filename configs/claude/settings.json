@@ -1,5 +1,5 @@
 {
-  "model": "sonnet",
+  "model": "fable",
   "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
     "codex@openai-codex": true,
@@ -21,7 +21,7 @@
       }
     }
   },
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "tui": "default",
   "skipDangerousModePermissionPrompt": true,
   "enableRemoteControl": false

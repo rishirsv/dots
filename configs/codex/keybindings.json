@@ -20,12 +20,20 @@
     "key": "Ctrl+Command+Alt+Shift+V"
   },
   {
+    "command": "composer.togglePlanMode",
+    "key": "Command+Shift+P"
+  },
+  {
     "command": "nextRecentThread",
     "key": null
   },
   {
     "command": "nextThread",
     "key": "Command+Alt+Down"
+  },
+  {
+    "command": "openCommandMenu",
+    "key": "CmdOrCtrl+K"
   },
   {
     "command": "previousRecentThread",
