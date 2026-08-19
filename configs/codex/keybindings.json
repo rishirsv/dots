@@ -1,58 +1,42 @@
 [
   {
-    "command": "composer.cycleReasoningEffort",
-    "key": "Ctrl+Command+Alt+Shift+R"
-  },
-  {
     "command": "composer.decreaseReasoningEffort",
-    "key": null
+    "key": "Ctrl+Command+Alt+Shift+["
   },
   {
     "command": "composer.increaseReasoningEffort",
-    "key": null
+    "key": "Ctrl+Command+Alt+Shift+]"
   },
   {
     "command": "composer.openModelPicker",
     "key": "Ctrl+Command+Alt+Shift+M"
   },
   {
-    "command": "globalDictationHold",
-    "key": "Ctrl+M"
+    "command": "composer.startDictation",
+    "key": "Ctrl+Command+Alt+Shift+D"
   },
   {
-    "command": "globalDictationToggle",
-    "key": "Ctrl+."
+    "command": "composer.startVoiceMode",
+    "key": "Ctrl+Command+Alt+Shift+V"
   },
   {
-    "command": "hotkeyWindow",
-    "key": "Ctrl+`"
-  },
-  {
-    "command": "nextTab",
-    "key": "Ctrl+Tab"
-  },
-  {
-    "command": "nextTab",
-    "key": "Command+Alt+Right"
-  },
-  {
-    "command": "previousTab",
-    "key": "Ctrl+Shift+Tab"
-  },
-  {
-    "command": "previousTab",
-    "key": "Command+Alt+Left"
-  },
-  {
-    "command": "realtimeVoice",
-    "key": "Ctrl+1"
-  },
-  {
-    "command": "realtimeVoice.toggleMicrophoneMute",
-    "key": "Ctrl+Command+Alt+Shift+."
-  },
-  {
-    "command": "switchToMode1",
+    "command": "nextRecentThread",
     "key": null
+  },
+  {
+    "command": "nextThread",
+    "key": "Command+Alt+Down"
+  },
+  {
+    "command": "previousRecentThread",
+    "key": null
+  },
+  {
+    "command": "previousThread",
+    "key": "Command+Alt+Up"
+  },
+  {
+    "command": "searchChats",
+    "key": "Ctrl+Command+Alt+Shift+K"
   }
 ]

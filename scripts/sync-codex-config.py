@@ -28,6 +28,7 @@ LOCAL_TABLE_PREFIXES = (
 )
 PORTABLE_TABLE_EXCEPTIONS = (("mcp_servers", "openaiDeveloperDocs"),)
 APP_RUNTIME_TABLE_KEYS = {("features",): {"chronicle", "js_repl"}}
+APP_RUNTIME_ROOT_KEYS = {"sandbox_mode"}
 APP_RUNTIME_DEFAULT_VALUES = {
     ("features",): {"default_mode_request_user_input": "false"},
     ("desktop",): {
@@ -169,7 +170,20 @@ def split_toml(text: str) -> Tuple[List[str], List[Tuple[Tuple[str, ...], List[s
 def strip_app_runtime_keys(text: str) -> str:
     """Ignore settings Codex Desktop writes into the portable marker block."""
     root, tables = split_toml(text)
-    parts = list(root)
+    has_permission_profile = any(
+        (match := ASSIGNMENT_RE.match(line))
+        and match.group(1) == "default_permissions"
+        for line in root
+    )
+    parts = [
+        line
+        for line in root
+        if not (
+            has_permission_profile
+            and (match := ASSIGNMENT_RE.match(line))
+            and match.group(1) in APP_RUNTIME_ROOT_KEYS
+        )
+    ]
     for path, lines in tables:
         runtime_keys = APP_RUNTIME_TABLE_KEYS.get(path, set())
         runtime_defaults = APP_RUNTIME_DEFAULT_VALUES.get(path, {})
@@ -277,10 +291,20 @@ def validate_portable_source(text: str) -> None:
 
     root, tables = split_toml(text)
     local_keys = []
+    permission_keys = set()
     for line in root:
         match = ASSIGNMENT_RE.match(line)
-        if match and match.group(1) in LOCAL_TOP_LEVEL_KEYS:
-            local_keys.append(match.group(1))
+        if match:
+            key = match.group(1)
+            if key in LOCAL_TOP_LEVEL_KEYS:
+                local_keys.append(key)
+            if key in {"default_permissions", "sandbox_mode"}:
+                permission_keys.add(key)
+    if permission_keys == {"default_permissions", "sandbox_mode"}:
+        raise ConfigError(
+            "tracked portable source cannot combine default_permissions "
+            "with sandbox_mode"
+        )
     local_paths = [".".join(path) for path, _ in tables if is_local_table(path)]
     if local_keys or local_paths:
         owned = sorted(set(local_keys + local_paths))

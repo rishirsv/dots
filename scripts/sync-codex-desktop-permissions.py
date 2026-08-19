@@ -110,7 +110,7 @@ def run(
 
     state = read_state(state_path)
     selection = current_selection(state)
-    if selection is None or selection == desired:
+    if selection == desired:
         print("Current Codex Desktop permission selection")
         return 0
 

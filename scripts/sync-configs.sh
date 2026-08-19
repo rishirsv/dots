@@ -289,6 +289,15 @@ sync_codex_personal() {
   if ! python3 "$ROOT/scripts/sync-codex-config.py" "${helper_args[@]}"; then
     STATUS=1
   fi
+  local state_args=("$MODE" --source "$ROOT/configs/codex/config.toml" --state "$HOME/.codex-personal/.codex-global-state.json")
+  if (( DRY_RUN )); then
+    state_args+=(--dry-run)
+  elif [[ "$MODE" == "apply" ]] && pgrep -f '/Applications/ChatGPT.app/Contents/MacOS/ChatGPT' >/dev/null 2>&1; then
+    state_args+=(--desktop-running)
+  fi
+  if ! python3 "$ROOT/scripts/sync-codex-desktop-permissions.py" "${state_args[@]}"; then
+    STATUS=1
+  fi
   install_symlink "$ROOT/configs/codex/keybindings.json" "$HOME/.codex-personal/keybindings.json"
   install_symlink "$ROOT/plugins/dots/agents" "$HOME/.codex-personal/agents"
 }

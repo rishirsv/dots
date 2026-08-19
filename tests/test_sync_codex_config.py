@@ -244,6 +244,53 @@ class CodexConfigHelperTests(unittest.TestCase):
             self.assertEqual(capture_result.returncode, 0, capture_result.stderr)
             self.assertEqual(source.read_text(), PORTABLE)
 
+    def test_status_and_capture_ignore_conflicting_runtime_sandbox_mode(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.toml"
+            target = root / "config.toml"
+            source.write_text(PORTABLE)
+            runtime_portable = PORTABLE.replace(
+                'default_permissions = ":danger-full-access"\n',
+                'default_permissions = ":danger-full-access"\n'
+                'sandbox_mode = "danger-full-access"\n',
+            )
+            target.write_text(
+                SYNC_CODEX_CONFIG.BEGIN_MARKER
+                + "\n"
+                + runtime_portable
+                + SYNC_CODEX_CONFIG.END_MARKER
+                + "\n"
+            )
+            os.chmod(target, 0o600)
+
+            status_result = self.run_helper("status", source, target)
+            self.assertEqual(status_result.returncode, 0, status_result.stdout)
+
+            capture_result = self.run_helper("capture", source, target)
+            self.assertEqual(capture_result.returncode, 0, capture_result.stderr)
+            self.assertEqual(source.read_text(), PORTABLE)
+
+            apply_result = self.run_helper("apply", source, target)
+            self.assertEqual(apply_result.returncode, 0, apply_result.stderr)
+            self.assertNotIn("sandbox_mode", target.read_text())
+
+    def test_portable_source_rejects_two_permission_systems(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.toml"
+            target = root / "config.toml"
+            source.write_text(
+                'default_permissions = "Dots"\n'
+                'sandbox_mode = "danger-full-access"\n'
+            )
+
+            result = self.run_helper("apply", source, target)
+
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("cannot combine", result.stderr)
+            self.assertFalse(target.exists())
+
     def test_status_and_capture_rebuild_desktop_tables_moved_outside_marker(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

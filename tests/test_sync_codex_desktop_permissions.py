@@ -109,6 +109,27 @@ class CodexDesktopPermissionSyncTests(unittest.TestCase):
             current = self.run_helper("status", source, state)
             self.assertEqual(current.returncode, 0, current.stdout)
 
+    def test_missing_selection_is_drift_and_apply_restores_it(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = self.write_source(root)
+            state = root / ".codex-global-state.json"
+            state.write_text(json.dumps({"unrelated": {"keep": True}}))
+            state.chmod(0o600)
+
+            drift = self.run_helper("status", source, state)
+            self.assertEqual(drift.returncode, 1)
+
+            applied = self.run_helper("apply", source, state)
+            self.assertEqual(applied.returncode, 0, applied.stderr)
+            parsed = json.loads(state.read_text())
+            atoms = parsed["electron-persisted-atom-state"]
+            self.assertEqual(
+                atoms["permission-selection-by-host-id:local"],
+                {"kind": "profile", "profileId": "Dots"},
+            )
+            self.assertEqual(parsed["unrelated"], {"keep": True})
+
     def test_apply_still_supports_documented_builtin_profile(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
