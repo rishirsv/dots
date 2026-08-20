@@ -60,7 +60,7 @@ For a plugin install, the Claude invocation is `/dots:self-improve`.
 python3 scripts/self_improve.py --platform claude triage --days 30
 python3 scripts/self_improve.py --platform claude show "${CLAUDE_SESSION_ID}"
 python3 scripts/self_improve.py --platform claude files "${CLAUDE_SESSION_ID}"
-python3 scripts/self_improve.py --platform claude skill-usage --skill dots:publish-pull-request --days 30
+python3 scripts/self_improve.py --platform claude skill-usage --skill dots:publish-pr --days 30
 python3 scripts/self_improve.py --platform claude stats --json
 ```
 

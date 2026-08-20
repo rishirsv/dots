@@ -383,9 +383,9 @@ class SelfImproveScopeTests(unittest.TestCase):
 
     def test_skill_usage_uses_an_exact_post_scan_filter(self):
         args = self_improve.build_parser().parse_args(
-            ["skill-usage", "--skill", "dots:publish-pull-request"]
+            ["skill-usage", "--skill", "dots:publish-pr"]
         )
-        self.assertEqual(args.skill, "dots:publish-pull-request")
+        self.assertEqual(args.skill, "dots:publish-pr")
         self.assertFalse(hasattr(args, "query"))
 
     def test_removed_commands_are_not_exposed(self):

@@ -1,9 +1,9 @@
 ---
-name: publish-pull-request
-description: "Use when finished changes should be committed, pushed, and published as a GitHub pull request; updates the branch's existing pull request or opens a new one ready for review. Not for merging or monitoring checks and reviews."
+name: publish-pr
+description: "Commits and pushes finished changes, then opens or updates a non-draft GitHub pull request ready for review. Use when the user asks to publish completed work as a PR. Not for merging, addressing review feedback, or monitoring checks and reviews."
 ---
 
-# Publish Pull Request
+# Publish PR
 
 Publish the requested changes as a pull request ready for review.
 

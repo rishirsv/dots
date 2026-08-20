@@ -52,7 +52,7 @@ if (( ${#TARGETS[@]} == 0 )); then
 fi
 
 CODEX_MARKETPLACE="$ROOT"
-CLAUDE_MARKETPLACE="$ROOT"
+CLAUDE_MARKETPLACE="rishirsv/dots"
 CODEX_PLUGIN_NAMES=("${(@f)$(
   python3 - "$ROOT/.agents/plugins/marketplace.json" <<'PY'
 import json

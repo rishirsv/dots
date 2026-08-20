@@ -40,7 +40,7 @@ and line number when a JSONL line is malformed.
 python3 scripts/self_improve.py --platform codex triage --days 30 --cwd "$PWD"
 python3 scripts/self_improve.py --platform codex show <thread-id>
 python3 scripts/self_improve.py --platform codex files <thread-id>
-python3 scripts/self_improve.py --platform codex skill-usage --skill dots:publish-pull-request --days 30
+python3 scripts/self_improve.py --platform codex skill-usage --skill dots:publish-pr --days 30
 python3 scripts/self_improve.py --platform codex stats --json
 ```
 

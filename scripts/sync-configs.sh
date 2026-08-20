@@ -9,7 +9,7 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--status|--capture] [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--claude|--vscode|--ghostty|--starship|--raycast|--zsh ...]
+Usage: scripts/sync-configs.sh [--status|--capture] [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--claude|--vscode|--ghostty|--starship|--zsh ...]
 
 Installs repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
@@ -28,7 +28,7 @@ EOF
 add_target() {
   local target="$1"
   if [[ "$target" == "all" ]]; then
-    TARGETS=(codex codex-personal claude vscode ghostty starship raycast zsh)
+    TARGETS=(codex codex-personal claude vscode ghostty starship zsh)
     return
   fi
   TARGETS+=("$target")
@@ -76,9 +76,6 @@ while (( $# )); do
       ;;
     --starship)
       add_target starship
-      ;;
-    --raycast)
-      add_target raycast
       ;;
     --zsh)
       add_target zsh
@@ -319,12 +316,7 @@ sync_starship() {
   install_file "$ROOT/configs/starship.toml" "$HOME/.config/starship.toml"
 }
 
-sync_raycast() {
-  install_file "$ROOT/configs/raycast/preferences.plist" "$HOME/Library/Preferences/com.raycast-x.macos.plist"
-}
-
 sync_zsh() {
-  install_file "$ROOT/configs/zsh/.zprofile" "$HOME/.zprofile"
   install_file "$ROOT/configs/zsh/.zshrc" "$HOME/.zshrc"
 }
 
@@ -337,7 +329,6 @@ for target in "${TARGETS[@]}"; do
     vscode) sync_vscode ;;
     ghostty) sync_ghostty ;;
     starship) sync_starship ;;
-    raycast) sync_raycast ;;
     zsh) sync_zsh ;;
     *)
       echo "Unknown target: $target" >&2

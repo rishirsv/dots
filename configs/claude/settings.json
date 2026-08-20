@@ -5,23 +5,17 @@
     "codex@openai-codex": true,
     "dots@dots": true,
     "meta-skill@dots": true,
-    "warp@claude-code-warp": true
+    "build-ios-apps@steady-app": true
   },
   "extraKnownMarketplaces": {
     "dots": {
       "source": {
-        "source": "directory",
-        "path": "/Users/rishi/Code/dots"
-      }
-    },
-    "claude-code-warp": {
-      "source": {
         "source": "github",
-        "repo": "warpdotdev/claude-code-warp"
+        "repo": "rishirsv/dots"
       }
     }
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "tui": "default",
   "skipDangerousModePermissionPrompt": true,
   "enableRemoteControl": false

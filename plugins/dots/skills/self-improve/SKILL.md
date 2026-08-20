@@ -54,7 +54,7 @@ from the current one.
 python3 scripts/self_improve.py --platform codex triage --days 30 --limit 100
 python3 scripts/self_improve.py --platform claude show <session-id>
 python3 scripts/self_improve.py --platform codex files <thread-id>
-python3 scripts/self_improve.py --platform codex skill-usage --skill dots:publish-pull-request --days 30 --limit 100
+python3 scripts/self_improve.py --platform codex skill-usage --skill dots:publish-pr --days 30 --limit 100
 python3 scripts/self_improve.py --platform codex stats --top 10
 python3 scripts/self_improve.py --platform claude decide accept <proposal-key>
 ```

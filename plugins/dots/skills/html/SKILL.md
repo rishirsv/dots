@@ -48,6 +48,8 @@ Read [authoring.md](references/authoring.md) before building.
 
 Read only the guidance the page needs:
 
+- [writing-style.md](../../references/writing-style.md) when prose carries the
+  page's argument or explanation;
 - [charts.md](references/charts.md) for charts;
 - [diagrams.md](references/diagrams.md) for diagrams;
 - [generated-images.md](references/generated-images.md) before using `imagegen`;

@@ -24,6 +24,18 @@
     "key": "Command+Shift+P"
   },
   {
+    "command": "globalDictationHold",
+    "key": "Ctrl+M"
+  },
+  {
+    "command": "globalDictationToggle",
+    "key": "Ctrl+."
+  },
+  {
+    "command": "hotkeyWindow",
+    "key": "Ctrl+`"
+  },
+  {
     "command": "nextRecentThread",
     "key": null
   },

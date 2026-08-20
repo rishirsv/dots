@@ -1,10 +1,10 @@
 interface:
   display_name: "Explain"
-  short_description: "Make a subject or previous answer understandable"
+  short_description: "Explain any subject or the previous answer clearly"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
   brand_color: "#3B82F6"
-  default_prompt: "Use $explain to make this understandable without assuming I will read the code."
+  default_prompt: "Use $explain to explain this, or your previous answer when I name no subject, with enough context to build a working mental model."
 
 policy:
   allow_implicit_invocation: false
