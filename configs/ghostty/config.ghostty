@@ -1,5 +1,4 @@
 # Ghostty owns terminal rendering; Zsh owns prompt, completion, and history UX.
-font-family = SF Mono Terminal
 font-size = 15.5
 adjust-cell-height = 10%
 
@@ -14,7 +13,7 @@ cursor-style-blink = false
 window-padding-x = 12
 window-padding-y = 10
 window-padding-balance = true
-window-save-state = always
+window-save-state = never
 unfocused-split-opacity = 0.85
 
 macos-titlebar-style = tabs
