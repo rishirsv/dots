@@ -46,16 +46,14 @@ and Claude before syncing plugins.
    ```
 
 Installation is complete when all three commands exit successfully and new
-Codex tasks show **Dots** in the permissions picker.
+Codex tasks show **Custom (config.toml)** in the permissions picker.
 
 ## Boundaries
 
 - Config sync creates timestamped backups before replacing existing files.
 - Codex config sync validates the complete result with the installed Codex
-  strict schema before writing either Codex home, then selects the documented
-  `Dots` permission profile in ChatGPT's local desktop state.
-- If Codex permission state must change while ChatGPT is running, quit ChatGPT
-  and rerun `scripts/sync-configs.sh --codex`.
+  strict schema before writing either Codex home. Permissions come directly
+  from `config.toml`; sync does not modify ChatGPT's local desktop state.
 - Computer History is not a `config.toml` setting. Its plugin and Memories are
   enabled by Dots, but each Mac still requires the app's Computer History
   opt-in. If collection stops, use **Settings > Computer history > Resume**.

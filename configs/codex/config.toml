@@ -1,24 +1,13 @@
 # Portable Codex defaults managed by Dots.
 # Machine-local notification and runtime state remain in ~/.codex/config.toml.
 
-# Default to non-interactive execution with the documented Dots permission
-# profile. Host-managed restrictions still take precedence.
+# Default to non-interactive execution with full access configured directly in
+# config.toml. Host-managed restrictions still take precedence.
 approval_policy = "never"
-default_permissions = "Dots"
+sandbox_mode = "danger-full-access"
 
 model = "gpt-5.6-sol"
 model_reasoning_effort = "medium"
-
-[permissions.Dots]
-description = "Unrestricted filesystem, network, and Unix socket access."
-
-[permissions.Dots.filesystem]
-":root" = "write"
-
-[permissions.Dots.network]
-enabled = true
-allow_local_binding = true
-dangerously_allow_all_unix_sockets = true
 
 [apps._default]
 default_tools_approval_mode = "approve"

@@ -18,8 +18,7 @@ the marked portable block from a live Codex config to the tracked source and
 requires --codex or --codex-personal.
 
 Codex config.toml is a regular 0600 file containing a Dots-owned portable
-block and machine-local settings. The default Codex target also aligns the
-Desktop host permission selector. Other Codex-owned files remain symlinks.
+block and machine-local settings. Other Codex-owned files remain symlinks.
 
 This script does not manage secrets. Keep shell secrets in ~/.zshrc.local.
 EOF
@@ -248,15 +247,6 @@ sync_codex() {
   if ! python3 "$ROOT/scripts/sync-codex-config.py" "${helper_args[@]}"; then
     STATUS=1
   fi
-  local state_args=("$MODE" --source "$ROOT/configs/codex/config.toml" --state "$HOME/.codex/.codex-global-state.json")
-  if (( DRY_RUN )); then
-    state_args+=(--dry-run)
-  elif [[ "$MODE" == "apply" ]] && pgrep -f '/Applications/ChatGPT.app/Contents/MacOS/ChatGPT' >/dev/null 2>&1; then
-    state_args+=(--desktop-running)
-  fi
-  if ! python3 "$ROOT/scripts/sync-codex-desktop-permissions.py" "${state_args[@]}"; then
-    STATUS=1
-  fi
   local computer_use_args=("$MODE")
   if (( DRY_RUN )); then
     computer_use_args+=(--dry-run)
@@ -281,15 +271,6 @@ sync_codex_personal() {
     helper_args+=(--dry-run)
   fi
   if ! python3 "$ROOT/scripts/sync-codex-config.py" "${helper_args[@]}"; then
-    STATUS=1
-  fi
-  local state_args=("$MODE" --source "$ROOT/configs/codex/config.toml" --state "$HOME/.codex-personal/.codex-global-state.json")
-  if (( DRY_RUN )); then
-    state_args+=(--dry-run)
-  elif [[ "$MODE" == "apply" ]] && pgrep -f '/Applications/ChatGPT.app/Contents/MacOS/ChatGPT' >/dev/null 2>&1; then
-    state_args+=(--desktop-running)
-  fi
-  if ! python3 "$ROOT/scripts/sync-codex-desktop-permissions.py" "${state_args[@]}"; then
     STATUS=1
   fi
   install_symlink "$ROOT/configs/codex/keybindings.json" "$HOME/.codex-personal/keybindings.json"
