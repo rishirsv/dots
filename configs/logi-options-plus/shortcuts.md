@@ -50,7 +50,7 @@ not an importable Logi Options+ backup.
 - UI confirmation: Logi Options+ device and assignment screens.
 - Exact stored chords and application inheritance:
   `~/Library/Application Support/LogiOptionsPlus/settings.db`, row `data._id=1`.
-- Wispr Flow push-to-talk chord:
-  `~/Library/Application Support/Wispr Flow/config.json`, preference `ptt`.
+- Wispr Flow toggle-dictation chord:
+  `~/Library/Application Support/Wispr Flow/config.json`, preference `popo`.
 - Secrets, account state, device telemetry, and the raw database are deliberately
   excluded from this repository.
