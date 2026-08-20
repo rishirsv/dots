@@ -9,7 +9,7 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--status|--capture] [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--claude|--vscode|--ghostty|--starship|--zsh ...]
+Usage: scripts/sync-configs.sh [--status|--capture] [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--claude|--vscode|--ghostty|--wispr-logitech|--starship|--zsh ...]
 
 Installs repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
@@ -27,7 +27,7 @@ EOF
 add_target() {
   local target="$1"
   if [[ "$target" == "all" ]]; then
-    TARGETS=(codex codex-personal claude vscode ghostty starship zsh)
+    TARGETS=(codex codex-personal claude vscode ghostty wispr-logitech starship zsh)
     return
   fi
   TARGETS+=("$target")
@@ -72,6 +72,9 @@ while (( $# )); do
       ;;
     --ghostty)
       add_target ghostty
+      ;;
+    --wispr-logitech)
+      add_target wispr-logitech
       ;;
     --starship)
       add_target starship
@@ -293,6 +296,18 @@ sync_ghostty() {
   install_file "$ROOT/configs/ghostty/config.ghostty" "$HOME/.config/ghostty/config.ghostty"
 }
 
+sync_wispr_logitech() {
+  local repair_args=()
+  if [[ "$MODE" == "status" ]]; then
+    repair_args+=(--check)
+  elif (( DRY_RUN )); then
+    repair_args+=(--dry-run)
+  fi
+  if ! "$ROOT/scripts/repair-wispr-logitech-shortcut.sh" "${repair_args[@]}"; then
+    STATUS=1
+  fi
+}
+
 sync_starship() {
   install_file "$ROOT/configs/starship.toml" "$HOME/.config/starship.toml"
 }
@@ -309,6 +324,7 @@ for target in "${TARGETS[@]}"; do
     claude) sync_claude ;;
     vscode) sync_vscode ;;
     ghostty) sync_ghostty ;;
+    wispr-logitech) sync_wispr_logitech ;;
     starship) sync_starship ;;
     zsh) sync_zsh ;;
     *)

@@ -8,7 +8,9 @@ on another Mac. The critical link is:
 
 Snapshot verified on 2026-08-20 against Wispr Flow 1.6.580, the Wispr shortcut
 and settings UI, Logi Options+, and the local Logi Options+ settings database.
-This is a manual restore reference, not an importable backup.
+The full snapshot remains a manual restore reference. The critical Wispr and
+mouse-button link has an automated repair command so it does not need to be
+recreated through the Logitech shortcut recorder.
 
 ## Devices
 
@@ -22,12 +24,27 @@ application-specific Logitech profiles in this snapshot.
 
 1. Install Wispr Flow and Logi Options+ and sign into the existing accounts.
 2. Connect the MX Master 4 and MX Mechanical Mini.
-3. Configure Wispr Flow shortcuts first, especially **Right Control** for
-   hands-free dictation.
-4. Configure the MX Master 4 top button to send **Right Control**.
-5. Apply the remaining Logitech assignments and device settings below.
-6. Apply the remaining Wispr Flow settings below.
-7. Validate the end-to-end behavior with the checklist at the end.
+3. Run `scripts/repair-wispr-logitech-shortcut.sh` from the Dots repository.
+   This configures Wispr Flow **Right Control**, the MX Master 4 top button,
+   and the wheel's middle click without using Logitech's shortcut recorder.
+4. Apply the remaining Logitech assignments and device settings below.
+5. Apply the remaining Wispr Flow settings below.
+6. Validate the end-to-end behavior with the checklist at the end.
+
+To check for drift without changing applications or settings:
+
+```sh
+scripts/repair-wispr-logitech-shortcut.sh --check
+```
+
+The repair is idempotent and creates timestamped backups before changing either
+application. It patches every Logitech profile containing the MX Master 4
+button slots so an application-specific profile cannot override the top button
+or wheel click. It fails without editing if the expected database row, button
+slots, or Wispr shortcut object is missing.
+
+The same repair is included in `scripts/sync-configs.sh --all`. Run only this
+target with `scripts/sync-configs.sh --wispr-logitech`.
 
 ## Wispr Flow shortcuts
 
@@ -51,7 +68,8 @@ Open **Settings > General > Shortcuts**.
 | Transform: Prompt Engineer | `Option+2` |
 
 The right-side modifier matters: the Logitech mouse must emit **Right
-Control**, not generic or left Control.
+Control**, not generic or left Control. Wispr stores this as macOS key code
+`62`; key code `59` is Left Control and must not own the hands-free action.
 
 ## MX Master 4 assignments
 
@@ -70,6 +88,18 @@ Open the MX Master 4 in Logi Options+ and select **Global settings**.
 | Gesture button: hold + move left | `Command+Control+Option+Shift+Left` |
 | Gesture button: hold + move right | `Command+Control+Option+Shift+Right` |
 | Additional button (`c195`) | Stored keystroke: `Escape`; the UI labels it “Keyboard shortcut: None” |
+
+For `c196`, the stored Logitech keystroke must include all three fields below.
+If `code` is omitted, Logi Options+ displays the empty `+` placeholder instead
+of `^Ctrl` and the assignment is invalid.
+
+```json
+{
+  "code": 228,
+  "displayCharacter": "^Ctrl",
+  "virtualKeyId": "VK_RCONTROL"
+}
+```
 
 ### Point, scroll, and press
 
