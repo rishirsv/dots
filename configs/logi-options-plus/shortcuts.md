@@ -1,6 +1,6 @@
 # Logi Options+ shortcuts
 
-Snapshot captured on 2026-08-17 from Logi Options+ using its UI and local
+Snapshot updated on 2026-08-19 from Logi Options+ and its local
 `settings.db`. This documents the portable intent of the configuration; it is
 not an importable Logi Options+ backup.
 
@@ -8,7 +8,6 @@ not an importable Logi Options+ backup.
 
 - Mouse: MX Master 4 (`mx-master-4-2b042`)
 - Keyboard: MX Mechanical Mini (`mx-mechanical-mini-2b367`)
-- Application override: ChatGPT (`com.openai.codex`)
 
 ## MX Master 4 — global
 
@@ -17,6 +16,7 @@ not an importable Logi Options+ backup.
 | Middle button | Middle click |
 | Back button | Back |
 | Forward button | Forward |
+| Top button (`c196`) | Wispr Flow toggle dictation: tap to start/stop (`Right Ctrl`) |
 | Thumb wheel | Horizontal scroll |
 | Gesture button: click | Mission Control |
 | Gesture button: hold + move up | Mission Control |
@@ -24,15 +24,6 @@ not an importable Logi Options+ backup.
 | Gesture button: hold + move left | `Cmd+Ctrl+Option+Shift+Left` |
 | Gesture button: hold + move right | `Cmd+Ctrl+Option+Shift+Right` |
 | Additional button `c195` | UI shows “Keyboard shortcut: None”; stored keystroke is `Escape` |
-| Additional button `c196` | Keyboard shortcut: None |
-
-## MX Master 4 — ChatGPT override
-
-The ChatGPT profile inherits the global mouse profile except for:
-
-| Control | Assignment |
-| --- | --- |
-| Back button (`c83`) | `V` (no modifiers) |
 
 ## MX Mechanical Mini — global
 
@@ -59,5 +50,7 @@ The ChatGPT profile inherits the global mouse profile except for:
 - UI confirmation: Logi Options+ device and assignment screens.
 - Exact stored chords and application inheritance:
   `~/Library/Application Support/LogiOptionsPlus/settings.db`, row `data._id=1`.
+- Wispr Flow push-to-talk chord:
+  `~/Library/Application Support/Wispr Flow/config.json`, preference `ptt`.
 - Secrets, account state, device telemetry, and the raw database are deliberately
   excluded from this repository.

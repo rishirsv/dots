@@ -7,7 +7,7 @@ approval_policy = "never"
 default_permissions = "Dots"
 
 model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model_reasoning_effort = "medium"
 
 [permissions.Dots]
 description = "Unrestricted filesystem, network, and Unix socket access."
@@ -20,10 +20,6 @@ enabled = true
 allow_local_binding = true
 dangerously_allow_all_unix_sockets = true
 
-[features]
-memories = true
-prevent_idle_sleep = true
-
 [apps._default]
 default_tools_approval_mode = "approve"
 open_world_enabled = true
@@ -35,90 +31,36 @@ enabled = true
 [plugins."computer-history@openai-bundled"]
 enabled = true
 
-[plugins."build-ios-apps@steady-app"]
-enabled = true
-
-[plugins."documents@openai-primary-runtime"]
-enabled = false
-
-[plugins."pdf@openai-primary-runtime"]
-enabled = false
-
-[plugins."spreadsheets@openai-primary-runtime"]
-enabled = true
-
-[plugins."presentations@openai-primary-runtime"]
-enabled = true
-
 [plugins."chrome@openai-bundled"]
-enabled = true
-
-[plugins."template-creator@openai-primary-runtime"]
 enabled = false
 
 [plugins."dots@dots"]
 enabled = true
 
 [plugins."meta-skill@dots"]
-enabled = true
+enabled = false
 
 [plugins."visualize@openai-bundled"]
-enabled = true
-
-[plugins."ts-document-parser@kpmg"]
-enabled = true
+enabled = false
 
 [plugins."build-ios-apps@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."browser@openai-bundled"]
-enabled = true
+enabled = false
 
 [plugins."sites@openai-bundled"]
-enabled = true
-
-[plugins."warp@codex-warp"]
-enabled = true
+enabled = false
 
 [plugins."pulse@dots"]
-enabled = true
-
-[mcp_servers.openaiDeveloperDocs]
-url = "https://developers.openai.com/mcp"
+enabled = false
 
 [desktop]
 followUpQueueMode = "queue"
-keepRemoteControlAwakeWhilePluggedIn = true
-selected-avatar-id = "custom:patch"
-avatar-overlay-mascot-width-px = 138
 conversationDetailMode = "STEPS_PROSE"
-preventSleepWhileRunning = true
 defaultTerminalLocation = "right"
-git-branch-prefix = ""
-git-create-pull-request-as-draft = false
-git-commit-instructions = """
-Run `git status --short` and `git diff --staged`. Stage only intended paths or hunks; preserve unrelated changes. Split independently reviewable work, or ask one scope question if partial staging is risky.
-
-Run `git diff --staged --check`. Reuse fresh validation; otherwise run obvious, cheap focused tests or linters. Never invent evidence or use `--no-verify` unless asked. Match `git log --oneline -5`; use an imperative subject of at most 50 characters. Add a body only to preserve the reason, constraint, or tradeoff, and omit tool-attribution trailers.
-
-After committing, run `git show --stat --oneline HEAD` and report the SHA, subject, and validation. Push only when explicitly requested: `git push` with an upstream, or `git push -u origin \"$(git branch --show-current)\"` without one. Ask first for detached/default branches, unclear remotes, or possible non-fast-forwards. Never open a PR, merge, rebase shared history, or force-push unless explicitly asked.
-"""
-git-pr-instructions = """
-Require a local Git repository, clear scope, `gh --version`, and authenticated `gh auth status`;
-
-Run `git status -sb`, `git diff --stat`, and `git diff --staged --stat`. If scope is mixed or unclear, ask which paths belong before staging, committing, or pushing. From the default branch, create the smallest repo-native, human-readable branch; otherwise keep the current branch unless asked. Repair review comments on the existing PR branch.
-
-Stage only intended paths, commit the confirmed description, run the most relevant checks, then `git push -u origin \"$(git branch --show-current)\"`. Create a draft PR by default and mark it ready only when explicitly requested.
-
-Unless repository rules or an explicit user title require otherwise, title the PR `<type>(<scope>): <concise outcome>`, or `<type>: <concise outcome>` when no stable scope applies. Use `feat`, `fix`, `perf`, `refactor`, `docs`, `test`, `build`, `ci`, or `chore`; derive a lowercase scope from a stable product area or subsystem. Describe the resulting behavior rather than the task, branch, plan, or commit list. Use no terminal punctuation and prefer 72 characters or fewer without sacrificing clarity. Nearby titles may establish repository vocabulary or required scopes, but inconsistent nearby titles do not override this default.
-
-Write the smallest reviewer-facing body that supports the merge decision. Lead with what changed, what was wrong before, and why it matters. Add only useful sections such as Details, Validation, UI evidence, Boundaries, or Review focus; omit empty sections, file-by-file recaps, generic checklists, agent narration, and repeated context. Preserve repository-required template fields and state material proof gaps plainly; use a temporary file for CLI Markdown when useful.
-
-Re-query the PR for merge state, checks, review decision, and review threads. UI or visual changes require real screenshot or clip embeds in the live body; keep the PR draft while required evidence is missing. Never stage unrelated changes or push without confirmed scope, and stop if no accessible GitHub remote exists. Summarize the branch, commit, PR URL, validation, PR health, and remaining confirmations.
-"""
 reviewDelivery = "detached"
 show-context-window-usage = true
-enabled-reasoning-efforts = ["low", "medium", "high", "xhigh", "ultra", "max"]
 git-pull-request-merge-method = "squash"
 
 [desktop.appearanceLightChromeTheme]

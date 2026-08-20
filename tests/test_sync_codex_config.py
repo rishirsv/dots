@@ -415,18 +415,18 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             )
             self.assertEqual(status_result.returncode, 0, status_result.stdout)
 
-    def test_warp_preview_copies_settings(self):
+    def test_ghostty_copies_config(self):
         with tempfile.TemporaryDirectory() as home_directory:
             environment = os.environ.copy()
             environment["HOME"] = home_directory
-            target = Path(home_directory) / ".warp-preview" / "settings.toml"
-            old_source = Path(home_directory) / "old-warp-settings.toml"
+            target = Path(home_directory) / ".config" / "ghostty" / "config.ghostty"
+            old_source = Path(home_directory) / "old-ghostty-config"
             target.parent.mkdir(parents=True)
             old_source.write_text("# old\n")
             target.symlink_to(old_source)
 
             result = subprocess.run(
-                ["zsh", str(SYNC), "--warp-preview"],
+                ["zsh", str(SYNC), "--ghostty"],
                 cwd=ROOT,
                 env=environment,
                 text=True,
@@ -437,7 +437,7 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             self.assertFalse(target.is_symlink())
             self.assertEqual(
                 target.read_bytes(),
-                (ROOT / "configs" / "warp-preview" / "settings.toml").read_bytes(),
+                (ROOT / "configs" / "ghostty" / "config.ghostty").read_bytes(),
             )
 
 

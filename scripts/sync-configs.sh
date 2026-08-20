@@ -9,7 +9,7 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--status|--capture] [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--claude|--vscode|--warp-preview|--starship|--raycast|--zsh|--karabiner ...]
+Usage: scripts/sync-configs.sh [--status|--capture] [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--claude|--vscode|--ghostty|--starship|--raycast|--zsh ...]
 
 Installs repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
@@ -28,7 +28,7 @@ EOF
 add_target() {
   local target="$1"
   if [[ "$target" == "all" ]]; then
-    TARGETS=(codex codex-personal claude vscode warp-preview starship raycast zsh karabiner)
+    TARGETS=(codex codex-personal claude vscode ghostty starship raycast zsh)
     return
   fi
   TARGETS+=("$target")
@@ -71,8 +71,8 @@ while (( $# )); do
     --vscode)
       add_target vscode
       ;;
-    --warp-preview)
-      add_target warp-preview
+    --ghostty)
+      add_target ghostty
       ;;
     --starship)
       add_target starship
@@ -82,9 +82,6 @@ while (( $# )); do
       ;;
     --zsh)
       add_target zsh
-      ;;
-    --karabiner)
-      add_target karabiner
       ;;
     -h|--help)
       usage
@@ -314,8 +311,8 @@ sync_vscode() {
   install_file "$ROOT/configs/vscode/keybindings.json" "$user_dir/keybindings.json"
 }
 
-sync_warp_preview() {
-  install_file "$ROOT/configs/warp-preview/settings.toml" "$HOME/.warp-preview/settings.toml"
+sync_ghostty() {
+  install_file "$ROOT/configs/ghostty/config.ghostty" "$HOME/.config/ghostty/config.ghostty"
 }
 
 sync_starship() {
@@ -331,10 +328,6 @@ sync_zsh() {
   install_file "$ROOT/configs/zsh/.zshrc" "$HOME/.zshrc"
 }
 
-sync_karabiner() {
-  install_file "$ROOT/configs/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
-}
-
 for target in "${TARGETS[@]}"; do
   case "$target" in
     agent-instructions) sync_agent_instructions ;;
@@ -342,11 +335,10 @@ for target in "${TARGETS[@]}"; do
     codex-personal) sync_codex_personal ;;
     claude) sync_claude ;;
     vscode) sync_vscode ;;
-    warp-preview) sync_warp_preview ;;
+    ghostty) sync_ghostty ;;
     starship) sync_starship ;;
     raycast) sync_raycast ;;
     zsh) sync_zsh ;;
-    karabiner) sync_karabiner ;;
     *)
       echo "Unknown target: $target" >&2
       exit 2
