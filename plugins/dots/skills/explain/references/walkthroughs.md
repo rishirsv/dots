@@ -1,43 +1,23 @@
 # Explain a complex subject
 
-Produce a clear explanation. Enough to build a working mental model, not
-annotated source code.
+For a narrow question, inspect and explain in one pass. For a subsystem, split
+the question into the few parts needed to trace its complete input-to-output or
+trigger-to-effect path.
 
-Assess complexity to decide the approach:
+For code, find the real entry point and follow only the callers, callees, data
+flow, and types needed for that path. Read the actual code. Stop when no step
+requires hand-waving. Mention surprising behavior or proof gaps that change the
+mental model.
 
-- **Simple** (a single module, a small utility, a narrow question like "how does
-  function X work"): explore and explain in a single pass.
-- **Complex** (a subsystem spanning multiple files/services, a cross-cutting
-  feature, a full architectural overview): split the question into distinct
-  parts and trace only the parts needed for the explanation.
+Lead with where the reader is going and a short map. Adapt what follows:
 
-When in doubt, lean simple. You can always explore further if the explanation
-hits a wall.
-
-For code, start broad enough to find the real entry point, then follow the
-thread: callers, callees, data flow, and type definitions. Read the actual code,
-don't guess from file names. Stop when you can describe the full path from input
-to output, or trigger to effect, without hand-waving any step. Note things that
-are surprising, non-obvious, or that a newcomer would get wrong.
-
-Begin with where the reader is, where the explanation is going, and a short map
-of the parts. Explain each part when it becomes relevant and show how it
-connects to the next. Adapt this order to the question; do not force empty
-sections:
-
-- **Overview.** 1-2 paragraphs. What it is, what it does, why it exists. Enough
-  to decide whether to keep reading.
-- **Key concepts.** The important types, services, or abstractions. Brief
-  definition of each. Not exhaustive, just the ones needed to understand the
-  rest.
-- **How it works.** Walk through the flow: what triggers it, what happens step
-  by step, where data goes, the decision points. Prose, not pseudocode.
-- **Where things live.** A brief map of the relevant files/directories. Not
-  every file, just the ones needed to start working in this area.
-- **Gotchas.** Non-obvious or surprising things that would trip someone up.
-  Historical context that explains why something looks weird. Known sharp
-  edges.
-
-For a live decision, explain one decision and its required vocabulary, then
-pause. For a requested complete walkthrough, continue through the map without
-forcing pauses.
+- **Operational workflow:** Start with one compact runnable sequence,
+  numbered only when numbering improves it. Add one brief proof or decision
+  note for each step. Omit alternate variants and internal mechanics unless
+  they change what the reader should do.
+- **Comparison or routing question:** Start with a compact table of ownership,
+  trigger, and output. Follow it with one or two examples that settle the
+  ambiguous boundaries, then stop unless the user asks for comprehensive
+  coverage.
+- **Complete walkthrough:** Cover only what it is, its key concepts and flow,
+  where relevant code lives, and consequential gotchas. Do not force headings.
