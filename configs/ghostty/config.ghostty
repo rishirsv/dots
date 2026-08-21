@@ -1,6 +1,5 @@
 # Ghostty owns terminal rendering; Zsh owns prompt, completion, and history UX.
 font-size = 15.5
-adjust-cell-height = 10%
 
 theme = dark:Catppuccin Mocha,light:Catppuccin Latte
 background-opacity = 0.94
@@ -16,7 +15,7 @@ window-padding-balance = true
 window-save-state = never
 unfocused-split-opacity = 0.85
 
-macos-titlebar-style = tabs
+macos-titlebar-style = transparent
 
 shell-integration = zsh
 macos-option-as-alt = true

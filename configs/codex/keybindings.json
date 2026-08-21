@@ -1,5 +1,9 @@
 [
   {
+    "command": "composer.cycleReasoningEffort",
+    "key": "Ctrl+Command+Alt+Shift+R"
+  },
+  {
     "command": "composer.decreaseReasoningEffort",
     "key": "Ctrl+Command+Alt+Shift+["
   },

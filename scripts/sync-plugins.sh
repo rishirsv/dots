@@ -10,7 +10,7 @@ Usage: scripts/sync-plugins.sh [--all|--codex|--claude]
 
 Registers the repo-root plugin marketplace and refreshes installed local
 plugins. The --codex target also refreshes ~/.codex-personal when that home
-exists. Defaults to --all.
+exists, then syncs portable Codex skills into OpenCode. Defaults to --all.
 EOF
 }
 
@@ -130,6 +130,7 @@ for target in "${TARGETS[@]}"; do
     codex)
       sync_codex_home "default Codex" ""
       sync_codex_home "Codex personal" "$HOME/.codex-personal"
+      "$ROOT/scripts/sync-opencode.py"
       ;;
     claude)
       sync_claude_plugins
