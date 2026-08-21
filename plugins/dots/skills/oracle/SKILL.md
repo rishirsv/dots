@@ -49,7 +49,7 @@ skill-improvement run ships the whole skill directory, not one file.
 
 Exclude dependency folders, build artifacts, credentials, and `.env` files
 unless the user explicitly approves a narrow redacted excerpt. For code-review
-requests, include [Review Code](../review-code/SKILL.md) and, when hard cuts are
+requests, include [Code Review](../code-review/SKILL.md) and, when hard cuts are
 in scope, [Hard-Cut Policy](../../references/hard-cut-policy.md) so the advisory
 request stands alone.
 
