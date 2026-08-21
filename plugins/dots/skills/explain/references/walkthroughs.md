@@ -6,8 +6,7 @@ trigger-to-effect path.
 
 For code, find the real entry point and follow only the callers, callees, data
 flow, and types needed for that path. Read the actual code. Stop when no step
-requires hand-waving. Mention surprising behavior or proof gaps that change the
-mental model.
+requires hand-waving. Mention surprising behavior that changes the explanation.
 
 Lead with where the reader is going and a short map. Adapt what follows:
 
