@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: "Reviews a diff, branch, commit, range, or pull request for actionable correctness, security, performance, and maintainability findings, with contextual PR comments and an optional Deep verification mode."
+description: "Reviews a diff, branch, commit, range, or pull request for actionable requirements, correctness, security, performance, and maintainability findings, with contextual PR comments and an optional Deep verification mode."
 ---
 
 # Code review
@@ -29,9 +29,13 @@ For a pull request, use its actual base and head. For a merged pull request,
 review the merged change. Freeze the exact scope before dispatching reviewers
 and restart the review if it changes unexpectedly.
 
-Read the applicable `AGENTS.md` files and other repository rules. Give every
-reviewer the same target, frozen diff, applicable rules, and any specification
-the user supplied. Do not invent requirements when none exist.
+Read the applicable `AGENTS.md` files and other repository rules. Locate an
+originating specification when the change should have one: use a source the
+user supplied, the PR description or linked issue, issue references in commits,
+or a matching file under the repository's documentation or spec directories.
+Give every reviewer the same target, frozen diff, and applicable rules. Give
+the located specification to the Correctness reviewer. If no specification is
+available, record that proof gap and do not invent requirements.
 
 The three core lanes are logical assignments. Run them concurrently when the
 runtime permits; otherwise run them sequentially without changing their scope.
@@ -46,18 +50,19 @@ through the whole assignment after finding the first issue.
 
 Keep a finding only when all of these are true:
 
-- it affects correctness, security, performance, or maintainability in a
-  meaningful way;
+- it affects requirements, correctness, security, performance, or
+  maintainability in a meaningful way;
 - it is discrete and actionable;
 - the reviewed change introduced it;
-- the affected scenario or call path can be demonstrated from the code; and
+- the affected requirement, scenario, or call path can be demonstrated from
+  the code and, for a spec finding, the cited specification; and
 - the author would probably fix it if they knew about it.
 
-Reject speculation, pre-existing problems, intentional behavior changes, and
-style nits that do not obscure the code. Anchor each finding to the smallest
-useful changed-line range. An unchanged line is relevant only when the change
-causes or exposes the problem; anchor the finding to the changed line that does
-so.
+Reject speculation, pre-existing problems, intentional behavior that remains
+within the documented scope, and style nits that do not obscure the code.
+Anchor each finding to the smallest useful changed-line range. An unchanged
+line is relevant only when the change causes or exposes the problem; anchor the
+finding to the changed line that does so.
 
 Reviewers return every qualifying finding without padding or a numeric cap.
 They do not modify files, create commits, push, post comments, or delegate.
@@ -78,7 +83,10 @@ Give each reviewer the finding contract and one lane.
 Read every hunk and its enclosing behavior. Check conditions, boundaries,
 nullability, state transitions, async work, error paths, removed safeguards,
 changed contracts, and interactions across callers and callees. Compare the
-change with supplied requirements and exact repository rules. Treat a rule as
+change with the located specification. Report missing or partial requirements,
+an implementation that contradicts a requirement, and meaningful behavior the
+specification did not request. Cite the exact requirement for every spec
+finding. Compare the change with exact repository rules, and treat a rule as
 policy only when it is actually written down.
 
 ### Simplicity
@@ -88,7 +96,21 @@ canonical implementation, needless wrappers or abstraction, redundant or
 derivable state, repeated branches, dead code, speculative flexibility, and
 generated-looking code slop that obscures the design. Look for code judo: a
 small reframing that removes whole branches, modes, helpers, states, or layers
-while preserving required behavior. Do not report cosmetic preferences.
+while preserving required behavior.
+
+Use these named smells as non-binding prompts, never automatic findings:
+
+- **Feature Envy:** behavior reaches into another object's data more than its
+  own;
+- **Data Clumps:** the same fields or parameters repeatedly travel together;
+- **Primitive Obsession:** a primitive hides a domain concept with real rules;
+- **Shotgun Surgery:** one logical change requires scattered edits;
+- **Divergent Change:** one module changes for several unrelated reasons;
+- **Message Chains:** callers depend on a long navigation chain; and
+- **Refused Bequest:** an implementation inherits a contract it mostly rejects.
+
+Report a smell only when the reviewed change introduces it and it satisfies the
+finding contract. Do not report cosmetic preferences.
 
 ### Systems
 
@@ -105,11 +127,12 @@ not an independent verifier wave.
 
 ## Review a pull request
 
-Finish the independent core review before reading existing pull-request
-discussion so it does not anchor the reviewers. Then inspect the PR description,
-linked requirements, current checks, and unresolved review threads. Incorporate
-useful evidence, diagnose failures when possible, and do not duplicate an issue
-that is already raised.
+Use the PR description and linked requirements as specification input before
+dispatching reviewers. Finish the independent core review before reading
+existing review discussion so it does not anchor the reviewers. Then inspect
+current checks and unresolved review threads. Incorporate useful evidence,
+diagnose failures when possible, and do not duplicate an issue that is already
+raised.
 
 The coordinator posts one inline GitHub comment for every surviving finding
 that has an exact changed-line anchor, a concrete failure scenario or material
