@@ -15,8 +15,9 @@ claim that a mode changed the active model or its reasoning budget.
 
 | Mode | Trigger | Workflow |
 | --- | --- | --- |
+| **Low** | The user explicitly asks for Low | One agent reviews the complete change through all three core lenses, prioritizing correctness. Low composes with PR when the target is a pull request. |
 | **Default** | A local diff, branch, commit, or range | Three core reviewers and a local report. |
-| **PR** | A pull request target | Default review plus PR context and qualifying GitHub comments. |
+| **PR** | A pull request target | The selected review workflow plus PR context and qualifying GitHub comments. |
 | **Deep** | The user explicitly asks for Deep | Core reviewers, risk-triggered specialists, independent verification, and a gap sweep. Deep composes with PR when the target is a pull request. |
 
 Use the target named by the user. Otherwise review the committed branch diff
@@ -34,12 +35,15 @@ originating specification when the change should have one: use a source the
 user supplied, the PR description or linked issue, issue references in commits,
 or a matching file under the repository's documentation or spec directories.
 Give every reviewer the same target, frozen diff, and applicable rules. Give
-the located specification to the Correctness reviewer. If no specification is
+the located specification to the Correctness lane. If no specification is
 available, record that proof gap and do not invent requirements.
 
-The three core lanes are logical assignments. Run them concurrently when the
-runtime permits; otherwise run them sequentially without changing their scope.
-If independent reviewers are unavailable, perform the three lanes in the
+The three core lanes are logical assignments. In Low mode, perform all three
+lanes in the coordinator as one review, with correctness as the primary focus.
+Inspect the complete change for Simplicity and Systems findings too; Low reduces
+independent fan-out, not review scope. In other modes, run the lanes concurrently
+when the runtime permits; otherwise run them sequentially without changing their
+scope. If independent reviewers are unavailable, perform the three lanes in the
 coordinator and disclose that the review ran without independent fan-out.
 
 ## Apply the finding contract
@@ -128,11 +132,10 @@ not an independent verifier wave.
 ## Review a pull request
 
 Use the PR description and linked requirements as specification input before
-dispatching reviewers. Finish the independent core review before reading
-existing review discussion so it does not anchor the reviewers. Then inspect
-current checks and unresolved review threads. Incorporate useful evidence,
-diagnose failures when possible, and do not duplicate an issue that is already
-raised.
+starting the review. Finish the core review before reading existing review
+discussion so it does not anchor the review. Then inspect current checks and
+unresolved review threads. Incorporate useful evidence, diagnose failures when
+possible, and do not duplicate an issue that is already raised.
 
 The coordinator posts one inline GitHub comment for every surviving finding
 that has an exact changed-line anchor, a concrete failure scenario or material
@@ -185,7 +188,7 @@ and verified list. It looks only for missed findings and does not repeat or
 rejudge existing ones. Independently verify every new candidate before keeping
 it.
 
-Default and PR modes do not run candidate verifiers or a gap sweep.
+Low, Default, and PR modes do not run candidate verifiers or a gap sweep.
 
 ## Repair when asked
 
