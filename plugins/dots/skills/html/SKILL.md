@@ -1,6 +1,6 @@
 ---
 name: html
-description: "Creates self-contained HTML pages, reports, charts, static mocks, or embeddable fragments from supplied material and sources. Use for HTML meant to be opened or shared; not for interactive visuals, product UI, or durable repository documentation."
+description: "Creates self-contained HTML pages and fragments from source material: reports, visual explainers, plans, PR walkthroughs, charts, diagrams, and static mocks. Use whenever information should become a browser-openable, shareable artifact, even without an HTML request; not for product UI, interactive visualizations, durable repository docs, or slides."
 ---
 
 # HTML
@@ -45,7 +45,10 @@ Read [authoring.md](references/authoring.md) before building.
 5. **Use real content.** Do not invent numbers, claims, or filler. Trace figures
    to their sources and mark important gaps as "not verified." Include a sources
    footer only when it helps the reader. Remove tool names, prompts, private
-   paths, scratch files, and generation details.
+   paths, scratch files, and generation details. Never add a title chip or
+   system meta-narration: do not explain how to read, review, navigate, use, or
+   respond to the artifact, or describe how its content is arranged. Begin with
+   the subject matter itself.
 6. **Review before delivery.** Apply the checks in
    [authoring.md](references/authoring.md#before-delivery).
 

@@ -80,15 +80,10 @@ function diagnosticScript() {
     mutedProbe.remove();
     if (mutedContrast < 4.5) failures.push("muted text contrast falls below 4.5:1 (" + mutedContrast.toFixed(2) + ")");
 
-    var status = document.querySelector(".status");
     var title = document.querySelector("h1");
     var header = document.querySelector(".page > header");
     var sectionGap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--section"));
-    if (!status || status.getBoundingClientRect().width < 30) failures.push("status is not readable");
     if (Math.abs(parseFloat(getComputedStyle(header).marginBottom) - sectionGap) > 1) failures.push("page header does not own the section gap");
-    if (viewport <= 680 && status.getBoundingClientRect().top < title.getBoundingClientRect().bottom - 1) {
-      failures.push("status does not stack below title");
-    }
     if (viewport <= 320 && parseFloat(getComputedStyle(title).fontSize) > 32) {
       failures.push("mobile title scale exceeds 32px");
     }
@@ -177,7 +172,7 @@ function bodyFixture() {
   </section>
   <section id="risks"><h2>Release risks</h2>
     <div data-component="data-table" class="table-scroll table-stack"><table><thead><tr><th>Risk</th><th>Owner</th><th>State</th><th>Mitigation</th></tr></thead><tbody>
-      <tr><td class="cell-label" data-label="Risk">Small-screen title collision</td><td data-label="Owner">Web</td><td data-label="State">Resolved</td><td data-label="Mitigation">Stack the status below the title.</td></tr>
+      <tr><td class="cell-label" data-label="Risk">Small-screen title collision</td><td data-label="Owner">Web</td><td data-label="State">Resolved</td><td data-label="Mitigation">Keep the title readable on narrow screens.</td></tr>
       <tr><td class="cell-label" data-label="Risk">Evidence too dense to read</td><td data-label="Owner">Research</td><td data-label="State">Resolved</td><td data-label="Mitigation">Use one focal figure and two supporting views.</td></tr>
     </tbody></table></div>
   </section>
@@ -189,8 +184,8 @@ function bodyFixture() {
       <figure class="evidence-item"><svg viewBox="0 0 640 360" role="img" aria-label="Dark state"><rect width="640" height="360" fill="var(--code-surface)"/><rect x="72" y="44" width="496" height="272" rx="6" fill="var(--background)" stroke="var(--a20)"/></svg><figcaption><strong>Dark.</strong> The same hierarchy survives the theme change.</figcaption></figure>
     </div>
   </section>
-  <section id="implementation"><h2>Implementation boundary</h2><p>The assembler packages chosen components but never chooses the story.</p></section>
-  <section id="next"><h2>Next step</h2><p>Review the screenshots, then publish through the normal plugin workflow.</p></section>`;
+  <section id="implementation"><h2>Release boundary</h2><p>The migration remains scoped to one candidate path.</p></section>
+  <section id="next"><h2>Release condition</h2><p>Publish after the final mobile state passes the focused check.</p></section>`;
 }
 
 async function launchChrome(chrome) {
@@ -323,10 +318,9 @@ try {
 
   const temp = mkdtempSync(join(tmpdir(), "dots-html-visual-"));
   const base = assemble({
-    title: "A deliberately long release-readiness title that exercises responsive status placement",
+    title: "A deliberately long release-readiness title that exercises responsive wrapping",
     context: "component validation / responsive proof",
     dek: "Representative components rendered together to catch clipping, hidden content, and weak mobile transformations.",
-    status: "verified",
     footer: "Validation fixture: representative catalog components.",
     body: bodyFixture(),
     components: ["toc-rail", "callout", "process-steps", "comparison-grid", "data-table", "wide-figure", "evidence-gallery", "page-behavior"],
@@ -359,7 +353,7 @@ try {
     const noJsPage = await browser.openPage(lightPath, 360, { javascript: false });
     const noJs = await noJsPage.html();
     await noJsPage.close();
-    for (const text of ["Verification path", "Stack the status below the title.", "Review the screenshots"]) {
+    for (const text of ["Verification path", "Keep the title readable on narrow screens.", "Publish after the final mobile state passes the focused check."]) {
       if (!noJs.includes(text)) fail(`JS-off output is missing "${text}"`);
     }
   } finally {

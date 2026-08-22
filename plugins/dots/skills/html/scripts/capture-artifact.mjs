@@ -72,18 +72,6 @@ function layoutDiagnostic() {
   document.querySelectorAll(".page, [data-component], section, figure, .process-step, .evidence-item")
     .forEach(checkBounds);
 
-  const title = document.querySelector("h1");
-  const status = document.querySelector(".status");
-  if (title && status) {
-    const titleRect = title.getBoundingClientRect();
-    const statusRect = status.getBoundingClientRect();
-    const overlaps = titleRect.left < statusRect.right
-      && titleRect.right > statusRect.left
-      && titleRect.top < statusRect.bottom
-      && titleRect.bottom > statusRect.top;
-    if (overlaps) failures.push("title and status overlap");
-  }
-
   document.querySelectorAll("svg text").forEach((label) => {
     const svg = label.closest("svg");
     if (!svg?.viewBox?.baseVal?.width) return;

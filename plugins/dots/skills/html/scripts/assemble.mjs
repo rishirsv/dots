@@ -73,7 +73,7 @@ function orderedComponents(requested) {
   return ordered;
 }
 
-function pageShell({ title, context, dek, status, footer, body, layout }) {
+function pageShell({ title, context, dek, footer, body, layout }) {
   let shell = sourceFor("page-shell").match(/<div data-component="page-shell"[\s\S]*$/)?.[0];
   if (!shell) fail("page-shell markup is missing");
 
@@ -81,7 +81,6 @@ function pageShell({ title, context, dek, status, footer, body, layout }) {
     .replace('data-layout="article"', `data-layout="${layout}"`)
     .replace(/<p class="context-line">[\s\S]*?<\/p>/, context ? `<p class="context-line">${escapeText(context)}</p>` : "")
     .replace(/<h1>[\s\S]*?<\/h1>/, `<h1>${escapeText(title)}</h1>`)
-    .replace(/<span class="status">[\s\S]*?<\/span>/, status ? `<span class="status">${escapeText(status)}</span>` : "")
     .replace(/<p class="dek">[\s\S]*?<\/p>/, dek ? `<p class="dek">${escapeText(dek)}</p>` : "")
     .replace(/\s*<!-- slot: toc-rail[^\n]*-->/, "")
     .replace(/\s*<!-- slot: sections[^\n]*-->/, `\n\n  ${body.trim().replace(/\n/g, "\n  ")}`)
@@ -90,7 +89,7 @@ function pageShell({ title, context, dek, status, footer, body, layout }) {
   return shell;
 }
 
-export function assemble({ title, context = "", dek = "", status = "", footer = "", body, components = [], lang = "en", assetRoot, layout = "article" }) {
+export function assemble({ title, context = "", dek = "", footer = "", body, components = [], lang = "en", assetRoot, layout = "article" }) {
   if (!title) fail("title is required");
   if (body == null) fail("body is required");
   if (!["article", "wide", "canvas"].includes(layout)) fail(`unknown layout "${layout}"`);
@@ -105,7 +104,7 @@ export function assemble({ title, context = "", dek = "", status = "", footer = 
   const scripts = componentSources
     .flatMap((source) => [...source.matchAll(/^<script(?:\s[^>]*)?>[\s\S]*?^<\/script>/gim)].map((match) => match[0].trim()))
     .join("\n\n");
-  const shell = pageShell({ title, context, dek, status, footer, body: embedLocalImages(body, assetRoot), layout });
+  const shell = pageShell({ title, context, dek, footer, body: embedLocalImages(body, assetRoot), layout });
 
   return `<!doctype html>
 <html lang="${escapeText(lang)}">
@@ -141,13 +140,13 @@ const invokedDirectly = process.argv[1] && fileURLToPath(import.meta.url) === pr
 if (invokedDirectly) {
   try {
     const args = parseArgs(process.argv.slice(2));
+    if (Object.hasOwn(args, "status")) fail("--status is not supported; state material status in the page body");
     if (!args.body) fail("--body is required");
     if (!args.out) fail("--out is required");
     const html = assemble({
       title: args.title,
       context: args.context,
       dek: args.dek,
-      status: args.status,
       footer: args.footer,
       lang: args.lang,
       layout: args.layout,

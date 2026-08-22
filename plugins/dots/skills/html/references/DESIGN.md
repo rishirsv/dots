@@ -163,10 +163,9 @@ page background or simulated elevation.
 
 ## Shapes
 
-`rounded.card` (6px) for cards, code panels, chips; `rounded.inline` (4px)
-for inline code and focus rings. Radius is quiet and uniform — nothing
-pill-shaped except the single status chip. Borders are 1px hairlines from the
-alpha ladder.
+`rounded.card` (6px) for cards and code panels; `rounded.inline` (4px)
+for inline code and focus rings. Radius is quiet and uniform. Borders are 1px
+hairlines from the alpha ladder.
 
 ## Components
 

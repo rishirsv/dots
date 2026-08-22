@@ -32,6 +32,13 @@ meaning the reader would otherwise miss.
   simulation, drill-down, mutable form state, or step-through control is the
   page's main value, use an interactive-visualization or product-UI
   workflow instead of building a half-interactive document.
+- Never add a chip or badge beside the title. When a real status materially
+  changes the decision, state it as ordinary subject-matter prose in the page.
+- Do not add system meta-narration. Omit sections, deks, callouts, and controls
+  that tell the audience how to read, review, navigate, use, or respond to the
+  artifact, or explain how the page arranged its evidence. Headings such as
+  "How to read this board," "How to review this report," and "What this page
+  shows" are prohibited. Start with the actual finding, argument, or evidence.
 
 ## Read only what applies
 
@@ -49,10 +56,7 @@ them.
    section list. Inspect a second example only when the first misses a distinct
    part of the request.
 2. Start from `page-shell` — it owns the context line, title, short introduction
-   (`dek`), footer, width mode, and one status chip when the page has a real
-   operational status that changes what the reader should do, such as blocked,
-   ready for review, or superseded. Never use it for editorial metadata such as
-   updated, revised, latest, new plan, or scope rewritten. Choose
+   (`dek`), footer, and width mode. Choose
    `article` for prose-led work, `wide` for parallel evidence, and `canvas` for
    visual references. Keep canvas prose inside `.reading-column`. Inline
    `theme.css` verbatim before component CSS; never edit its tokens or add
@@ -119,10 +123,10 @@ node scripts/assemble.mjs \
   --out /path/to/release-readiness.html
 ```
 
-Add `--status`, `--footer`, or `page-behavior` in `--components` only when the
-content calls for them. `--layout` accepts `article`, `wide`, or `canvas` and
-defaults to `article`. The assembler packages chosen CSS and behavior; it does
-not select examples, components, content, or section order.
+Add `--footer` or `page-behavior` in `--components` only when the content calls
+for them. `--layout` accepts `article`, `wide`, or `canvas` and defaults to
+`article`. The assembler packages chosen CSS and behavior; it does not select
+examples, components, content, or section order.
 
 ### Working source and finished page
 
@@ -201,6 +205,9 @@ Review the source before delivery:
   context when needed, and no claim to be observed evidence.
 - Remove internal working details, prompts, private paths, scratch files, and
   generation metadata.
+- Remove title chips and system meta-narration. The page must not tell the
+  audience how to read, review, navigate, use, or respond to the artifact, or
+  describe its own structure. Lead with subject matter.
 - For an implementation plan, apply the universal and activated gates in
   [implementation-plans.md](implementation-plans.md#readiness-check). Do not
   present the plan as implementation-ready while an applicable material gate

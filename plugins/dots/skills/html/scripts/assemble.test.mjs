@@ -17,7 +17,6 @@ test("assembles one self-contained page and deduplicates selected component CSS"
     title: "Release <readiness>",
     context: "project / release",
     dek: "The decision and its evidence.",
-    status: "verified",
     footer: "Sources: supplied release checks.",
     layout: "wide",
     body,
@@ -26,7 +25,7 @@ test("assembles one self-contained page and deduplicates selected component CSS"
 
   assert.match(html, /^<!doctype html>/);
   assert.match(html, /<h1>Release &lt;readiness&gt;<\/h1>/);
-  assert.match(html, /<span class="status">verified<\/span>/);
+  assert.ok(!html.includes('class="status"'));
   assert.match(html, /data-layout="wide"/);
   assert.equal((html.match(/\.callout \{/g) ?? []).length, 1);
   assert.equal((html.match(/data-component="callout"/g) ?? []).length, 2);
@@ -52,7 +51,7 @@ test("expands component dependencies and omits optional shell fields cleanly", (
   assert.ok(!html.includes('class="sources"'));
 });
 
-test("CLI writes the requested file and rejects an unknown component", () => {
+test("CLI writes the requested file and rejects unsupported input", () => {
   const dir = mkdtempSync(join(tmpdir(), "dots-html-assemble-"));
   const bodyPath = join(dir, "body.html");
   const outPath = join(dir, "out.html");
@@ -67,6 +66,10 @@ test("CLI writes the requested file and rejects an unknown component", () => {
     const bad = spawnSync(process.execPath, [script, "--title", "One", "--body", bodyPath, "--out", outPath, "--components", "missing"], { encoding: "utf8" });
     assert.equal(bad.status, 1);
     assert.match(bad.stderr, /unknown component/);
+
+    const status = spawnSync(process.execPath, [script, "--title", "One", "--body", bodyPath, "--out", outPath, "--status", "ready"], { encoding: "utf8" });
+    assert.equal(status.status, 1);
+    assert.match(status.stderr, /--status is not supported/);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

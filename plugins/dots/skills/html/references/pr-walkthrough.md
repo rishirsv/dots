@@ -153,15 +153,16 @@ change. Do not put types, files, or repeated mappings into bento cards when rows
 make comparison easier. Describe removed behavior in ordinary before/now prose
 or a table, never with strike-through styling.
 
-Avoid decorative horizontal rules, nested or double borders, and status chips
-that fragment a long explanation. Do not decorate the page with architecture
+Avoid decorative horizontal rules, nested or double borders, and status chips.
+Do not decorate the page with architecture
 diagrams, KPI tiles, test counts, merge-state boxes, or review metadata that do
 not improve understanding.
 
-Keep internal production narration out of the artifact. Do not say that the
-page, diagram, or explanation was generated, derived from a branch, source
-backed, assembled from a diff, or designed to tell the reader how to read it.
-Use an ordinary product heading and explain the change itself.
+Keep system meta-narration out of the artifact. Do not say that the page,
+diagram, or explanation was generated, derived from a branch, source backed,
+assembled from a diff, or designed to tell the reader how to read, review,
+navigate, use, or respond to it. Use an ordinary product heading and explain
+the change itself.
 
 ## State evidence and incompleteness honestly
 
