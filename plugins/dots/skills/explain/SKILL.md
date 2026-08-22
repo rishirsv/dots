@@ -8,16 +8,24 @@ description: "Use only when the user writes `$explain`. Explain any subject or, 
 Explain the named subject or, when none is named, the previous answer. Ask what
 to explain only when neither is clear.
 
-Match the user's existing knowledge, vocabulary, and conversation context.
-Explain the missing bridge, not the whole subject. Start with the practical
-result or decision, then show the mechanism and why it matters. Keep necessary
-terms and define only unfamiliar ones. Stop when the user can follow the result
-and decide what to do.
+Match the user's existing knowledge, vocabulary, and conversation context, but
+do not assume the source wording already makes sense. Explain the missing
+bridge, not the whole subject. Start with the practical result or decision,
+then show the mechanism and why it matters. Stop when the user can follow the
+result and decide what to do.
 
-Use one concrete example, comparison, or compact visual when it clarifies the
-mechanism. If the previous answer did not land, re-pitch the missing concept
-instead of summarizing it. Research only when a missing fact would change the
-explanation.
+Translate rather than restate. Start with an observable action, failure, or
+boundary, then introduce the technical term that names it. For code, name the
+runtime actor and the file where it lives; do not describe the file itself as
+performing the work. Connect the pieces with one concrete scenario, comparison,
+or compact visual.
+
+Write the explanation once. Do not split it into technical and simple versions
+or use headings that narrate the explanation. Use a heading only when it names
+the subject. Do not mirror a terse list of claims.
+
+If the previous answer did not land, re-pitch the missing concept instead of
+summarizing it. Research only when a missing fact would change the explanation.
 
 Be specific. Say what it does, not how it feels. Prefer the plain word. Vary
 rhythm. Short sentences. Then longer ones that take their time. Mix it up.
