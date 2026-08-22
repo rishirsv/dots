@@ -55,10 +55,10 @@
       "name": "pr-walkthrough",
       "title": "PR walkthrough",
       "file": "pr-walkthrough.html",
-      "job": "Help a reviewer understand the behavioral change, risks, and proof.",
+      "job": "Help a reviewer understand the actual work, why it was necessary, its scope, mechanism, and proof.",
       "layout": "wide",
       "treatment": "editorial",
-      "shape": ["review thesis", "file map", "annotated diff", "findings", "validation"],
+      "shape": ["change-derived story", "realistic trace", "scope and consequence", "grounded proof"],
       "boundary": "Ground every claim in the actual diff and repository context."
     }
   ]

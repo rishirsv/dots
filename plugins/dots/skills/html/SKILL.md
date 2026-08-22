@@ -23,7 +23,10 @@ Read [authoring.md](references/authoring.md) before building.
 
 1. **Understand the reader and source.** Decide what the reader must understand
    or decide. Read the relevant sources, including code or a diff when the page
-   explains existing software.
+   explains existing software. For an implementation plan, inspect the parts of
+   the current experience, ownership, persistence, data loading, and product
+   direction that the proposed change can affect before choosing sections or
+   delivery slices.
 2. **Choose a reading order.** For a page, open the
    [finished-page examples](assets/outcomes/index.html) and inspect the one
    closest to the reader's need. Use its reading order, not its sample content
@@ -50,6 +53,9 @@ Read only the guidance the page needs:
 
 - [writing-style.md](../../references/writing-style.md) when prose carries the
   page's argument or explanation;
+- [implementation-plans.md](references/implementation-plans.md) for product,
+  migration, architecture, and technical implementation plans; plans always
+  apply the shared writing-style reference;
 - [charts.md](references/charts.md) for charts;
 - [diagrams.md](references/diagrams.md) for diagrams;
 - [generated-images.md](references/generated-images.md) before using `imagegen`;
@@ -66,3 +72,9 @@ Exploratory visualizations, simulations, and filter-driven analysis belong to
 an interactive-visualization workflow. Static HTML mocks without product state
 belong here. Durable repository documentation belongs to `docs-writer`. Slide
 decks are out of scope.
+
+When an HTML plan must make or validate an unresolved product-UI decision, use
+the relevant product-design workflow and use HTML to communicate the result. If
+the design is already approved or supplied, treat it as source material. HTML
+owns the artifact. Product design owns hierarchy, interaction, accessibility,
+and visual judgment.

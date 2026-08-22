@@ -50,7 +50,9 @@ them.
    part of the request.
 2. Start from `page-shell` — it owns the context line, title, short introduction
    (`dek`), footer, width mode, and one status chip when the page has a real
-   status. Choose
+   operational status that changes what the reader should do, such as blocked,
+   ready for review, or superseded. Never use it for editorial metadata such as
+   updated, revised, latest, new plan, or scope rewritten. Choose
    `article` for prose-led work, `wide` for parallel evidence, and `canvas` for
    visual references. Keep canvas prose inside `.reading-column`. Inline
    `theme.css` verbatim before component CSS; never edit its tokens or add
@@ -93,6 +95,13 @@ them.
    the sources footer. Appendix material (raw data, full logs, candidate
    configs) goes in `disclosure` blocks after the footer, never before the
    conclusion.
+
+### Product mocks inside plans
+
+Apply [the plan-specific mock guidance](implementation-plans.md#product-mocks-inside-plans).
+It owns when to compare directions, which states to show, and how to label
+illustrative UI, including when an unresolved decision requires the
+product-design workflow.
 
 ### Fast assembly
 
@@ -192,8 +201,14 @@ Review the source before delivery:
   context when needed, and no claim to be observed evidence.
 - Remove internal working details, prompts, private paths, scratch files, and
   generation metadata.
+- For an implementation plan, apply the universal and activated gates in
+  [implementation-plans.md](implementation-plans.md#readiness-check). Do not
+  present the plan as implementation-ready while an applicable material gate
+  remains unresolved.
 
-Use browser or rendered review only when the user asks for it or when visual
-proof is the task. In that case, inspect the states relevant to the requested
-proof and report exactly what was reviewed. Do not imply rendered or interaction
+Use browser or rendered review when the user asks for it, when visual proof is
+the task, or when the page carries meaningful layout risk: custom CSS, a wide
+or canvas layout, product mocks, diagrams, long or wide tables, or six or more
+sections. Inspect desktop and narrow layouts plus the states relevant to the
+risk. Report exactly what was reviewed. Do not imply rendered or interaction
 proof from source inspection.

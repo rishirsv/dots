@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Review: bind publication to the verified candidate</title>
+<title>One verified release candidate survives every gate</title>
 <style>
 /* GENERATED from DESIGN.md by scripts/generate-theme.mjs — do not edit.
  * Tokens + base document styles for dots HTML artifacts. Inline this file
@@ -518,35 +518,78 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
   }
   .recommendation p { margin: 0; }
   .recommendation p + p { margin-top: 10px; }
-  .recommendation strong { font-weight: 700; }
+.recommendation strong { font-weight: 700; }
+
+.process-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+    gap: 24px;
+    list-style: none;
+    margin: 0 0 var(--section);
+    padding: 0;
+  }
+  .process-step { position: relative; min-width: 0; }
+  .process-step:not(:last-child)::after {
+    content: "\2192";
+    position: absolute;
+    top: 3px;
+    right: -17px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  .process-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 10px;
+    border: 1px solid var(--a20);
+    border-radius: 50%;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .process-title { font-size: 14px; font-weight: 600; line-height: 1.45; }
+  .process-detail { margin: 4px 0 0; color: var(--text-muted); font-size: 12px; line-height: 1.55; }
+  @media (max-width: 680px) {
+    .process-steps { grid-template-columns: 1fr; gap: 16px; }
+    .process-step {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      column-gap: 12px;
+    }
+    .process-marker { grid-row: 1 / span 2; margin: 0; }
+    .process-step:not(:last-child)::after {
+      content: "";
+      top: 27px;
+      bottom: -17px;
+      left: 12px;
+      right: auto;
+      width: 1px;
+      background: var(--a20);
+    }
+  }
 </style>
 </head>
 <body>
 <div data-component="page-shell" class="page" data-layout="wide">
   <header class="stagger">
-    <p class="context-line">sample / pull request walkthrough</p>
-    <div class="title-row">
-      <h1>Review: bind publication to the verified candidate</h1>
-      <span class="status">review</span>
-    </div>
-    <p class="dek">This change removes a rebuild between validation and upload. Review the ownership boundary first, then the focused behavior and proof.</p>
+    <h1>One verified release candidate now survives every gate</h1>
+    <p class="dek">The release command no longer rebuilds between validation and upload. The artifact that passes verification is the only artifact publication can receive. This PR changes candidate identity and handoff; build rules, verification rules, and production rollout stay outside its scope.</p>
   </header>
 
-  <div class="reading-column"><section id="thesis"><h2>What changes for the operator</h2><p>The release command still builds, validates, and uploads. Internally, those stages now share one immutable candidate instead of reconstructing it between gates.</p><div data-component="callout" class="callout"><p><strong>Review focus.</strong> Confirm that no path can call publication without the verification receipt for the same candidate.</p></div></section></div>
-  <section id="files"><h2>Read these files in this order</h2><ul data-component="file-map" class="file-map">
-    <li class="file-map-item"><div class="file-path">src/release/types.ts</div><div class="file-role"><strong>Contract.</strong> Defines candidate identity and the verified receipt.</div></li>
-    <li class="file-map-item"><div class="file-path">src/release/run.ts</div><div class="file-role"><strong>Orchestration.</strong> Threads the candidate through each stage.</div></li>
-    <li class="file-map-item"><div class="file-path">src/release/publish.ts</div><div class="file-role"><strong>Boundary.</strong> Accepts only a verified receipt.</div></li>
-  </ul></section>
-  <section id="diff"><h2>The meaningful change</h2><div data-component="diff-block" class="diff-block"><div class="diff-head">src/release/run.ts</div><div class="diff-annotation"><pre class="diff-annotation-code"><div class="diff-line del"><span class="diff-line-number">28</span><span class="diff-gutter">-</span>await publish(await build(config));</div><div class="diff-line add"><span class="diff-line-number">28</span><span class="diff-gutter">+</span>const receipt = await verify(candidate);</div><div class="diff-line add"><span class="diff-line-number">29</span><span class="diff-gutter">+</span>await publish(receipt);</div></pre><p class="diff-note"><strong>The type carries the proof.</strong> Publication no longer has access to build configuration, so it cannot silently create a different artifact.</p></div></div></section>
-  <section id="findings"><h2>Review findings</h2><ol data-component="finding-list" class="finding-list">
-    <li class="finding" data-severity="medium"><div class="finding-severity">Medium</div><div><h3>The retry path must preserve the receipt</h3><p><strong>Evidence.</strong> Network retries re-enter the publisher after the candidate is uploaded.</p><p><strong>Consequence.</strong> Rebuilding on retry would reopen the identity gap.</p><p class="finding-action"><strong>Action.</strong> Persist and reuse the original upload receipt.</p></div></li>
-    <li class="finding" data-severity="low"><div class="finding-severity">Low</div><div><h3>The failure message can name the candidate</h3><p><strong>Evidence.</strong> Current output reports only the stage name.</p><p class="finding-action"><strong>Action.</strong> Add the candidate identifier to the terminal receipt.</p></div></li>
-  </ol></section>
-  <section id="proof"><h2>Validation evidence</h2><div data-component="data-table" class="table-scroll"><table><thead><tr><th>Check</th><th>Result</th><th>What it establishes</th></tr></thead><tbody><tr><td>Candidate contract tests</td><td>Pass</td><td>Identity survives each stage</td></tr><tr><td>Publisher retry fixture</td><td>Pass</td><td>Retry reuses the receipt</td></tr><tr><td>Production upload</td><td>Not run</td><td>External behavior remains unverified</td></tr></tbody></table></div></section>
-  <div class="reading-column"><section id="decision"><h2>Reviewer decision</h2><div data-component="recommendation" class="recommendation"><p><strong>Approve after the retry path persists the original receipt.</strong> The main ownership change is sound; that focused correction prevents the only observed route back to an unproven candidate.</p></div></section></div>
+  <div class="reading-column"><section id="failure"><h2>Why the old release path was unsafe</h2><p>Verification approved one build, but publication asked the build system to create another. Even when both builds began from the same configuration, the uploaded bytes were not the bytes that had passed the gate.</p><div data-component="callout" class="callout"><p><strong>The practical failure:</strong> a dependency or generated file could change between the two builds, allowing an unverified artifact to reach production.</p></div></section></div>
 
-  <footer class="sources">Illustrative reference: replace all sample claims, dates, metrics, paths, and decisions with grounded source material.</footer>
+  <section id="before-now"><h2>Before and now</h2><div data-component="data-table" class="table-scroll"><table><thead><tr><th>Moment</th><th>Before</th><th>Now</th></tr></thead><tbody><tr><td>Build</td><td>Created a temporary artifact for verification.</td><td>Creates one candidate with a stable identity.</td></tr><tr><td>Verification</td><td>Returned success without carrying the artifact forward.</td><td>Returns a receipt bound to that candidate.</td></tr><tr><td>Publication</td><td>Rebuilt from configuration and uploaded the new output.</td><td>Accepts only the verified receipt and uploads its candidate.</td></tr><tr><td>Retry</td><td>Could rebuild again after a network failure.</td><td>Reuses the same receipt and candidate.</td></tr></tbody></table></div></section>
+
+  <section id="example"><h2>Follow one release through the new boundary</h2><ol data-component="process-steps" class="process-steps"><li class="process-step"><span class="process-marker">1</span><div class="process-title">Build</div><p class="process-detail">The runner creates candidate <code>web-1842</code> with one content digest.</p></li><li class="process-step"><span class="process-marker">2</span><div class="process-title">Verify</div><p class="process-detail">The verifier binds its receipt to that candidate and digest.</p></li><li class="process-step"><span class="process-marker">3</span><div class="process-title">Publish</div><p class="process-detail">The publisher receives the receipt, not build configuration.</p></li><li class="process-step"><span class="process-marker">4</span><div class="process-title">Retry</div><p class="process-detail">A failed upload reuses the receipt, so the bytes cannot change.</p></li></ol></section>
+
+  <section id="ownership"><h2>Where the responsibilities live</h2><div data-component="data-table" class="table-scroll"><table><thead><tr><th>Part</th><th>Plain-language responsibility</th><th>Exact change</th><th>Why it matters</th></tr></thead><tbody><tr><td><code>release/types.ts</code></td><td>Defines the candidate and proof carried between stages.</td><td>Adds stable identity and a receipt bound to one digest.</td><td>The contract makes substituting another build invalid.</td></tr><tr><td><code>release/run.ts</code></td><td>Coordinates the release.</td><td>Builds once and passes the same candidate through verification and publication.</td><td>The safe path is the ordinary path.</td></tr><tr><td><code>release/publish.ts</code></td><td>Controls what can be uploaded.</td><td>Accepts a verified receipt instead of build configuration.</td><td>The publisher can no longer rebuild.</td></tr></tbody></table></div></section>
+
+  <section id="scope"><h2>The boundary of this PR</h2><div data-component="data-table" class="table-scroll"><table><thead><tr><th>Included</th><th>Deliberately unchanged or deferred</th></tr></thead><tbody><tr><td>One candidate identity across build, verification, upload, and retry</td><td>How candidates are built</td></tr><tr><td>A publisher contract that requires proof</td><td>The verification rules themselves</td></tr><tr><td>Retry behavior that preserves the original receipt</td><td>Production rollout and a live registry upload</td></tr></tbody></table></div></section>
+
+  <section id="proof"><h2>What is proven, and what is not</h2><div data-component="data-table" class="table-scroll"><table><thead><tr><th>Scenario exercised</th><th>What the evidence establishes</th><th>Remaining limit</th></tr></thead><tbody><tr><td>A candidate passes through every in-process stage</td><td>The identity and digest remain unchanged.</td><td>Does not exercise an external registry.</td></tr><tr><td>An upload fails once and retries</td><td>The retry reuses the original receipt and candidate.</td><td>Does not simulate a process restart.</td></tr><tr><td>The publisher is called without a receipt</td><td>The contract rejects the call before upload.</td><td>A live production upload is still unverified.</td></tr></tbody></table></div><div data-component="callout" class="callout warn"><p><strong>Residual risk and containment:</strong> a process restart could expose a receipt-persistence gap and a live registry could behave differently from the fixture. Keep rollout non-production until a restart retry and one external upload preserve candidate <code>web-1842</code>.</p></div></section>
 </div>
 
 </body>

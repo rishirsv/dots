@@ -4,7 +4,8 @@ Use these only for a page whose source material lacks a deliberate reading
 order. Preserve an existing strong structure. A recipe arranges supplied
 content; it never invents a claim, fills an evidence gap, or makes a decision
 the source did not make. A specialized route such as a PR walkthrough or code
-change explainer takes precedence.
+change explainer takes precedence. Implementation plans use
+[implementation-plans.md](implementation-plans.md) instead of a fixed recipe.
 
 ## Decision brief
 

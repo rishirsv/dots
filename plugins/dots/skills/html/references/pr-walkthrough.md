@@ -37,25 +37,47 @@ the unknown rather than smoothing it over.
 
 ## Build a teaching story
 
-Choose sections from the PR's content. Do not turn the list into
-a standard set of headings, force empty sections, or organize the page by file
-or commit order. Name sections in product language.
+Derive the document shape from the change. Before outlining, identify the
+former condition, failure, constraint, or opportunity; the practical result;
+the included and excluded scope; the runtime actors and facts that changed; and
+the evidence gap that matters most. This is a private change map, not a rendered
+section.
 
-Every walkthrough needs this order, although adjacent parts may be
-combined when the change is small:
+Choose the reading order that best explains the dominant change. These are
+examples, not templates:
 
-1. **Outcome.** Lead with what is now meaningfully different and why it matters
-   to users, the product, or the team. Use plain language and present the
-   concrete result before repository terminology.
-2. **Before and after.** Give only the prior context needed to understand the
-   change, then explain how the system works now. Contrast behavior and
-   responsibility, not lists of old and new files.
-3. **Complete change tour.** Explain every meaningful change, grouped by product
-   responsibility, user journey, or dependency. Connect each group to the
-   central idea and its consequence.
-4. **Evidence and status.** Explain what proves the important behavior, what is
-   not verified, what remains unfinished, and any decision the reader still
-   needs to make.
+- **User-journey change:** former problem -> before/after experience -> one
+  realistic journey -> important states and boundaries -> proof
+- **Ownership or architecture change:** former failure -> competing or missing
+  responsibility -> new owner and handoffs -> product consequence -> proof
+- **Data or migration change:** former facts -> transformation -> new facts and
+  identities -> cutover, removal, or recovery -> proof
+- **Reliability fix:** observed failure -> cause -> changed mechanism ->
+  recovered and failed states -> proof
+- **Foundation or staged delivery:** capability being enabled -> foundation
+  added -> what is shipping, prepared, and remaining -> adoption boundary
+
+Combine those spines when the change genuinely crosses them, and invent a
+better one when needed. Do not organize the page by file, commit, diff order,
+or a reusable heading template. Name sections in product language and keep the
+smallest structure that teaches the complete change.
+
+Every walkthrough must cover these invariants, but they do not need their own
+headings and one section may satisfy several:
+
+- the actual work and its observable result
+- the specific failure, constraint, or opportunity that made it necessary
+- what the PR includes, deliberately excludes, removes, and leaves unchanged
+- how one concrete action, input, or state moves through the relevant actors
+  and facts to reach its result
+- the material before/after distinction in behavior, responsibility, or data
+- consequential residual risks, their user or operational consequence, and the
+  relevant containment or decision boundary
+- what evidence proves consequential behavior and what remains unverified
+
+The first screen should give a time-constrained reviewer the result, the need,
+and the scope boundary. The rest of the page should earn its length by
+explaining mechanism, consequence, and proof rather than repeating summaries.
 
 Add teaching sections only when the change calls for them:
 
@@ -67,7 +89,7 @@ Add teaching sections only when the change calls for them:
 | Stored data or persistence changed | Explain which facts existed before, which exist now, and why the distinction matters. |
 | A migration, deletion, or hard cut occurred | State what was removed, what replaces it, and what cannot continue unchanged. |
 | An external service or dataset is involved | Separate what is shipping, what is only prepared, and the concrete adoption work remaining. |
-| UI or visual behavior changed | Use real before/after evidence or representative states when available. |
+| UI or visual behavior changed | Show the actual screen composition with matched evidence or UI-shaped wireframes of the changed states. |
 | Permissions, privacy, security, or trust changed | Explain the user-facing trust boundary and failure consequence. |
 | Performance or reliability changed | Name the former bottleneck or failure, the mechanism that changed, and the measured result. |
 | Developer infrastructure changed | Explain the downstream product capability or operating improvement it enables. |
@@ -79,6 +101,12 @@ it through the system. Show how a realistic input, action, or state becomes an
 observable result. Generalize only after the example establishes the
 explanation. For a small fix, a short before, cause, after, and evidence story
 may be the complete walkthrough.
+
+When several walkthroughs belong together, use one quiet contents page. Give
+each PR or stack one row with the actual change, why it matters, and what
+deserves attention. Add a stack overview or consolidated verification page only
+when it explains cumulative behavior that the individual pages cannot. Keep one
+navigation layer and do not repeat the same routes in multiple rails.
 
 ## Teach at the reader's level
 
@@ -98,6 +126,12 @@ glossary. File and symbol names are optional supporting links, never required
 reading or the substance of a section. Say what is confirmed, inferred, and
 unknown.
 
+If files, types, routes, or symbols help establish coverage, put them after the
+concept is clear. A useful row pairs the part with its plain-language
+responsibility, exact change, and consequence. Do not present a bare file list,
+and do not label a section an "execution path" unless it explains every
+important handoff from the initiating action to the observable result.
+
 Tie internal detail to a consequence. When describing a schema, controller,
 queue, adapter, or test, explain the fact it represents, the behavior it owns,
 the failure it prevents, or the product capability it enables. Prefer a concrete
@@ -109,16 +143,35 @@ Use visuals only when they replace prose:
 - `process-steps` for one linear causal or end-to-end path
 - `flow-diagram` only when the path branches or rejoins
 - `data-table` for repeated mappings such as product surface to changed behavior
-- real screenshots or clips for visual and interaction changes
+- real screenshots, clips, or screen-shaped wireframes for visual and
+  interaction changes; include the controls, hierarchy, values, and states that
+  actually changed
 - `callout` for an unfinished boundary or limitation the reader must not miss
 
-Do not decorate the page with architecture diagrams, KPI tiles, or test counts
-that do not improve understanding.
+Do not substitute numbered story cards or a generic process diagram for a UI
+change. Do not put types, files, or repeated mappings into bento cards when rows
+make comparison easier. Describe removed behavior in ordinary before/now prose
+or a table, never with strike-through styling.
+
+Avoid decorative horizontal rules, nested or double borders, and status chips
+that fragment a long explanation. Do not decorate the page with architecture
+diagrams, KPI tiles, test counts, merge-state boxes, or review metadata that do
+not improve understanding.
+
+Keep internal production narration out of the artifact. Do not say that the
+page, diagram, or explanation was generated, derived from a branch, source
+backed, assembled from a diff, or designed to tell the reader how to read it.
+Use an ordinary product heading and explain the change itself.
 
 ## State evidence and incompleteness honestly
 
 Describe what validation proves rather than presenting test totals as the
-story. Keep these states distinct when external adoption or staged delivery is
+story. Omit approval state, reviewer counts, check labels, checked times,
+commit identifiers, mergeability, and design-review bookkeeping unless one of
+those facts materially changes the reader's product or delivery decision.
+"Passed" alone is not evidence; name the behavior or risk the check exercised.
+
+Keep these states distinct when external adoption or staged delivery is
 involved:
 
 - **Shipping:** implemented and available in the resulting product or system.
@@ -140,10 +193,15 @@ accurately explain:
 - what the relevant before/after distinction is
 - which product areas, stored facts, and outside services are affected
 - what was removed, prepared but not delivered, or left unfinished
+- which consequential risks remain and how they are contained or handed off
 - what evidence supports the result and what remains unverified
 
 Confirm that every meaningful change from the list appears in the walkthrough
 and every supporting change is accounted for without being given equal weight.
+Confirm that every rendered section can point to a source signal or reviewer
+decision it helps explain. Remove sections whose only job is to display
+bookkeeping or prove that the artifact was made.
+
 Remove code-reading instructions such as “start with this
 file,” “review this module,” or “follow this test.” If the reader still needs a
 separate explanation to understand the page, the walkthrough is not finished.
