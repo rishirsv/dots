@@ -4,7 +4,7 @@ Use this when turning source material into a finished page or fragment. The
 visual style and shared component rules live in
 [DESIGN.md](DESIGN.md).
 
-## Choose the level of polish
+## Select structure
 
 Use a simple title, introduction, sections, and only the components the content
 needs by default. Add a table of contents, figures, pull quotes, motion, or a
@@ -32,39 +32,34 @@ meaning the reader would otherwise miss.
   simulation, drill-down, mutable form state, or step-through control is the
   page's main value, use an interactive-visualization or product-UI
   workflow instead of building a half-interactive document.
-- Never add a chip or badge beside the title. When a real status materially
-  changes the decision, state it as ordinary subject-matter prose in the page.
-- Do not add system meta-narration. Omit sections, deks, callouts, and controls
-  that tell the audience how to read, review, navigate, use, or respond to the
-  artifact, or explain how the page arranged its evidence. Headings such as
-  "How to read this board," "How to review this report," and "What this page
-  shows" are prohibited. Start with the actual finding, argument, or evidence.
 
 ## Read only what applies
 
 For a small edit, read the page and the source for its named component. For a
-new page, also use the finished-page examples and component catalog. For a novel
-canvas or important long-lived page, read `DESIGN.md` and check the result with
-actual-page screenshots. Read specialized references only when the page uses
-them.
+new non-template page, also use the finished-page examples and component
+catalog. For a novel canvas or important long-lived page, read `DESIGN.md` and
+check the result with actual-page screenshots. Read specialized references
+only when the page uses them.
 
 ## Page assembly
 
-1. Open [the finished-page examples](../assets/outcomes/index.html), choose the
+1. For a non-template page, open
+   [the finished-page examples](../assets/outcomes/index.html), choose the
    preview closest to the reader's need, and inspect that page. It shows useful
    reading order, density, and use of evidence; it does not dictate an exact
    section list. Inspect a second example only when the first misses a distinct
-   part of the request.
-2. Start from `page-shell` — it owns the context line, title, short introduction
-   (`dek`), footer, and width mode. Choose
+   part of the request. When a valid template manifest is supplied, inspect its
+   retained reference instead and do not load a generic outcome example.
+2. Start from `page-shell`, which supplies the context line, title, short
+   introduction (`dek`), footer, and width mode. Choose
    `article` for prose-led work, `wide` for parallel evidence, and `canvas` for
    visual references. Keep canvas prose inside `.reading-column`. Inline
    `theme.css` verbatim before component CSS; never edit its tokens or add
    colors inline.
 3. Preserve a strong reading order already present in the source material. If
-   it has none, use the selected example or choose the closest reading order from
-   [recipes.md](recipes.md); neither may supply missing claims or evidence.
-   Outline sections before styling. Each
+   it has none, use the selected example or choose suitable structures from
+   [form-factors.md](form-factors.md); neither may supply missing claims or
+   evidence. Outline sections before styling. Each
    `<section id="...">` gets an `<h2>`; ids are short and stable. Add
    `toc-rail` for six or more sections, or when a long reference page benefits
    from non-linear lookup. Omit it from short, simple pages; on narrow
@@ -93,19 +88,12 @@ them.
    for text sections. Without `page-behavior`, the page remains static and
    complete.
    Generate the forms supported by `scripts/chart.mjs`; author other forms
-   directly against the same tokens and accessibility contract. See
+   directly against the same tokens and accessibility rules. See
    [charts.md](charts.md#generate-supported-charts-build-others).
 7. Close with `recommendation` when the document commits to something, then
    the sources footer. Appendix material (raw data, full logs, candidate
    configs) goes in `disclosure` blocks after the footer, never before the
    conclusion.
-
-### Product mocks inside plans
-
-Apply [the plan-specific mock guidance](implementation-plans.md#product-mocks-inside-plans).
-It owns when to compare directions, which states to show, and how to label
-illustrative UI, including when an unresolved decision requires the
-product-design workflow.
 
 ### Fast assembly
 
@@ -159,7 +147,7 @@ a full page:
   var(--font-sans);` and the component's own CSS rewritten under
   `.dots-block`. The fragment carries its own background and text style, so it
   reads as a complete block instead of partly inheriting the destination's fonts.
-- No script, no reveals: the destination owns behavior. Ship static — if the
+- No script, no reveals: keep behavior with the destination. Ship static — if the
   component's markup has `class="reveal"`, drop it (or add `is-in`);
   nothing may depend on our JS.
 - No TOC and no general footer. One quiet caption line may name an
@@ -208,10 +196,6 @@ Review the source before delivery:
 - Remove title chips and system meta-narration. The page must not tell the
   audience how to read, review, navigate, use, or respond to the artifact, or
   describe its own structure. Lead with subject matter.
-- For an implementation plan, apply the universal and activated gates in
-  [implementation-plans.md](implementation-plans.md#readiness-check). Do not
-  present the plan as implementation-ready while an applicable material gate
-  remains unresolved.
 
 Use browser or rendered review when the user asks for it, when visual proof is
 the task, or when the page carries meaningful layout risk: custom CSS, a wide

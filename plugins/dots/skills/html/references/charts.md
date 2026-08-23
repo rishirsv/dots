@@ -28,7 +28,7 @@ comment, change the spec, then run `node scripts/chart.mjs --from-fragment
 <file>`. The command rewrites that fragment file in place.
 
 Build chart types the script does not support when they make the data easier to
-understand. Follow the mark specs and accessibility contract below, use only
+understand. Follow the mark specs and accessibility rules below, use only
 the `x-chart` roles in [DESIGN.md](DESIGN.md), and preserve the closest registry
 component's structure where it applies.
 

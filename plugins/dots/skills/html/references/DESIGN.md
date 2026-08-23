@@ -150,9 +150,9 @@ collapsing to a compact native disclosure on narrow viewports. Linear processes
 reflow into a vertical sequence; branching diagrams and genuinely wide tables
 stay bounded inside their own containers. The page never scrolls sideways.
 
-The page shell owns the transition from its header to the first content block;
-do not hang structural spacing from the header's last child. Parallel grids
-declare their item count and may not expose empty tracks.
+The page shell supplies the transition from its header to the first content
+block; do not hang structural spacing from the header's last child. Parallel
+grids declare their item count and may not expose empty tracks.
 
 ## Elevation & Depth
 

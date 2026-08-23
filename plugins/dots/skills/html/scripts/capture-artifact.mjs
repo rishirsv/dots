@@ -238,7 +238,7 @@ async function launchChrome(chrome) {
       setTimeout(() => child.kill("SIGKILL"), 250).unref();
       setTimeout(() => {
         try { rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }); }
-        catch { /* The OS temp sweep owns a profile Chrome has not released yet. */ }
+        catch { /* The OS cleans up a profile Chrome has not released yet. */ }
       }, 500);
     },
   };

@@ -9,7 +9,7 @@
  * Output:  assets/theme.css (tokens + alpha ladder + base styles + motion).
  *          --check exits 1 if the committed theme.css is stale.
  *
- * DESIGN.md is canonical; never edit theme.css by hand. The x-dark,
+ * DESIGN.md is the source; never edit theme.css by hand. The x-dark,
  * x-alpha-steps, and x-motion keys are generator-owned extensions beyond the
  * design.md alpha spec.
  */

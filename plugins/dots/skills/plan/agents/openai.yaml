@@ -1,0 +1,10 @@
+interface:
+  display_name: "Plan"
+  short_description: "Build an implementation-ready plan"
+  icon_small: "../../assets/icon.png"
+  icon_large: "./assets/preview.png"
+  brand_color: "#1F5EFF"
+  default_prompt: "Use $plan to inspect the current system and produce an implementation-ready plan for this change."
+
+policy:
+  allow_implicit_invocation: false

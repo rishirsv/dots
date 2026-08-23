@@ -1,9 +1,10 @@
 <!doctype html>
+<!-- Retained adaptive visual reference for $plan. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>One verified release candidate survives every gate</title>
+<title>Make release proof follow one candidate</title>
 <style>
 /* GENERATED from DESIGN.md by scripts/generate-theme.mjs — do not edit.
  * Tokens + base document styles for dots HTML artifacts. Inline this file
@@ -289,6 +290,35 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
   }
   .callout-stack { display: flex; flex-direction: column; gap: 10px; }
 
+.mockup-frame { margin: 0 0 var(--section); }
+  .mockup-surface {
+    min-height: 280px;
+    border: 1px solid var(--a20);
+    border-radius: var(--r-card);
+    padding: 28px;
+    background: var(--background);
+  }
+  .mockup-toolbar {
+    display: flex;
+    gap: 6px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--a12);
+  }
+  .mockup-toolbar span { width: 7px; height: 7px; border-radius: 50%; background: var(--a20); }
+  .mockup-layout { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 28px; padding-top: 28px; }
+  .mockup-nav, .mockup-main { display: grid; align-content: start; gap: 10px; }
+  .mockup-line { height: 10px; background: var(--a8); border-radius: var(--r-inline); }
+  .mockup-line.is-strong { background: var(--foreground); opacity: .82; width: 72%; height: 16px; }
+  .mockup-line.is-accent { background: var(--accent); width: 44%; }
+  .mockup-line.is-short { width: 84%; }
+  .mockup-block { height: 96px; border: 1px solid var(--a12); border-radius: var(--r-card); margin-top: 12px; }
+  .mockup-frame figcaption { margin-top: 10px; font-size: 12px; color: var(--text-muted); }
+  @media (max-width: 600px) {
+    .mockup-surface { min-height: 220px; padding: 20px; }
+    .mockup-layout { grid-template-columns: 1fr; }
+    .mockup-nav { display: none; }
+  }
+
 .file-map { list-style: none; padding: 0; margin: 0 0 var(--section); border-top: 1px solid var(--a20); }
   .file-map-item {
     display: grid;
@@ -306,6 +336,62 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
   .file-role strong { color: var(--foreground); }
   @media (max-width: 600px) {
     .file-map-item { grid-template-columns: 1fr; gap: 4px; }
+  }
+
+.process-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+    gap: 24px;
+    list-style: none;
+    margin: 0 0 var(--section);
+    padding: 0;
+  }
+  .process-step { position: relative; min-width: 0; }
+  .process-step:not(:last-child)::after {
+    content: "\2192";
+    position: absolute;
+    top: 3px;
+    right: -17px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  .process-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 10px;
+    border: 1px solid var(--a20);
+    border-radius: 50%;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .process-step.is-current .process-marker {
+    border-color: var(--accent);
+    color: var(--accent-deep);
+    font-weight: 700;
+  }
+  .process-title { font-size: 14px; font-weight: 600; line-height: 1.45; }
+  .process-detail { margin: 4px 0 0; color: var(--text-muted); font-size: 12px; line-height: 1.55; }
+  @media (max-width: 680px) {
+    .process-steps { grid-template-columns: 1fr; gap: 16px; }
+    .process-step {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      column-gap: 12px;
+    }
+    .process-marker { grid-row: 1 / span 2; margin: 0; }
+    .process-step:not(:last-child)::after {
+      content: "";
+      top: 27px;
+      bottom: -17px;
+      left: 12px;
+      right: auto;
+      width: 1px;
+      background: var(--a20);
+    }
   }
 
 .code-panel {
@@ -421,29 +507,6 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
     .diff-note { border-top: 1px solid var(--a12); }
   }
 
-.finding-list { list-style: none; padding: 0; margin: 0 0 var(--section); }
-  .finding {
-    display: grid;
-    grid-template-columns: 68px minmax(0, 1fr);
-    gap: 16px;
-    padding: 18px 0;
-    border-top: 1px solid var(--a12);
-  }
-  .finding:last-child { border-bottom: 1px solid var(--a12); }
-  .finding-severity {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
-  }
-  .finding[data-severity="high"] .finding-severity { color: var(--danger-ink); }
-  .finding[data-severity="medium"] .finding-severity { color: var(--warning-ink); }
-  .finding h3 { margin-bottom: 6px; }
-  .finding p { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
-  .finding-action { color: var(--foreground); }
-  @media (max-width: 520px) {
-    .finding { grid-template-columns: 1fr; gap: 6px; }
-  }
-
 .table-scroll {
     overflow-x: auto;
     margin-bottom: var(--section);
@@ -506,78 +569,37 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
   }
   .recommendation p { margin: 0; }
   .recommendation p + p { margin-top: 10px; }
-.recommendation strong { font-weight: 700; }
-
-.process-steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
-    gap: 24px;
-    list-style: none;
-    margin: 0 0 var(--section);
-    padding: 0;
-  }
-  .process-step { position: relative; min-width: 0; }
-  .process-step:not(:last-child)::after {
-    content: "\2192";
-    position: absolute;
-    top: 3px;
-    right: -17px;
-    color: var(--text-muted);
-    font-size: 14px;
-  }
-  .process-marker {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    margin-bottom: 10px;
-    border: 1px solid var(--a20);
-    border-radius: 50%;
-    color: var(--text-muted);
-    font-family: var(--font-mono);
-    font-size: 11px;
-  }
-  .process-title { font-size: 14px; font-weight: 600; line-height: 1.45; }
-  .process-detail { margin: 4px 0 0; color: var(--text-muted); font-size: 12px; line-height: 1.55; }
-  @media (max-width: 680px) {
-    .process-steps { grid-template-columns: 1fr; gap: 16px; }
-    .process-step {
-      display: grid;
-      grid-template-columns: 28px minmax(0, 1fr);
-      column-gap: 12px;
-    }
-    .process-marker { grid-row: 1 / span 2; margin: 0; }
-    .process-step:not(:last-child)::after {
-      content: "";
-      top: 27px;
-      bottom: -17px;
-      left: 12px;
-      right: auto;
-      width: 1px;
-      background: var(--a20);
-    }
-  }
+  .recommendation strong { font-weight: 700; }
 </style>
 </head>
 <body>
 <div data-component="page-shell" class="page" data-layout="wide">
   <header class="stagger">
-    <h1>One verified release candidate now survives every gate</h1>
-    <p class="dek">The release command no longer rebuilds between validation and upload. The artifact that passes verification is the only artifact publication can receive. This PR changes candidate identity and handoff; build rules, verification rules, and production rollout stay outside its scope.</p>
+    <p class="context-line">sample / implementation plan</p>
+    <div class="title-row">
+      <h1>Make release proof follow one candidate</h1>
+    </div>
+    <p class="dek">A contained change to candidate ownership, validation receipts, and rollback—without replacing the existing build system.</p>
   </header>
 
-  <div class="reading-column"><section id="failure"><h2>Why the old release path was unsafe</h2><p>Verification approved one build, but publication asked the build system to create another. Even when both builds began from the same configuration, the uploaded bytes were not the bytes that had passed the gate.</p><div data-component="callout" class="callout"><p><strong>The practical failure:</strong> a dependency or generated file could change between the two builds, allowing an unverified artifact to reach production.</p></div></section></div>
+  <div class="reading-column"><section id="contract"><h2>Implementation contract</h2><p>One command creates a candidate. Every verification stage accepts that candidate by reference. Publication cannot rebuild it.</p><div data-component="callout" class="callout"><p><strong>Scope boundary.</strong> Preserve build commands, credential handling, and remote publication behavior; change only candidate identity and handoff.</p></div></section></div>
+  <section id="outcome"><h2>Intended operator view</h2><figure data-component="mockup-frame" class="mockup-frame"><div class="mockup-surface" role="img" aria-label="Concept release receipt with candidate, verification, and publication details"><div class="mockup-toolbar" aria-hidden="true"><span></span><span></span><span></span></div><div class="mockup-layout" aria-hidden="true"><div class="mockup-nav"><div class="mockup-line is-accent"></div><div class="mockup-line"></div><div class="mockup-line"></div></div><div class="mockup-main"><div class="mockup-line is-strong"></div><div class="mockup-line"></div><div class="mockup-line mockup-line-short"></div><div class="mockup-block"></div></div></div></div><figcaption><strong>Concept — not observed UI.</strong> One release receipt keeps the candidate, gates, and upload result in the same reading path.</figcaption></figure></section>
+  <section id="ownership"><h2>Ownership map</h2><ul data-component="file-map" class="file-map">
+    <li class="file-map-item"><div class="file-path">src/release/candidate.ts</div><div class="file-role"><strong>Change.</strong> Return an immutable candidate reference instead of a transient build directory.</div></li>
+    <li class="file-map-item"><div class="file-path">src/release/verify.ts</div><div class="file-role"><strong>Change.</strong> Accept the reference and emit a structured gate receipt.</div></li>
+    <li class="file-map-item"><div class="file-path">src/release/publish.ts</div><div class="file-role"><strong>Change.</strong> Reject unverified candidates and record the remote receipt.</div></li>
+  </ul></section>
+  <section id="phases"><h2>Four contained phases</h2><ol data-component="process-steps" class="process-steps">
+    <li class="process-step"><span class="process-marker">1</span><div class="process-title">Define identity</div><p class="process-detail">Candidate path, checksum, and build metadata.</p></li>
+    <li class="process-step"><span class="process-marker">2</span><div class="process-title">Move gates</div><p class="process-detail">Run existing checks against the reference.</p></li>
+    <li class="process-step"><span class="process-marker">3</span><div class="process-title">Bind publish</div><p class="process-detail">Require a verified receipt.</p></li>
+    <li class="process-step"><span class="process-marker">4</span><div class="process-title">Exercise handoff</div><p class="process-detail">Use one non-production upload.</p></li>
+  </ol></section>
+  <section id="change"><h2>The core code boundary</h2><div data-component="diff-block" class="diff-block"><div class="diff-head">release.ts</div><div class="diff-annotation"><pre class="diff-annotation-code"><div class="diff-line del"><span class="diff-line-number">42</span><span class="diff-gutter">-</span>publish(await build());</div><div class="diff-line add"><span class="diff-line-number">42</span><span class="diff-gutter">+</span>publish(await verify(candidate));</div></pre><p class="diff-note"><strong>Publication loses build authority.</strong> It can only consume the candidate returned by verification.</p></div></div></section>
+  <section id="proof"><h2>Proof and rollback</h2><div data-component="data-table" class="table-scroll"><table><thead><tr><th>Gate</th><th>Proves</th><th>Failure response</th></tr></thead><tbody><tr><td>Focused unit contract</td><td>Each stage preserves candidate identity</td><td>Stop before credentials</td></tr><tr><td>Archive inspection</td><td>Expected payload and checksum</td><td>Discard candidate</td></tr><tr><td>Non-production upload</td><td>External handoff accepts the receipt</td><td>Keep old publisher entrypoint</td></tr></tbody></table></div></section>
+  <div class="reading-column"><section id="decision"><h2>Execution decision</h2><div data-component="recommendation" class="recommendation"><p><strong>Implement the candidate reference first, then move existing gates one at a time.</strong> Keep the current publisher callable until the non-production handoff succeeds; remove it in the same change that records the first complete receipt.</p></div></section></div>
 
-  <section id="before-now"><h2>Before and now</h2><div data-component="data-table" class="table-scroll"><table><thead><tr><th>Moment</th><th>Before</th><th>Now</th></tr></thead><tbody><tr><td>Build</td><td>Created a temporary artifact for verification.</td><td>Creates one candidate with a stable identity.</td></tr><tr><td>Verification</td><td>Returned success without carrying the artifact forward.</td><td>Returns a receipt bound to that candidate.</td></tr><tr><td>Publication</td><td>Rebuilt from configuration and uploaded the new output.</td><td>Accepts only the verified receipt and uploads its candidate.</td></tr><tr><td>Retry</td><td>Could rebuild again after a network failure.</td><td>Reuses the same receipt and candidate.</td></tr></tbody></table></div></section>
-
-  <section id="example"><h2>Follow one release through the new boundary</h2><ol data-component="process-steps" class="process-steps"><li class="process-step"><span class="process-marker">1</span><div class="process-title">Build</div><p class="process-detail">The runner creates candidate <code>web-1842</code> with one content digest.</p></li><li class="process-step"><span class="process-marker">2</span><div class="process-title">Verify</div><p class="process-detail">The verifier binds its receipt to that candidate and digest.</p></li><li class="process-step"><span class="process-marker">3</span><div class="process-title">Publish</div><p class="process-detail">The publisher receives the receipt, not build configuration.</p></li><li class="process-step"><span class="process-marker">4</span><div class="process-title">Retry</div><p class="process-detail">A failed upload reuses the receipt, so the bytes cannot change.</p></li></ol></section>
-
-  <section id="ownership"><h2>Where the responsibilities live</h2><div data-component="data-table" class="table-scroll"><table><thead><tr><th>Part</th><th>Plain-language responsibility</th><th>Exact change</th><th>Why it matters</th></tr></thead><tbody><tr><td><code>release/types.ts</code></td><td>Defines the candidate and proof carried between stages.</td><td>Adds stable identity and a receipt bound to one digest.</td><td>The contract makes substituting another build invalid.</td></tr><tr><td><code>release/run.ts</code></td><td>Coordinates the release.</td><td>Builds once and passes the same candidate through verification and publication.</td><td>The safe path is the ordinary path.</td></tr><tr><td><code>release/publish.ts</code></td><td>Controls what can be uploaded.</td><td>Accepts a verified receipt instead of build configuration.</td><td>The publisher can no longer rebuild.</td></tr></tbody></table></div></section>
-
-  <section id="scope"><h2>The boundary of this PR</h2><div data-component="data-table" class="table-scroll"><table><thead><tr><th>Included</th><th>Deliberately unchanged or deferred</th></tr></thead><tbody><tr><td>One candidate identity across build, verification, upload, and retry</td><td>How candidates are built</td></tr><tr><td>A publisher contract that requires proof</td><td>The verification rules themselves</td></tr><tr><td>Retry behavior that preserves the original receipt</td><td>Production rollout and a live registry upload</td></tr></tbody></table></div></section>
-
-  <section id="proof"><h2>What is proven, and what is not</h2><div data-component="data-table" class="table-scroll"><table><thead><tr><th>Scenario exercised</th><th>What the evidence establishes</th><th>Remaining limit</th></tr></thead><tbody><tr><td>A candidate passes through every in-process stage</td><td>The identity and digest remain unchanged.</td><td>Does not exercise an external registry.</td></tr><tr><td>An upload fails once and retries</td><td>The retry reuses the original receipt and candidate.</td><td>Does not simulate a process restart.</td></tr><tr><td>The publisher is called without a receipt</td><td>The contract rejects the call before upload.</td><td>A live production upload is still unverified.</td></tr></tbody></table></div><div data-component="callout" class="callout warn"><p><strong>Residual risk and containment:</strong> a process restart could expose a receipt-persistence gap and a live registry could behave differently from the fixture. Keep rollout non-production until a restart retry and one external upload preserve candidate <code>web-1842</code>.</p></div></section>
+  <footer class="sources">Illustrative reference: replace all sample claims, dates, metrics, paths, and decisions with grounded source material.</footer>
 </div>
 
 </body>

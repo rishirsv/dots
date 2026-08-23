@@ -3,7 +3,7 @@
  * Package a real HTML body fragment with the dots page shell, theme, and the
  * CSS or behavior for explicitly selected registry components.
  *
- * The caller owns narrative, component choice, and markup. This script only
+ * The caller supplies the narrative, component choice, and markup. This script
  * removes repeated packaging work and keeps component CSS deduplicated.
  */
 

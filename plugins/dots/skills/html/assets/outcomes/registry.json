@@ -5,7 +5,7 @@
       "name": "decision-comparison",
       "title": "Decision comparison",
       "file": "decision-comparison.html",
-      "job": "Choose among materially different approaches and commit to one.",
+      "job": "Choose among meaningfully different approaches and commit to one.",
       "layout": "wide",
       "treatment": "editorial",
       "shape": ["decision frame", "option cases", "shared criteria", "tradeoffs", "recommendation"],
@@ -14,11 +14,11 @@
     {
       "name": "technical-explainer",
       "title": "Technical explainer",
-      "file": "technical-explainer.html",
+      "file": "../../../explain-code/assets/reference.html",
       "job": "Build an accurate mental model of a system or change.",
       "layout": "wide",
       "treatment": "editorial",
-      "shape": ["thesis", "annotated flow", "ownership map", "worked example", "gotchas"],
+      "shape": ["thesis", "annotated flow", "responsibility map", "worked example", "gotchas"],
       "boundary": "If the intended result is durable repository documentation, route to docs-writer."
     },
     {
@@ -44,17 +44,17 @@
     {
       "name": "implementation-plan",
       "title": "Implementation plan",
-      "file": "implementation-plan.html",
-      "job": "Make a change executable with explicit ownership, proof, and rollback.",
+      "file": "../../../plan/assets/reference.html",
+      "job": "Make a change executable with clear responsibilities, proof, and rollback.",
       "layout": "wide",
       "treatment": "editorial",
-      "shape": ["contract", "concept outcome", "ownership map", "phases", "proof", "rollback"],
-      "boundary": "Mutable prototypes and product UI belong to design; this page describes the contract."
+      "shape": ["chosen outcome", "responsibility map", "phases", "proof", "rollback"],
+      "boundary": "Mutable prototypes and production UI belong to design; this page explains what to build."
     },
     {
       "name": "pr-walkthrough",
       "title": "PR walkthrough",
-      "file": "pr-walkthrough.html",
+      "file": "../../../explain-code/assets/examples/pr-walkthrough.html",
       "job": "Help a reviewer understand the actual work, why it was necessary, its scope, mechanism, and proof.",
       "layout": "wide",
       "treatment": "editorial",

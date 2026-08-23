@@ -1,83 +1,54 @@
 ---
 name: html
-description: "Creates self-contained HTML pages and fragments from source material: reports, visual explainers, plans, PR walkthroughs, charts, diagrams, and static mocks. Use whenever information should become a browser-openable, shareable artifact, even without an HTML request; not for product UI, interactive visualizations, durable repository docs, or slides."
+description: "Creates and edits self-contained HTML pages, fragments, and static product mocks. Use for browser-openable HTML, product mockups, template-backed HTML artifacts, or creating a template skill; not for production UI implementation, interactive visualizations, underlying research or planning, durable docs, or slides."
 ---
 
 # HTML
 
-Create one self-contained HTML page or one embeddable fragment that a reader can
-open, understand, and share. Keep confirmed facts, inference, and unknowns
-distinct.
+Create one self-contained page or one embeddable fragment that a reader can
+open, understand, and share. Read [authoring.md](references/authoring.md) before
+building; it explains how to build, edit, check, and deliver the result.
 
-Choose the output before writing:
+## Build from prepared material
 
-- **Page:** shell, theme, components, and optional behavior. Make no external
-  requests; use system fonts and embed visual assets.
-- **Fragment:** one scoped component with no shell or behavior dependency. Use
-  this for a chart or block that will be pasted into another surface. See
-  [fragment delivery](references/authoring.md#fragment-delivery).
+When another skill calls `$html`, use the audience, verified material, required
+points, decisions, and reading order it provides. Do not redo its research or
+second-guess its decisions. Turn that material into sound HTML without dropping
+evidence labels or required coverage.
 
-Read [authoring.md](references/authoring.md) before building.
+When the caller supplies an `artifact-template.json` with `kind: "html"`:
 
-## Build
+1. Open the retained reference and preview relative to the calling skill. Keep
+   them unchanged and inspect both before composing.
+2. Follow the content and structure supplied by the calling skill. Use the
+   reference for visual treatment; for an adaptive template, do not copy its
+   sample headings, claims, or order as slots.
+3. Deliver the new, verified artifact—not the reference, preview, or working
+   source.
 
-1. **Understand the reader and source.** Decide what the reader must understand
-   or decide. Read the relevant sources, including code or a diff when the page
-   explains existing software. For an implementation plan, inspect the parts of
-   the current experience, ownership, persistence, data loading, and product
-   direction that the proposed change can affect before choosing sections or
-   delivery slices.
-2. **Choose a reading order.** For a page, open the
-   [finished-page examples](assets/outcomes/index.html) and inspect the one
-   closest to the reader's need. Use its reading order, not its sample content
-   or exact section list. Skip this for a fragment. Preserve a strong order that
-   already exists in the source.
-3. **Use the smallest useful design.** Do not invent controls, KPI rows, cards,
-   legends, or secondary facts to make the page feel complete. If filtering,
-   simulation, or mutable state is the main job, use an interactive
-   visualization or product-UI workflow instead.
-4. **Build from the supplied visual system.** Use
-   [assets/theme.css](assets/theme.css) for every page. Choose components from
-   [assets/atlas.html](assets/atlas.html), copy their source from
-   `assets/registry/`, and replace all example content. Use
-   `scripts/assemble.mjs` for pages with several components. Custom CSS may use
-   only the existing design tokens.
-5. **Use real content.** Do not invent numbers, claims, or filler. Trace figures
-   to their sources and mark important gaps as "not verified." Include a sources
-   footer only when it helps the reader. Remove tool names, prompts, private
-   paths, scratch files, and generation details. Never add a title chip or
-   system meta-narration: do not explain how to read, review, navigate, use, or
-   respond to the artifact, or describe how its content is arranged. Begin with
-   the subject matter itself.
-6. **Review before delivery.** Apply the checks in
-   [authoring.md](references/authoring.md#before-delivery).
+Read only what the artifact needs:
 
-Read only the guidance the page needs:
-
+- [form-factors.md](references/form-factors.md) when the source lacks a strong
+  structure;
 - [writing-style.md](../../references/writing-style.md) when prose carries the
   page's argument or explanation;
-- [implementation-plans.md](references/implementation-plans.md) for product,
-  migration, architecture, and technical implementation plans; plans always
-  apply the shared writing-style reference;
 - [charts.md](references/charts.md) for charts;
 - [diagrams.md](references/diagrams.md) for diagrams;
 - [generated-images.md](references/generated-images.md) before using `imagegen`;
-- [recipes.md](references/recipes.md) when the source lacks a reading order;
-- [pr-walkthrough.md](references/pr-walkthrough.md) for a pull-request
-  walkthrough; and
-- [code-change-explainer.md](references/code-change-explainer.md) for an HTML
-  explanation of completed code changes.
+- [creating-templates.md](references/creating-templates.md) with `skill-author`
+  when creating or revising an HTML-template skill.
 
 ## Boundaries
 
-Product and app UI, interactive editors, and real form state belong to `design`.
-Exploratory visualizations, simulations, and filter-driven analysis belong to
-an interactive-visualization workflow. Static HTML mocks without product state
-belong here. Durable repository documentation belongs to `docs-writer`. Slide
-decks are out of scope.
+Use HTML for static product mocks when that is the requested deliverable. Use
+`design` for production UI, interactive editors, and real form state. Use an
+interactive-visualization workflow for exploratory simulations or analysis led
+by filters. Use `docs-writer` for repository documentation; do not use HTML for
+slides.
 
-When an HTML plan must make or validate an unresolved product-UI decision, use
-the relevant product-design workflow and use HTML to communicate the result. If
-the design is already approved or supplied, treat it as source material. HTML
-owns the artifact. Product design owns hierarchy, interaction, accessibility,
-and visual judgment.
+If the task still needs planning or code research, ask the user to select
+`$plan` or `$explain-code` first. If a product-UI choice is unresolved, settle
+it through product design before building the page. Product design decides the
+product hierarchy, interaction, accessibility requirements, and visual
+direction; HTML makes the resulting artifact readable, navigable, and
+accessible.

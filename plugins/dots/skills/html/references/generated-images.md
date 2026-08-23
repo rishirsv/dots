@@ -1,8 +1,8 @@
 # Generated images in HTML pages
 
-Read this when an original raster image would materially improve a page. These
-are the HTML integration instructions; the `imagegen` skill owns generation mode,
-prompting, editing, transparency, save paths, and image-level validation.
+Read this when an original raster image would clearly improve a page. Use
+`imagegen` to create, edit, and check the image; this file explains how to place
+the result in HTML.
 
 ## Decide whether an image earns its place
 

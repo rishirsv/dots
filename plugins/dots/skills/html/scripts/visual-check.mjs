@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Render representative responsive components in headless Chrome, emit stable
- * screenshots, and fail on observable clipping or responsive-contract defects.
+ * screenshots, and fail on visible clipping or responsive-layout defects.
  *
  * Usage: node scripts/visual-check.mjs --out-dir /path/to/screenshots
  * Set CHROME_BIN when Chrome is not in a standard macOS location.
@@ -24,7 +24,7 @@ const chromeCandidates = [
 function cleanupProfile(profile) {
   setTimeout(() => {
     try { rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }); }
-    catch { /* Chrome may still be releasing profile files; the OS temp sweep owns the remainder. */ }
+    catch { /* Chrome may still be releasing profile files; the OS cleans up the remainder. */ }
   }, 500);
 }
 
@@ -83,7 +83,7 @@ function diagnosticScript() {
     var title = document.querySelector("h1");
     var header = document.querySelector(".page > header");
     var sectionGap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--section"));
-    if (Math.abs(parseFloat(getComputedStyle(header).marginBottom) - sectionGap) > 1) failures.push("page header does not own the section gap");
+    if (Math.abs(parseFloat(getComputedStyle(header).marginBottom) - sectionGap) > 1) failures.push("page header has the wrong section gap");
     if (viewport <= 320 && parseFloat(getComputedStyle(title).fontSize) > 32) {
       failures.push("mobile title scale exceeds 32px");
     }
