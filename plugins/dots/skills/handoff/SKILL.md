@@ -12,6 +12,11 @@ Default to an inline handoff in chat. Write a file only when the user asks,
 the handoff is too large for chat, or a durable artifact is clearly needed —
 use the requested path, else a clearly named temporary path, and report it.
 
+Use a handoff at a phase boundary when the next agent should inherit the work,
+not the whole discussion: research to decision, decision to implementation,
+implementation to verification, one pull request to its dependent, or local
+proof to release. Name the phase that ended and the next atomic objective.
+
 ## Context
 
 Use the visible conversation and current workspace first: branch, dirty
@@ -22,12 +27,25 @@ or the current state is unclear — and prefer a reduced context packet over
 transcript replay. If a source is unavailable, note it under risks and
 continue.
 
+Compress by decision relevance. Keep settled decisions that constrain future
+work, current state, reusable proof, live artifacts, unresolved questions, and
+the next execution seam. Omit repeated narration, raw tool logs, superseded
+plans, rejected alternatives that no longer guard a boundary, and unrelated
+project history. Preserve a rejected direction only when repeating it is a
+credible risk; label it as an exclusion rather than retelling the debate.
+
 ## Destination
 
 Use the smallest route the user asked for: inline (default), saved file, new
 session or thread, isolated worktree, or forked conversation. Platform
 thread and workspace actions happen only when explicitly requested and the
 platform provides the tool.
+
+For a fresh continuation, make the brief self-contained enough to execute
+without opening the source transcript. Point to authoritative files instead of
+copying them, state what changed since each artifact was written, and identify
+which existing verification remains reusable so the next agent does not repeat
+valid work.
 
 ## Codex
 
@@ -73,6 +91,10 @@ risks. Use this shape:
 ## Key Decisions
 <decisions already made and why>
 
+## Scope
+- In: <work the continuation owns>
+- Out: <superseded or explicitly excluded work>
+
 ## Artifacts
 - `<path or URL>` - <why it matters>
 
@@ -81,6 +103,7 @@ risks. Use this shape:
 
 ## Validation
 - Run: <checks already run>
+- Reusable evidence: <proof that still applies and under what checkout/configuration>
 - Still needed: <checks/manual review still needed>
 
 ## Risks And Unknowns
