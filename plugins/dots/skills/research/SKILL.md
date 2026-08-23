@@ -1,107 +1,71 @@
 ---
 name: research
-description: "Produces evidence-backed answers and reports from proportionate investigation across code, docs, web sources, and technical options. Use when explicitly asked for research, a research report, or deep research; not for implementation or formal planning."
+description: "Use only when the user writes `$research`. Delegate evidence gathering to focused researchers and synthesize their reports into a supported answer; not for implementation or formal planning."
 ---
 
 # Research
 
-Produce evidence-backed answers and research reports through the lightest
-investigation shape that preserves source quality and usable context. The
-parent thread scopes the question, inspects one bounded source directly when
-that can answer it, delegates broader or independent research, and writes the
-synthesis.
+Delegate evidence gathering by default. Keep source searches and long excerpts
+with the researchers; use the main task to define the question, check coverage,
+and write the answer.
 
 ## Workflow
 
-1. State the question, scope, intended output, and what will make the research
-   complete. Keep this to one compact update unless the user requested a formal
-   research contract.
-2. Choose the investigation shape:
-   - **Direct:** inspect in the parent when one bounded source or a small
-     supplied set can answer one narrow question without crowding out synthesis.
-   - **Delegated:** dispatch bounded workers when the work spans independent
-     source classes or questions, needs broad search, or would put substantial
-     raw source context in the parent.
-3. For delegated work, require each worker to return a compact claim-level
-   report: answer and implications first, then supporting citations, confidence,
-   contradictions, gaps, and useful next checks. Raw search trails, page dumps,
-   transcripts, and broad file contents stay out of the parent thread.
-4. Evaluate whether the returned reports answer the question. For material
-   gaps, contradictions, or weak claims, dispatch a focused follow-up or an
-   independent verification worker.
-5. Synthesize the reports by claim, distinguish fact from inference and
-   recommendation, preserve consequential uncertainty, and deliver the
-   requested output.
+1. Define the question, scope, intended output, and what would count as enough
+   evidence. Share that framing in one compact update. The frame is ready when
+   a researcher can tell what to answer, which sources and time period count,
+   and what evidence would support, qualify, or leave the answer open.
+2. Dispatch one researcher by default. Use several in parallel only when they
+   cover independent questions or source types. Work directly only for a
+   trivial lookup in one known, bounded source; delegate any search, survey,
+   comparison, or substantial reading. Dispatch is complete when every
+   necessary question is assigned to a researcher or explicitly qualifies for
+   the direct-lookup exception, and every researcher brief follows the
+   requirements below.
+3. Evaluate the reports and synthesize by claim. Reuse the same researcher for
+   clarification or a source follow-up; use a fresh researcher when independent
+   verification would change confidence. Continue until every important
+   question is answered or left as a visible gap, conflicting evidence is
+   reconciled or preserved, and each consequential claim has suitable support.
 
-If delegation is unavailable or the user forbids it, use the direct path only
-when the question and source boundary remain genuinely narrow. For broader work,
-state the coverage limit and return the strongest bounded result rather than
-silently pulling a large research corpus into the parent thread.
+If delegation is unavailable or forbidden, return the strongest bounded result
+and state the coverage limit instead of silently loading a broad corpus into the
+main task.
 
-## Worker Briefs
+## Brief Researchers
 
-Every brief should name:
+Every brief names the question, source boundary, relevant date or version,
+evidence standard, return shape, stopping condition, and read-only constraint.
 
-- the bounded question or claim
-- the allowed source boundary and any date or version constraint
-- the evidence and citation standard
-- the compact return shape
-- the budget or stop condition when the work could sprawl
-- read-only and no-edit constraints
+Every report leads with the answer and implications, followed by claim-level
+citations, confidence, contradictions, gaps, and useful next checks. Save
+detailed notes only when they must survive the session or would overflow the
+compact return. Follow the repository's scratch convention and return the path
+when notes are saved.
 
-Choose the worker by evidence source:
+Choose the researcher by evidence source:
 
 - **Codebase**: trace relevant files, symbols, flows, tests, commands, and
   observed behavior. Report what exists before recommending change.
 - **Web and documentation**: prefer current primary sources, record dates or
   versions when freshness matters, and report conflicting guidance.
 - **Mixed**: use separate local and external workers when their searches are
-  independent, then compare their reports in the parent synthesis.
-- **Verification**: give the worker the claims and cited reports to challenge.
-  It should return supported, refuted, downgraded, contradicted, or unresolved
-  findings without producing the final answer.
-
-Workers save detailed notes only when they need to survive the session or would
-otherwise overflow a compact return. Use the repository's scratch convention
-and return the report path plus the minimum findings needed for synthesis.
+  independent, then compare their reports in the main task.
+- **Verification**: give a fresh researcher the claims and cited reports to
+  challenge. For each claim, it returns one verdict: supported, refuted,
+  downgraded, contradicted, or unresolved. It does not write the final answer.
 
 ## Deep Research
 
 For broad, ambiguous, high-impact, or cross-cutting questions that need several
-workers, iterative follow-up, or adversarial verification, read
-[deep-research.md](references/deep-research.md). It owns decomposition,
-barriers, verification passes, and deep-research artifact handling.
+researchers, iterative follow-up, or adversarial verification, read
+[deep-research.md](references/deep-research.md) before dispatching. Use it to
+divide the work, check reports between waves, verify contested claims, and save
+research notes when needed.
 
-## Evidence And Synthesis
+## Return The Answer
 
-Treat worker reports as evidence, not final answers:
-
-- **Fact**: directly supported by a cited source, command, test, or file.
-- **Inference**: reasoned from reported evidence; state confidence.
-- **Recommendation**: a proposed choice after weighing evidence and tradeoffs.
-- **Open question**: uncertainty that could change the answer or next action.
-
-For delegated work, the parent verifies at the report level: check completeness,
-compare independent reports, identify unsupported claims, and delegate
-source-level verification. For direct work, inspect only the bounded sources
-needed for the answer. Never invent citations, URLs, paths, quotes, or command
-results.
-
-## Output And Artifacts
-
-Lead with the conclusion or recommendation, then give the evidence, material
-tradeoffs, and gaps. Cite claims close to where they are used.
-
-Read [report-standards.md](references/report-standards.md) only when saving a
-research artifact. Research may provide evidence or a handoff for planning, but
-the planning workflow owns the implementation plan.
-
-## Final Check
-
-- The investigation used the direct path only for a narrow question and bounded
-  sources; broader or independent work was delegated.
-- Delegated work returned compact reports rather than raw source context.
-- Material contradictions and weak claims were resolved or named.
-- The answer distinguishes evidence, inference, recommendation, and uncertainty.
-- Durable artifacts were created only when requested or justified by repository
-  conventions.
+Lead with the conclusion or recommendation, followed by evidence, important
+tradeoffs, contradictions, and gaps. Cite claims close to where they are used.
+Read [report-standards.md](references/report-standards.md) only when saving an
+artifact. Research may inform a plan; use `$plan` when the user wants one.
