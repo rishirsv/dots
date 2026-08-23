@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 from unittest import mock
 
@@ -436,6 +437,42 @@ class SelfImproveScopeTests(unittest.TestCase):
 
 
 class OracleContainmentTests(unittest.TestCase):
+    def test_package_contains_only_prompt_and_context_archive(self):
+        script = PLUGIN_ROOT / "skills" / "oracle" / "scripts" / "oracle_package.py"
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "context.txt").write_text("context")
+            output = root / "packages"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(script),
+                    "--root",
+                    str(root),
+                    "--task",
+                    "Review",
+                    "--file",
+                    "context.txt",
+                    "--output-dir",
+                    str(output),
+                    "--name",
+                    "review",
+                ],
+                capture_output=True,
+                text=True,
+            )
+            package = output / "review"
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(
+                {path.name for path in package.iterdir()},
+                {"prompt.md", "context.zip"},
+            )
+            with zipfile.ZipFile(package / "context.zip") as archive:
+                self.assertEqual(
+                    set(archive.namelist()),
+                    {"files/context.txt", "file-map.txt"},
+                )
+
     def test_package_scope_must_be_explicit(self):
         script = PLUGIN_ROOT / "skills" / "oracle" / "scripts" / "oracle_package.py"
         with tempfile.TemporaryDirectory() as tmp:

@@ -1,13 +1,14 @@
 ---
 name: research
-description: "Use only when the user writes `$research`. Delegate evidence gathering to focused researchers and synthesize their reports into a supported answer; not for implementation or formal planning."
+description: "Research a question and produce an evidence-backed answer through delegated source investigation. Use only when the user writes `$research`; not for implementation or formal planning."
 ---
 
 # Research
 
-Delegate evidence gathering by default. Keep source searches and long excerpts
-with the researchers; use the main task to define the question, check coverage,
-and write the answer.
+Research the user's question or topic and return an evidence-backed answer. Delegate
+source investigation by default. Use the main task to frame the question, check
+coverage, reconcile findings, and write the answer; keep searches and long
+excerpts with the researchers.
 
 ## Workflow
 

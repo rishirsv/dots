@@ -38,16 +38,6 @@ DEFAULT_IGNORES = {
 DEFAULT_IGNORE_FILENAMES = {".DS_Store"}
 
 
-HOW_TO_USE_TEMPLATE = """# How To Use This Oracle Package (ChatGPT Pro)
-
-1. Open a ChatGPT Pro chat and choose the model you want to consult (a reasoning-tier model for hard problems).
-2. Open `prompt.md` in this folder and paste its full contents as your message.
-3. Attach `context.zip` from this folder as a file attachment on the same message — do not unzip and paste individual files.
-4. Confirm the attachment shows as uploaded before sending; large zips can take a moment to finish uploading.
-5. Send the message and let the model work from the attached context.
-6. Bring the full answer back to the primary agent for the After The Oracle step: paste or summarize what the model concluded, and note any recommendations, objections, or missing-context requests it raised.
-"""
-
 SENSITIVE_PATTERNS = [
     ".env",
     ".env.*",
@@ -544,8 +534,6 @@ def main() -> int:
         archive.writestr("file-map.txt", "\n".join(str(entry["path"]) for entry in included) + "\n")
     prompt_path = package_dir / "prompt.md"
     prompt_path.write_text(prompt, encoding="utf-8")
-    how_to_use_path = package_dir / "HOW-TO-USE.md"
-    how_to_use_path.write_text(HOW_TO_USE_TEMPLATE, encoding="utf-8")
 
     zip_summary, zip_warning = verify_and_summarize_zip(context_zip, max_zip_mb=args.max_zip_mb)
     print(zip_summary)

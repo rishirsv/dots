@@ -7,9 +7,7 @@ exact files or directories to inspect.
 Package first only when:
 
 - the user wants a sendable bundle
-- context is too large or scattered for direct references
-- the CLI requires package-like input
-- a durable package record matters
+- the CLI cannot read essential evidence directly
 
 Two baseline routes are documented here: **Claude** via the `claude` CLI and
 **Codex** via `codex exec`. Both are advisory: read-only, no external writes, and

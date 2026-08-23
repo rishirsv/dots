@@ -19,6 +19,12 @@ Prefer ChatGPT's in-app browser. Use Chrome when the task depends on its existin
 
 To view a local HTML file, put its full absolute filesystem path directly into ChatGPT's in-app browser address bar and open it.
 
+Distinguish browser rendering from browser automation. If a user-visible browser
+tab already displays a local artifact, treat user rendering as successful unless
+contrary evidence exists. If automation cannot navigate to or inspect the local
+file, report that narrower automation limitation; do not claim that browser
+rendering is unavailable.
+
 Use subagents only when the user asks or when independent parallel work
 materially improves breadth, latency, or adversarial review. Do not delegate
 ordinary work.

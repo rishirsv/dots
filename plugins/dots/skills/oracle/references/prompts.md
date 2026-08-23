@@ -72,6 +72,23 @@ glob matches:
 For large bundles, mark the few files the oracle should read first. Supporting
 files can be there for evidence without being first-pass reading.
 
+## GitHub-Connected ChatGPT
+
+When ChatGPT can inspect the repository through GitHub, keep the prompt
+repository-native:
+
+- name the repository and the branch, tag, or commit that controls;
+- give a few starting files or symbols only when they materially shorten
+  discovery;
+- ask the advisor to inspect current source and tests through GitHub;
+- attach only evidence GitHub cannot provide, such as an uncommitted diff,
+  local plan, screenshot, or exact failure log; and
+- distinguish that attachment as a delta from the named repository revision.
+
+Do not say context is attached when it is not. Avoid exhaustive file inventories
+that merely restate a discoverable repository tree. The decision, constraints,
+and requested advice should remain easier to find than the context map.
+
 ## Output Request
 
 Ask for the answer shape the primary agent can use immediately. Depending on the

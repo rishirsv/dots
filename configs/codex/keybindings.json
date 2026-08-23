@@ -29,11 +29,11 @@
   },
   {
     "command": "globalDictationHold",
-    "key": "Ctrl+M"
+    "key": null
   },
   {
     "command": "globalDictationToggle",
-    "key": "Ctrl+."
+    "key": null
   },
   {
     "command": "hotkeyWindow",
