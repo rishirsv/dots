@@ -3,7 +3,7 @@
 Use `skill-usage` once to build the frozen read list for a named skill review.
 
 ```bash
-python3 scripts/self_improve.py skill-usage --skill dots:publish-pr --days 30 --limit 100
+python3 scripts/self_improve.py skill-usage --skill dots:pr --days 30 --limit 100
 ```
 
 The exact skill filter is applied after the bounded corpus is scanned. Do not

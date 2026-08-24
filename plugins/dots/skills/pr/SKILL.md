@@ -1,5 +1,5 @@
 ---
-name: publish-pr
+name: pr
 description: "Commits and pushes finished changes, then opens or updates a non-draft GitHub pull request ready for review. Use when the user asks to publish completed work as a PR. Not for merging, addressing review feedback, or monitoring checks and reviews."
 ---
 
@@ -62,11 +62,40 @@ Upload visual evidence only when the completed task already produced a
 screenshot or short video. Publishing a pull request does not capture or
 recapture evidence.
 
-Open the pull request in a signed-in GitHub browser, edit the description, and
-upload each file through GitHub's attachment control or drag-and-drop target.
-Wait for GitHub to insert its `github.com/user-attachments` link before saving.
-If the upload interaction does nothing, retry it in the editor. Reopen the pull
-request and confirm that the image or video renders.
+Use `gh pr create` or `gh pr edit` with `--attach` as the primary upload path.
+Write the description to a Markdown file, place each image where it belongs
+with ordinary Markdown image syntax whose destination is the local path, then
+attach that same path. For example, use `Settings screen` as the alt text and
+`./settings.png` as both the Markdown destination and attachment:
 
-The GitHub connector and `gh` can edit the description but cannot upload local
-media. Do not paste a local file path into the pull request.
+```bash
+gh pr create --title "Show account status in Settings" \
+  --body-file pr-body.md \
+  --attach ./settings.png
+```
+
+For an existing pull request, preserve its required template fields and run:
+
+```bash
+gh pr edit 123 --body-file pr-body.md --attach ./settings.png
+```
+
+Repeat `--attach` for multiple files. `gh` uploads each file and rewrites a
+matching local Markdown link to its GitHub-hosted URL. If the body does not
+reference an attached file, `gh` appends it. For an appended image, supply alt
+text with a quoted `file#alt text` value:
+
+```bash
+gh pr edit 123 --attach './settings.png#Account status in Settings'
+```
+
+Check support with `gh pr create --help` when needed; the flag first appeared
+in the `2.99.0-attach-preview` build. After publishing, inspect the saved body
+and confirm that local paths were replaced with `github.com/user-attachments`
+links and that the image or video renders.
+
+If the active `gh` lacks `--attach` or the upload fails, use a signed-in GitHub
+browser as the fallback: edit the description, upload through the attachment
+control or drag-and-drop target, wait for GitHub to insert its
+`github.com/user-attachments` link, save, and confirm that it renders. Never
+paste a local file path into the pull request.
