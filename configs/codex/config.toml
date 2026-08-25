@@ -6,7 +6,7 @@
 approval_policy = "never"
 default_permissions = "Custom"
 
-model = "gpt-5.6-sol"
+model = "gpt-5.6-terra"
 model_reasoning_effort = "medium"
 
 [permissions.Custom]
@@ -28,33 +28,54 @@ destructive_enabled = true
 [plugins."computer-use@openai-bundled"]
 enabled = true
 
-[plugins."computer-history@openai-bundled"]
-enabled = true
-
 [plugins."chrome@openai-bundled"]
-enabled = false
+enabled = true
 
 [plugins."dots@dots"]
 enabled = true
 
+[plugins."meta-skill@dots"]
+enabled = true
+
 [plugins."visualize@openai-bundled"]
-enabled = false
+enabled = true
 
 [plugins."build-ios-apps@openai-curated"]
 enabled = false
 
 [plugins."browser@openai-bundled"]
-enabled = false
+enabled = true
 
 [plugins."sites@openai-bundled"]
 enabled = false
 
 [plugins."pulse@dots"]
-enabled = false
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."codex-app-tools@openai-bundled"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."messages@openai-bundled"]
+enabled = true
 
 [desktop]
 followUpQueueMode = "queue"
-conversationDetailMode = "STEPS_PROSE"
+conversationDetailMode = "STEPS_COMMANDS"
 defaultTerminalLocation = "right"
 reviewDelivery = "detached"
 show-context-window-usage = true
