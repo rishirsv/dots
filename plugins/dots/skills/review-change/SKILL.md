@@ -1,6 +1,6 @@
 ---
 name: review-change
-description: "Reviews a completed change for actionable correctness, security, performance, and maintainability findings, then fixes them when acting as the implementing agent's post-change pass. Standalone reviews stay read-only unless repair is requested. Supports Low, Deep, and explicit Challenge review; not architecture-primary scans."
+description: "Reviews a completed change for actionable correctness, security, performance, and maintainability findings, scaling Low, Default, or Deep depth to its risk. Post-change reviews repair retained findings; standalone reviews stay read-only unless repair is requested. Challenge is explicit-only."
 ---
 
 # Review Change
@@ -18,17 +18,18 @@ Outcome, review depth, target, and posture are independent:
 | **Outcome** | Post-change | Default when the current agent has just implemented the change. Reviewers report candidates; the main agent judges and fixes retained findings. |
 | **Outcome** | Review-only | The user asks for a standalone review, audit, inspection, report, or PR feedback without asking for repair. Return findings without modifying the change. |
 | **Outcome** | Repair | The user explicitly asks a standalone review to fix its findings. Follow the Post-change repair workflow after review. |
-| **Depth** | Low | The user explicitly asks for Low. One reviewer applies all three core lenses, prioritizing correctness. |
-| **Depth** | Default | Three core reviewers inspect the complete change independently. |
-| **Depth** | Deep | The user explicitly asks for Deep. Add risk-triggered specialists, independent verification, and a gap sweep. |
+| **Depth** | Low | A localized, reversible change has a narrow proof surface and no material security, data, migration, permission, concurrency, or public-contract risk. One reviewer applies all three core lenses, prioritizing correctness. |
+| **Depth** | Default | Normal multi-file work or a change whose blast radius is not obviously narrow. Three core reviewers inspect the complete change independently. |
+| **Depth** | Deep | Security-sensitive, data-changing, migration-heavy, cross-system, concurrency-sensitive, difficult-to-reverse, or otherwise high-blast-radius work. Add relevant specialists, independent verification, and a gap sweep. |
 | **Target** | Local | Review a local diff, branch, commit, or range and return a local report. |
 | **Target** | PR | Review the pull request's actual base and head, inspect PR context, and return a local report. Post comments only when the user explicitly asks. |
 | **Posture** | Standard | Return only findings that meet the actionable finding contract. |
 | **Posture** | Challenge | The user explicitly asks to challenge, interrogate, stress-test, tear apart, or find blind spots. Add adversarial candidates and transparent lead judgment without lowering the bar for actionable findings. |
 
-Low and Deep compose with either target and posture. The modes control workflow,
-not model reasoning effort. Do not claim that a mode changed the active model or
-its reasoning budget.
+Use a depth the user names. Otherwise choose the smallest depth whose evidence
+and independence match the change. Review depths compose with either target and
+posture. The modes control workflow, not model reasoning effort. Do not claim
+that a mode changed the active model or its reasoning budget.
 
 ## Freeze scope and intent
 

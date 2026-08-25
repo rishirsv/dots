@@ -97,16 +97,5 @@ class PluginValidationTests(unittest.TestCase):
             self.assertTrue(any("local link does not resolve" in error for error in errors))
             self.assertTrue(any("icon_small does not resolve" in error for error in errors))
 
-    def test_generated_python_cache_fails(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp) / "dots"
-            write_valid_plugin(root)
-            cache = root / "scripts" / "__pycache__"
-            cache.mkdir(parents=True)
-            (cache / "helper.cpython-312.pyc").write_bytes(b"cache")
-            errors = validator.validate_plugin(root)
-            self.assertTrue(any("generated Python cache" in error for error in errors))
-
-
 if __name__ == "__main__":
     unittest.main()

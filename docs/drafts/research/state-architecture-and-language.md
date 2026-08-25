@@ -415,8 +415,6 @@ Local precedents:
 
 - `plugins/dots/skills/self-improve/` for evidence, proposals, approval, and
   closest-scope rules.
-- `plugins/meta-skill/references/run-layout.md` for immutable inputs,
-  append-only history, mutable lifecycle, and derived views.
 - `plugins/dots/skills/pr/` and Excel live control for keeping external systems
   authoritative.
 

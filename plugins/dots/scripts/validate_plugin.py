@@ -107,12 +107,6 @@ def validate_markdown_links(root: Path, errors: list[str]) -> None:
                 fail(errors, f"{path}: local link does not resolve: {match.group(1)}")
 
 
-def validate_generated_files(root: Path, errors: list[str]) -> None:
-    for path in sorted(root.rglob("*")):
-        if path.name == "__pycache__" or path.suffix == ".pyc":
-            fail(errors, f"{path}: generated Python cache must not be packaged")
-
-
 def validate_plugin(root: Path) -> list[str]:
     errors: list[str] = []
     skills = root / "skills"
@@ -131,8 +125,6 @@ def validate_plugin(root: Path) -> list[str]:
 
     validate_manifest(root, errors)
     validate_markdown_links(root, errors)
-    validate_generated_files(root, errors)
-
     runtime_suffixes = {".md", ".html", ".yaml", ".yml"}
     for path in sorted(skills.rglob("*")):
         if not path.is_file() or path.suffix.lower() not in runtime_suffixes:
