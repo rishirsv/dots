@@ -282,7 +282,7 @@ sync_codex_personal() {
 
 sync_claude() {
   sync_claude_agents
-  install_symlink "$ROOT/configs/claude/settings.json" "$HOME/.claude/settings.json"
+  install_file "$ROOT/configs/claude/settings.json" "$HOME/.claude/settings.json"
   install_symlink "$ROOT/configs/claude/keybindings.json" "$HOME/.claude/keybindings.json"
 }
 
