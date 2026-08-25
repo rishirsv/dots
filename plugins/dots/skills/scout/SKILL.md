@@ -24,12 +24,27 @@ Treat an accepted reference, source, fork, or stated direction as the source of
 truth for intent. If the current product, code, or documentation conflicts with
 it, explain the difference and ask which should govern.
 
-## Ask consequential questions
+## Work the decision tree
 
-Work from the biggest unresolved decision into the details. Ask one decision at
-a time when its answer could change the next question. Batch a small set when
-the questions are independent, share the same context, and are easier to answer
-together. Do not serialize questions merely to preserve an interview rhythm.
+Map this as a **design tree**: every decision branches into the decisions that
+hang off it. Call the questions ready to ask now the **frontier**. A question is
+on the frontier only when the settled context is enough to answer it and its
+answer does not depend on another open decision or pending finding.
+
+Work the tree in rounds. Ask two or three frontier questions by default. Use
+four when they are short, independent, and easy to answer together. Ask one
+when it unlocks what follows or deserves focused deliberation. A question that
+depends on another question in the current round belongs in a later round.
+
+Number each question and give a recommended answer. Use this compact shape:
+
+```md
+❓ **Q1 · <plain-language decision>**
+
+<The question, useful context, and choices when they help.>
+
+➡️ **Recommendation:** <the answer that best fits the direction so far, and why>
+```
 
 Put the question first. Then give only the context the user needs to answer it:
 why the decision matters, what would change, and the real tradeoff.
@@ -53,15 +68,19 @@ Match the question to the work:
 - **Knowledge or analytical work:** focus on the decision the result supports,
   its audience, definitions, evidence, assumptions, and required output.
 
-After each answer, acknowledge the newly settled decision in one line and move
-to the next question. Reopen an earlier choice only when new evidence changes
-or contradicts it.
+After each reply, record the newly settled decisions, preserve unanswered
+questions, and recompute the frontier. If the user answers only part of a
+round, resurface each skipped consequential question when it returns to the
+frontier or keep it open in the Scout Snapshot. Reopen an earlier choice only
+when new evidence changes or contradicts it.
 
 ## Use research and prototypes when they settle a choice
 
-Finding relevant facts is part of Scout. Inspect the repository or external
-sources directly for a focused lookup. Delegate only when independent work
-materially improves breadth or latency.
+Facts are Scout's responsibility; decisions stay with the user. Inspect the
+repository or external sources directly for a focused lookup. Delegate only when
+independent work materially improves breadth or latency. A pending lookup
+blocks only the questions that depend on it; keep working the rest of the
+frontier.
 
 - **Factual research:** ask for facts that could change the decision, their
   sources, and meaningful uncertainty. Bring back what they mean for the
@@ -87,16 +106,55 @@ the decision is already made.
 
 ## Finish with a Scout Snapshot
 
+Before finishing, recompute the frontier and account for pending research. If
+the user asks to plan, build, or proceed while an open decision could change
+the downstream work, show what remains and continue Scout. A request to proceed
+accepts the settled direction; it does not answer a question the user skipped.
+
 Finish when every consequential decision is answered, rejected, or explicitly
-deferred. Return a short snapshot that lets the next workflow continue without
-reopening the interview:
+deferred and no pending finding could change the direction. Return this
+self-contained contract so the next workflow can continue without reopening
+the interview:
 
-- what the interview was trying to settle;
-- the decisions made, exact non-negotiables, and why each choice won;
-- any term whose meaning was clarified;
-- open questions and what they depend on;
-- anything the user explicitly chose not to address; and
-- what the result is ready for next.
+```md
+**Scout Snapshot**
 
-When the user accepts the direction or tells you to proceed, hand off the
-snapshot without another confirmation pause.
+**Shared understanding**
+
+<In two to four sentences, state what Scout believes the user means. Preserve
+the user's language where it matters.>
+
+**Decisions**
+
+- **<plain-language decision>** — <the user's answer>. <Why it won and the
+  tradeoff the user accepted.>
+
+**Guardrails**
+
+- **Non-negotiables:** <exact constraints, or "None surfaced">
+- **Non-goals:** <what this should not become, or "None surfaced">
+- **Rejected branches:** <important paths not chosen and why, or "None">
+- **Assumption to test:** <the riskiest remaining assumption, or "None surfaced">
+
+**Open or deferred**
+
+- **<decision>** — <open or deferred>. Depends on <evidence or event>; blocks
+  <what cannot safely proceed>.
+
+Write `None` instead when the frontier is empty with nothing deferred.
+
+**What shaped it**
+
+<Include only direction-changing user input, research with citations, or
+prototype reactions with artifact links. Omit this section when none applied.>
+
+**Next mode**
+
+<stop, research, plan, design, document, or build> — <why the result is ready
+for that mode and what context must carry forward.>
+```
+
+If the user has not already accepted the direction, ask them to confirm the
+snapshot, correct one part, or reopen the frontier. When they have accepted it
+or already told you to proceed, do not add another confirmation pause; hand the
+snapshot to the requested next workflow.
