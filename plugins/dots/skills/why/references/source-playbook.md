@@ -1,6 +1,10 @@
 # Source playbooks
 
-The why skill spawns one investigator per available evidence category, each reading a single source-specific playbook below. The playbooks are concrete examples for common MCPs; adapt them for a different MCP in the same category.
+Use one playbook for each evidence category selected by the investigation depth
+in `../SKILL.md`. Focused and expanded searches load only the sources they need.
+Exhaustive mode can investigate every available category in parallel. These
+playbooks give concrete queries for common tools; adapt the matching category
+when another tool holds the same kind of record.
 
 | Category | Playbook | Example MCP it documents |
 |---|---|---|

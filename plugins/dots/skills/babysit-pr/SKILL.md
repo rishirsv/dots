@@ -3,7 +3,7 @@ name: babysit-pr
 description: "Keeps a GitHub pull request moving by watching its latest checks and review feedback, fixing problems within its original goal, and replying to handled feedback. Use when the user asks to monitor, watch, or babysit a pull request; not for a one-time status report."
 ---
 
-# Babysit a Pull Request
+# Babysit PR
 
 Keep following the pull request until its latest commit is clean. Keep the
 original goal fixed, and merge only when the user asks.

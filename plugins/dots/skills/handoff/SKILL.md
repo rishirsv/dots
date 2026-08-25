@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "Creates a concise continuation brief for the current task, branch, PR, plan, or conversation so another agent or future session can pick it up, inline by default or saved on request. Explicit-only; not for PR publication or sending work to another model for review."
+description: "Use only when the user selects `$handoff` to create a continuation brief for the current task, branch, PR, plan, or conversation, inline by default or saved on request; not for PR publication or external-model review."
 ---
 
 # Handoff
@@ -9,7 +9,7 @@ Create a practical continuation brief for the current task, branch, PR,
 issue, plan, or conversation.
 
 Default to an inline handoff in chat. Write a file only when the user asks,
-the handoff is too large for chat, or a durable artifact is clearly needed —
+the handoff is too large for chat, or a durable artifact is clearly needed,
 use the requested path, else a clearly named temporary path, and report it.
 
 Use a handoff at a phase boundary when the next agent should inherit the work,
@@ -22,8 +22,8 @@ proof to release. Name the phase that ended and the next atomic objective.
 Use the visible conversation and current workspace first: branch, dirty
 files, recent commits, active plans, issue/PR links, and validation already
 run. Reach for prior-session history only when it materially improves the
-handoff — the user asks to continue earlier work, the work spans sessions,
-or the current state is unclear — and prefer a reduced context packet over
+handoff, the user asks to continue earlier work, the work spans sessions,
+or the current state is unclear, and prefer a reduced context packet over
 transcript replay. If a source is unavailable, note it under risks and
 continue.
 

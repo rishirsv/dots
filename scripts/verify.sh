@@ -8,12 +8,6 @@ if [[ $# -ne 1 || "${1-}" != "--full" ]]; then
 fi
 
 ROOT="${0:A:h:h}"
-METASKILL="plugins/meta-skill/scripts/metaskill"
-META_SKILLS=(
-  plugins/meta-skill/skills/skill-author
-  plugins/meta-skill/skills/skill-reviewer
-  plugins/meta-skill/skills/skill-evaluator
-)
 
 cd "$ROOT"
 
@@ -123,19 +117,6 @@ for plugin in "${PLUGIN_NAMES[@]}"; do
   CODEX_HOME="$CODEX_VERIFY_HOME" codex plugin add "$plugin@dots" >/dev/null
 done
 
-echo "==> Meta-Skill CLI smoke test"
-mkdir -p "$ROOT/.agents/tmp"
-PYTHONDONTWRITEBYTECODE=1 META_SKILL_CACHE_DIR="$ROOT/.agents/tmp/meta-skill-cache" \
-  "$ROOT/plugins/meta-skill/scripts/metaskill" doctor --json >/dev/null
-
-echo "==> Meta-Skill validation"
-for skill in "${META_SKILLS[@]}"; do
-  "$METASKILL" validate "$skill" --json >/dev/null
-done
-
-echo "==> Pulse skill validation"
-"$METASKILL" validate plugins/pulse/skills/pulse --json >/dev/null
-
 echo "==> Pulse MCP builds and upstream X tests"
 npm --prefix plugins/pulse/server ci --ignore-scripts >/dev/null
 npm --prefix plugins/pulse/server run typecheck
@@ -145,21 +126,8 @@ npm --prefix plugins/pulse/server/x-search/server test
 npm --prefix plugins/pulse/server/x-search/server run build
 scripts/verify-x-search-import.sh
 
-echo "==> Meta-Skill workbench frontend"
-npm --prefix plugins/meta-skill/workbench-ui ci --ignore-scripts >/dev/null
-npm --prefix plugins/meta-skill/workbench-ui run verify
-
-echo "==> Dots skill validation"
+echo "==> Dots-specific skill checks"
 python3 plugins/dots/scripts/validate_plugin.py
-for skill in plugins/dots/skills/*(/); do
-  [[ -f "$skill/SKILL.md" ]] || continue
-  "$METASKILL" validate "$skill" --json >/dev/null
-done
-
-echo "==> Dots eval suite checks"
-while IFS= read -r suite; do
-  "$METASKILL" eval run --check --suite "$suite" --json >/dev/null
-done < <(find plugins/dots -path '*/evals/evals.json' -not -path '*/runs/*' -print 2>/dev/null | sort)
 
 echo "==> Dots HTML deterministic checks"
 node plugins/dots/skills/html/scripts/generate-theme.mjs --check
@@ -168,15 +136,9 @@ node --test plugins/dots/skills/html/scripts/*.test.mjs
 echo "==> Dry-run config sync"
 scripts/sync-configs.sh --dry-run --codex --codex-personal --claude
 
-echo "==> Meta-Skill tests"
-METASKILL_TEST_PYTHON="$ROOT/.agents/tmp/meta-skill-cache/venv/bin/python"
-[[ -x "$METASKILL_TEST_PYTHON" ]] || {
-  echo "error: Meta-Skill test environment was not created by the CLI smoke test." >&2
-  exit 2
-}
 find_verify_python() {
-  if [[ -n "${META_SKILL_PYTHON:-}" ]]; then
-    printf '%s\n' "$META_SKILL_PYTHON"
+  if [[ -n "${DOTS_VERIFY_PYTHON:-}" ]]; then
+    printf '%s\n' "$DOTS_VERIFY_PYTHON"
     return 0
   fi
   local name candidate
@@ -198,16 +160,11 @@ find_verify_python() {
 }
 
 VERIFY_PYTHON=$(find_verify_python) || {
-  echo "error: unittest step requires Python 3.10+; set META_SKILL_PYTHON to a compatible interpreter." >&2
+  echo "error: unittest step requires Python 3.10+; set DOTS_VERIFY_PYTHON to a compatible interpreter." >&2
   exit 2
 }
 
-PYTHONDONTWRITEBYTECODE=1 "$METASKILL_TEST_PYTHON" -m unittest discover -s plugins/meta-skill/tests -p 'test_*.py'
-
-echo "==> Dots runtime safety tests"
+echo "==> Dots tests"
 PYTHONDONTWRITEBYTECODE=1 "$VERIFY_PYTHON" -m unittest discover -s plugins/dots/tests -p 'test_*.py'
-
-echo "==> Dots plugin tests"
-"$VERIFY_PYTHON" -m unittest discover -s plugins/dots/tests -p 'test_*.py'
 
 echo "Verify passed"

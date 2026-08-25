@@ -1,6 +1,6 @@
 ---
 name: oracle
-description: "Prepares focused advisory requests for an external or differently specialized model. Use for critique, missing-proof checks, or implementation guidance; not routine local work or orchestration."
+description: "Use only when the user selects `$oracle` to request critique, missing-proof checks, or implementation guidance from an external or differently specialized model; not for routine local work, subagent review, or orchestration."
 ---
 
 # Oracle
@@ -14,14 +14,19 @@ work stalls. Do not use it for routine local work, subagent review, worker
 orchestration, or implementation handoff. Even when the user asks another
 model for implementation guidance, the oracle only advises.
 
-Default route:
+## Choose the route
 
-| advisor access | default |
-| --- | --- |
-| Local CLI can read the repo | Send a standalone prompt with exact paths; do not package. |
-| ChatGPT has repository access through GitHub | Send a standalone prompt naming the repository, revision, and a few starting anchors; do not package repository files. |
-| UI/browser advisor cannot read required evidence | Package only the local-only evidence with `prompt.md` and `context.zip`. |
-| API advisor | Use only after explicit provider, content, and cost approval. |
+| route | use when | authorization | action |
+| --- | --- | --- | --- |
+| `chatgpt-pro` | No route is named, or the user says "chatgpt". ChatGPT can inspect the authoritative repository through GitHub. | No model call or upload is authorized. | Return a standalone prompt naming the repository, revision, and a few starting anchors. Package only essential local-only evidence. |
+| `package-only` | The user says "package this" or asks for a sendable bundle, including for a UI or browser advisor that cannot read required evidence. | Building the local package needs no provider approval. | Build the minimal package, report its path, and paste the full `prompt.md` message in one fenced block. |
+| `codex` | The user says "oracle this to codex" or "ask codex," and the local CLI can read the repository. | Before the call, name the provider, content, and likely cost. | Run `codex exec` with a standalone prompt, exact file references, and read-only sandboxing. Confirm the current flagship model ID. |
+| `claude-code` | The user says "oracle this to claude" or "ask claude," and the local CLI can read the repository. | Before the call, name the provider, content, and likely cost. State the billing gate first. | Run `claude -p` with a standalone prompt, exact file references, and the strongest approved advisor model and effort. |
+| `openai-api` | The user explicitly asks to use the API. | Get explicit provider, content, and cost approval. | Use the Responses API after confirming credentials. |
+
+Never send private, proprietary, or credential-like material externally without
+approval. Do not operate a ChatGPT browser session or upload packages; the
+ChatGPT handoff is local saving only.
 
 ## The Decision
 
@@ -45,7 +50,7 @@ Smallest sufficient context wins:
 - **Map:** one reason per file or referenced path, tied to the decision.
 
 Match altitude to the task type with
-[references/context-development.md](references/context-development.md) — a
+[references/context-development.md](references/context-development.md). A
 skill-improvement run ships the whole skill directory, not one file.
 
 Exclude dependency folders, build artifacts, credentials, and `.env` files
@@ -95,21 +100,6 @@ python3 plugins/dots/skills/oracle/scripts/oracle_package.py \
   --dry-run
 ```
 
-## Advisor Routes
-
-| route | trigger phrasing | action |
-| --- | --- | --- |
-| `chatgpt-pro` | no route named, "chatgpt" | When ChatGPT has GitHub access and repository source is sufficient, return a standalone prompt naming the repo and revision. Package only essential local-only evidence. |
-| `package-only` | "package this", "sendable bundle" | Build the minimal package; report its path and paste the full `prompt.md` message in one fenced block for the user. |
-| `codex` | "oracle this to codex", "ask codex" | Run `codex exec` with a standalone prompt, exact file references, and read-only sandboxing. Confirm the current flagship model ID. |
-| `claude-code` | "oracle this to claude", "ask claude" | Run `claude -p` with a standalone prompt, exact file references, and the strongest approved advisor model/effort. State the billing gate first. |
-| `openai-api` | explicit API/cost approval | Use the Responses API after confirming credentials, content, and cost. |
-
-Approval: before any non-default route, name the provider, content, and likely
-cost. Never send private, proprietary, or credential-like material externally
-without approval. Do not operate a ChatGPT browser session or upload packages;
-the ChatGPT handoff is local saving only.
-
 ## Prompt Shape
 
 Write to the downstream model in second person. Include:
@@ -137,7 +127,7 @@ implementation-guide prompts.
 First explain the answer plainly: 3-6 sentences on what the oracle concluded
 and why, naming where it disagrees with local evidence. Then verify before
 adopting: extract concrete claims, check them against the repo, and classify
-each suggestion — adopt now, verify first, reject (hallucinated, stale, or
+each suggestion: adopt now, verify first, reject (hallucinated, stale, or
 against constraints), or missing context. Write "the oracle claims..." until
 local evidence supports a claim, and reconcile conflicts with source checks
 or one focused follow-up rather than silently switching. Do not keep

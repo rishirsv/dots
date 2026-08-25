@@ -1,9 +1,9 @@
 ---
 name: clarify
-description: "Clarify requirements before implementing. Do not use automatically, only when invoked explicitly."
+description: "Use only when the user selects `$clarify` to resolve underspecified requirements before implementation; not for shaping a fuzzy idea, planning the implementation, or asking questions the repository can answer."
 ---
 
-# Ask Questions If Underspecified
+# Clarify
 
 ## Goal
 
@@ -13,83 +13,53 @@ explicitly approves proceeding with stated assumptions.
 
 ## Workflow
 
-### 1) Decide whether the request is underspecified
+### 1. Inspect before asking
 
-Treat a request as underspecified if after exploring how to perform the work, some or all of the following are not clear:
-- Define the objective (what should change vs stay the same)
-- Define "done" (acceptance criteria, examples, edge cases)
-- Define scope (which files/components/users are in/out)
-- Define constraints (compatibility, performance, style, deps, time)
-- Identify environment (language/runtime versions, OS, build/test runner)
-- Clarify safety/reversibility (data migration, rollout/rollback, risk)
+Read the request, relevant repository guidance, configuration, accepted
+references, and nearby implementation. Do not ask the user for an answer the
+available material already provides.
 
-If multiple plausible interpretations exist, assume it is underspecified.
+A request still needs clarification when more than one plausible answer would
+change any of these:
 
-### 2) Ask must-have questions first (keep it small)
+- the objective, including what should change and what should stay the same;
+- the definition of done, including important examples or edge cases;
+- the scope, including which files, components, or users are in or out;
+- the constraints, such as compatibility, performance, style, dependencies, or
+  timing; or
+- the safety boundary, including migration, rollout, rollback, or irreversible
+  effects.
 
-Ask 1-5 questions in the first pass. Prefer questions that eliminate whole branches of work.
+### 2. Ask the must-have questions
 
-Make questions easy to answer:
-- Optimize for scannability (short, numbered questions; avoid paragraphs)
-- Offer multiple-choice options when possible
-- Suggest reasonable defaults when appropriate (mark them clearly as the default/recommended choice; bold the recommended choice in the list, or if you present options in a code block, put a bold "Recommended" line immediately above the block and also tag defaults inside the block)
-- Include a fast-path response (e.g., reply `defaults` to accept all recommended/default choices)
-- Include a low-friction "not sure" option when helpful (e.g., "Not sure - use default")
-- Separate "Need to know" from "Nice to know" if that reduces friction
-- Structure options so the user can respond with compact decisions (e.g., `1b 2a 3c`); restate the chosen options in plain language to confirm
+Ask one to three questions in the first pass. Prefer the question that removes
+the largest branch of possible work.
 
-### 3) Pause before acting
+Make each question easy to answer:
 
-Until must-have answers arrive:
-- Do not run commands, edit files, or produce a detailed plan that depends on unknowns
-- Do perform a clearly labeled, low-risk discovery step only if it does not commit you to a direction (e.g., inspect repo structure, read relevant config files)
+- keep it short and number it when there is more than one;
+- offer distinct choices when they are clearer than an open-ended question;
+- recommend a reasonable default when one genuinely fits the repository and
+  the user's direction;
+- include “not sure, use the default” when that lowers the cost of answering;
+  and
+- separate must-have questions from optional preferences when both exist.
 
-If the user explicitly asks you to proceed without answers:
-- State your assumptions as a short numbered list
-- Ask for confirmation; proceed only after they confirm or correct them
+### 3. Pause only for answers that change the work
 
-### 4) Write the shared understanding
+Do not edit files or produce a detailed implementation plan while a must-have
+decision is unresolved. Low-risk repository inspection may continue.
 
-Once you have answers, write a concise, easy-to-review `Shared understanding`.
-Include only applicable items: the outcome and definition of done, scope and
-non-goals, settled decisions and constraints, and assumptions or open questions.
-Distinguish recommendations and assumptions from settled decisions.
+If the user tells you to proceed without answering, state the assumptions that
+could affect the result and continue. Do not require another confirmation after
+the user has already approved that path.
 
-For work with multiple meaningful implementation steps, add an
-`Implementation plan` with one bullet per step in execution order and include
-verification where relevant. Keep it as an alignment outline rather than a
-repo-grounded or pressure-tested plan. Do not plan past a blocking decision.
+### 4. Record the shared understanding when it helps
 
-### 5) Confirm, then proceed
+For work with meaningful scope or risk, summarize the agreed outcome,
+definition of done, scope and non-goals, constraints, and remaining assumptions.
+Keep it short. Clarify owns alignment, not a repo-grounded implementation plan.
 
-Ask the user to confirm or correct the shared understanding before
-implementation unless they explicitly waived another approval pause. Treat the
-confirmed version as the working contract. If later discovery changes a
-material decision, assumption, scope boundary, or success criterion, pause and
-update it before continuing.
-
-## Question templates
-
-- "Before I start, I need: (1) ..., (2) ..., (3) .... If you don't care about (2), I will assume ...."
-- "Which of these should it be? A) ... B) ... C) ... (pick one)"
-- "What would you consider 'done'? For example: ..."
-- "Any constraints I must follow (versions, performance, style, deps)? If none, I will target the existing project defaults."
-- Use numbered questions with lettered options and a clear reply format
-
-```text
-1) Scope?
-a) Minimal change (default)
-b) Refactor while touching the area
-c) Not sure - use default
-2) Compatibility target?
-a) Current project defaults (default)
-b) Also support older versions: <specify>
-c) Not sure - use default
-
-Reply with: defaults (or 1a 2a)
-```
-
-## Anti-patterns
-
-- Don't ask questions you can answer with a quick, low-risk discovery read (e.g., configs, existing patterns, docs).
-- Don't ask open-ended questions if a tight multiple-choice or yes/no would eliminate ambiguity faster.
+Finish when every blocking ambiguity is answered, explicitly deferred, or
+covered by an assumption the user authorized. If later evidence changes one of
+those decisions, surface the change before continuing.

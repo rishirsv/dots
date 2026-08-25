@@ -1,9 +1,9 @@
 ---
 name: self-improve
-description: "Explicit-only workflow review that mines Codex or Claude Code sessions for recurring paper cuts, happy paths, and durable improvements. Use when asked to self-improve, audit work patterns, or review every use of a skill; not for one-off fixes or static skill-source review."
+description: "Use only when the user selects `$self-improve` to mine Codex or Claude Code sessions for recurring paper cuts, happy paths, and durable workflow improvements; not for one-off fixes or static skill-source review."
 ---
 
-# Self Improve
+# Self-Improve
 
 Find recurring workflow friction and the smallest durable changes that prevent
 it. Treat scripts and aggregate counts as leads; base conclusions on the
@@ -11,9 +11,9 @@ underlying conversations, tool calls, and files.
 
 ## Routes
 
-- **Improvement review — default.** Find the happy path, recurring paper cuts,
+- **Improvement review, default.** Find the happy path, recurring paper cuts,
   and up to three justified changes.
-- **Insights — only when the user passes `insights`.** Produce the report-only
+- **Insights, only when the user passes `insights`.** Produce the report-only
   profile in [references/insights-report.md](references/insights-report.md).
   Never edit on this route.
 

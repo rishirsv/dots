@@ -1,22 +1,28 @@
 ---
 name: review-change
-description: "Reviews a diff, branch, commit, range, or pull request for actionable correctness, security, performance, and maintainability findings. Supports Low, Deep, and explicit Challenge review; not architecture-primary scans or implementation without an explicit repair request."
+description: "Reviews a completed change for actionable correctness, security, performance, and maintainability findings, then fixes them when acting as the implementing agent's post-change pass. Standalone reviews stay read-only unless repair is requested. Supports Low, Deep, and explicit Challenge review; not architecture-primary scans."
 ---
 
-# Review change
+# Review Change
 
 Review the complete change and return every actionable finding. Reviewers stay
-read-only. Repair only when the user explicitly asks.
+read-only. When this is the implementing agent's post-change pass, the main
+agent addresses retained findings within the original task scope and validates
+the result. A standalone request to review, audit, inspect, or report on a
+change stays read-only unless the user asks for repair.
 
-Review depth, target, and posture are independent:
+Outcome, review depth, target, and posture are independent:
 
 | Dimension | Option | Trigger and workflow |
 | --- | --- | --- |
+| **Outcome** | Post-change | Default when the current agent has just implemented the change. Reviewers report candidates; the main agent judges and fixes retained findings. |
+| **Outcome** | Review-only | The user asks for a standalone review, audit, inspection, report, or PR feedback without asking for repair. Return findings without modifying the change. |
+| **Outcome** | Repair | The user explicitly asks a standalone review to fix its findings. Follow the Post-change repair workflow after review. |
 | **Depth** | Low | The user explicitly asks for Low. One reviewer applies all three core lenses, prioritizing correctness. |
 | **Depth** | Default | Three core reviewers inspect the complete change independently. |
 | **Depth** | Deep | The user explicitly asks for Deep. Add risk-triggered specialists, independent verification, and a gap sweep. |
 | **Target** | Local | Review a local diff, branch, commit, or range and return a local report. |
-| **Target** | PR | Review the pull request's actual base and head, inspect PR context, and post qualifying inline findings. |
+| **Target** | PR | Review the pull request's actual base and head, inspect PR context, and return a local report. Post comments only when the user explicitly asks. |
 | **Posture** | Standard | Return only findings that meet the actionable finding contract. |
 | **Posture** | Challenge | The user explicitly asks to challenge, interrogate, stress-test, tear apart, or find blind spots. Add adversarial candidates and transparent lead judgment without lowering the bar for actionable findings. |
 
@@ -42,15 +48,19 @@ only when ambiguity would materially change what success means; otherwise
 state the assumption. Review whether the change achieves the intent well, not
 whether the intent itself is correct.
 
-Read the applicable `AGENTS.md` files and other repository rules. Locate an
-originating specification when the change should have one: use a source the
-user supplied, the PR description or linked issue, issue references in commits,
-or a matching file under the repository's documentation or spec directories.
-If no specification is available, record that proof gap and do not invent
-requirements.
+Read the applicable `AGENTS.md` files, repository review guidelines, and other
+repository rules. Look for review guidance supplied by the user or linked from
+the PR, then scoped sources such as `CONTRIBUTING*`, `REVIEWING*`,
+`CODE_REVIEW*`, pull-request templates, and review documents those sources
+reference. Locate an originating specification when the change should have one:
+use a source the user supplied, the PR description or linked issue, issue
+references in commits, or a matching file under the repository's documentation
+or spec directories. If no specification is available, record that proof gap
+and do not invent requirements.
 
-Give every reviewer the same target, frozen diff, intent, and applicable rules.
-Give the located specification to the Correctness lane.
+Give every reviewer the same target, frozen diff, intent, applicable rules, and
+repository review guidelines. Give the located specification to the
+Correctness lane.
 
 ## Apply the review standard
 
@@ -58,6 +68,9 @@ Before dispatching reviewers, read:
 
 - [Review rubric](references/review-rubric.md) for the complete core and cross-cutting lenses; and
 - [Review guidelines](references/review-guidelines.md) for the finding contract, Challenge candidate contract, lead judgment, priorities, and output rules.
+
+Read the shared [Hard-Cut Policy](../../references/hard-cut-policy.md) when the
+change involves migration, compatibility, legacy APIs, or dual paths.
 
 Every reviewer inspects the complete assigned diff and enough surrounding code,
 tests, types, callers, and callees to judge the actual path. Continue through
@@ -80,23 +93,28 @@ Reviewers return candidates only. They do not modify files, create commits,
 push, post comments, or delegate. The coordinator checks cited locations and
 failure paths, combines duplicates, applies lead judgment, and rejects
 candidates that do not meet the applicable contract. Standard synthesis is not
-an independent verifier wave.
+an independent verifier wave. In Post-change outcome, the coordinator then
+addresses every retained finding itself; do not hand the implementation back to
+the reviewers.
 
 ## Use conditional playbooks
 
 Read [Playbooks](references/playbooks.md) when the target is a pull request,
-the depth is Deep, or the user asked for repair. Apply only the relevant
-playbook sections.
+the depth is Deep, the outcome is Post-change, or the user asked for repair.
+Apply only the relevant playbook sections.
 
 Architecture-primary scans belong to `$architecture-review`. A change review
 may report architecture evidence introduced by the reviewed change. In
-Challenge posture, a primarily structural concern may recommend a critical
-review with `$architecture-review` for architecture-review lenses; do not turn
-the current task into a broad architecture scan.
+Challenge posture, route a primarily structural concern to a focused
+`$architecture-review`; do not expand the current review into a broad
+architecture scan.
 
 ## Finish
 
 Finish only after the complete frozen scope has been inspected, every retained
 finding satisfies the actionable contract, every Challenge candidate is
 categorized, duplicates are merged, and the applicable PR, Deep, or repair
-playbook is complete.
+playbook is complete. For Post-change or Repair outcome, finish only after
+retained findings within scope are repaired, focused validation passes, and the
+main agent has inspected the final diff. Report any finding left unresolved
+because it needs new authority or expands the original task.

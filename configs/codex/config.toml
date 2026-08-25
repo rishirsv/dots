@@ -37,9 +37,6 @@ enabled = false
 [plugins."dots@dots"]
 enabled = true
 
-[plugins."meta-skill@dots"]
-enabled = false
-
 [plugins."visualize@openai-bundled"]
 enabled = false
 

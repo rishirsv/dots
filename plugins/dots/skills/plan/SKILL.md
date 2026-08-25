@@ -26,7 +26,7 @@ team. Use one investigation agent by default. Add another only for a separate
 part of the system, such as another product area, service, data model, or
 migration risk that the first agent cannot cover efficiently. Give each agent a
 precise question and ask for source paths, behavior, uncertainty, and
-conflicts—not a proposed plan. Combine the evidence and make the decisions
+conflicts, not a proposed plan. Combine the evidence and make the decisions
 yourself.
 
 ## Make The Decisions

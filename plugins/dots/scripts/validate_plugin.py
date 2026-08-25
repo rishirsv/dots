@@ -7,12 +7,13 @@ import json
 import re
 import sys
 from pathlib import Path
+from urllib.parse import unquote
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILLS = ROOT / "skills"
 DESCRIPTION_WORD_LIMIT = 45
 DEFAULT_PROMPT_CHAR_LIMIT = 400
+MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 FORBIDDEN = {
     "prompt-wrapper residue": re.compile(r"</content>"),
     "stale review name": re.compile(r"\bUltraReview\b"),
@@ -31,10 +32,21 @@ def quoted_field(text: str, field: str) -> str | None:
     return match.group(2) if match else None
 
 
-def validate_skill(skill_dir: Path, errors: list[str]) -> None:
+def plain_field(text: str, field: str) -> str | None:
+    match = re.search(rf"^\s*{re.escape(field)}:\s*([^\s#]+)\s*$", text, re.MULTILINE)
+    return match.group(1) if match else None
+
+
+def validate_skill(skill_dir: Path, errors: list[str]) -> str | None:
     skill_file = skill_dir / "SKILL.md"
     agent_file = skill_dir / "agents" / "openai.yaml"
     text = skill_file.read_text(encoding="utf-8")
+    name = plain_field(text, "name")
+    if name is None:
+        fail(errors, f"{skill_file}: missing frontmatter name")
+    elif name != skill_dir.name:
+        fail(errors, f"{skill_file}: name {name!r} must match directory {skill_dir.name!r}")
+
     description = quoted_field(text, "description")
     if description is None:
         fail(errors, f"{skill_file}: missing quoted frontmatter description")
@@ -46,7 +58,7 @@ def validate_skill(skill_dir: Path, errors: list[str]) -> None:
 
     if not agent_file.exists():
         fail(errors, f"{agent_file}: missing agent metadata")
-        return
+        return name
     agent_text = agent_file.read_text(encoding="utf-8")
     prompt = quoted_field(agent_text, "default_prompt")
     if prompt is None:
@@ -58,61 +70,90 @@ def validate_skill(skill_dir: Path, errors: list[str]) -> None:
         )
     if not re.search(r"^\s*allow_implicit_invocation:\s*(true|false)\s*$", agent_text, re.MULTILINE):
         fail(errors, f"{agent_file}: missing boolean allow_implicit_invocation policy")
+    for field in ("icon_small", "icon_large"):
+        icon = quoted_field(agent_text, field)
+        if icon is not None and not (skill_dir / icon).resolve().is_file():
+            fail(errors, f"{agent_file}: {field} does not resolve: {icon}")
+    return name
 
 
-def validate_eval(path: Path, errors: list[str]) -> None:
+def validate_manifest(root: Path, errors: list[str]) -> None:
+    manifest_path = root / ".codex-plugin" / "plugin.json"
     try:
-        suite = json.loads(path.read_text(encoding="utf-8"))
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
-        fail(errors, f"{path}: invalid JSON: {exc}")
+        fail(errors, f"{manifest_path}: invalid manifest: {exc}")
         return
-    if "cases" in suite:
-        fail(errors, f"{path}: legacy 'cases' key; use schema_version 2 with evals")
-    if suite.get("schema_version") != 2:
-        fail(errors, f"{path}: schema_version must be 2")
-    if suite.get("target") != {"type": "skill", "ref": "SKILL.md"}:
-        fail(errors, f"{path}: target must reference SKILL.md")
-    evals = suite.get("evals")
-    if not isinstance(evals, list) or not evals:
-        fail(errors, f"{path}: evals must be a non-empty list")
-        return
-    for index, case in enumerate(evals):
-        for field in ("prompt", "expected_output"):
-            if not isinstance(case.get(field), str) or not case[field].strip():
-                fail(errors, f"{path}: eval {index} must define non-empty {field}")
-        expectations = case.get("expectations")
-        if not isinstance(expectations, list) or not expectations or not all(
-            isinstance(expectation, str) and expectation.strip() for expectation in expectations
-        ):
-            fail(errors, f"{path}: eval {index} must define non-empty expectations")
+
+    if manifest.get("name") != root.name:
+        fail(errors, f"{manifest_path}: name must match plugin directory {root.name!r}")
+    interface = manifest.get("interface")
+    if isinstance(interface, dict):
+        for field in ("composerIcon", "logo"):
+            resource = interface.get(field)
+            if isinstance(resource, str) and not (root / resource).resolve().is_file():
+                fail(errors, f"{manifest_path}: interface.{field} does not resolve: {resource}")
 
 
-def main() -> int:
+def validate_markdown_links(root: Path, errors: list[str]) -> None:
+    for path in sorted(root.rglob("*.md")):
+        text = path.read_text(encoding="utf-8")
+        for match in MARKDOWN_LINK.finditer(text):
+            target = match.group(1).strip().strip("<>")
+            if not target or target.startswith("#") or re.match(r"^[a-z][a-z0-9+.-]*:", target, re.I):
+                continue
+            target = unquote(target.split("#", 1)[0].split("?", 1)[0])
+            if target and not (path.parent / target).resolve().exists():
+                fail(errors, f"{path}: local link does not resolve: {match.group(1)}")
+
+
+def validate_generated_files(root: Path, errors: list[str]) -> None:
+    for path in sorted(root.rglob("*")):
+        if path.name == "__pycache__" or path.suffix == ".pyc":
+            fail(errors, f"{path}: generated Python cache must not be packaged")
+
+
+def validate_plugin(root: Path) -> list[str]:
     errors: list[str] = []
-    skill_dirs = sorted(path.parent for path in SKILLS.glob("*/SKILL.md"))
+    skills = root / "skills"
+    skill_dirs = sorted(path.parent for path in skills.glob("*/SKILL.md"))
     if not skill_dirs:
-        fail(errors, f"{SKILLS}: no source skills found")
+        fail(errors, f"{skills}: no source skills found")
+
+    names: dict[str, Path] = {}
     for skill_dir in skill_dirs:
-        validate_skill(skill_dir, errors)
+        name = validate_skill(skill_dir, errors)
+        if name is not None:
+            if name in names:
+                fail(errors, f"{skill_dir / 'SKILL.md'}: duplicate skill name {name!r}; first used by {names[name]}")
+            else:
+                names[name] = skill_dir / "SKILL.md"
+
+    validate_manifest(root, errors)
+    validate_markdown_links(root, errors)
+    validate_generated_files(root, errors)
 
     runtime_suffixes = {".md", ".html", ".yaml", ".yml"}
-    for path in sorted(SKILLS.rglob("*")):
+    for path in sorted(skills.rglob("*")):
         if not path.is_file() or path.suffix.lower() not in runtime_suffixes:
             continue
         text = path.read_text(encoding="utf-8")
         for label, pattern in FORBIDDEN.items():
             if pattern.search(text):
                 fail(errors, f"{path}: {label}")
+    return errors
 
-    for path in sorted(ROOT.rglob("evals/evals.json")):
-        validate_eval(path, errors)
+
+def main() -> int:
+    errors = validate_plugin(ROOT)
 
     if errors:
         print("Dots validation failed:", file=sys.stderr)
         for error in errors:
             print(f"- {error}", file=sys.stderr)
         return 1
-    print(f"Dots validation passed: {len(skill_dirs)} skills")
+    skill_count = sum(1 for _ in (ROOT / "skills").glob("*/SKILL.md"))
+    print(f"Dots validation passed: {skill_count} skills")
     return 0
 
 

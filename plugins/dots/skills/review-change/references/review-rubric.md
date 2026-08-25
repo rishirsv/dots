@@ -12,9 +12,21 @@ Does the code actually do what the intent says it should?
 - Read every hunk and its enclosing behavior.
 - Check the happy path and sad path, conditions, boundaries, empty inputs,
   nullability, type coercion, overflow, encoding, and removed safeguards.
+- For each deleted or replaced behavior, safeguard, or validation path, identify
+  the invariant it enforced and where the new code re-establishes it. Keep a
+  finding only when the change dropped or broke it.
 - Check state transitions, stale state, dangling references, async work,
   cancellation, error propagation, and silently swallowed failures.
 - Check callers and callees for changed contracts and partial requirements.
+- Scan changed code for the classic pitfalls of its language or framework: for
+  example, falsy-zero handling, coercion, closure-captured loop variables,
+  mutable default arguments, late-binding closures, range-variable capture,
+  timezone or daylight-saving drift, and floating-point equality. Flag only a
+  reachable problem introduced by the change.
+- When the change adds or modifies a wrapper, proxy, decorator, cache, or
+  adapter, check that every method routes to the wrapped instance rather than
+  back through a registry, session, or global, and that it forwards every
+  method its callers actually use.
 - Ask what happens when an operation runs twice or a prior run stops halfway.
   Require reconciliation when correctness otherwise depends on leftover state.
 - When multiple actors can touch mutable state, determine whether access is
@@ -22,8 +34,6 @@ Does the code actually do what the intent says it should?
   ownership rather than a convention that will eventually fail.
 - Compare the change with the located specification. Cite the exact requirement
   for missing, partial, contradictory, or unrequested behavior.
-- Compare the change with exact repository rules. Treat a rule as policy only
-  when it is actually written down.
 
 When a potential bug depends on a value or state, trace the execution path.
 Show the call chain that makes the state reachable; do not merely say it could
@@ -66,6 +76,11 @@ Report a smell only when the reviewed change introduces it and it satisfies the
 finding contract. Do not report cosmetic preferences or impose a universal
 file-size threshold.
 
+For each retained cleanup finding, state the concrete cost: what is duplicated,
+wasted, or harder to maintain. Name the simpler form or cheaper alternative. If
+neither the material cost nor a concrete improvement can be demonstrated,
+reject the candidate.
+
 ## Systems
 
 Is the change fixing the actual problem at the right owning boundary?
@@ -85,15 +100,28 @@ Is the change fixing the actual problem at the right owning boundary?
 - Check whether data structures match actual access patterns.
 - Ask whether the change is integrated or bolted on: if the requirement had
   been known from the start, would the code look like this?
-- Flag legacy dual paths when callers can migrate and the old path can be
-  deleted in the same wave. Preserve compatibility only for a real persisted
-  or external contract.
+- Apply the shared Hard-Cut Policy to legacy paths, compatibility, and migration
+  findings. Keep the compatibility exception and completion test there as the
+  single source of truth.
 - Report symptom patches and scattered special cases when a demonstrated
   canonical owner can solve the problem once. Do not demand a broader
   abstraction when the local fix is the right boundary.
 - Treat unnecessary sequential orchestration and non-atomic related updates as
   design smells when a cleaner structure is demonstrated, not as speculative
   micro-optimization.
+
+## Repository review guidance
+
+Does the change comply with the repository's applicable review instructions?
+
+- Map each changed file to the `AGENTS.md`, contribution guide, review guide,
+  pull-request template, or linked checklist whose scope covers it.
+- Apply the concrete review lenses, required evidence, and validation named by
+  those sources. Higher-priority instructions win when guidance conflicts.
+- Keep a compliance finding only when the rule is actually written down and
+  the reviewed change violates it.
+- Quote the exact rule, name its source path, and cite the exact changed line
+  that violates it. Do not infer style preferences or the "spirit" of a rule.
 
 ## Verification
 

@@ -3,7 +3,7 @@ interface:
   short_description: "Independently review product UI without changing it"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
-  brand_color: "#3B82F6"
+  brand_color: "#36C5A7"
   default_prompt: "Use $design-review to review this surface, flow, design system, or motion from current evidence."
 policy:
   allow_implicit_invocation: true

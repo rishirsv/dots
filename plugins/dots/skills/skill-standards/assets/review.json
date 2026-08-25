@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "kind": "skill-static-review",
+  "created_at": "<ISO timestamp>",
+  "target": {
+    "skill": "<name>",
+    "inspected_files": [
+      {
+        "path": "<repo-relative path>",
+        "sha256": "<digest>"
+      }
+    ]
+  },
+  "scope": "<review scope>",
+  "verdict": "<verdict>",
+  "findings": [],
+  "open_questions": [],
+  "limitations": []
+}

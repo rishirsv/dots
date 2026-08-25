@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "dots",
-      "version": "0.2.101",
+      "version": "0.2.109",
       "description": "Opinionated development workflows and reusable skills for planning, building, reviewing, documenting, and shipping software.",
       "author": {
         "name": "Rishi"
@@ -21,22 +21,6 @@
         "skills"
       ],
       "homepage": "https://github.com/rishirsv/dots/tree/main/plugins/dots"
-    },
-    {
-      "name": "meta-skill",
-      "version": "0.1.42",
-      "description": "Create, revise, review, and evaluate agent skills.",
-      "author": {
-        "name": "Rishi"
-      },
-      "source": "./plugins/meta-skill",
-      "category": "productivity",
-      "tags": [
-        "skills",
-        "meta",
-        "workflow"
-      ],
-      "homepage": "https://github.com/rishirsv/dots/tree/main/plugins/meta-skill"
     }
   ]
 }

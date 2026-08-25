@@ -40,22 +40,21 @@ Source repo for Rishi's personal plugins, agent workflows, and machine config.
 - Bump the owning `plugin.json` version when a release changes skill behavior.
 - Before syncing configs, run `scripts/sync-configs.sh --dry-run --all`; then
   apply scoped syncs such as `--zsh` or `--vscode`.
-- Meta-Skill CLI lives at `plugins/meta-skill/scripts/metaskill`.
+- Skill creation and mechanical validation belong to the active environment's
+  default skill creator. Dots-specific quality guidance lives at
+  `plugins/dots/references/skill-practices.md`.
 
 ## Validation
 
 - Use focused checks for ordinary changes, including documentation, config, and
   a single skill.
 - After editing a skill, review the changed files directly and run relevant
-  deterministic tests.
-- For Meta-Skill validation, prefer
-  `plugins/meta-skill/scripts/metaskill validate <skill-dir> --json`.
+  deterministic tests plus the active environment's default skill validation.
 - Never run automated HTML structural validation.
 - `scripts/verify.sh --full` is the full repository integration gate. It checks
   plugin and marketplace metadata, validates and smoke-installs marketplace
-  plugins, validates Meta-Skill and Dots skills and eval suites, exercises the
-  Meta-Skill CLI and workbench, runs deterministic HTML generation/tests,
-  dry-runs config sync, and runs Meta-Skill and Dots test suites.
+  plugins, checks Dots-specific skill conventions, runs deterministic HTML
+  generation/tests, dry-runs config sync, and runs Dots test suites.
 - Run `scripts/verify.sh --full` only when the user explicitly requests it, for
   marketplace or plugin packaging, for cross-plugin/shared integration or
   release-infrastructure changes, or when changing the gate itself.

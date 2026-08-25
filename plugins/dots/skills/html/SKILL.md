@@ -23,7 +23,7 @@ When the caller supplies an `artifact-template.json` with `kind: "html"`:
 2. Follow the content and structure supplied by the calling skill. Use the
    reference for visual treatment; for an adaptive template, do not copy its
    sample headings, claims, or order as slots.
-3. Deliver the new, verified artifact—not the reference, preview, or working
+3. Deliver the new, verified artifact, not the reference, preview, or working
    source.
 
 Read only what the artifact needs:
@@ -35,7 +35,7 @@ Read only what the artifact needs:
 - [charts.md](references/charts.md) for charts;
 - [diagrams.md](references/diagrams.md) for diagrams;
 - [generated-images.md](references/generated-images.md) before using `imagegen`;
-- [creating-templates.md](references/creating-templates.md) with `skill-author`
+- [creating-templates.md](references/creating-templates.md) with `skill-standards`
   when creating or revising an HTML-template skill.
 
 ## Boundaries

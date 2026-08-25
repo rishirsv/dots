@@ -4,7 +4,6 @@
   "enabledPlugins": {
     "codex@openai-codex": true,
     "dots@dots": true,
-    "meta-skill@dots": true,
     "build-ios-apps@steady-app": true
   },
   "extraKnownMarketplaces": {

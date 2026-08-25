@@ -1,6 +1,6 @@
 ---
 name: architecture-review
-description: "Reviews a codebase or subsystem for structural refactor candidates, architecture ownership problems, shallow modules, weak seams, duplicated policy, and hard-cut cleanup opportunities. Explicit-only after-the-fact architecture review; not post-implementation diff cleanup, planning-only work, or direct feature work."
+description: "Use only when the user selects `$architecture-review` to find structural refactor candidates, ownership problems, shallow modules, weak seams, duplicated policy, or hard-cut cleanup opportunities; not for changed-code review, planning, or feature implementation."
 ---
 
 # Architecture Review
@@ -66,9 +66,9 @@ Apply the deletion test (architecture-language.md).
 
 Default to a ranked candidate report in chat unless the user asks for a file or the candidate set needs diagrams. Shape the report however best serves the candidates found; a useful report covers three things per candidate:
 
-1. **The problem** — what friction the current architecture causes, where it lives (files, seams, competing owners), and the evidence.
-2. **The change** — what would move, merge, deepen, or disappear, in plain English, including any hard cuts and where the owning invariant should be tested.
-3. **The payoff and confidence** — how locality, leverage, testability, or navigability improves, and whether this is strongly recommended, worth exploring, or speculative.
+1. **The problem:** what friction the current architecture causes, where it lives (files, seams, competing owners), and the evidence.
+2. **The change:** what would move, merge, deepen, or disappear, in plain English, including any hard cuts and where the owning invariant should be tested.
+3. **The payoff and confidence:** how locality, leverage, testability, or navigability improves, and whether this is strongly recommended, worth exploring, or speculative.
 
 Write for the repo owner deciding what to do next: lead with the strongest candidate and why, keep candidates scannable, and skip dimensions that don't apply rather than filling in every field.
 

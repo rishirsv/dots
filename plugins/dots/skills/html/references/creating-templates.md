@@ -1,8 +1,8 @@
 # Create an HTML-template skill
 
-Read this alongside `skill-author` when creating or revising a named
+Read this alongside `skill-standards` when creating or revising a named
 HTML-template skill. This file covers the HTML-specific package and handoff;
-`skill-author` covers the rest of the skill and its validation.
+`skill-standards` covers the rest of the skill and its validation.
 
 Create a template skill when a recurring artifact needs its own content rules,
 reference page, and preview. A generic HTML form factor does not need another
@@ -98,7 +98,7 @@ identity.
 
 Before delivery:
 
-- validate the skill with Meta-Skill;
+- validate the skill through the environment's default skill creator;
 - run `node --test scripts/template-contract.test.mjs` from the HTML skill
   directory after adding or moving a template package or gallery entry; it
   checks the manifest, in-package assets, preview signature, and gallery links;
