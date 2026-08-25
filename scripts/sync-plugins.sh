@@ -113,6 +113,20 @@ raise SystemExit(0 if any(plugin.get("id") == plugin_id for plugin in installed)
 ' "$plugin_id" <<< "$installed_json"
 }
 
+claude_stale_plugin_ids() {
+  claude plugin list --json | python3 -c '
+import json
+import sys
+
+desired = set(sys.argv[1:])
+for plugin in json.load(sys.stdin):
+    plugin_id = plugin.get("id", "")
+    name, separator, marketplace = plugin_id.partition("@")
+    if separator and marketplace == "dots" and name not in desired:
+        print(plugin_id)
+' "${CLAUDE_PLUGIN_NAMES[@]}"
+}
+
 sync_claude_plugins() {
   claude plugin marketplace add "$CLAUDE_MARKETPLACE" --scope user
   for plugin in "${CLAUDE_PLUGIN_NAMES[@]}"; do
@@ -122,6 +136,11 @@ sync_claude_plugins() {
     else
       claude plugin install "$plugin_id" --scope user
     fi
+  done
+  local stale_plugin_id
+  for stale_plugin_id in "${(@f)$(claude_stale_plugin_ids)}"; do
+    [[ -n "$stale_plugin_id" ]] || continue
+    claude plugin uninstall "$stale_plugin_id" --scope user
   done
 }
 

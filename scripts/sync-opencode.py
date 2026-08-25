@@ -18,6 +18,8 @@ CONFIG_SOURCE = DOTS_ROOT / "configs" / "opencode" / "opencode.json"
 CONFIG_TARGET = CONFIG_ROOT / "opencode.json"
 SKILLS_TARGET = CONFIG_ROOT / "skills"
 MANIFEST = CONFIG_ROOT / ".dots-synced-skills.json"
+DOTS_MARKETPLACE = DOTS_ROOT / ".agents" / "plugins" / "marketplace.json"
+DOTS_CACHE = HOME / ".codex" / "plugins" / "cache" / "dots"
 VALID_SKILL_NAME = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 
@@ -42,12 +44,18 @@ def source_rank(skill_file: Path) -> tuple[int, str]:
     return rank, path
 
 
+def current_dots_plugins() -> set[str]:
+    payload = json.loads(DOTS_MARKETPLACE.read_text())
+    return {plugin["name"] for plugin in payload.get("plugins", [])}
+
+
 def discover_skills() -> dict[str, Path]:
     roots = [
         DOTS_ROOT / "plugins",
         HOME / ".codex" / "skills",
         HOME / ".codex" / "plugins" / "cache",
     ]
+    dots_plugins = current_dots_plugins()
     candidates: dict[str, list[Path]] = {}
     for root in roots:
         if not root.exists():
@@ -55,6 +63,10 @@ def discover_skills() -> dict[str, Path]:
         for skill_file in root.rglob("SKILL.md"):
             if "node_modules" in skill_file.parts:
                 continue
+            if skill_file.is_relative_to(DOTS_CACHE):
+                cached_plugin = skill_file.relative_to(DOTS_CACHE).parts[0]
+                if cached_plugin not in dots_plugins:
+                    continue
             name = skill_file.parent.name
             if not VALID_SKILL_NAME.fullmatch(name):
                 print(f"Skipping invalid OpenCode skill name: {name} ({skill_file})")
