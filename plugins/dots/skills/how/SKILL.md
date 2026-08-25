@@ -1,6 +1,6 @@
 ---
 name: how
-description: "Use for 'how does X work', code or change walkthroughs, and placement, ownership, or layering questions. Explains subsystem architecture, runtime flow, diffs, commits, branches, and pull requests. Can critique architecture. Use why for motivation and explain for quick ELI5 answers."
+description: "Explains how code, a subsystem, change, commit, branch, or pull request works, including runtime flow, ownership, placement, and layering. Use why for historical rationale, explain for a quick ELI5 answer, and architecture-review for a broad structural audit."
 ---
 
 # How

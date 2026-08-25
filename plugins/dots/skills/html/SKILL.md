@@ -1,6 +1,6 @@
 ---
 name: html
-description: "Creates and edits self-contained HTML pages, fragments, and static product mocks. Use for browser-openable HTML, product mockups, template-backed HTML artifacts, or creating a template skill; not for production UI implementation, interactive visualizations, underlying research or planning, durable docs, or slides."
+description: "Creates and edits self-contained browser-openable HTML pages, fragments, static product mocks, templates, and HTML assets for template-driven skills. Not for production UI implementation, interactive data visualizations, underlying research or planning, durable documentation, or non-HTML skill authoring."
 ---
 
 # HTML

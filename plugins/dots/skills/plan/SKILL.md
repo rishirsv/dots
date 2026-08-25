@@ -1,6 +1,6 @@
 ---
 name: plan
-description: "Creates implementation-ready product and engineering plans from inspected source. Use only when the user explicitly selects or names $plan; not for implementing changes, informal task lists, or fuzzy-direction interviews."
+description: "Creates implementation-ready software plans from inspected repository source. Use when the user asks to plan a feature, bug fix, refactor, or engineering change; not for shaping fuzzy direction, informal task lists, or implementation."
 ---
 
 # Plan

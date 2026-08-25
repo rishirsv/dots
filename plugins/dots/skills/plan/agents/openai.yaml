@@ -7,4 +7,4 @@ interface:
   default_prompt: "Use $plan to inspect the current system and produce an implementation-ready plan for this change."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

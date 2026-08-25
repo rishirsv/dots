@@ -7,4 +7,4 @@ interface:
   default_prompt: "Use $architecture-review to find and rank structural refactor candidates in this codebase area."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

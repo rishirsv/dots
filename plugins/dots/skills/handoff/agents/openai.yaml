@@ -7,4 +7,4 @@ interface:
   default_prompt: "Use $handoff to create a continuation brief with current state, decisions, risks, validation, and next actions. Reference existing task or plan artifacts instead of duplicating them."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

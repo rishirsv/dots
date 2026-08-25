@@ -1,6 +1,6 @@
 ---
 name: architecture-review
-description: "Use only when the user selects `$architecture-review` to find structural refactor candidates, ownership problems, shallow modules, weak seams, duplicated policy, or hard-cut cleanup opportunities; not for changed-code review, planning, or feature implementation."
+description: "Finds structural refactor candidates, ownership problems, weak seams, duplicated policy, and hard-cut cleanup opportunities across a codebase or subsystem. Use for broad architecture audits; use review-change for a completed diff and how for explaining a named architecture."
 ---
 
 # Architecture Review

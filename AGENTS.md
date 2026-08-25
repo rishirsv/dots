@@ -35,8 +35,11 @@ Source repo for Rishi's personal plugins, agent workflows, and machine config.
 
 - Sync repo-owned marketplace plugins and installed local plugin caches with
   `scripts/sync-plugins.sh`; run it after commits on `main` and plugin PR merges.
-- In this repo, when the user says `sync`, publish the scoped work: commit it,
-  push it, then run the relevant sync script.
+- In this repo, when the user says `commit` or `sync`, publish and propagate the
+  scoped work: commit only the scoped files, push the current branch, then run
+  every relevant repo sync command. Use `scripts/sync-plugins.sh --all` for
+  plugin changes. For config changes, follow the dry-run and scoped sync rule
+  below. Never include unrelated working-tree changes.
 - Bump the owning `plugin.json` version when a release changes skill behavior.
 - Before syncing configs, run `scripts/sync-configs.sh --dry-run --all`; then
   apply scoped syncs such as `--zsh` or `--vscode`.

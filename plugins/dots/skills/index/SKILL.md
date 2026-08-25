@@ -1,6 +1,6 @@
 ---
 name: index
-description: "Routes Dots plugin requests to the right focused skill, shared playbook, or reference. Use when Dots is named or tagged, a development request spans several phases, or the user asks how to use Dots."
+description: "Routes Dots requests to the right focused skill, Feature Dev playbook, or shared reference. Use when Dots is named, the user asks how to use it, or a software request spans multiple Dots workflows."
 ---
 
 # Dots Index

@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "Use only when the user selects `$handoff` to create a continuation brief for the current task, branch, PR, plan, or conversation, inline by default or saved on request; not for PR publication or external-model review."
+description: "Creates a continuation brief for the current task, branch, pull request, plan, or conversation. Use when the user asks to hand work to another task, agent, or phase; use recall to reconstruct earlier work and pr to publish changes."
 ---
 
 # Handoff
