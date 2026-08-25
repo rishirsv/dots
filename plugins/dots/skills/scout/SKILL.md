@@ -36,18 +36,52 @@ four when they are short, independent, and easy to answer together. Ask one
 when it unlocks what follows or deserves focused deliberation. A question that
 depends on another question in the current round belongs in a later round.
 
-Number each question and give a recommended answer. Use this compact shape:
+Number each question and give a recommended answer. Keep the common case
+compact. Use one meaningful emoji in the question heading and one in the
+recommendation label when they improve scanning; otherwise leave them out. Let
+the subject choose the emojis rather than using a fixed vocabulary.
 
 ```md
-❓ **Q1 · <plain-language decision>**
+<question emoji> **Q1 · <plain-language decision>**
 
-<The question, useful context, and choices when they help.>
+<Why this matters and what changes based on the answer.>
 
-➡️ **Recommendation:** <the answer that best fits the direction so far, and why>
+- **A · <plain-language option>** — <What it means in practice, its strongest
+  benefit, and its main cost.>
+- **B · <plain-language option>** — <What it means in practice, its strongest
+  benefit, and its main cost.>
+
+<recommendation emoji> **Recommendation: <option>** — <Why it best fits the
+direction so far and which tradeoff makes it preferable.>
 ```
 
 Put the question first. Then give only the context the user needs to answer it:
 why the decision matters, what would change, and the real tradeoff.
+
+Teach only what the user needs to make the decision. When a concept may be
+unfamiliar, explain it through its practical consequences rather than turning
+the response into a lesson or glossary. Do not explain concepts the user has
+already used confidently or that the conversation has made clear.
+
+When a choice leans on knowledge the user may not have, add this below the
+recommendation:
+
+```md
+**What these mean**
+
+- **<unfamiliar concept or choice>** — <What it means in plain language, what
+  choosing it commits the user to, and how to tell whether it fits.>
+```
+
+Cover only the choices where this genuinely helps; omit the block for a fork
+the user already understands. Keep each explanation to one or two sentences
+and do not repeat the option's stated benefit and cost. If several concepts
+need real teaching, ask that question alone instead of adding it to a batch.
+
+When the user lacks a map of the domain, briefly teach only the vocabulary,
+what good looks like, or the potholes needed to answer the current question.
+Treat each surfaced blindspot as a possible frontier branch, not a settled
+fact.
 
 When the user is choosing among distinct options:
 
@@ -58,7 +92,7 @@ When the user is choosing among distinct options:
 - leave the choice genuinely open.
 
 Do not force options onto a simple preference or open-ended judgment. Ask it
-directly.
+directly and omit the choice list.
 
 Match the question to the work:
 
