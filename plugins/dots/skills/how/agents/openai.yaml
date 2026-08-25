@@ -1,0 +1,10 @@
+interface:
+  display_name: "How"
+  short_description: "Explain how code, systems, or changes work"
+  icon_small: "../../assets/icon.png"
+  icon_large: "./assets/preview.png"
+  brand_color: "#1F5EFF"
+  default_prompt: "Use $how to explore this code, system, or change and explain how it works; critically review its architecture only when requested."
+
+policy:
+  allow_implicit_invocation: true

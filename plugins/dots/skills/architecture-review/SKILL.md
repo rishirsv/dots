@@ -30,7 +30,7 @@ Keep only repo guidance that changes the recommendation; higher-priority instruc
 If docs are incomplete, infer the current layer model from the code and state the assumption.
 
 Architecture Review owns architecture-primary scans: structural candidates,
-ownership, seams, and interface shape. Code Review may report architecture
+ownership, seams, and interface shape. Review Change may report architecture
 evidence found while reviewing a diff or broad quality audit, but routes a
 primarily structural candidate search here.
 

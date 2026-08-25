@@ -5,9 +5,10 @@ polish pass.
 
 ## Authority
 
-Follow repo design guidance, design-system docs, and existing conventions first.
-Use these principles inside those constraints. When no repo design guide exists,
-these principles become the default design standard.
+Follow repository product and design authority first. Use these principles to
+exercise judgment where that authority leaves room; they do not prescribe one
+aesthetic. In greenfield work, any coherent composition is available when it
+fits the product, content, platform, and brief.
 
 ## Ground Distinctiveness In The Subject
 
@@ -25,39 +26,34 @@ component motifs, and copy as core design material, not optional polish.
 
 ## Hero And First Viewport
 
-For web designs, the hero is a thesis. Open with the most characteristic thing
-in the subject's world, in whatever form fits: a headline, image, animation,
-live demo, interface moment, or product scene.
+For web designs, use the first viewport to establish the product's thesis. Its
+focus may be a headline, image, animation, live demo, interface moment, product
+scene, or another composition supported by the brief.
 
-Be deliberate. A big number with a small label, supporting stats, and a gradient
-accent is the template answer. Use it only when it is truly the best answer.
+Be deliberate. Familiar hero formulas can work, but they need a product reason
+rather than serving as a default composition.
 
-Keep the first viewport focused: one focal point, a short readable headline or
-primary task, restrained supporting copy, one visible primary action, and enough
-negative space to survive a small laptop viewport. Do not overcrowd the opening
-view with stats, chips, badges, fake controls, or competing mini-panels.
+Make the first viewport's hierarchy legible on a small laptop. Focused and dense
+compositions are both available; when several actions, stats, controls, or
+panels appear together, their competition should be intentional and usable.
 
-Do not add hero eyebrows, kickers, pretitle labels, badges, or pills by default.
-Use one only when the user explicitly requested it or the accepted/reference
-design already contains it.
+Eyebrows, kickers, badges, pills, and other small labels should communicate real
+status, category, or structure rather than decorate empty space.
 
-Default headers should stay quiet: brand mark, essential navigation, and one
-primary action or control. Avoid icon-heavy navigation, extra buttons, search
-bars, status widgets, segmented controls, decorative illustrations, or dense
-product chrome unless the user requested them or the product workflow requires
-them.
+Give headers only the navigation, identity, search, status, or actions the
+product needs. Their density and expression may be quiet or elaborate when the
+selected direction and workflow support it.
 
-Use interactive UI inside a hero only when it genuinely fits: SaaS/software
-previews, product demos, or purposeful interactive animation. Do not force fake
-interactive chrome into branded, editorial, product, venue, food, consumer, or
-background-led heroes.
+Use interactive UI inside a hero when it demonstrates a real product idea or
+supports the composition. Avoid fake chrome that implies behavior the surface
+does not have.
 
 ## Visual Direction Defaults
 
 When the user has not given stronger art direction, choose a coherent direction
-before concepting: one theme paradigm, one background character, one typography
-character, one hero or primary-screen architecture, one section/app rhythm, 2-4
-signature component motifs, and 1-2 motion cues.
+before concepting. Define the composition, typography character, material,
+rhythm, signature visual idea, and motion character only to the depth the
+surface needs.
 
 Set density, spacing, typographic contrast, and image use from the product task,
 content, platform, and selected direction. Every choice must remain practical to
@@ -67,9 +63,9 @@ Commit to the combination so the design feels intentional instead of generic.
 Adapt it to the product type rather than forcing every app into a
 marketing-site style.
 
-Translate mood adjectives into constraints the model and code can execute:
+Translate mood adjectives into decisions the model and code can execute:
 type family or class, weight, case, layout skeleton, spacing rhythm, shape
-language, imagery rules, motion timing, and explicit anti-patterns.
+language, imagery, motion timing, and relevant tradeoffs.
 
 ## Typography
 
@@ -95,26 +91,22 @@ Structure is information. Numbering, eyebrows, dividers, labels, rails, bands,
 and containers should encode something true about the content rather than
 decorate it.
 
-Use numbered markers only when order matters, such as a real process, sequence,
-timeline, rank, or typed state progression. Avoid arbitrary 01/02/03 markers
-for unrelated content.
+Use numbered markers when they communicate order, sequence, rank, or state;
+otherwise choose structure that reflects the actual relationship.
 
-Prefer open layouts, bands, rails, lists, tables, canvases, and purposeful single
-frames over nested cards, giant rounded wrappers, default bento grids, or
-overcompartmentalized dashboards. Cards are allowed when they reflect the actual
-information model.
+Choose containers from the information model. Open layouts, bands, rails,
+lists, tables, canvases, cards, and panels are all valid; excessive nesting or
+uniform card grids often flatten hierarchy.
 
 Long pages should vary rhythm across sections: density, image-to-text ratio,
 alignment, scale, whitespace, and visual tempo should change deliberately while
 preserving one palette, typography system, component family, and spacing logic.
-Do not repeat the same centered block or left-text/right-card formula through
-the whole page.
+Vary long-page rhythm when repetition stops helping comprehension.
 
 Use connective tissue between sections: gutters, bands, alignment, typography
-rhythm, recurring media frames, color cadence, and subtle transitions. Do not
-invent major new carousels, accordions, pricing cards, dashboards, forms, tab
-systems, feature grids, or other component families unless the user requested
-them, the accepted concept shows them, or the workflow concretely requires them.
+rhythm, recurring media frames, color cadence, and transitions. Add component
+families when content or interaction requires them, not simply to fill a
+composition.
 
 Generated media should sit in implementation-friendly frames: stable aspect
 ratios, consistent crop logic, radius, shadows, and spacing. Avoid random image
@@ -125,17 +117,17 @@ sizes or collage systems unless the brief calls for that direction.
 Use motion deliberately. Choose a few moments that reveal state, guide attention,
 make interaction tangible, or support the subject's atmosphere.
 
-Use one primary motion motif per flow and reserve other motion for state,
-feedback, or spatial continuity. Respect reduced-motion preferences.
+Use a coherent motion vocabulary for authored moments, state, feedback, and
+spatial continuity. Respect reduced-motion preferences.
 
 ## Complexity And Restraint
 
 Match complexity to the vision. Maximalist directions need elaborate execution.
 Minimal directions need precision in spacing, type, rhythm, and detail.
 
-Give each composition one product-specific focal element, keep repeated elements
-consistent, and remove decoration that does not serve hierarchy, state, content,
-or the selected visual world.
+Give each composition identifiable product-specific logic, keep repeated
+elements consistent, and remove decoration that does not serve hierarchy,
+state, content, or the selected visual world.
 
 ## Content
 
@@ -158,4 +150,4 @@ Before final delivery, critique the work like a design lead:
 - Do typography, spacing, color, and assets feel intentional at every scale?
 - Are controls, labels, icons, states, and responsive behavior polished?
 - Is there one strong idea, or are several decorative ideas competing?
-- What should be removed before leaving the house?
+- What should be removed before delivery?

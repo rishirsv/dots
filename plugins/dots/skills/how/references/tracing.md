@@ -11,10 +11,11 @@ covering. Ask for:
 
 - the real entry point and what triggers it
 - each consequential caller, callee, state transition, or data transformation
-- changes in responsibility, asynchronous handoffs, storage, and external effects
+- the important types, boundaries, asynchronous handoffs, storage, and external
+  effects needed to understand the path
 - the visible result and important failure or alternate state
-- exact source locations supporting the account
-- uncertainty, conflicting evidence, and any handoff not traced
+- exact source locations, uncertainty, conflicting evidence, untraced handoffs,
+  and non-obvious behavior or sharp edges supported by source
 
 A tracer should follow the runtime path, not inventory files. It may omit
 unchanged plumbing that does not affect the explanation. It should stop only
@@ -64,3 +65,6 @@ Before delivery, verify that each causal claim points to source, each inference
 shows its reasoning, and each unknown names the missing handoff. Remove detail
 that does not help answer the question. If the reader would still need to open
 the source to understand a consequential handoff, the trace is incomplete.
+Link source locations that support distinct causal claims. Concentrate
+navigation-only links in Where Things Live instead of linking every symbol
+mention in the explanation.

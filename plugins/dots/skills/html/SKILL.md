@@ -47,7 +47,7 @@ by filters. Use `docs-writer` for repository documentation; do not use HTML for
 slides.
 
 If the task still needs planning or code research, ask the user to select
-`$plan` or `$explain-code` first. If a product-UI choice is unresolved, settle
+`$plan` or `$how` first. If a product-UI choice is unresolved, settle
 it through product design before building the page. Product design decides the
 product hierarchy, interaction, accessibility requirements, and visual
 direction; HTML makes the resulting artifact readable, navigable, and

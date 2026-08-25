@@ -14,7 +14,7 @@
     {
       "name": "technical-explainer",
       "title": "Technical explainer",
-      "file": "../../../explain-code/assets/reference.html",
+      "file": "../../../how/assets/reference.html",
       "job": "Build an accurate mental model of a system or change.",
       "layout": "wide",
       "treatment": "editorial",
@@ -54,7 +54,7 @@
     {
       "name": "pr-walkthrough",
       "title": "PR walkthrough",
-      "file": "../../../explain-code/assets/examples/pr-walkthrough.html",
+      "file": "../../../how/assets/examples/pr-walkthrough.html",
       "job": "Help a reviewer understand the actual work, why it was necessary, its scope, mechanism, and proof.",
       "layout": "wide",
       "treatment": "editorial",

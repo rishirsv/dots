@@ -1,119 +1,105 @@
 ---
 name: design-review
-description: "Use when asked to critique or assess existing UI, screens, prototypes, screenshots, user flows, accessibility, design-system consistency, or motion, including UX audits and ship-readiness verdicts. Produces evidence-backed findings and pass/block decisions; not for designing, building, redesigning, routine self-checks, or general code review."
+description: "Use when independently critiquing or auditing existing UI, screenshots, prototypes, flows, accessibility, design-system conformance, or motion. Produces evidence-backed findings and ship-readiness verdicts without changing product source; for making or polishing UI, use design."
 ---
 
 # Design Review
 
-Choose one review path, inspect current evidence, and report the strongest
-supported findings. This skill evaluates; it does not implement fixes. Route
-building, redesign, and implementation polish to
-[design](../design/SKILL.md).
+Independently assess existing product UI. Inspect evidence, test claims against
+the governing product direction, and report findings without implementing
+fixes or modifying product source.
 
-## Choose One Path
+## Establish Authority And Scope
 
-| Request | Path | Read |
-| --- | --- | --- |
-| One screen, component, state, static artifact, target comparison, or pre-handoff acceptance gate | Surface critique | [surface-critique.md](references/surface-critique.md) |
-| A journey, funnel, workflow, product area, or several supplied states representing one experience | Experience audit | [experience-audit.md](references/experience-audit.md) |
-| Source-level token, primitive, variant, component, or design-contract conformance | Design-system audit | [design-system-audit.md](references/design-system-audit.md) |
-| Live or recorded motion, animation changes, or a motion system | Motion review | [motion-audit.md](references/motion-audit.md) |
+Before choosing a review playbook, inspect the repository guidance governing
+the target:
 
-Load only the owning playbook. When the user asks for both a flow audit and a
-gate on one screen, run the two paths separately and keep their verdicts
-separate.
+1. Root and applicable nested `AGENTS.md` files and root or applicable
+   `DESIGN.md` files.
+2. Repository-local product-design skills named by those instructions, loading
+   only their task-relevant references.
+3. Accepted briefs, decisions, targets, design-system documentation, tokens,
+   components, assets, platform conventions, current source, and shipped UI.
 
-Animation and interaction code belong here only when motion is the review
-subject. Route general code review elsewhere. Routine self-checks stay with the
-implementation skill; use this skill for an independent judgment or explicit
-acceptance gate.
+Resolve conflicts by scope and authority: the user's explicit review goal, the
+most specific repository instruction, product-specific guidance, accepted
+decisions and targets, the established system and product evidence, then this
+skill's generic standards.
 
-## Ground The Judgment
+State what is being judged, the user goal, the governing quality bar, and the
+available evidence. Treat implementation rationale and prior self-review as
+evidence, not as the verdict. Do not invent a new product direction during
+review.
 
-Compare the work against the user's goal, binding product and design rules, an
-accepted target or brief, and the quality bar for the surface. Use nearby
-shipped behavior only after confirming it governs the same product and context.
+## Choose The Review
 
-Do not invent a new direction during review. Distinguish a contract violation
-from a preference, and a visible defect from an implementation hypothesis.
+| Request | Read |
+| --- | --- |
+| One screen, component, state, static artifact, target comparison, or acceptance gate | [surface-critique.md](references/surface-critique.md) |
+| A journey, workflow, product area, or several states representing one experience | [experience-audit.md](references/experience-audit.md) |
+| Token, primitive, variant, component, or design-contract conformance in source | [design-system-audit.md](references/design-system-audit.md) |
+| Live or recorded motion, animation changes, or a motion system | [motion-audit.md](references/motion-audit.md) |
 
-Use these principles as judgment prompts:
+Load only the applicable playbook. Keep separate verdicts when the user asks
+for distinct reviews, such as a flow audit and a screen acceptance gate.
+Animation source belongs here only when motion is the review subject; route
+general code review elsewhere.
 
-1. **Purpose:** every element and step earns the user's time and attention.
-2. **Agency:** people can act, recover, undo, cancel, or leave without traps.
-3. **Responsibility:** privacy, safety, consent, and consequences serve the user.
-4. **Familiarity:** established metaphors and platform behavior remain predictable.
-5. **Flexibility:** the experience works across relevant contexts and abilities.
-6. **Simplicity:** hierarchy and disclosure clarify the task without hiding it.
-7. **Craft:** type, color, spacing, assets, states, and motion form one system.
-8. **Delight:** the intended feeling emerges from the other principles, not decoration.
+## Judge From Current Evidence
 
-Use these principles as judgment prompts, not a scorecard. Mention only
-principles that explain a material finding or strength. Give a numeric score
-only when the user asks for one, and explain the rubric and evidence limits.
+Compare the work with the user goal, repository authority, accepted target or
+brief, and relevant platform standards. Use nearby shipped behavior only when
+it governs the same product and context. Distinguish contract violations from
+preferences, visible defects from implementation hypotheses, and missing proof
+from a failed result.
 
-## Use Evidence Precisely
+Use purpose, agency, clarity, accessibility, consistency, and craft as prompts,
+not a scorecard. Mention a principle only when it explains a material finding
+or strength. Give a numeric score only when the user requests one and explain
+its rubric and evidence limits.
 
 Read the shared [visual-proof checklist](../../references/visual-proof.md) when
-the path needs rendered evidence.
+the review needs rendered evidence.
 
-- Use evidence opened, captured, or inspected in the current run. User-supplied
-  artifacts remain valid evidence when inspected now.
-- Rendered evidence supports appearance and visible-state claims. Source
-  supports implementation and conformance facts. Dynamic evidence supports
-  timing, interruption, gesture, haptic, and performance-feel claims.
-- Inspect each screenshot before citing it. Reject the wrong window, state,
-  viewport, crop, loading screen, or blank capture.
-- Do not claim full accessibility compliance from screenshots, fidelity without
-  a source target, or experiential quality from code alone.
-- If required evidence is unavailable, return the path's blocked result or
-  narrow the claim and name the missing proof.
+- Inspect evidence in the current run before citing it.
+- Use rendered evidence for appearance and visible states, source for
+  implementation and conformance, and dynamic evidence for timing, gesture,
+  interruption, haptics, and performance feel.
+- Reject captures with the wrong window, state, viewport, crop, loading screen,
+  or blank content.
+- Do not claim accessibility compliance from screenshots, fidelity without a
+  target, or experiential quality from code alone.
+- When evidence is unavailable, narrow the claim or return the playbook's
+  blocked result and name the missing proof.
 
-Use the runtime's browser tooling for web UI, Chrome only when its existing
-session is required, and native control tooling for app UI. Stop before login,
-payment, PII entry, account mutation, destructive action, consent change,
-send/post, or another external write unless the user approved that action or
-the target is clearly a test environment.
+Use browser or native UI tooling appropriate to the product. Do not cross login,
+payment, PII, account mutation, destructive action, consent, send/post, or
+other external-write boundaries without authorization or a clear test
+environment.
 
-## Rank Findings
+## Report Actionable Findings
 
-Use severity for user or acceptance consequence:
+Rank findings by consequence:
 
-- `P0`: blocks the core task, creates destructive-mistake or trust risk, causes
-  a severe accessibility barrier, or makes the surface unusable.
-- `P1`: major mismatch, comprehension failure, wrong-action risk, broken
-  responsive path, or product-fit failure that blocks release or handoff.
+- `P0`: blocks the core task or creates severe safety, trust, or accessibility
+  risk.
+- `P1`: major comprehension, wrong-action, responsive, or product-fit failure
+  that blocks release or handoff.
 - `P2`: meaningful friction, drift, unclear state, inconsistency, or craft gap
-  that weakens confidence but has a safe path.
+  with a safe path.
 - `P3`: non-blocking refinement.
 
-Each substantive finding contains:
+Each substantive finding includes severity, exact location, current evidence,
+user or fidelity impact, one concrete correction, and an acceptance check. Add
+`Verification needed` and confidence when stronger proof is unavailable. Merge
+duplicate symptoms under their root cause and remove unsupported candidates.
 
-- severity and concise title;
-- exact location and affected surface;
-- current evidence;
-- user or fidelity impact;
-- one concrete correction;
-- an acceptance check;
-- `Verification needed` when stronger proof requires interaction, source,
-  assistive technology, analytics, or user testing;
-- confidence when the judgment is aesthetic or evidence-limited.
+Lead with the verdict or audit outcome, then findings in descending consequence
+and the smallest coherent repair order. State evidence limits that affect the
+result. Return a positive-null result when no substantive issue survives.
 
-Keep the correction with its finding. Delete duplicate findings and unsupported
-candidates. Phrase a possibly intentional difference as an assumption or
-question rather than a defect.
-
-## Finish The Review
-
-Lead with the path's outcome, then findings in descending consequence and the
-smallest coherent repair order. State evidence limits that affect confidence.
-When no substantive issue survives, return a positive-null result instead of
-padding the report.
-
-Answer in chat by default. Save a report only when the user asks or an
-established workflow requires it; follow the repository destination, otherwise
-use `.agents/outputs/`. Do not modify product source.
-
-Use a second independent reviewer only when the user asks, the active context
-authored consequential work, or a close high-stakes verdict could change the
-result. Verify its evidence yourself; the parent review owns the final verdict.
+Answer in chat unless the user or repository requires a saved report. Saving a
+report does not authorize product-source changes. Use a second independent
+reviewer only when requested or when consequential work was authored in the
+active context and a close verdict could change the result; verify that
+reviewer's evidence before adopting it.

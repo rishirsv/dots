@@ -1,0 +1,10 @@
+interface:
+  display_name: "Review Change"
+  short_description: "Review changed code and challenge weak decisions"
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
+  brand_color: "#3B82F6"
+  default_prompt: "Use $review-change to review the current change with read-only Correctness, Simplicity, and Systems reviewers. Use Low, Deep, or Challenge only when I ask, and do not repair unless I ask."
+
+policy:
+  allow_implicit_invocation: true

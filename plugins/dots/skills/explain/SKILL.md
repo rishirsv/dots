@@ -27,5 +27,5 @@ Read the shared [writing style](../../references/writing-style.md) only for a
 substantial or writing-heavy explanation.
 
 Do not start a repository investigation, review code, or create an artifact.
-The user can select `$explain-code` when they want a rigorous, source-traced
+The user can select `$how` when they want a rigorous, source-traced
 explanation of code, a system, or a change.
