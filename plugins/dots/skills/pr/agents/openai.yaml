@@ -1,5 +1,5 @@
 interface:
-  display_name: "Publish PR"
+  display_name: "PR"
   short_description: "Commit, push, and publish a ready pull request"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

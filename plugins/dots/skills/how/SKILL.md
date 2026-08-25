@@ -97,9 +97,11 @@ because it appears here.
 - **Gotchas.** Explain the surprising behavior, hidden coupling, historical
   oddity, or sharp edge a newcomer is likely to miss.
 
-Use a diagram when several components interact or data changes shape across
-stages and the picture makes that relationship easier to understand. Skip it
-when prose already makes the flow clear.
+When the user asks to see, diagram, or make the explanation visual, read
+[Visual explanations](../../references/visual-explanations.md) and include the
+smallest useful view. Otherwise use a visual when several components interact
+or data changes shape across stages and the picture makes that relationship
+easier to understand. Skip it when prose already makes the flow clear.
 
 For change mode, derive the teaching story from `changes.md` rather than
 forcing subsystem headings onto a diff.

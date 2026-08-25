@@ -5,10 +5,8 @@ description: "Creates, updates, or statically reviews agent skill source against
 
 # Skill Standards
 
-Create, update, or review an agent skill against one shared quality standard.
-The three jobs use the same judgment, but they produce different outcomes:
-creation builds new source, updating changes an existing contract without
-flattening it, and reviewing diagnoses source without editing it.
+Create, update, or review an agent skill according to one shared quality standard.
+The workflows for creating, updating, and reviewing a skill are different, although they share similar standards.
 
 Read [skill-practices.md](../../references/skill-practices.md), then choose the
 branch that matches the user's requested outcome:

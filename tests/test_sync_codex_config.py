@@ -351,7 +351,7 @@ class CodexConfigHelperTests(unittest.TestCase):
 
 
 class SyncConfigsIntegrationTests(unittest.TestCase):
-    def test_codex_apply_and_status_keep_owned_files_as_symlinks(self):
+    def test_codex_apply_and_status_copy_owned_files(self):
         with tempfile.TemporaryDirectory() as home_directory:
             environment = os.environ.copy()
             environment["HOME"] = home_directory
@@ -383,18 +383,22 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             self.assertIn('open_world_enabled = true', live_config)
             self.assertIn('destructive_enabled = true', live_config)
             agents = home / ".codex" / "AGENTS.md"
-            self.assertTrue(agents.is_symlink())
+            self.assertTrue(agents.is_file())
+            self.assertFalse(agents.is_symlink())
             self.assertEqual(
-                agents.resolve(),
-                ROOT / "configs" / "agents" / "AGENTS.md",
+                agents.read_bytes(),
+                (ROOT / "configs" / "agents" / "AGENTS.md").read_bytes(),
             )
-            self.assertTrue((home / ".codex" / "keybindings.json").is_symlink())
+            keybindings = home / ".codex" / "keybindings.json"
+            self.assertTrue(keybindings.is_file())
+            self.assertFalse(keybindings.is_symlink())
+            self.assertEqual(
+                keybindings.read_bytes(),
+                (ROOT / "configs" / "codex" / "keybindings.json").read_bytes(),
+            )
             agent_profiles = home / ".codex" / "agents"
-            self.assertTrue(agent_profiles.is_symlink())
-            self.assertEqual(
-                agent_profiles.resolve(),
-                ROOT / "plugins" / "dots" / "agents",
-            )
+            self.assertTrue(agent_profiles.is_dir())
+            self.assertFalse(agent_profiles.is_symlink())
             self.assertEqual(
                 {path.name for path in agent_profiles.glob("*.toml")},
                 {
@@ -405,9 +409,54 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
                     "worker.toml",
                 },
             )
+            self.assertEqual(
+                (agent_profiles / "worker.toml").read_bytes(),
+                (
+                    ROOT / "plugins" / "dots" / "agents" / "worker.toml"
+                ).read_bytes(),
+            )
 
             status_result = subprocess.run(
                 ["zsh", str(SYNC), "--status", "--codex"],
+                cwd=ROOT,
+                env=environment,
+                text=True,
+                capture_output=True,
+            )
+            self.assertEqual(status_result.returncode, 0, status_result.stdout)
+
+    def test_claude_apply_and_status_copy_owned_files(self):
+        with tempfile.TemporaryDirectory() as home_directory:
+            environment = os.environ.copy()
+            environment["HOME"] = home_directory
+
+            apply_result = subprocess.run(
+                ["zsh", str(SYNC), "--claude"],
+                cwd=ROOT,
+                env=environment,
+                text=True,
+                capture_output=True,
+            )
+            self.assertEqual(apply_result.returncode, 0, apply_result.stderr)
+
+            home = Path(home_directory)
+            instructions = home / ".claude" / "CLAUDE.md"
+            keybindings = home / ".claude" / "keybindings.json"
+            self.assertTrue(instructions.is_file())
+            self.assertFalse(instructions.is_symlink())
+            self.assertEqual(
+                instructions.read_bytes(),
+                (ROOT / "configs" / "agents" / "AGENTS.md").read_bytes(),
+            )
+            self.assertTrue(keybindings.is_file())
+            self.assertFalse(keybindings.is_symlink())
+            self.assertEqual(
+                keybindings.read_bytes(),
+                (ROOT / "configs" / "claude" / "keybindings.json").read_bytes(),
+            )
+
+            status_result = subprocess.run(
+                ["zsh", str(SYNC), "--status", "--claude"],
                 cwd=ROOT,
                 env=environment,
                 text=True,

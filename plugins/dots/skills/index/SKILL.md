@@ -29,10 +29,14 @@ settled decisions and evidence across the handoff.
 - `$why` investigates historical evidence and design rationale.
 - `$teach` combines how and why into a paced explanation of a body of work.
 
-When the user requests an HTML explanation, plan, review, or walkthrough, use
-the skill that owns the content first, then use `$html` to render the prepared
-material. Use `$html` as the primary skill only when the job itself is to create
-or edit a standalone HTML page, fragment, or throwaway product mock.
+When the user asks to see, diagram, or make an explanation visual, use the
+skill that owns the content first and read
+[Visual explanations](../../references/visual-explanations.md). Default
+source-grounded software questions to `$how`. Use `$html` afterward when the
+user asks for HTML or the result needs to be a durable, visual, or shareable
+artifact. Use `$html` as the primary skill only when the job itself is to
+create or edit a standalone HTML page, fragment, or throwaway product mock. Do
+not treat “show me your work” as a request for a visual explanation.
 
 ### Build and document
 
@@ -78,6 +82,8 @@ to the user's work unless they ask for the full index.
 Read shared references only when their condition applies:
 
 - [Writing style](../../references/writing-style.md) for reader-facing prose.
+- [Visual explanations](../../references/visual-explanations.md) when the user
+  asks to see, diagram, or make an explanation visual.
 - [Visual proof](../../references/visual-proof.md) when appearance, interaction,
   or rendered output is part of the claim.
 - [Hard-cut policy](../../references/hard-cut-policy.md) when replacing a

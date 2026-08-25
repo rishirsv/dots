@@ -18,7 +18,7 @@ Outcome, review depth, target, and posture are independent:
 | **Outcome** | Post-change | Default when the current agent has just implemented the change. Reviewers report candidates; the main agent judges and fixes retained findings. |
 | **Outcome** | Review-only | The user asks for a standalone review, audit, inspection, report, or PR feedback without asking for repair. Return findings without modifying the change. |
 | **Outcome** | Repair | The user explicitly asks a standalone review to fix its findings. Follow the Post-change repair workflow after review. |
-| **Depth** | Low | A localized, reversible change has a narrow proof surface and no material security, data, migration, permission, concurrency, or public-contract risk. One reviewer applies all three core lenses, prioritizing correctness. |
+| **Depth** | Low | A localized, reversible change has a narrow proof surface and no material security, data, migration, permission, concurrency, or public-contract risk. The coordinator applies all three core lenses, prioritizing correctness, without reviewer fan-out. |
 | **Depth** | Default | Normal multi-file work or a change whose blast radius is not obviously narrow. Three core reviewers inspect the complete change independently. |
 | **Depth** | Deep | Security-sensitive, data-changing, migration-heavy, cross-system, concurrency-sensitive, difficult-to-reverse, or otherwise high-blast-radius work. Add relevant specialists, independent verification, and a gap sweep. |
 | **Target** | Local | Review a local diff, branch, commit, or range and return a local report. |

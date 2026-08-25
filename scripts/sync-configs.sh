@@ -18,7 +18,8 @@ the marked portable block from a live Codex config to the tracked source and
 requires --codex or --codex-personal.
 
 Codex config.toml is a regular 0600 file containing a Dots-owned portable
-block and machine-local settings. Other Codex-owned files remain symlinks.
+block and machine-local settings. Other managed files and directories are
+copied from the tracked source.
 
 This script does not manage secrets. Keep shell secrets in ~/.zshrc.local.
 EOF
@@ -180,28 +181,28 @@ install_file() {
   log "Installed file $target"
 }
 
-install_symlink() {
+install_tree() {
   local source="$1"
   local target="$2"
   ensure_source "$source"
 
   if [[ "$MODE" == "status" ]]; then
-    if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$source" ]]; then
-      log "Current symlink $target"
+    if [[ -d "$target" && ! -L "$target" ]] && diff -qr "$source" "$target" >/dev/null; then
+      log "Current directory $target"
     else
-      log "Drift symlink $target"
+      log "Drift directory $target"
       STATUS=1
     fi
     return
   fi
 
-  if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$source" ]]; then
-    log "Unchanged symlink $target"
+  if [[ -d "$target" && ! -L "$target" ]] && diff -qr "$source" "$target" >/dev/null; then
+    log "Unchanged directory $target"
     return
   fi
 
   if (( DRY_RUN )); then
-    log "Would install symlink $target -> $source"
+    log "Would install directory $source -> $target"
     if [[ -e "$target" || -L "$target" ]]; then
       backup_path "$target"
     fi
@@ -213,20 +214,20 @@ install_symlink() {
     backup_path "$target"
     rm -rf "$target"
   fi
-  ln -s "$source" "$target"
-  log "Installed symlink $target -> $source"
+  cp -pR "$source" "$target"
+  log "Installed directory $target"
 }
 
 sync_codex_agents() {
-  install_symlink "$ROOT/configs/agents/AGENTS.md" "$HOME/.codex/AGENTS.md"
+  install_file "$ROOT/configs/agents/AGENTS.md" "$HOME/.codex/AGENTS.md"
 }
 
 sync_codex_personal_agents() {
-  install_symlink "$ROOT/configs/agents/AGENTS.md" "$HOME/.codex-personal/AGENTS.md"
+  install_file "$ROOT/configs/agents/AGENTS.md" "$HOME/.codex-personal/AGENTS.md"
 }
 
 sync_claude_agents() {
-  install_symlink "$ROOT/configs/agents/AGENTS.md" "$HOME/.claude/CLAUDE.md"
+  install_file "$ROOT/configs/agents/AGENTS.md" "$HOME/.claude/CLAUDE.md"
 }
 
 sync_agent_instructions() {
@@ -257,8 +258,8 @@ sync_codex() {
   if ! python3 "$ROOT/scripts/sync-codex-computer-use.py" "${computer_use_args[@]}"; then
     STATUS=1
   fi
-  install_symlink "$ROOT/configs/codex/keybindings.json" "$HOME/.codex/keybindings.json"
-  install_symlink "$ROOT/plugins/dots/agents" "$HOME/.codex/agents"
+  install_file "$ROOT/configs/codex/keybindings.json" "$HOME/.codex/keybindings.json"
+  install_tree "$ROOT/plugins/dots/agents" "$HOME/.codex/agents"
 }
 
 sync_codex_personal() {
@@ -276,14 +277,14 @@ sync_codex_personal() {
   if ! python3 "$ROOT/scripts/sync-codex-config.py" "${helper_args[@]}"; then
     STATUS=1
   fi
-  install_symlink "$ROOT/configs/codex/keybindings.json" "$HOME/.codex-personal/keybindings.json"
-  install_symlink "$ROOT/plugins/dots/agents" "$HOME/.codex-personal/agents"
+  install_file "$ROOT/configs/codex/keybindings.json" "$HOME/.codex-personal/keybindings.json"
+  install_tree "$ROOT/plugins/dots/agents" "$HOME/.codex-personal/agents"
 }
 
 sync_claude() {
   sync_claude_agents
   install_file "$ROOT/configs/claude/settings.json" "$HOME/.claude/settings.json"
-  install_symlink "$ROOT/configs/claude/keybindings.json" "$HOME/.claude/keybindings.json"
+  install_file "$ROOT/configs/claude/keybindings.json" "$HOME/.claude/keybindings.json"
 }
 
 sync_vscode() {

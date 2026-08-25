@@ -19,6 +19,10 @@ clear. Use one concrete example, comparison, or compact text diagram when it
 shortens the explanation. If the previous answer did not land, explain the
 missing idea from a different angle instead of summarizing it.
 
+When the user asks to see, diagram, or make the explanation visual, read
+[Visual explanations](../../references/visual-explanations.md) and use only its
+lightweight inline forms.
+
 Write the explanation once. Do not split it into technical and simple versions
 or use headings that narrate the explanation. Use a heading only when it names
 the subject. Prefer the plain word and stop when the user can follow the result.

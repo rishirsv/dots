@@ -82,8 +82,8 @@ demonstrated path can be decisive.
 
 ## Output
 
-In Standard posture, present findings first, ordered by priority. Use one entry
-per issue:
+In Review-only outcome with Standard posture, present findings first, ordered
+by priority. Use one entry per issue:
 
 `[P1] Imperative finding title — path/to/file.ext:line`
 
@@ -91,6 +91,12 @@ Follow it with one short paragraph explaining the affected scenario and why
 the behavior is wrong or materially harder to maintain. Keep the cited range
 tight and overlapping the reviewed diff. If there are no qualifying findings,
 say `No findings.` Do not invent one.
+
+In Post-change or Repair outcome with Standard posture, do not repeat repaired
+findings as open review comments. Return a brief completion summary naming the
+meaningful fixes and validation performed. Include an unresolved finding in the
+standard format only when it could not be repaired; omit reviewer process,
+rejected candidates, and empty sections.
 
 In Challenge posture, use this structure:
 
@@ -132,5 +138,5 @@ Treat convergence as a signal, not proof.
 Briefly state the overall assessment, reviewed depth, target, posture, and
 frozen scope; material test gaps or residual risks; degraded execution or
 routing fallbacks; GitHub comments posted; and repairs and validation
-performed. In Standard posture, provide the same execution summary after the
-findings without adding empty Challenge sections.
+performed. In Review-only outcome with Standard posture, provide the same
+execution summary after the findings without adding empty Challenge sections.
