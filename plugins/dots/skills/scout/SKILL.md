@@ -27,8 +27,9 @@ it, explain the difference and ask which should govern.
 ## Ask consequential questions
 
 Work from the biggest unresolved decision into the details. Ask one decision at
-a time by default. Batch questions only when they belong to the same choice and
-are easier to answer together.
+a time when its answer could change the next question. Batch a small set when
+the questions are independent, share the same context, and are easier to answer
+together. Do not serialize questions merely to preserve an interview rhythm.
 
 Put the question first. Then give only the context the user needs to answer it:
 why the decision matters, what would change, and the real tradeoff.

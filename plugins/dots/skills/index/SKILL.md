@@ -1,24 +1,26 @@
 ---
 name: index
-description: "Routes broad Dots requests to the focused workflow. Use when Dots is explicitly named or tagged, the user asks which Dots skill to use, or requests the Dots skill index; not when a focused Dots skill is already selected."
+description: "Routes broad Dots requests and new-feature development. Use when Dots is named or tagged, the user asks which Dots workflow to use, names feature-dev, or asks to build, add, or implement a new feature; not when a focused Dots skill is selected."
 ---
 
 # Dots
 
-Choose the narrowest Dots skill that owns the requested outcome. This index
-routes the work; the selected skill owns execution.
+Choose the narrowest Dots workflow that owns the requested outcome. This index
+routes focused work and owns the shared feature-development workflow.
 
 ## Route
 
 1. Honor an explicitly selected focused skill.
-2. Otherwise choose one primary owner from the skill descriptions, using the
+2. When the user names `feature-dev` or asks to build, add, or implement a new
+   feature, follow [Develop a feature](../../references/feature-development.md).
+3. Otherwise choose one primary owner from the skill descriptions, using the
    requested outcome first and the object being acted on to break ties.
-3. For an execution request, load and follow the selected skill only when it
+4. For an execution request, load and follow the selected skill only when it
    allows implicit invocation. When it requires explicit selection, recommend
    it and stop so the user can select it deliberately.
-4. For a routing question, return the selected skill and its boundary without
+5. For a routing question, return the selected skill and its boundary without
    starting the workflow.
-5. Name a sequence only when the request has distinct outcomes with a real
+6. Name a sequence only when the request has distinct outcomes with a real
    handoff. Keep one owner active at a time.
 
 If no Dots skill fits, continue without one. Ask one short question only when
@@ -29,7 +31,8 @@ settle which outcome the user wants.
 
 - **Shape:** `$clarify`, `$scout`, `$plan`
 - **Understand:** `$explain`, `$how`, `$why`, `$teach`
-- **Create:** `$design`, `$html`, `$docs-writer`, `$verification-skill`
+- **Build a feature:** [Feature development](../../references/feature-development.md)
+- **Create focused outputs:** `$design`, `$html`, `$docs-writer`, `$verification-skill`
 - **Review:** `$review-change`, `$architecture-review`, `$design-review`, `$oracle`
 - **Improve skills:** `$skill-standards`, `$skill-evaluator`
 - **Continue:** `$recall`, `$handoff`, `$self-improve`
