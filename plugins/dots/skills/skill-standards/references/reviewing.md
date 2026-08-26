@@ -22,8 +22,10 @@ parts instead of manufacturing findings for them.
 Inspect for:
 
 - discovery overlap or near-miss capture;
-- unclear purpose, flattened voice, or compressed language that hides the
-  action and reason;
+- an opener that promises quality, confidence, or impact without naming the
+  work; prose that says how the result should feel instead of what the agent
+  should do; or compression that removes actions, artifacts, decision rules,
+  or completion conditions;
 - vague, contradictory, duplicated, no-op, or unjustifiably rigid instructions;
 - missing modes, decisions, examples, output fields, or completion behavior;
 - detail in the wrong layer and resources without runtime callers;

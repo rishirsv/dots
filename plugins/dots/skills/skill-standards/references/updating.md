@@ -10,8 +10,8 @@ Read repository instructions and every file that defines or depends on the
 requested behavior. Account for:
 
 - the recurring job, nearest boundary, triggers, and near misses;
-- the accepted purpose sentence, voice, terminology, and passages the user has
-  praised or asked to preserve;
+- the accepted opening job statement, voice, terminology, and passages the user
+  has praised or asked to preserve;
 - the mental model, memorable distinctions, and examples that make the skill
   understandable;
 - the common path, meaningful branches, output, and completion evidence;
@@ -39,7 +39,7 @@ request for concision is not permission to rewrite every sentence.
 
 ## 3. Author the bounded change
 
-Load the environment's default skill creator, then make the change from:
+Make the change from:
 
 - the source path and requested change;
 - the four preservation sets;
@@ -58,8 +58,9 @@ after accounting for its package role.
 ## 4. Compare the result with its source
 
 Read the old and new versions side by side. Account for every removed mode,
-branch, decision rule, example, output field, and accepted passage. Restore
-anything whose removal was not requested or supported.
+action, artifact, domain term, branch, decision rule, example, output field,
+and accepted passage. Restore anything whose removal was not requested or
+supported.
 
 Read changed prose aloud. It should sound at least as natural and clear as the
 source it replaces, not like compressed rubric language.
@@ -70,3 +71,8 @@ behavior matters.
 
 Finish when the requested behavior is implemented, the preserved contract is
 intact, applicable validation passes, and remaining uncertainty is stated.
+
+When existing evaluation receipts or authored suites cover the changed seam,
+hand the changed dependency IDs and hashes back to `skill-evaluator`. It decides
+which evidence is stale and reruns only what the user's evaluation request
+authorizes; a source update does not make behavioral evaluation automatic.

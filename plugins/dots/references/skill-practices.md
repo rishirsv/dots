@@ -82,63 +82,65 @@ template, checklist, or scoring system.
 - **Keep concepts together.** Put a definition, its rules, and its caveats in
   one place instead of scattering them across the payload.
 
-### Write like a capable colleague
+### Write instructions that change behavior
 
-- **Treat voice as part of the contract.** Agent-facing prose is both
-  instruction and interface. It should sound like a person explaining the job,
-  not a compressed policy document.
-- **Be tight, not terse.** Remove padding, ceremony, and repeated explanation.
-  Keep the thought that makes the workflow understandable.
-- **State the job plainly.** Open with a sentence a person would naturally say
-  aloud. Name the action and the reason it matters.
-- **Prefer concrete actions and consequences.** “Ask the minimum set of
-  clarifying questions needed to avoid wrong work” says what to do and why.
-  “Resolve material ambiguity” hides both behind a label.
-- **Use ordinary words.** Prefer `use`, `read`, `compare`, `write`, `run`, and
-  `stop` over abstract or institutional language.
-- **Let one familiar word carry repeated guidance.** A strong term such as
-  `audit` can replace several restatements because the agent already knows how
-  to think with it. Repeat the term, not its definition. If the term needs a
-  paragraph of explanation, use a plain instruction instead.
-- **State the target behavior.** Tell the agent what to do. Use prohibitions
-  only for real guardrails, and pair them with the behavior that should replace
-  the forbidden action.
-- **Watch abstract clusters.** Words such as `material`, `consequential`,
-  `applicable`, `scope`, and `context` are sometimes correct. Several in one
-  sentence usually mean it needs a concrete subject, verb, or example.
-- **Explain why when it carries judgment.** Keep the reason when it helps the
-  agent choose between plausible actions or remember the operating model.
-- **Use examples for real distinctions.** An example earns its place when it
-  clarifies a boundary, transformation, output, or failure that prose alone
-  leaves fuzzy.
-- **Vary the rhythm.** Short sentences land a point. Longer sentences can carry
-  one idea with its condition or consequence. Do not clip every sentence into
-  the same cadence.
-- **Read it aloud.** If the prose sounds like rubric labels joined together,
-  restore the plain-language account and cut somewhere else.
+- **Treat prose as part of the mechanism.** Agent-facing text is both
+  instruction and interface. A sentence earns its place when it changes an
+  action, decision, boundary, or useful understanding.
+- **Open with the work, not an aspiration.** Name what the agent inspects,
+  creates, changes, decides, or verifies. A promise about quality, confidence,
+  or impact does not replace the work that produces it.
+- **Make the work concrete before making it shorter.** Write the actions,
+  artifacts, roles, and decisions plainly. Then remove repetition without
+  replacing those details with umbrella nouns or compressed policy language.
+- **Say what it does, not how it feels.** Prefer a concrete instruction,
+  mechanism, fact, or observable consequence. If a sentence only says that the
+  result should be rigorous, trustworthy, useful, or high quality, state what
+  produces that property or remove the sentence.
+- **Use a clear actor, verb, and object.** “The grader compares each output with
+  the approved criteria” is easier to execute than “Ensure robust assessment.”
+  Prefer ordinary verbs such as `read`, `inspect`, `compare`, `write`, `run`,
+  `check`, and `stop`.
+- **Use familiar terms only when they carry stable behavior.** A word such as
+  `audit` can replace repeated explanation when it reliably activates the same
+  method. Do not use `evidence`, `confidence`, `quality`, or another broad noun
+  as a substitute for naming the method.
+- **State the positive behavior.** Use prohibitions for real guardrails and
+  pair them with what the agent should do instead.
+- **Explain why when it changes judgment.** Keep the reason when it helps the
+  agent choose between plausible actions, understand a non-obvious constraint,
+  or remember the method. Do not add reasons that merely advertise the value
+  of following the instruction.
+- **Run the portability test.** If a sentence could appear unchanged in several
+  unrelated skills, check whether it contains any job-specific behavior. Make
+  it concrete or remove it.
+- **Keep a natural voice.** Vary sentence rhythm and use examples for real
+  distinctions. Read changed prose aloud. If it sounds like rubric labels,
+  product copy, or institutional policy, rewrite the instruction rather than
+  decorating it.
 
 ### Prune without flattening the skill
 
-- **Keep** a sentence when it changes an action, decision, boundary, authority,
-  completion condition, or justified confidence.
-- **Keep** a sentence when it establishes the purpose, teaches the mental
-  model, preserves an accepted voice, or makes another instruction concrete
-  enough to use.
-- **Consolidate** repeated meaning only when the surviving version keeps the
-  clearer wording, explanation, and rhythm.
-- **Delete** a sentence only when a capable agent would behave the same and the
-  skill loses no useful explanation, emphasis, voice, or navigational cue.
-- **Run the no-op test sentence by sentence.** Ask what the agent would do
-  differently because this sentence exists. Delete the whole sentence when the
-  honest answer is nothing. When the default behavior is uncertain, test it
-  instead of calling the sentence redundant by intuition.
+- **Use a behavioral no-op test.** Ask what the agent would do differently
+  because a sentence exists. Delete it only when the answer is nothing and the
+  skill loses no useful explanation, emphasis, voice, or navigation.
+- **Test uncertainty about the default.** Whether an instruction is a no-op
+  depends on how the agent behaves without it. When that is uncertain and the
+  distinction matters, run the skill instead of deciding from prose alone.
+- **Delete whole no-ops.** Do not trim an unnecessary sentence into a shorter
+  but more abstract version.
+- **Preserve the method while pruning.** Keep the actions, artifacts, decision
+  rules, examples, and completion conditions that make the workflow
+  executable.
 - **Shorten structurally first.** Remove obsolete branches, duplicated
   procedures, unnecessary templates, and unconditional ceremony before
   rewriting good local prose.
-- **Use the environment as the cache.** Point to cheap authoritative sources
-  such as config, schemas, and `--help` instead of copying facts that will go
-  stale. Keep the unwritten reason or failure pattern the environment cannot
-  show.
+- **Do not use length as evidence.** A shorter skill is better only when it
+  preserves or improves the behavior, judgment, and writing quality that the
+  job requires.
+- **Use the environment as the source of truth.** Point to cheap authoritative
+  sources such as configuration, schemas, directory structure, and `--help`.
+  Keep the reason, convention, or failure pattern the environment cannot show.
 
 ### Define what done means
 

@@ -57,7 +57,8 @@ not treat “show me your work” as a request for a visual explanation.
 ### Develop skills
 
 - `$skill-standards` creates, updates, or statically reviews skill source.
-- `$skill-evaluator` runs behavioral trials of a skill with fresh workers.
+- `$skill-evaluator` designs, audits, runs, and maintains local behavioral
+  evaluations with fresh workers and reviewable evidence.
 
 ### Continue, coordinate, and ship
 

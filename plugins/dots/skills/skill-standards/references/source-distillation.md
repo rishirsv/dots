@@ -9,6 +9,7 @@ model, not a summary of the sources.
 - [Start with each source's role](#start-with-each-sources-role)
 - [Choose the useful lenses](#choose-the-useful-lenses)
 - [Pair inputs with outputs](#pair-inputs-with-outputs)
+- [Generalize the instance without flattening the method](#generalize-the-instance-without-flattening-the-method)
 - [Extract the operating model](#extract-the-operating-model)
 - [Check for overfitting and leakage](#check-for-overfitting-and-leakage)
 - [Match the draft back to examples](#match-the-draft-back-to-examples)
@@ -63,6 +64,41 @@ Also look for structure: what opens the artifact, how evidence is attached to
 claims, where decisions appear, how exceptions are handled, and what the output
 deliberately leaves unsaid. For prose, distinguish transferable voice and
 rhythm from phrases that would merely imitate the example.
+
+## Generalize The Instance Without Flattening The Method
+
+When adapting an authoritative source, separate what to retain, translate, and
+remove.
+
+Retain:
+
+- the concrete verbs that describe the work;
+- stable names for roles, artifacts, states, and decisions;
+- workflow order and branches that affect correctness;
+- completion conditions and observable failure behavior; and
+- established terms that reliably activate useful domain knowledge.
+
+Translate:
+
+- provider-specific commands, storage, infrastructure, and execution
+  machinery;
+- host-specific component names; and
+- source-specific examples that need an equivalent in the target environment.
+
+Remove:
+
+- marketing language, rhetorical flourishes, and copied explanations that do
+  not change behavior;
+- facts and names that belong only to the original instance; and
+- mechanisms the target workflow genuinely does not use.
+
+Generalize from the source's instance to the class of task. Do not generalize
+away the actions and distinctions that make the method work.
+
+Before finishing, compare the draft with the source. Account for its central
+verbs, artifacts, workflow order, decision rules, and completion conditions.
+If the draft preserves only the source's goals or desired qualities, the method
+has been flattened.
 
 ## Extract The Operating Model
 

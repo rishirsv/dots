@@ -19,7 +19,7 @@ document, or a connector is the better owner.
 
 ## 2. Build the smallest useful runtime
 
-Load the environment's default skill creator, then create the source from:
+Create the source from:
 
 - the target source location and repository instructions;
 - the job, discovery boundary, examples, output, and finish condition;
@@ -37,13 +37,13 @@ time. Look for:
 
 - discovery overlap and weak boundaries;
 - no-op, duplicated, contradictory, or overly rigid instructions;
-- unclear purpose, flattened voice, or examples that no longer teach the
-  intended distinction;
+- an opener that describes an aspiration instead of the work, flattened voice,
+  or compressed language that hides actions and artifacts;
 - detail in the wrong layer or references without callers;
 - vague completion, failure, or stop behavior; and
 - source-specific, private, or maintainer material in the runtime.
 
-For a complex or risky skill, use the default skill creator's independent
+For a complex or risky skill, use the loaded creator's independent
 forward-testing guidance. Give the fresh reviewer the intended contract,
 complete runtime payload, repository instructions, and `skill-practices.md`,
 but keep the authoring rationale and expected verdict out of its context.
@@ -58,3 +58,7 @@ Ordinary skill creation does not require a subagent review.
 
 Finish when the source matches the job, applicable validation passes, and every
 supported material review finding is resolved or reported as a blocker.
+
+When the user needs behavioral readiness rather than source readiness, load
+`skill-evaluator` after source validation. Let it design the cases, approval
+contract, workers, graders, and evidence; do not recreate that workflow here.

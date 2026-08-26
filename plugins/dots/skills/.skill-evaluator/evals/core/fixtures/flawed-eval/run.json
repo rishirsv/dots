@@ -1,0 +1,7 @@
+{
+  "results": [
+    {"case": "e1", "score": 5, "worker_prompt": "This is an evaluation. Make sure the answer says setup is difficult."},
+    {"case": "e2", "score": 0, "error": "worker service unavailable"}
+  ],
+  "summary": {"pass_rate": 0.5, "conclusion": "The skill failed."}
+}

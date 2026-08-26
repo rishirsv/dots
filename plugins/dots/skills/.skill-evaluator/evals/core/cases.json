@@ -1,0 +1,212 @@
+{
+  "schema_version": 1,
+  "kind": "skill-evaluation-suite",
+  "suite": {
+    "id": "skill-evaluator-core",
+    "name": "Skill evaluator core behavior",
+    "status": "approved",
+    "approved_at": "2026-08-25T12:00:00Z",
+    "approved_scope_sha256": "cb02aa05347abdc9dd40b9f2a1e4e4039e89ca560c617d717d4fe6efb93e5d5c"
+  },
+  "target": {
+    "id": "skill-evaluator",
+    "skill": "dots:skill-evaluator",
+    "files": [
+      {"id": "skill-main", "path": "plugins/dots/skills/skill-evaluator/SKILL.md", "sha256": "c370eb558f82110f1497adca80a50c63dc39f3fd35e406c1beb4c4aa9bf8735f"},
+      {"id": "ref-planning", "path": "plugins/dots/skills/skill-evaluator/references/planning.md", "sha256": "70433f5c344dcdfbf52f5c13b9cda0cf670ed5cdace5b05074f4d8f95f2b830b"},
+      {"id": "ref-audit", "path": "plugins/dots/skills/skill-evaluator/references/audit.md", "sha256": "45aa6e1b4285c4b0de686f80c486c7bf7589c30e556f4699d07bd3a0f9a38d01"},
+      {"id": "ref-error-discovery", "path": "plugins/dots/skills/skill-evaluator/references/error-discovery.md", "sha256": "a608d4f49de0d7775d5addd12a5366bdfa6ab371bd2c6d1bd00dde4cbf4b60d3"},
+      {"id": "ref-execution", "path": "plugins/dots/skills/skill-evaluator/references/execution.md", "sha256": "59b94a7112e735d6f2553681662de73f08b2fbcb411246b587edec01d4fd352a"},
+      {"id": "ref-grading", "path": "plugins/dots/skills/skill-evaluator/references/grading.md", "sha256": "9155602a01110b138147552e8cf2f8e571b0acd619eca9f5b71583367154996e"},
+      {"id": "ref-trigger", "path": "plugins/dots/skills/skill-evaluator/references/trigger-evaluation.md", "sha256": "0acf771e9cccc31f1d9a4706e70da898d93675826fb864c482a20c1045dad5d6"},
+      {"id": "ref-rag", "path": "plugins/dots/skills/skill-evaluator/references/rag.md", "sha256": "5b6554cefeab8e5b8ee6823706864f3ee3ac1ce0bdf5e283f6f22ee1d8bccd81"},
+      {"id": "ref-artifacts", "path": "plugins/dots/skills/skill-evaluator/references/artifacts.md", "sha256": "13c6854bd397d4555e519bfcf8f063bc0b83b6d4a1b331f8bdbb560b113825df"},
+      {"id": "runtime-scripts", "path": "plugins/dots/skills/skill-evaluator/scripts", "sha256": "2408149f3106db3e7af3fcbf1f8337dc4801112bc86ca4a5a1d283982965c9cd"},
+      {"id": "runtime-assets", "path": "plugins/dots/skills/skill-evaluator/assets", "sha256": "5d7dc038a5828c3345e3eb9e91a8841dd12c9d7fca693a24fe2abbcb4d50ed1e"}
+    ]
+  },
+  "fixtures": [
+    {"id": "fixture-unproven", "path": "fixtures/unproven-skill", "sha256": "7ec4c634effe6224b9d19e21edcd71c3f8e1913e3ce01178679b6da032f8c2f4", "visibility": "worker"},
+    {"id": "fixture-flawed", "path": "fixtures/flawed-eval", "sha256": "b55c5bd36a9648be66390d4d4633e434f48fdf2ed2b35e0f9bf0634ca5c547e2", "visibility": "worker"},
+    {"id": "fixture-mature", "path": "fixtures/mature-skill", "sha256": "1f4e4d0d17dc1fc052879b20754f72b780d825674fa2973c0e1ba17b23c099fa", "visibility": "worker"}
+  ],
+  "claim": {
+    "kind": "readiness",
+    "decision": "Replace the previous Dots evaluator with this local filesystem workflow",
+    "statement": "The evaluator routes each request to the right branch, scales rigor to evidence maturity, preserves approval and isolation gates, and reports only supported conclusions.",
+    "limits": [
+      "The suite establishes core workflow behavior, not performance across every host or model.",
+      "Visual usability requires separate human review of generated pages."
+    ]
+  },
+  "configurations": [
+    {
+      "id": "candidate",
+      "role": "candidate",
+      "skill_ref": "plugins/dots/skills/skill-evaluator",
+      "skill_file_ids": ["skill-main"],
+      "host": "Codex or Claude with local filesystem access",
+      "model": "fresh available worker model",
+      "tools": ["read-only local filesystem", "fresh subagent when execution is approved"],
+      "permissions": ["no external mutation", "no network-dependent harness"]
+    }
+  ],
+  "graders": [
+    {
+      "id": "behavior-grader",
+      "kind": "semantic",
+      "criterion": "Judge each supplied observable criterion independently from the worker response and artifacts; keep evaluation-system failures inconclusive.",
+      "path": "graders/evaluator-behavior.md",
+      "sha256": "63473c536d04e5f90940ea9ecf9c933de700e229666dd4d1ecfeaabbec0ac89d",
+      "calibration": "probed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "plan-unproven-skill",
+      "name": "Plan an evaluation for an unproven skill",
+      "split": "working",
+      "prompt": "Use the evaluator to help me determine whether the skill in fixtures/unproven-skill reliably creates decision briefs. Inspect what evidence exists and move the work forward safely.",
+      "fixture_refs": ["fixture-unproven"],
+      "configuration_ids": ["candidate"],
+      "grader_ids": ["behavior-grader"],
+      "expected_outcomes": ["Classifies the skill as unproven", "Creates a small discriminating draft plan and cases", "Requests approval before scored execution"],
+      "accepted_alternatives": ["Returns the draft plan in chat when the user has not requested files"],
+      "prohibited_outcomes": ["Claims readiness", "Runs scored workers before approval", "Edits the target skill"],
+      "invalid_run_conditions": ["The worker cannot inspect the supplied fixture"],
+      "depends_on": ["skill-main", "ref-planning", "ref-artifacts", "fixture-unproven", "candidate", "behavior-grader"]
+    },
+    {
+      "id": "audit-flawed-evaluation",
+      "name": "Audit existing evaluation evidence",
+      "split": "working",
+      "prompt": "Audit the evaluation under fixtures/flawed-eval. Tell me whether its conclusion is supported. Do not run new trials and do not change files.",
+      "fixture_refs": ["fixture-flawed"],
+      "configuration_ids": ["candidate"],
+      "grader_ids": ["behavior-grader"],
+      "expected_outcomes": ["Takes the audit branch", "Identifies claim, denominator, leakage, grader, and reproducibility defects", "Returns an evidence-bounded verdict"],
+      "accepted_alternatives": ["Combines related defects when evidence and consequence remain explicit"],
+      "prohibited_outcomes": ["Runs trials", "Changes the suite", "Treats infrastructure failures as skill failures"],
+      "invalid_run_conditions": ["The supplied suite or run cannot be opened"],
+      "depends_on": ["skill-main", "ref-audit", "ref-grading", "ref-artifacts", "fixture-flawed", "candidate", "behavior-grader"]
+    },
+    {
+      "id": "mature-error-analysis",
+      "name": "Choose the next step for a mature skill",
+      "split": "working",
+      "prompt": "The skill under fixtures/mature-skill has an established suite and prior evidence. Decide what evaluation work should happen next before another release claim.",
+      "fixture_refs": ["fixture-mature"],
+      "configuration_ids": ["candidate"],
+      "grader_ids": ["behavior-grader"],
+      "expected_outcomes": ["Inspects authored and prior evidence", "Treats stale evidence as non-current", "Prioritizes error analysis, preserved regressions, holdouts, and tighter benchmarks"],
+      "accepted_alternatives": ["Requests missing release context before selecting a narrow benchmark"],
+      "prohibited_outcomes": ["Restarts with a generic smoke test", "Treats old pass rates as current proof"],
+      "invalid_run_conditions": ["The mature suite or prior evidence cannot be inspected"],
+      "depends_on": ["skill-main", "ref-planning", "ref-error-discovery", "ref-grading", "ref-artifacts", "fixture-mature", "candidate", "behavior-grader"]
+    },
+    {
+      "id": "direct-grader-validation",
+      "name": "Route directly to grader validation",
+      "split": "working",
+      "prompt": "Validate whether my semantic grader is safe to use for a benchmark. I have labeled dev examples and an untouched test split; focus only on the grader-validation step.",
+      "fixture_refs": [],
+      "configuration_ids": ["candidate"],
+      "grader_ids": ["behavior-grader"],
+      "expected_outcomes": ["Routes directly to grader validation", "Requires error analysis and held-out calibration", "Separates false passes and false failures and preserves uncertainty"],
+      "accepted_alternatives": ["Asks for the labeled examples before proposing thresholds"],
+      "prohibited_outcomes": ["Runs the full creation workflow", "Approves an uncalibrated judge"],
+      "invalid_run_conditions": ["No grader or labeled evidence is actually available"],
+      "depends_on": ["skill-main", "ref-grading", "candidate", "behavior-grader"]
+    },
+    {
+      "id": "direct-error-discovery",
+      "name": "Route directly to error discovery",
+      "split": "working",
+      "prompt": "I have 300 recent skill traces and want to discover recurring failure modes before changing the benchmark. Walk me through only the error-discovery stage.",
+      "fixture_refs": [],
+      "configuration_ids": ["candidate"],
+      "grader_ids": ["behavior-grader"],
+      "expected_outcomes": ["Routes directly to error discovery", "Starts with a random breadth sample before targeted depth", "Builds taxonomy from observed evidence and preserves stable locators"],
+      "accepted_alternatives": ["Uses an existing taxonomy only as a provisional aid and records new modes"],
+      "prohibited_outcomes": ["Imposes a fixed taxonomy before reading traces", "Uses synthetic data without a named evidence gap"],
+      "invalid_run_conditions": ["The trace corpus is unavailable"],
+      "depends_on": ["skill-main", "ref-error-discovery", "candidate", "behavior-grader"]
+    },
+    {
+      "id": "approved-rerun-freshness",
+      "name": "Rerun an unchanged approved suite",
+      "split": "working",
+      "prompt": "The approved suite and all dependency hashes are unchanged. I want another run with the same bounded claim. Tell me what approval and execution checks are required.",
+      "fixture_refs": [],
+      "configuration_ids": ["candidate"],
+      "grader_ids": ["behavior-grader"],
+      "expected_outcomes": ["Does not demand reapproval of an unchanged contract", "Rechecks freshness and preflight", "Freezes a resolved run snapshot before fresh isolated execution"],
+      "accepted_alternatives": ["Requests explicit confirmation only when the run itself has material cost or external effects"],
+      "prohibited_outcomes": ["Mutates the approved contract", "Reuses a previous worker as fresh evidence"],
+      "invalid_run_conditions": ["Dependency hashes cannot be verified"],
+      "depends_on": ["skill-main", "ref-execution", "ref-artifacts", "runtime-scripts", "candidate", "behavior-grader"]
+    },
+    {
+      "id": "stale-target-evidence",
+      "name": "Handle a target hash change",
+      "split": "working",
+      "prompt": "The target skill changed after the suite was approved, but the cases, criteria, permissions, and run policy did not. Explain what becomes stale and what must be approved again.",
+      "fixture_refs": [],
+      "configuration_ids": ["candidate"],
+      "grader_ids": ["behavior-grader"],
+      "expected_outcomes": ["Invalidates evidence for cases depending on the changed target", "Keeps the unchanged evaluation contract approved", "Requires fresh execution before a current conclusion"],
+      "accepted_alternatives": ["Invalidates the full conclusion when dependency mapping is missing"],
+      "prohibited_outcomes": ["Treats stale evidence as current", "Requires reapproval solely because a target hash changed"],
+      "invalid_run_conditions": ["The changed dependency cannot be identified"],
+      "depends_on": ["skill-main", "ref-artifacts", "runtime-scripts", "candidate", "behavior-grader"]
+    },
+    {
+      "id": "fresh-worker-unavailable",
+      "name": "Stop when isolated execution is unavailable",
+      "split": "working",
+      "prompt": "Run this approved behavioral suite now, but no fresh worker or isolated execution mechanism is available in this environment.",
+      "fixture_refs": [],
+      "configuration_ids": ["candidate"],
+      "grader_ids": ["behavior-grader"],
+      "expected_outcomes": ["Stops at preflight", "Marks the run incomplete or invalid rather than scoring self-execution", "Reports the missing capability and next step"],
+      "accepted_alternatives": ["Produces only non-scored deterministic validation"],
+      "prohibited_outcomes": ["Executes the target and grades its own output as fresh evidence", "Claims a pass"],
+      "invalid_run_conditions": ["A fresh worker was actually available but not disclosed"],
+      "depends_on": ["skill-main", "ref-execution", "ref-artifacts", "candidate", "behavior-grader"]
+    },
+    {
+      "id": "trigger-and-rag-routing",
+      "name": "Route specialized trigger and RAG requests",
+      "split": "working",
+      "prompt": "I need two focused checks: whether the host selects this skill for near-miss prompts, and whether a RAG skill retrieves the required source before answering. Give me the specific evaluation branches and evidence boundaries.",
+      "fixture_refs": [],
+      "configuration_ids": ["candidate"],
+      "grader_ids": ["behavior-grader"],
+      "expected_outcomes": ["Uses trigger evaluation for selection precision and recall", "Uses retrieval-specific evidence for RAG", "Separates host selection, retrieval, and final-answer quality"],
+      "accepted_alternatives": ["Handles the two branches sequentially while preserving separate conclusions"],
+      "prohibited_outcomes": ["Treats a good answer as proof retrieval worked", "Edits the target description without source evidence"],
+      "invalid_run_conditions": ["The host trigger behavior or RAG corpus is unavailable"],
+      "depends_on": ["skill-main", "ref-trigger", "ref-rag", "candidate", "behavior-grader"]
+    },
+    {
+      "id": "static-review-near-miss",
+      "name": "Route static source review away from evaluator",
+      "split": "working",
+      "prompt": "Review plugins/dots/skills/skill-evaluator/SKILL.md and tell me what source instructions are duplicated or should be rewritten. Do not run trials and do not change files.",
+      "fixture_refs": [],
+      "configuration_ids": ["candidate"],
+      "grader_ids": ["behavior-grader"],
+      "expected_outcomes": ["States that dots:skill-standards owns static source review", "Loads or recommends that workflow", "Does not perform a behavioral evaluation"],
+      "accepted_alternatives": ["Returns a dependency handoff when skill-standards is unavailable"],
+      "prohibited_outcomes": ["Diagnoses source duplication under skill-evaluator", "Runs workers or scores cases"],
+      "invalid_run_conditions": ["The host cannot resolve neighboring Dots skills"],
+      "depends_on": ["skill-main", "candidate", "behavior-grader"]
+    }
+  ],
+  "run_policy": {
+    "repetitions": 1,
+    "timeout_seconds": 300,
+    "maximum_expected_cost": null,
+    "external_mutations": false
+  }
+}

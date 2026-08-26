@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Skill evaluation review</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18231f;
+      --muted: #62716b;
+      --line: #d9e2de;
+      --paper: #fbfcfb;
+      --panel: #ffffff;
+      --wash: #eef4f1;
+      --accent: #087f5b;
+      --accent-dark: #056144;
+      --accent-soft: #dff3eb;
+      --warn: #ad5f00;
+      --danger: #b42318;
+      --shadow: 0 14px 40px rgba(24, 35, 31, .08);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--paper); font: 15px/1.55 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    button, input, textarea, select { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid #61c9a7; outline-offset: 2px; }
+    .shell { min-height: 100vh; display: grid; grid-template-columns: 310px minmax(0, 1fr); }
+    .sidebar { position: sticky; top: 0; height: 100vh; border-right: 1px solid var(--line); background: #f4f8f6; padding: 24px 18px; overflow: auto; }
+    .eyebrow { margin: 0 0 5px; color: var(--accent-dark); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: 24px; line-height: 1.18; letter-spacing: -.02em; }
+    .claim { margin: 10px 0 18px; color: var(--muted); }
+    .progress { display: flex; align-items: center; gap: 10px; margin: 16px 0; }
+    .progress-track { flex: 1; height: 8px; overflow: hidden; border-radius: 999px; background: #dce7e2; }
+    .progress-fill { height: 100%; width: 0; background: var(--accent); transition: width .2s ease; }
+    .progress-copy { min-width: 55px; color: var(--muted); font-size: 12px; text-align: right; }
+    .filter { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin: 16px 0 12px; }
+    input[type="search"], select, textarea { width: 100%; border: 1px solid #c8d4cf; border-radius: 10px; background: white; color: var(--ink); }
+    input[type="search"], select { min-height: 42px; padding: 9px 11px; }
+    textarea { min-height: 112px; padding: 12px; resize: vertical; }
+    .item-list { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+    .item-button { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; border: 1px solid transparent; border-radius: 10px; background: transparent; padding: 9px 10px; color: var(--ink); text-align: left; cursor: pointer; }
+    .item-button:hover { background: #e7f0ec; }
+    .item-button[aria-current="true"] { border-color: #9bcbb9; background: var(--accent-soft); }
+    .item-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #b3c1bb; }
+    .dot.reviewed { background: var(--accent); }
+    .dot.partial { background: var(--warn); }
+    .sidebar-actions { position: sticky; bottom: -24px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 18px -2px -24px; padding: 16px 2px 24px; background: linear-gradient(transparent, #f4f8f6 18%); }
+    .button { min-height: 42px; border: 1px solid #b9c8c1; border-radius: 10px; background: white; color: var(--ink); padding: 9px 13px; font-weight: 700; cursor: pointer; }
+    .button:hover { border-color: #7cae9a; }
+    .button.primary { border-color: var(--accent); background: var(--accent); color: white; }
+    .button.primary:hover { background: var(--accent-dark); }
+    main { min-width: 0; padding: 34px clamp(22px, 5vw, 72px) 64px; }
+    .topbar { max-width: 1120px; display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; margin: 0 auto 22px; }
+    .mode-badge, .status-badge, .meta-chip { display: inline-flex; align-items: center; border-radius: 999px; padding: 5px 9px; font-size: 12px; font-weight: 750; }
+    .mode-badge { color: var(--accent-dark); background: var(--accent-soft); }
+    .status-badge { color: var(--muted); background: var(--wash); }
+    .status-badge.invalid { color: var(--danger); background: #fee4e2; }
+    .nav { display: flex; gap: 8px; }
+    .nav button { min-width: 42px; }
+    .card { max-width: 1120px; margin: 0 auto 22px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); box-shadow: var(--shadow); overflow: hidden; }
+    .card-header { padding: 24px clamp(20px, 4vw, 34px) 18px; border-bottom: 1px solid var(--line); }
+    .card-header h2 { margin: 6px 0 5px; font-size: clamp(24px, 3vw, 34px); line-height: 1.18; letter-spacing: -.025em; }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+    .meta-chip { color: #52615b; background: #f0f4f2; }
+    .content { padding: 8px clamp(20px, 4vw, 34px) 34px; }
+    .block { margin-top: 24px; }
+    .block-title { margin: 0 0 8px; color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .prose { max-width: 78ch; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .prose h3, .prose h4 { margin: 1.2em 0 .35em; }
+    .prose p { margin: .65em 0; }
+    pre { margin: 0; overflow: auto; border: 1px solid #d7dfdc; border-radius: 12px; background: #f5f7f6; padding: 16px; color: #16211d; font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .diff-add { display: block; background: #ddf5e8; color: #155d3c; }
+    .diff-del { display: block; background: #ffe4e1; color: #912018; }
+    .table-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #f2f6f4; font-size: 12px; letter-spacing: .03em; text-transform: uppercase; }
+    tr:last-child td { border-bottom: 0; }
+    .image-block img { display: block; max-width: 100%; max-height: 720px; border: 1px solid var(--line); border-radius: 12px; background: #f2f4f3; object-fit: contain; }
+    figcaption { margin-top: 8px; color: var(--muted); }
+    .trace { display: grid; gap: 10px; }
+    .trace-event { border-left: 4px solid #95a59e; border-radius: 0 10px 10px 0; background: #f6f8f7; padding: 11px 13px; }
+    .trace-event[data-role="user"] { border-left-color: #2f6fed; }
+    .trace-event[data-role="assistant"] { border-left-color: var(--accent); }
+    .trace-event[data-role^="tool"] { border-left-color: #8c5ac7; }
+    .trace-role { margin-bottom: 4px; color: var(--muted); font-size: 11px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
+    .file-link { display: inline-flex; gap: 8px; align-items: center; color: var(--accent-dark); font-weight: 750; }
+    .review-card { max-width: 1120px; margin: 0 auto; border: 1px solid #bfd7cd; border-radius: var(--radius); background: #f5fbf8; padding: 24px clamp(20px, 4vw, 34px); }
+    .review-card h3 { margin: 0 0 4px; font-size: 19px; }
+    .hint { margin: 0 0 15px; color: var(--muted); font-size: 13px; }
+    .decision-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 16px; }
+    .decision { border: 1px solid #b8c8c0; border-radius: 999px; background: white; padding: 9px 14px; font-weight: 750; cursor: pointer; }
+    .decision.selected { border-color: var(--accent); background: var(--accent); color: white; }
+    .selection { display: none; margin: 10px 0; border-left: 3px solid var(--accent); background: white; padding: 10px 12px; color: var(--muted); }
+    .selection.visible { display: block; }
+    .suggestions { display: grid; gap: 9px; margin: 18px 0; }
+    .suggestion { border: 1px dashed #9c7ac7; border-radius: 11px; background: #fbf8ff; padding: 12px; }
+    .suggestion p { margin: 3px 0 9px; }
+    .suggestion-actions { display: flex; gap: 7px; }
+    .suggestion-actions button { min-height: 34px; padding: 5px 10px; }
+    .context-panel { max-width: 1120px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 0 auto 22px; }
+    .context-box { border: 1px solid var(--line); border-radius: 12px; background: white; padding: 14px; }
+    .context-box h3 { margin: 0 0 8px; font-size: 13px; }
+    .context-box ul { margin: 0; padding-left: 18px; color: var(--muted); }
+    .empty { max-width: 720px; margin: 14vh auto; text-align: center; color: var(--muted); }
+    .toast { position: fixed; right: 22px; bottom: 22px; z-index: 3; transform: translateY(120px); border-radius: 10px; background: #173e31; color: white; padding: 11px 15px; box-shadow: var(--shadow); transition: transform .2s ease; }
+    .toast.visible { transform: translateY(0); }
+    @media (max-width: 800px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 18px; }
+      .item-list { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); max-height: 180px; overflow: auto; }
+      .sidebar-actions { position: static; margin: 12px 0 0; padding: 0; background: none; }
+      main { padding: 24px 16px 48px; }
+      .topbar { align-items: center; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" aria-label="Review navigation">
+      <p class="eyebrow" id="modeName">Evaluation review</p>
+      <h1 id="pageTitle">Loading review</h1>
+      <p class="claim" id="claim"></p>
+      <div class="progress" aria-label="Review progress">
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <span class="progress-copy" id="progressCopy">0 / 0</span>
+      </div>
+      <div class="filter">
+        <input id="search" type="search" placeholder="Find an item" aria-label="Find an item">
+        <select id="statusFilter" aria-label="Filter review status">
+          <option value="all">All</option>
+          <option value="unreviewed">Unreviewed</option>
+          <option value="reviewed">Reviewed</option>
+          <option value="partial">Partial / invalid</option>
+        </select>
+      </div>
+      <ol class="item-list" id="itemList"></ol>
+      <div class="sidebar-actions">
+        <button class="button" id="clearButton" type="button">Clear current</button>
+        <button class="button primary" id="exportButton" type="button">Export feedback</button>
+      </div>
+    </aside>
+    <main id="main" tabindex="-1">
+      <div class="topbar">
+        <div><span class="mode-badge" id="modeBadge"></span></div>
+        <nav class="nav" aria-label="Item navigation">
+          <button class="button" id="previousButton" type="button" aria-label="Previous item">←</button>
+          <button class="button" id="nextButton" type="button" aria-label="Next item">→</button>
+        </nav>
+      </div>
+      <section class="context-panel" id="contextPanel" aria-label="Review context"></section>
+      <article class="card" id="itemCard"></article>
+      <section class="review-card" id="reviewCard" aria-label="Review feedback"></section>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    "use strict";
+    const reviewData = __SKILL_EVALUATION_REVIEW_DATA__;
+    const storageKey = `skill-evaluation-review:v1:${reviewData.review_id}:${reviewData.review_sha256}`;
+    const state = { index: 0, query: "", filter: "all", feedback: loadFeedback() };
+
+    function loadFeedback() {
+      try { return JSON.parse(localStorage.getItem(storageKey) || "{}"); }
+      catch (_) { return {}; }
+    }
+    function saveFeedback() {
+      try { localStorage.setItem(storageKey, JSON.stringify(state.feedback)); }
+      catch (_) { showToast("Browser storage is unavailable; export feedback to preserve it."); }
+      updateProgress();
+      renderList();
+    }
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      window.setTimeout(() => toast.classList.remove("visible"), 1800);
+    }
+    function modeLabel(value) { return value.split("-").map(part => part[0].toUpperCase() + part.slice(1)).join(" "); }
+    function reviewed(item) { return state.feedback[item.id]?.review_status === "reviewed"; }
+    function visibleItems() {
+      const query = state.query.toLowerCase();
+      return reviewData.items.filter(item => {
+        const matchesText = !query || `${item.id} ${item.label}`.toLowerCase().includes(query);
+        const matchesStatus = state.filter === "all"
+          || (state.filter === "reviewed" && reviewed(item))
+          || (state.filter === "unreviewed" && !reviewed(item))
+          || (state.filter === "partial" && ["partial", "invalid"].includes(item.status));
+        return matchesText && matchesStatus;
+      });
+    }
+    function currentItem() { return visibleItems()[state.index] || null; }
+    function ensureIndex() { state.index = Math.max(0, Math.min(state.index, Math.max(0, visibleItems().length - 1))); }
+    function updateProgress() {
+      const total = reviewData.items.length;
+      const done = reviewData.items.filter(reviewed).length;
+      document.getElementById("progressFill").style.width = total ? `${done / total * 100}%` : "0%";
+      document.getElementById("progressCopy").textContent = `${done} / ${total}`;
+    }
+    function renderList() {
+      ensureIndex();
+      const list = document.getElementById("itemList");
+      list.replaceChildren();
+      visibleItems().forEach((item, index) => {
+        const li = document.createElement("li");
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "item-button";
+        button.setAttribute("aria-current", index === state.index ? "true" : "false");
+        const label = document.createElement("span");
+        label.className = "item-label";
+        label.textContent = item.label;
+        const dot = document.createElement("span");
+        dot.className = `dot ${reviewed(item) ? "reviewed" : (["partial", "invalid"].includes(item.status) ? "partial" : "")}`;
+        dot.setAttribute("aria-label", reviewed(item) ? "Reviewed" : item.status);
+        button.append(label, dot);
+        button.addEventListener("click", () => { state.index = index; render(); document.getElementById("main").focus(); });
+        li.append(button);
+        list.append(li);
+      });
+    }
+    function paragraph(text) { const p = document.createElement("p"); p.textContent = text; return p; }
+    function safeMarkdown(text) {
+      const root = document.createElement("div");
+      root.className = "prose";
+      let code = false;
+      let codeLines = [];
+      const flushCode = () => {
+        if (!codeLines.length) return;
+        const pre = document.createElement("pre"); pre.textContent = codeLines.join("\n"); root.append(pre); codeLines = [];
+      };
+      text.split(/\r?\n/).forEach(line => {
+        if (line.startsWith("```")) { if (code) flushCode(); code = !code; return; }
+        if (code) { codeLines.push(line); return; }
+        const heading = line.match(/^(#{1,4})\s+(.*)$/);
+        if (heading) { const h = document.createElement(heading[1].length <= 2 ? "h3" : "h4"); h.textContent = heading[2]; root.append(h); }
+        else if (line.trim()) root.append(paragraph(line));
+      });
+      flushCode();
+      return root;
+    }
+    function renderBlock(block, index) {
+      const section = document.createElement("section");
+      section.className = `block ${block.kind}-block`;
+      section.dataset.blockIndex = String(index);
+      const title = document.createElement("p");
+      title.className = "block-title";
+      title.textContent = block.label || block.kind;
+      section.append(title);
+      if (block.kind === "text") {
+        section.append(block.format === "markdown" ? safeMarkdown(block.text) : Object.assign(document.createElement("div"), {className: "prose", textContent: block.text}));
+      } else if (block.kind === "code") {
+        const pre = document.createElement("pre");
+        if (block.diff) block.text.split(/\r?\n/).forEach(line => { const span = document.createElement("span"); span.textContent = `${line}\n`; if (line.startsWith("+")) span.className = "diff-add"; if (line.startsWith("-")) span.className = "diff-del"; pre.append(span); });
+        else pre.textContent = block.text;
+        section.append(pre);
+      } else if (block.kind === "table") {
+        const wrap = document.createElement("div"); wrap.className = "table-wrap";
+        const table = document.createElement("table"); const head = document.createElement("thead"); const hr = document.createElement("tr");
+        block.columns.forEach(column => { const th = document.createElement("th"); th.textContent = column.label; hr.append(th); }); head.append(hr); table.append(head);
+        const body = document.createElement("tbody"); block.rows.forEach(row => { const tr = document.createElement("tr"); block.columns.forEach(column => { const td = document.createElement("td"); const value = row[column.id]; td.textContent = value == null ? "" : (typeof value === "string" ? value : JSON.stringify(value)); tr.append(td); }); body.append(tr); }); table.append(body); wrap.append(table); section.append(wrap);
+      } else if (block.kind === "image") {
+        const figure = document.createElement("figure"); const image = document.createElement("img"); image.src = block.src; image.alt = block.alt; figure.append(image); if (block.caption) { const caption = document.createElement("figcaption"); caption.textContent = block.caption; figure.append(caption); } section.append(figure);
+      } else if (block.kind === "trace") {
+        const trace = document.createElement("div"); trace.className = "trace"; block.events.forEach(event => { const eventNode = document.createElement("div"); eventNode.className = "trace-event"; eventNode.dataset.role = event.role.toLowerCase(); const role = document.createElement("div"); role.className = "trace-role"; role.textContent = event.role; const content = document.createElement("div"); content.className = "prose"; content.textContent = event.content; eventNode.append(role, content); trace.append(eventNode); }); section.append(trace);
+      } else if (block.kind === "file") {
+        const link = document.createElement("a"); link.className = "file-link"; link.href = block.href; link.download = block.download_name || "evidence.bin"; link.textContent = `Download ${block.label}`; link.rel = "noreferrer"; section.append(link, paragraph(block.media_type));
+      }
+      return section;
+    }
+    function renderContext() {
+      const panel = document.getElementById("contextPanel"); panel.replaceChildren();
+      const boxes = [];
+      if (reviewData.coverage && Object.keys(reviewData.coverage).length) boxes.push(["Coverage", Object.entries(reviewData.coverage).map(([key, value]) => `${key}: ${value}`)]);
+      if (Array.isArray(reviewData.taxonomy) && reviewData.taxonomy.length) boxes.push(["Emerging taxonomy", reviewData.taxonomy.map(mode => typeof mode === "string" ? mode : `${mode.name || mode.id}: ${mode.count ?? ""}`)]);
+      if (reviewData.summary && Object.keys(reviewData.summary).length) boxes.push(["Summary", Object.entries(reviewData.summary).map(([key, value]) => `${key}: ${typeof value === "object" ? JSON.stringify(value) : value}`)]);
+      if (Array.isArray(reviewData.blind_pairs) && reviewData.blind_pairs.length) boxes.push(["Blind pairs", reviewData.blind_pairs.map(pair => `${pair.id}: ${(pair.labels || ["A", "B"]).join(" / ")} · identity withheld`)]);
+      if (Array.isArray(reviewData.provenance) && reviewData.provenance.length) boxes.push(["Provenance", reviewData.provenance.map(value => typeof value === "string" ? value : JSON.stringify(value))]);
+      boxes.forEach(([heading, rows]) => { const box = document.createElement("section"); box.className = "context-box"; const h = document.createElement("h3"); h.textContent = heading; const ul = document.createElement("ul"); rows.slice(0, 8).forEach(row => { const li = document.createElement("li"); li.textContent = row; ul.append(li); }); box.append(h, ul); panel.append(box); });
+      panel.hidden = boxes.length === 0;
+    }
+    function decisionOptions() {
+      return {
+        "case-review": ["Pass", "Fail", "Defer"],
+        "blind-comparison": ["A", "B", "Tie", "Defer"],
+        "error-discovery": ["Reviewed", "Needs follow-up", "Defer"],
+        "grader-calibration": ["Pass", "Fail", "Defer"],
+        "trigger-review": ["Should trigger", "Should not trigger", "Defer"],
+        "benchmark": ["Supported", "Concern", "Defer"]
+      }[reviewData.mode] || ["Reviewed", "Defer"];
+    }
+    function suggestionsFor(item) { return (reviewData.suggestions || []).filter(suggestion => suggestion.item_id === item.id || suggestion.record_id === item.id); }
+    function annotationsFor(item) { return (reviewData.annotations || []).filter(annotation => annotation.item_id === item.id || annotation.record_id === item.id); }
+    function feedbackFor(item) { return state.feedback[item.id] || { decision: null, note: "", review_status: "not-reviewed", selection: null, suggestion_decisions: {} }; }
+    function updateFeedback(item, change) { state.feedback[item.id] = {...feedbackFor(item), ...change, updated_at: new Date().toISOString()}; saveFeedback(); }
+    function renderReview(item) {
+      const card = document.getElementById("reviewCard"); card.replaceChildren();
+      const heading = document.createElement("h3"); heading.textContent = reviewData.mode === "blind-comparison" ? "Record a blind decision" : "Record your review";
+      const hint = document.createElement("p"); hint.className = "hint"; hint.textContent = "Feedback saves in this browser as you work. Export it before moving the page or changing browsers.";
+      const row = document.createElement("div"); row.className = "decision-row";
+      const feedback = feedbackFor(item);
+      decisionOptions().forEach(option => { const button = document.createElement("button"); button.type = "button"; button.className = `decision ${feedback.decision === option ? "selected" : ""}`; button.textContent = option; button.setAttribute("aria-pressed", feedback.decision === option ? "true" : "false"); button.addEventListener("click", () => { updateFeedback(item, {decision: option, review_status: "reviewed"}); renderReview(item); }); row.append(button); });
+      const noteLabel = document.createElement("label"); noteLabel.textContent = "Free-text note"; noteLabel.htmlFor = "reviewNote";
+      const note = document.createElement("textarea"); note.id = "reviewNote"; note.value = feedback.note || ""; note.placeholder = "What did you notice? Describe evidence before categorizing it."; note.addEventListener("input", () => updateFeedback(item, {note: note.value}));
+      const selection = document.createElement("div"); selection.className = `selection ${feedback.selection ? "visible" : ""}`; selection.textContent = feedback.selection ? `Selected evidence: “${feedback.selection.quote}”` : "";
+      const capture = document.createElement("button"); capture.type = "button"; capture.className = "button"; capture.textContent = "Attach selected text"; capture.addEventListener("click", () => {
+        const selected = window.getSelection(); const quote = selected ? selected.toString().trim() : "";
+        if (!selected || !quote || !selected.anchorNode || !selected.focusNode) return showToast("Select text in the evidence first.");
+        const asElement = node => node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement;
+        const startBlock = asElement(selected.anchorNode)?.closest("[data-block-index]");
+        const endBlock = asElement(selected.focusNode)?.closest("[data-block-index]");
+        if (!startBlock || startBlock !== endBlock) return showToast("Select text within one evidence block.");
+        const blockIndex = Number(startBlock.dataset.blockIndex);
+        const block = item.blocks[blockIndex];
+        const canonical = block.canonical_text || "";
+        const first = canonical.indexOf(quote);
+        const second = canonical.indexOf(quote, first + 1);
+        if (first < 0) return showToast("That selection cannot be anchored to the canonical evidence text.");
+        if (second >= 0) return showToast("Select a longer passage so it occurs only once in this block.");
+        const start = Array.from(canonical.slice(0, first)).length;
+        const end = start + Array.from(quote).length;
+        updateFeedback(item, {selection: {item_id: item.id, block_index: blockIndex, content_sha256: block.content_sha256, offset_unit: "unicode-code-points", start, end, quote}});
+        renderReview(item);
+      });
+      card.append(heading, hint, row, noteLabel, note, selection, capture);
+      const annotations = annotationsFor(item);
+      if (annotations.length) { const box = document.createElement("div"); box.className = "suggestions"; annotations.forEach(annotation => { const node = document.createElement("section"); node.className = "suggestion"; const tag = document.createElement("strong"); tag.textContent = "Human annotation"; const quote = annotation.quote || annotation.text; if (quote) { const quoted = paragraph(`“${quote}”`); node.append(tag, quoted); } else node.append(tag); node.append(paragraph(annotation.note || "Recorded annotation")); box.append(node); }); card.append(box); }
+      const suggestions = suggestionsFor(item);
+      if (suggestions.length) { const box = document.createElement("div"); box.className = "suggestions"; suggestions.forEach(suggestion => { const node = document.createElement("section"); node.className = "suggestion"; const tag = document.createElement("strong"); tag.textContent = `Agent suggestion · ${suggestion.mode || suggestion.id}`; const body = paragraph(suggestion.text || suggestion.quote || "Suggested instance"); const actions = document.createElement("div"); actions.className = "suggestion-actions"; ["accepted", "dismissed"].forEach(value => { const button = document.createElement("button"); button.type = "button"; button.className = `button ${feedback.suggestion_decisions?.[suggestion.id] === value ? "primary" : ""}`; button.textContent = value === "accepted" ? "Accept" : "Dismiss"; button.addEventListener("click", () => { const next = {...feedbackFor(item).suggestion_decisions, [suggestion.id]: value}; updateFeedback(item, {suggestion_decisions: next}); renderReview(item); }); actions.append(button); }); node.append(tag, body, actions); box.append(node); }); card.append(box); }
+    }
+    function renderItem() {
+      const item = currentItem(); const card = document.getElementById("itemCard"); card.replaceChildren();
+      document.getElementById("reviewCard").hidden = !item;
+      if (!item) { const empty = document.createElement("div"); empty.className = "empty"; const h = document.createElement("h2"); h.textContent = "No matching review items"; empty.append(h, paragraph("Clear the search or filter to continue.")); card.append(empty); return; }
+      const header = document.createElement("header"); header.className = "card-header";
+      const status = document.createElement("span"); status.className = `status-badge ${item.status}`; status.textContent = item.status;
+      const h = document.createElement("h2"); h.textContent = item.label;
+      const id = paragraph(item.id); id.className = "hint";
+      const meta = document.createElement("div"); meta.className = "meta-row"; (item.evidence_refs || []).forEach(ref => { const chip = document.createElement("span"); chip.className = "meta-chip"; chip.textContent = typeof ref === "string" ? ref : (ref.id || ref.path || "evidence"); meta.append(chip); });
+      header.append(status, h, id, meta); card.append(header);
+      const content = document.createElement("div"); content.className = "content"; item.blocks.forEach((block, index) => content.append(renderBlock(block, index))); card.append(content);
+      renderReview(item);
+    }
+    function render() { ensureIndex(); renderList(); renderItem(); renderContext(); updateProgress(); const items = visibleItems(); document.getElementById("previousButton").disabled = state.index <= 0; document.getElementById("nextButton").disabled = state.index >= items.length - 1; }
+    function move(delta) { state.index += delta; ensureIndex(); render(); document.getElementById("main").focus(); }
+    function exportFeedback() {
+      const payload = {schema_version: 1, kind: "skill-evaluation-feedback", review_id: reviewData.review_id, review_sha256: reviewData.review_sha256, mode: reviewData.mode, title: reviewData.title, exported_at: new Date().toISOString(), items: reviewData.items.map(item => ({item_id: item.id, ...feedbackFor(item)}))};
+      const blob = new Blob([JSON.stringify(payload, null, 2) + "\n"], {type: "application/json"}); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = "feedback.json"; link.click(); URL.revokeObjectURL(url); showToast("Feedback exported.");
+    }
+    document.getElementById("pageTitle").textContent = reviewData.title;
+    document.getElementById("claim").textContent = reviewData.claim || "Review the evidence and preserve uncertainty.";
+    document.getElementById("modeName").textContent = modeLabel(reviewData.mode);
+    document.getElementById("modeBadge").textContent = modeLabel(reviewData.mode);
+    document.getElementById("search").addEventListener("input", event => { state.query = event.target.value; state.index = 0; render(); });
+    document.getElementById("statusFilter").addEventListener("change", event => { state.filter = event.target.value; state.index = 0; render(); });
+    document.getElementById("previousButton").addEventListener("click", () => move(-1));
+    document.getElementById("nextButton").addEventListener("click", () => move(1));
+    document.getElementById("exportButton").addEventListener("click", exportFeedback);
+    document.getElementById("clearButton").addEventListener("click", () => { const item = currentItem(); if (!item) return; delete state.feedback[item.id]; saveFeedback(); render(); });
+    document.addEventListener("keydown", event => { if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName)) return; if (event.key === "ArrowLeft") move(-1); if (event.key === "ArrowRight") move(1); if (["1", "2", "d", "D"].includes(event.key)) { const item = currentItem(); if (!item) return; const options = decisionOptions(); const option = event.key === "1" ? options[0] : event.key === "2" ? options[1] : options[options.length - 1]; updateFeedback(item, {decision: option, review_status: "reviewed"}); renderReview(item); } if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") { event.preventDefault(); exportFeedback(); } });
+    render();
+  </script>
+</body>
+</html>

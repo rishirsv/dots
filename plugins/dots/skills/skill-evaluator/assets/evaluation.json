@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "kind": "skill-evaluation",
+  "created_at": "replace-with-ISO-timestamp",
+  "target": {
+    "skill": "replace-with-name",
+    "inspected_files": []
+  },
+  "claim": "replace-with-claim",
+  "method": {
+    "comparison": "replace-with-design",
+    "workers": "replace-with-configuration",
+    "judge": "replace-with-method"
+  },
+  "review_refs": [],
+  "cases": [],
+  "conclusion": {
+    "status": "inconclusive",
+    "summary": "replace-with-supported-conclusion"
+  },
+  "limitations": [],
+  "suite_ref": null,
+  "run_refs": [],
+  "preflight": {
+    "status": "not-run",
+    "failed_check_ids": []
+  },
+  "freshness": {
+    "status": "stale",
+    "affected_case_ids": []
+  },
+  "feedback_ref": null
+}

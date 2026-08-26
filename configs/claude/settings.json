@@ -17,7 +17,7 @@
   "effortLevel": "medium",
   "modelSettings": {
     "claude-fable-5": {
-      "effortLevel": "high"
+      "effortLevel": "medium"
     }
   },
   "tui": "default",
