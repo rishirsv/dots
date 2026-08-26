@@ -19,7 +19,7 @@ SPEC.loader.exec_module(SYNC_CODEX_CONFIG)
 
 PORTABLE = """\
 approval_policy = "never"
-default_permissions = ":danger-full-access"
+sandbox_mode = "danger-full-access"
 model = "portable-model"
 
 [features]
@@ -117,10 +117,9 @@ class CodexConfigHelperTests(unittest.TestCase):
             )
             self.assertIn('approval_policy = "never"', live)
             self.assertNotIn('approval_policy = "on-request"', live)
-            self.assertNotIn('sandbox_mode = "workspace-write"', live)
-            self.assertIn(
-                'default_permissions = ":danger-full-access"', live
-            )
+            self.assertIn('sandbox_mode = "danger-full-access"', live)
+            self.assertNotIn("default_permissions", live)
+            self.assertNotRegex(live, r"\[permissions(?:\.|\])")
             self.assertIn('service_tier = "old"', live)
             self.assertIn('[apps._default]', live)
             self.assertIn('default_tools_approval_mode = "approve"', live)
@@ -244,21 +243,16 @@ class CodexConfigHelperTests(unittest.TestCase):
             self.assertEqual(capture_result.returncode, 0, capture_result.stderr)
             self.assertEqual(source.read_text(), PORTABLE)
 
-    def test_status_and_capture_ignore_conflicting_runtime_sandbox_mode(self):
+    def test_status_and_capture_preserve_direct_full_access_sandbox_mode(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "source.toml"
             target = root / "config.toml"
             source.write_text(PORTABLE)
-            runtime_portable = PORTABLE.replace(
-                'default_permissions = ":danger-full-access"\n',
-                'default_permissions = ":danger-full-access"\n'
-                'sandbox_mode = "danger-full-access"\n',
-            )
             target.write_text(
                 SYNC_CODEX_CONFIG.BEGIN_MARKER
                 + "\n"
-                + runtime_portable
+                + PORTABLE
                 + SYNC_CODEX_CONFIG.END_MARKER
                 + "\n"
             )
@@ -273,7 +267,10 @@ class CodexConfigHelperTests(unittest.TestCase):
 
             apply_result = self.run_helper("apply", source, target)
             self.assertEqual(apply_result.returncode, 0, apply_result.stderr)
-            self.assertNotIn("sandbox_mode", target.read_text())
+            live = target.read_text()
+            self.assertIn('sandbox_mode = "danger-full-access"', live)
+            self.assertNotIn("default_permissions", live)
+            self.assertNotRegex(live, r"\[permissions(?:\.|\])")
 
     def test_portable_source_rejects_two_permission_systems(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -372,11 +369,9 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             self.assertEqual(stat.S_IMODE(config.stat().st_mode), 0o600)
             live_config = config.read_text()
             self.assertIn('approval_policy = "never"', live_config)
-            self.assertIn('default_permissions = "Custom"', live_config)
-            self.assertIn("[permissions.Custom]", live_config)
-            self.assertIn('[permissions.Custom.filesystem]', live_config)
-            self.assertIn('[permissions.Custom.network]', live_config)
-            self.assertNotIn("sandbox_mode", live_config)
+            self.assertIn('sandbox_mode = "danger-full-access"', live_config)
+            self.assertNotIn("default_permissions", live_config)
+            self.assertNotRegex(live_config, r"\[permissions(?:\.|\])")
             self.assertNotIn("approvals_reviewer", live_config)
             self.assertIn('[apps._default]', live_config)
             self.assertIn('default_tools_approval_mode = "approve"', live_config)
