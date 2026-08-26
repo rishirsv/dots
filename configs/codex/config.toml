@@ -1,11 +1,21 @@
 # Portable Codex defaults managed by Dots.
 # Machine-local notification and runtime state remain in ~/.codex/config.toml.
 
-# Default to non-interactive execution with OpenAI's built-in unrestricted
-# permission profile.
+# Default to non-interactive execution with the Dots power-user profile.
 # Host-managed restrictions still take precedence.
 approval_policy = "never"
-default_permissions = ":danger-full-access"
+default_permissions = "dots"
+
+[permissions.dots]
+description = "Power user config."
+
+[permissions.dots.filesystem]
+":root" = "write"
+
+[permissions.dots.network]
+enabled = true
+allow_local_binding = true
+dangerously_allow_all_unix_sockets = true
 
 [apps._default]
 default_tools_approval_mode = "approve"
