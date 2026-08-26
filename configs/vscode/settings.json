@@ -5,6 +5,7 @@
   "editor.inlineSuggest.fontFamily": "CommitMono",
   "terminal.integrated.fontFamily": "CommitMono",
   "workbench.activityBar.location": "top",
+  "workbench.experimental.modernUI": true,
   "explorer.confirmDelete": false,
   "editor.fontSize": 16,
   "terminal.integrated.fontSize": 16,

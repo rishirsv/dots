@@ -20,9 +20,6 @@ enabled = true
 [plugins."dots@dots"]
 enabled = true
 
-[plugins."meta-skill@dots"]
-enabled = true
-
 [plugins."visualize@openai-bundled"]
 enabled = true
 

@@ -332,7 +332,7 @@ artifacts/
 
 Why it wins: it balances cross-context identity, report continuity, messaging,
 auditability, privacy, portability, and direct human editing. It combines
-file-backed working state with traits from Self Improve and Meta-Skill.
+file-backed working state with traits from Self Improve and native skills.
 
 What it loses: it needs deterministic scope resolution and simple
 single-writer or locking discipline. Personal and artifact state must be joined
