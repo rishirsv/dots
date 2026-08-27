@@ -49,7 +49,7 @@ not treat “show me your work” as a request for a visual explanation.
 
 ### Review and advise
 
-- `$review-change` reviews a completed diff and scales its depth to the change.
+- `$review` reviews a completed diff and scales its depth to the change.
 - `$architecture-review` finds structural refactor and ownership candidates.
 - `$design-review` independently audits an existing product surface or flow.
 - `$oracle` asks another model for focused advice when the user selects it.

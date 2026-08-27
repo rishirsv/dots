@@ -21,7 +21,7 @@ decisions, responsible code, chosen direction, and proof status.
 6. **Prove it.** Run focused repository checks and exercise the real product
    path when one exists. A build or unit test does not by itself prove an
    integration or visible behavior.
-7. **Review and finish.** Apply `$review-change`, repair retained in-scope
+7. **Review and finish.** Apply `$review`, repair retained in-scope
    findings, rerun affected checks, inspect the final diff, and summarize the
    result, proof, intentional exclusions, and remaining risk.
 

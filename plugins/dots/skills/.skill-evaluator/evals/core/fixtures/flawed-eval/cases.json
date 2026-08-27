@@ -1,4 +1,0 @@
-{
-  "cases": [{"id": "e1", "prompt": "Write a decision brief", "expected": "A strong brief"}],
-  "judge": {"model": "floating-model-alias", "rubric": "Rate overall quality from 1 to 5", "human_validation": false}
-}

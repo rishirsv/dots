@@ -68,7 +68,7 @@ class PlatformSeamTests(unittest.TestCase):
                             "content": [
                                 {"type": "text", "text": "I will inspect it."},
                                 {"type": "tool_use", "name": "Read", "input": {"file_path": str(source_file)}},
-                                {"type": "tool_use", "name": "Skill", "input": {"skill": "review-change"}},
+                                {"type": "tool_use", "name": "Skill", "input": {"skill": "review"}},
                             ],
                         },
                     },
@@ -95,7 +95,7 @@ class PlatformSeamTests(unittest.TestCase):
             helper = load_module("self_improve_claude_fixture", SCRIPT)
             skill_call = next(call for call in calls if call["name"] == "Skill")
             self.assertEqual(
-                helper._tool_skill_name(skill_call, {"review-change"}), "review-change"
+                helper._tool_skill_name(skill_call, {"review"}), "review"
             )
 
     def test_codex_source_never_discovers_claude_sessions(self) -> None:

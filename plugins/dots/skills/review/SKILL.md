@@ -1,9 +1,9 @@
 ---
-name: review-change
+name: review
 description: "Reviews a completed change for actionable correctness, security, performance, and maintainability findings, scaling Low, Default, or Deep depth to its risk. Post-change reviews repair retained findings; standalone reviews stay read-only unless repair is requested. Challenge is explicit-only."
 ---
 
-# Review Change
+# Review
 
 Review the complete change and return every actionable finding. Reviewers stay
 read-only. When this is the implementing agent's post-change pass, the main

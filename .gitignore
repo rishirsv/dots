@@ -4,7 +4,8 @@
 !/.agents/plugins/marketplace.json
 /.claude/
 
-# Skill companion workspaces keep authored evals trackable and generated state ignored.
+# Skill companion workspaces keep generated state ignored.
+**/.skill-evaluator/
 **/.[a-z0-9_-]*/runs/
 **/.[a-z0-9_-]*/worktrees/
 **/.[a-z0-9_-]*/tmp/

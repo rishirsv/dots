@@ -1,7 +1,0 @@
-{
-  "suite": "core",
-  "working_cases": 18,
-  "holdout_cases": 6,
-  "graders": ["citation-check", "claim-boundary-judge"],
-  "last_validated": "2026-04-10"
-}

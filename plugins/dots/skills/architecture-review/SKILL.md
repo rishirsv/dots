@@ -1,6 +1,6 @@
 ---
 name: architecture-review
-description: "Finds structural refactor candidates, ownership problems, weak seams, duplicated policy, and hard-cut cleanup opportunities across a codebase or subsystem. Use for broad architecture audits; use review-change for a completed diff and how for explaining a named architecture."
+description: "Finds structural refactor candidates, ownership problems, weak seams, duplicated policy, and hard-cut cleanup opportunities across a codebase or subsystem. Use for broad architecture audits; use review for a completed diff and how for explaining a named architecture."
 ---
 
 # Architecture Review
@@ -30,7 +30,7 @@ Keep only repo guidance that changes the recommendation; higher-priority instruc
 If docs are incomplete, infer the current layer model from the code and state the assumption.
 
 Architecture Review owns architecture-primary scans: structural candidates,
-ownership, seams, and interface shape. Review Change may report architecture
+ownership, seams, and interface shape. Review may report architecture
 evidence found while reviewing a diff or broad quality audit, but routes a
 primarily structural candidate search here.
 
