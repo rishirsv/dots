@@ -7,6 +7,12 @@ description: "Commits and pushes finished changes, then opens or updates a non-d
 
 Publish the requested changes as a pull request ready for review.
 
+Before writing commit messages, the pull-request title, or its description,
+read and apply
+[Technical writing guidance](../docs-writer/references/technical-writing-guidance.md).
+Keep `$pr` as the owner of these publishing artifacts; use the shared guidance
+as an editing standard, not as a documentation workflow.
+
 1. Confirm that the GitHub repository and active account are correct. If the
    wrong account is active, use `gh auth switch`, then confirm access again.
 

@@ -19,8 +19,9 @@ settled decisions and evidence across the handoff.
 ### Shape the work
 
 - `$clarify` resolves the few missing requirements that would change the work.
-- `$scout` helps the user shape or challenge a fuzzy idea before planning.
-- `$plan` inspects the repository and produces an implementation-ready plan.
+- `$scout` helps the user shape or challenge a fuzzy idea before building.
+- `$prototype` resolves a behavioral, technical, interaction, or visual choice
+  with an isolated throwaway experiment.
 
 ### Understand and explain
 
@@ -56,6 +57,8 @@ not treat “show me your work” as a request for a visual explanation.
 
 ### Develop skills
 
+- `$automate-me` creates or updates a personal mode from repeated preferences
+  in the user's own sessions.
 - `$skill-standards` creates, updates, or statically reviews skill source.
 - `$skill-evaluator` designs, audits, runs, and maintains local behavioral
   evaluations with fresh workers and reviewable evidence.
@@ -64,7 +67,8 @@ not treat “show me your work” as a request for a visual explanation.
 
 - `$recall` reconstructs recent working context from task history.
 - `$handoff` writes a continuation brief for another task or phase.
-- `$self-improve` mines repeated workflow friction for durable improvements.
+- `$self-improve` reflects on the active task or mines repeated workflow
+  friction for durable shared improvements.
 - `$orchestrate` coordinates a small team when parallel work adds real value.
 - `$pr` commits, pushes, and opens or updates a review-ready pull request.
 - `$babysit-pr` monitors a pull request and handles checks and review feedback.
@@ -75,8 +79,10 @@ to the user's work unless they ask for the full index.
 
 ## Playbooks
 
-- **Feature Dev:** for a feature, bug fix, refactor, or other material software
-  change, read and follow [Feature Development](../../references/feature-development.md).
+- **Feature Dev:** for planning or building a feature, bug fix, refactor,
+  measured performance change, or other material software work, read and follow
+  [Feature Development](../../references/feature-development.md). A plan-only
+  request stops at its planning handoff; an HTML plan then routes to `$html`.
 
 ## References
 

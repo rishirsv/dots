@@ -1,6 +1,6 @@
 ---
 name: self-improve
-description: "Use only when the user selects `$self-improve` to mine Codex or Claude Code sessions for recurring paper cuts, happy paths, and durable workflow improvements; not for one-off fixes or static skill-source review."
+description: "Use only when the user selects `$self-improve` to reflect on the current task or mine Codex or Claude sessions for shared workflow improvements; not for personal mode creation, one-off product fixes, or static skill review."
 ---
 
 # Self-Improve
@@ -9,16 +9,76 @@ Find recurring workflow friction and the smallest durable changes that prevent
 it. Treat scripts and aggregate counts as leads; base conclusions on the
 underlying conversations, tool calls, and files.
 
+This improves shared instructions, skills, scripts, or workflows. Use
+`$automate-me` when the desired artifact is a personal mode that captures one
+user's working preferences.
+
 ## Routes
 
 - **Improvement review, default.** Find the happy path, recurring paper cuts,
   and up to three justified changes.
+- **Reflect, only when the user passes `reflect`.** Inspect the active task,
+  preserve fresh lessons, and separate changes justified now from candidates
+  that still need repeated evidence. Do not scan other tasks on this route.
 - **Insights, only when the user passes `insights`.** Produce the report-only
   profile in [references/insights-report.md](references/insights-report.md).
   Never edit on this route.
 
 Use the current host unless the user names another. Never mix Codex and Claude
 evidence without naming both and analyzing each separately first.
+
+## Reflect on the active task
+
+Use the conversation, tool calls, changed files, and observed validation from
+the active task. When compaction or a handoff removed material needed to judge
+the causal chain, recover only this task through the host's supported read-only
+history. Do not widen into recent sessions.
+
+1. Establish the original request, intended outcome, governing instructions,
+   actual path, user corrections, and final evidence. A confident completion
+   message without an accepted artifact or observed check is not a successful
+   path.
+2. Recover the shortest successful route. Keep a failed attempt only when it
+   exposes a reusable failure class and the task demonstrated a better remedy.
+3. Test each lesson against the generalization gate in
+   [thread evidence](references/thread-evidence.md), then classify it:
+   - **Ready now:** an explicit durable user correction, authoritative contract,
+     or costly observed failure with a demonstrated reusable remedy supports a
+     concrete change.
+   - **Needs repetition:** the lesson is plausible but this task is its only
+     support. Preserve the candidate for a later Improvement review; do not
+     edit shared behavior now.
+   - **Encode structurally:** a check, script, metadata field, or runtime
+     invariant would enforce the lesson more reliably than agent prose.
+   - **Reject:** the lesson is task-specific, contradicted, already owned, or
+     did not affect the outcome.
+4. For every non-rejected candidate, name the behavior it would change, closest
+   owner, evidence strength, smallest durable change, verification, and a
+   falsifier. Keep transcript identifiers, private examples, and raw task
+   content out of proposed runtime text.
+5. Present the full classification before editing. Apply only the subset the
+   user approves, through the owner named in the proposal.
+
+Return this compact shape:
+
+```md
+## Task outcome
+<what succeeded, failed, or remains uncertain>
+
+## Ready now
+1. <lesson, owner, evidence, smallest change, verification, falsifier>
+
+## Needs repetition
+- <candidate and what future evidence would promote it>
+
+## Encode structurally
+- <mechanism, owner, and why prose is weaker>
+
+## Rejected
+- <candidate and reason>
+```
+
+A valid reflection may conclude that the task produced no reusable lesson.
 
 ## Review
 

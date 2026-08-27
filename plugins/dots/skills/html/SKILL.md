@@ -46,9 +46,10 @@ interactive-visualization workflow for exploratory simulations or analysis led
 by filters. Use `docs-writer` for repository documentation; do not use HTML for
 slides.
 
-If the task still needs planning or code research, ask the user to select
-`$plan` or `$how` first. If a product-UI choice is unresolved, settle
-it through product design before building the page. Product design decides the
-product hierarchy, interaction, accessibility requirements, and visual
-direction; HTML makes the resulting artifact readable, navigable, and
-accessible.
+If the task still needs software planning, apply the planning-only boundary in
+[Feature Development](../../references/feature-development.md) first. Use
+`$how` when the missing input is an explanation of current code. If a
+product-UI choice is unresolved, settle it through product design or
+`$prototype` before building the page. Those workflows decide the product
+hierarchy, interaction, accessibility requirements, and visual direction; HTML
+makes the resulting artifact readable, navigable, and accessible.
