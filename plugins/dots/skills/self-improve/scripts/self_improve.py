@@ -41,7 +41,7 @@ SOURCE_SKILLS_ROOT = Path(__file__).resolve().parents[2]
 DECISIONS_FILE = CODEX_HOME / "self_improve_decisions.json"
 # Derived per-session statistics, keyed by schema version + session id + mtime.
 STATS_CACHE_FILE = CODEX_HOME / "self_improve_stats_cache.json"
-STATS_SCHEMA = 4
+STATS_SCHEMA = 5
 PLATFORM = "codex"
 SESSION_SOURCE: SessionSource = CodexSource(CODEX_HOME, iter_session_events)
 
@@ -187,6 +187,44 @@ LANGUAGE_BY_SUFFIX = {
 # confidence per references/thread-evidence.md).
 PATH_ARG_KEYS = ("file_path", "path", "notebook_path", "filePath", "target_file")
 COMMAND_ARG_KEYS = ("command", "cmd", "script")
+
+# Command classes used for validation-cost leads. These intentionally match
+# executable-shaped tokens rather than prose mentioning "tests" or "build".
+VALIDATION_COMMANDS: tuple[tuple[str, re.Pattern[str]], ...] = (
+    ("Test", re.compile(
+        r"(?:^|(?:&&|\|\||[;|])\s*)(?:python\d*\s+-m\s+(?:pytest|unittest)|pytest|"
+        r"cargo\s+test|go\s+test|swift\s+test|xcodebuild\b[^\n]*\btest\b|"
+        r"(?:npm|pnpm|yarn|bun)\s+(?:run\s+)?test\b|"
+        r"(?:gradle|\.\/gradlew)\s+\S*test\b|rspec|mix\s+test)"
+    )),
+    ("Type Check", re.compile(
+        r"(?:^|(?:&&|\|\||[;|])\s*)(?:mypy|pyright|tsc(?:\s|$)|"
+        r"(?:npm|pnpm|yarn|bun)\s+(?:run\s+)?(?:typecheck|type-check)\b)"
+    )),
+    ("Lint", re.compile(
+        r"(?:^|(?:&&|\|\||[;|])\s*)(?:ruff(?:\s|$)|eslint|flake8|shellcheck|rubocop|"
+        r"cargo\s+clippy|swiftlint|golangci-lint|"
+        r"(?:npm|pnpm|yarn|bun)\s+(?:run\s+)?lint\b)"
+    )),
+    ("Build", re.compile(
+        r"(?:^|(?:&&|\|\||[;|])\s*)(?:cargo\s+build|go\s+build|swift\s+build|"
+        r"xcodebuild\b[^\n]*\bbuild\b|(?:npm|pnpm|yarn|bun)\s+(?:run\s+)?build\b|"
+        r"(?:gradle|\.\/gradlew)\s+\S*build\b)"
+    )),
+    ("Validation", re.compile(
+        r"(?:^|(?:&&|\|\||[;|])\s*)(?:[^\s;&|]*/)?(?:verify|validate)(?:\.sh|\.py)?(?:\s|$)|"
+        r"quick_validate\.py(?:\s|$)"
+    )),
+)
+
+EDIT_TOOL_NAMES = {
+    "apply_patch", "edit", "multiedit", "write", "write_file", "notebookedit",
+}
+
+COMPLETION_CLAIM_RE = re.compile(
+    r"\b(?:done|completed|finished|implemented|fixed|resolved|ready for review)\b",
+    re.IGNORECASE,
+)
 
 RESPONSE_GAP_BUCKETS: tuple[tuple[str, int], ...] = (
     ("<10s", 10), ("10-30s", 30), ("30s-1m", 60), ("1-2m", 120),
@@ -637,6 +675,36 @@ def _arg_dict(payload: dict[str, Any]) -> dict[str, Any]:
     return arguments if isinstance(arguments, dict) else {}
 
 
+def _command_text(arguments: dict[str, Any]) -> str:
+    for key in COMMAND_ARG_KEYS:
+        value = arguments.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return ""
+
+
+def _validation_category(command: str) -> str | None:
+    lowered = " ".join(command.lower().split())
+    for label, pattern in VALIDATION_COMMANDS:
+        if pattern.search(lowered):
+            return label
+    return None
+
+
+def _command_fingerprint(command: str) -> str:
+    """Return a stable correlation token without retaining raw command text."""
+    normalized = " ".join(command.strip().split())
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:16]
+
+
+def _output_failed(payload: dict[str, Any]) -> bool:
+    text = _output_text(payload.get("output"))[:2000].lower()
+    if any(marker in text for marker in ERROR_MARKERS):
+        return True
+    exit_code = payload.get("exit_code")
+    return isinstance(exit_code, int) and exit_code != 0
+
+
 def _error_category(text: str) -> str | None:
     if any(marker in text for marker in BENIGN_OUTPUT_MARKERS):
         return None
@@ -658,6 +726,9 @@ def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, An
     """
     tool_counts: Counter = Counter()
     error_categories: Counter = Counter()
+    validation_categories: Counter = Counter()
+    validation_seconds_by_category: Counter = Counter()
+    validation_fingerprints: Counter = Counter()
     languages: Counter = Counter()
     skills: Counter = Counter()
     hours: Counter = Counter()
@@ -680,6 +751,21 @@ def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, An
     previous_ts: int | None = None
     first_ts: int | None = None
     last_ts: int | None = None
+    validation_calls = 0
+    validation_paired = 0
+    validation_timed = 0
+    validation_unpaired = 0
+    validation_ambiguous_outputs = 0
+    validation_failed = 0
+    validation_repeats = 0
+    validation_total_seconds = 0
+    validation_longest_seconds = 0
+    validation_after_completion_claims = 0
+    failure_edit_retest_cycles = 0
+    completion_claim_seen = False
+    validation_call_ids: set[str] = set()
+    pending_validation: dict[str, dict[str, Any]] = {}
+    failed_validation_after_edit: dict[str, bool] = {}
 
     try:
         for event in SESSION_SOURCE.events(thread):
@@ -718,6 +804,8 @@ def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, An
                             response_gaps.append(stamp - last_assistant_ts)
                 elif event.role == "assistant":
                     assistant_messages += 1
+                    if COMPLETION_CLAIM_RE.search(event.text):
+                        completion_claim_seen = True
                     if stamp is not None:
                         last_assistant_ts = stamp
             elif event.kind == "function_call":
@@ -726,6 +814,10 @@ def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, An
                 if name:
                     tool_counts[name] += 1
                 arguments = _arg_dict(payload)
+                lowered_name = name.lower()
+                if lowered_name in EDIT_TOOL_NAMES:
+                    for fingerprint in failed_validation_after_edit:
+                        failed_validation_after_edit[fingerprint] = True
                 for key in PATH_ARG_KEYS:
                     value = arguments.get(key)
                     if isinstance(value, str) and value:
@@ -733,29 +825,67 @@ def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, An
                         language = LANGUAGE_BY_SUFFIX.get(Path(value).suffix.lower())
                         if language:
                             languages[language] += 1
-                for key in COMMAND_ARG_KEYS:
-                    command = arguments.get(key)
-                    if not isinstance(command, str):
-                        continue
+                command = _command_text(arguments)
+                if command:
                     lowered = command.lower()
                     if "git commit" in lowered:
                         commits += 1
                     if "git push" in lowered:
                         pushes += 1
+                    validation_category = _validation_category(command)
+                    if validation_category:
+                        fingerprint = _command_fingerprint(command)
+                        validation_calls += 1
+                        validation_categories[validation_category] += 1
+                        if validation_fingerprints[fingerprint]:
+                            validation_repeats += 1
+                        validation_fingerprints[fingerprint] += 1
+                        if completion_claim_seen:
+                            validation_after_completion_claims += 1
+                        if failed_validation_after_edit.get(fingerprint):
+                            failure_edit_retest_cycles += 1
+                            failed_validation_after_edit[fingerprint] = False
+                        if event.call_id:
+                            validation_call_ids.add(event.call_id)
+                            pending_validation[event.call_id] = {
+                                "category": validation_category,
+                                "fingerprint": fingerprint,
+                                "start": stamp,
+                            }
+                        else:
+                            validation_unpaired += 1
                 invoked = _tool_skill_name(payload, known_skills)
                 if invoked:
                     skills[invoked] += 1
             elif event.kind == "function_call_output":
                 text = _output_text(payload.get("output"))[:2000].lower()
-                if any(marker in text for marker in ERROR_MARKERS):
+                failed = _output_failed(payload)
+                if failed:
                     tool_errors += 1
                 category = _error_category(text)
                 if category:
                     error_categories[category] += 1
+                if event.call_id in validation_call_ids:
+                    pending = pending_validation.pop(event.call_id, None)
+                    if pending is None:
+                        validation_ambiguous_outputs += 1
+                    else:
+                        validation_paired += 1
+                        start = pending["start"]
+                        if start is not None and stamp is not None and stamp >= start:
+                            duration = stamp - start
+                            validation_timed += 1
+                            validation_total_seconds += duration
+                            validation_longest_seconds = max(validation_longest_seconds, duration)
+                            validation_seconds_by_category[pending["category"]] += duration
+                        if failed:
+                            validation_failed += 1
+                            failed_validation_after_edit[pending["fingerprint"]] = False
     except ValueError as exc:
         # A malformed rollout line is reported, not silently dropped.
         malformed = str(exc)
 
+    validation_unpaired += len(pending_validation)
     span_minutes = max(0, thread.updated_at - thread.created_at) // 60
     # Prefer the stamped event window; a record's span can predate a resume.
     if first_ts is not None and last_ts is not None:
@@ -777,6 +907,20 @@ def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, An
         "tool_counts": dict(tool_counts),
         "tool_errors": tool_errors,
         "error_categories": dict(error_categories),
+        "validation_calls": validation_calls,
+        "validation_categories": dict(validation_categories),
+        "validation_paired": validation_paired,
+        "validation_timed": validation_timed,
+        "validation_unpaired": validation_unpaired,
+        "validation_ambiguous_outputs": validation_ambiguous_outputs,
+        "validation_failed": validation_failed,
+        "validation_repeats": validation_repeats,
+        "validation_total_seconds": validation_total_seconds,
+        "validation_longest_seconds": validation_longest_seconds,
+        "validation_seconds_by_category": dict(validation_seconds_by_category),
+        "validation_fingerprints": dict(validation_fingerprints),
+        "validation_after_completion_claims": validation_after_completion_claims,
+        "failure_edit_retest_cycles": failure_edit_retest_cycles,
         "friction_cues": friction_cues,
         "interruptions": interruptions,
         "commits": commits,
@@ -852,6 +996,9 @@ def _project_label(cwd: str) -> str:
 def aggregate_session_stats(entries: list[dict[str, Any]]) -> dict[str, Any]:
     tool_counts: Counter = Counter()
     error_categories: Counter = Counter()
+    validation_categories: Counter = Counter()
+    validation_seconds_by_category: Counter = Counter()
+    validation_fingerprints: Counter = Counter()
     languages: Counter = Counter()
     skills: Counter = Counter()
     hours: Counter = Counter()
@@ -862,6 +1009,9 @@ def aggregate_session_stats(entries: list[dict[str, Any]]) -> dict[str, Any]:
     for entry in entries:
         tool_counts.update(entry["tool_counts"])
         error_categories.update(entry["error_categories"])
+        validation_categories.update(entry.get("validation_categories", {}))
+        validation_seconds_by_category.update(entry.get("validation_seconds_by_category", {}))
+        validation_fingerprints.update(entry.get("validation_fingerprints", {}))
         languages.update(entry["languages"])
         skills.update(entry["skills"])
         hours.update({int(hour): count for hour, count in entry["hours"].items()})
@@ -873,6 +1023,10 @@ def aggregate_session_stats(entries: list[dict[str, Any]]) -> dict[str, Any]:
             "user_messages", "injected_messages", "assistant_messages", "tool_calls", "tool_errors",
             "friction_cues", "interruptions", "commits", "pushes",
             "duration_minutes", "engaged_minutes", "files_touched", "stamped_events",
+            "validation_calls", "validation_paired", "validation_timed",
+            "validation_unpaired", "validation_ambiguous_outputs", "validation_failed",
+            "validation_repeats", "validation_total_seconds",
+            "validation_after_completion_claims", "failure_edit_retest_cycles",
         ):
             totals[field_name] += entry.get(field_name, 0)
 
@@ -898,6 +1052,14 @@ def aggregate_session_stats(entries: list[dict[str, Any]]) -> dict[str, Any]:
         "models": models.most_common(),
         "tools": tool_counts.most_common(),
         "error_categories": error_categories.most_common(),
+        "validation_categories": validation_categories.most_common(),
+        "validation_seconds_by_category": validation_seconds_by_category.most_common(),
+        "validation_longest_seconds": max(
+            (entry.get("validation_longest_seconds", 0) for entry in entries), default=0
+        ),
+        "validation_repeated_fingerprints": sum(
+            1 for count in validation_fingerprints.values() if count > 1
+        ),
         "languages": languages.most_common(),
         "skills_used": skills.most_common(),
         "skills_installed_unused": [name for name in installed if name not in skills],
@@ -1106,12 +1268,13 @@ def _print_counter_rows(title: str, rows: list[tuple[Any, int]], limit: int) -> 
 
 
 def cmd_stats(args: argparse.Namespace) -> None:
-    """Quantitative profile of how the user works, for the insights route.
+    """Quantitative profile for insights and workflow-audit routes.
 
     This mode supplies facts only: durations, message and tool volumes, language
-    mix, failure buckets, response gaps, and which installed skills went unused.
-    The AGENT interprets them. Coverage is reported so the report can state its
-    own limits instead of implying it saw everything."""
+    mix, failure buckets, paired validation timing, response gaps, and which
+    installed skills went unused. The agent interprets them. Coverage is
+    reported so the report can state its own limits instead of implying it saw
+    everything."""
     rows = threads(limit=args.limit, archived=args.archived, days=args.days, query=args.query, cwd=args.cwd)
     entries, coverage = collect_session_stats(rows, max_new=args.max_new, refresh=args.refresh)
     summary = aggregate_session_stats(entries)
@@ -1136,6 +1299,21 @@ def cmd_stats(args: argparse.Namespace) -> None:
         else:
             print(f"- Session span: {summary['hours_span']}h (no stamped events; span includes idle and resumed time)")
         print(f"- Tool calls: {totals['tool_calls']} ({totals['tool_errors']} failed outputs)")
+        if totals["validation_calls"]:
+            print(
+                f"- Validation calls: {totals['validation_calls']} · "
+                f"paired: {totals['validation_paired']} · timed: {totals['validation_timed']} · "
+                f"failed: {totals['validation_failed']} · repeated: {totals['validation_repeats']}"
+            )
+            if totals["validation_timed"]:
+                print(
+                    f"- Observed validation time: {totals['validation_total_seconds']}s · "
+                    f"longest paired call: {summary['validation_longest_seconds']}s"
+                )
+            print(
+                f"- Validation leads: {totals['failure_edit_retest_cycles']} failure/edit/retest cycles · "
+                f"{totals['validation_after_completion_claims']} calls after a completion claim"
+            )
         print(f"- Commits: {totals['commits']} · pushes: {totals['pushes']}")
         print(f"- Interruption markers: {totals['interruptions']} · friction cues: {totals['friction_cues']}")
         unmeasurable = []
@@ -1145,6 +1323,16 @@ def cmd_stats(args: argparse.Namespace) -> None:
             unmeasurable.append("no tool-output failure markers matched this host's tool surface")
         if not totals["stamped_events"]:
             unmeasurable.append("no stamped events, so timing distributions are unavailable")
+        if totals["validation_calls"] and totals["validation_unpaired"]:
+            unmeasurable.append(
+                f"{totals['validation_unpaired']} validation calls lacked a paired output or call identifier"
+            )
+        if totals["validation_calls"] and not totals["validation_timed"]:
+            unmeasurable.append("validation calls could not be timed from paired stamped events")
+        if totals["validation_ambiguous_outputs"]:
+            unmeasurable.append(
+                f"{totals['validation_ambiguous_outputs']} validation outputs had ambiguous pairing"
+            )
         for note in unmeasurable:
             print(f"- Unmeasurable: {note}")
         print()
@@ -1153,6 +1341,11 @@ def cmd_stats(args: argparse.Namespace) -> None:
         _print_counter_rows("Tools", summary["tools"], args.top)
         _print_counter_rows("Languages", summary["languages"], args.top)
         _print_counter_rows("Failure Buckets", summary["error_categories"], args.top)
+        _print_counter_rows("Validation Calls", summary["validation_categories"], args.top)
+        if summary["validation_seconds_by_category"]:
+            _print_counter_rows(
+                "Observed Validation Seconds", summary["validation_seconds_by_category"], args.top
+            )
         _print_counter_rows("Skills Used", summary["skills_used"], args.top)
         _print_counter_rows("Models", summary["models"], args.top)
 

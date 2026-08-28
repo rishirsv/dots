@@ -11,6 +11,7 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
+from types import SimpleNamespace
 from unittest import mock
 
 
@@ -401,7 +402,7 @@ class SelfImproveScopeTests(unittest.TestCase):
         }
         self.assertTrue(removed.isdisjoint(subparsers.choices))
 
-    def test_stats_cache_schema_invalidates_v3_entries(self):
+    def test_stats_cache_schema_invalidates_v4_entries(self):
         with tempfile.TemporaryDirectory() as tmp:
             transcript = Path(tmp) / "rollout.jsonl"
             transcript.write_text("", encoding="utf-8")
@@ -409,7 +410,7 @@ class SelfImproveScopeTests(unittest.TestCase):
                 "id", "title", "", tmp, 0, 1, False, "", str(transcript)
             )
             current_key = self_improve.stats_cache_key(thread)
-            stale_key = current_key.replace("v4:", "v3:", 1)
+            stale_key = current_key.replace("v5:", "v4:", 1)
             derived = {
                 "malformed": None,
                 "self_referential": False,
@@ -434,6 +435,87 @@ class SelfImproveScopeTests(unittest.TestCase):
         args = self_improve.build_parser().parse_args(["stats"])
         self.assertIsNone(args.days)
         self.assertIsNone(args.limit)
+
+    def test_validation_stats_pair_timing_retries_and_coverage_without_raw_commands(self):
+        events = [
+            SimpleNamespace(kind="message", role="user", text="Fix it.", payload={}, timestamp="2026-01-01T00:00:01Z", call_id=""),
+            SimpleNamespace(kind="message", role="assistant", text="Implemented.", payload={}, timestamp="2026-01-01T00:00:02Z", call_id=""),
+            SimpleNamespace(
+                kind="function_call", role="", text="", timestamp="2026-01-01T00:00:10Z", call_id="test-1",
+                payload={"name": "exec", "arguments": {"cmd": "pytest tests/unit"}},
+            ),
+            SimpleNamespace(
+                kind="function_call_output", role="", text="", timestamp="2026-01-01T00:00:20Z", call_id="test-1",
+                payload={"output": "exit code 1"},
+            ),
+            SimpleNamespace(
+                kind="function_call", role="", text="", timestamp="2026-01-01T00:00:21Z", call_id="edit-1",
+                payload={"name": "apply_patch", "arguments": {}},
+            ),
+            SimpleNamespace(
+                kind="function_call", role="", text="", timestamp="2026-01-01T00:00:30Z", call_id="test-2",
+                payload={"name": "exec", "arguments": {"cmd": "pytest tests/unit"}},
+            ),
+            SimpleNamespace(
+                kind="function_call_output", role="", text="", timestamp="2026-01-01T00:00:40Z", call_id="test-2",
+                payload={"output": "passed"},
+            ),
+            SimpleNamespace(
+                kind="function_call", role="", text="", timestamp="2026-01-01T00:00:50Z", call_id="",
+                payload={"name": "exec", "arguments": {"cmd": "ruff check ."}},
+            ),
+            SimpleNamespace(
+                kind="function_call", role="", text="", timestamp="2026-01-01T00:01:00Z", call_id="build-1",
+                payload={"name": "exec", "arguments": {"cmd": "cargo build"}},
+            ),
+            SimpleNamespace(
+                kind="function_call_output", role="", text="", timestamp="2026-01-01T00:01:05Z", call_id="build-1",
+                payload={"output": "finished"},
+            ),
+            SimpleNamespace(
+                kind="function_call_output", role="", text="", timestamp="2026-01-01T00:01:06Z", call_id="build-1",
+                payload={"output": "duplicate transport output"},
+            ),
+            SimpleNamespace(
+                kind="function_call", role="", text="", timestamp="", call_id="test-3",
+                payload={"name": "exec", "arguments": {"cmd": "pytest --token secret-pattern"}},
+            ),
+            SimpleNamespace(
+                kind="function_call_output", role="", text="", timestamp="", call_id="test-3",
+                payload={"output": "passed"},
+            ),
+            SimpleNamespace(kind="message", role="user", text="Thanks.", payload={}, timestamp="2026-01-01T00:01:10Z", call_id=""),
+        ]
+        source = SimpleNamespace(events=lambda _thread: iter(events))
+        thread = self_improve.Thread(
+            "id", "title", "", "/repo", 1, 70, False, "model", "/tmp/transcript"
+        )
+
+        with mock.patch.object(self_improve, "SESSION_SOURCE", source):
+            stats = self_improve.derive_session_stats(thread, set())
+
+        self.assertEqual(stats["validation_calls"], 5)
+        self.assertEqual(stats["validation_paired"], 4)
+        self.assertEqual(stats["validation_timed"], 3)
+        self.assertEqual(stats["validation_unpaired"], 1)
+        self.assertEqual(stats["validation_ambiguous_outputs"], 1)
+        self.assertEqual(stats["validation_failed"], 1)
+        self.assertEqual(stats["validation_repeats"], 1)
+        self.assertEqual(stats["failure_edit_retest_cycles"], 1)
+        self.assertEqual(stats["validation_total_seconds"], 25)
+        self.assertEqual(stats["validation_longest_seconds"], 10)
+        self.assertNotIn("secret-pattern", json.dumps(stats))
+        with mock.patch.object(self_improve, "known_skill_names", return_value=set()):
+            summary = self_improve.aggregate_session_stats([stats])
+        self.assertEqual(summary["totals"]["validation_total_seconds"], 25)
+        self.assertEqual(summary["validation_longest_seconds"], 10)
+        self.assertNotIn("secret-pattern", json.dumps(summary))
+
+    def test_validation_classifier_requires_an_executable_shaped_command(self):
+        self.assertEqual(self_improve._validation_category("python3 -m pytest tests"), "Test")
+        self.assertEqual(self_improve._validation_category("cd repo && pytest tests"), "Test")
+        self.assertEqual(self_improve._validation_category("pnpm run typecheck"), "Type Check")
+        self.assertIsNone(self_improve._validation_category("echo testing took too long"))
 
 
 class OracleContainmentTests(unittest.TestCase):

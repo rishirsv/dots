@@ -1,8 +1,10 @@
 # Insights Report
 
-The insights route answers a different question from the improvement review:
-not "what should change?" but "how does the user actually work?" The output is a
-coaching report over the whole retained session window.
+The insights route answers a different question from the improvement
+review: not "what should change?" but "how does the user actually work across
+the retained history?" The output is a broad insights report over the whole
+retained session window. Use [user-coaching.md](user-coaching.md) instead when
+the user asks for a focused evaluation or rating of their own work.
 
 The report itself is host-neutral. Only the session source differs; every
 section, heading, and judgment reads the same regardless of which host was
@@ -50,6 +52,9 @@ Read these fields the way `stats` defines them:
   user never interrupts.
 - **Failure buckets** are coarse leads about where friction concentrates. An
   empty set can mean the failure markers do not match this host's tool surface.
+- **Testing time** can show how long recorded tests and builds took, which ones
+  repeated, and whether failures were followed by edits and another test. Use
+  these as clues, then read the conversation before explaining why they happened.
 - **Unmeasurable** lines name exactly these capability gaps. Repeat them in the
   report's coverage block rather than reporting a zero as a finding.
 
@@ -73,7 +78,8 @@ Write in second person. Skip a section rather than padding it.
    - *Agent-side*: misread requests, wrong approach, output that did not work.
    - *User-side*: thin context up front, environment and setup gaps, scope that
      shifted mid-run.
-   Give each side concrete patterns, not a single blended complaint.
+   Give each side concrete patterns, not a single blended complaint. This is a
+   insights summary, not a fixed rubric for evaluating the user.
 5. **Quick Wins** — draw from what is actually installed and configured, not a
    generic feature list. An installed skill with no organic invocations in
    `skill-usage` or `stats` is a stronger lead than a feature pitch. Skip

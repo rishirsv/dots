@@ -34,6 +34,9 @@ class SessionEvent:
     role: str = ""
     text: str = ""
     payload: dict[str, Any] | None = None
+    # Host tool-call identifier. Empty means the host did not expose a safe
+    # call/output pairing; consumers must not infer one from event order.
+    call_id: str = ""
     # Raw host timestamp when the rollout records one. Empty when the host does
     # not stamp the event; callers must degrade instead of assuming coverage.
     timestamp: str = ""
@@ -182,12 +185,14 @@ class CodexSource:
         if not path.exists():
             return
         for event in self._event_reader(path, strict=True):
+            payload = event.payload or {}
             yield SessionEvent(
                 kind=event.kind,
                 role=event.role or "",
                 text=event.text or "",
-                payload=event.payload or {},
+                payload=payload,
                 timestamp=str(getattr(event, "timestamp", "") or ""),
+                call_id=str(payload.get("call_id") or ""),
             )
 
 
@@ -301,6 +306,7 @@ class ClaudeSource:
                                     kind="function_call_output",
                                     payload={"output": _content_text(block.get("content"))},
                                     timestamp=stamp,
+                                    call_id=str(block.get("tool_use_id") or ""),
                                 )
                 elif kind == "assistant":
                     message = item.get("message") or {}
@@ -323,10 +329,12 @@ class ClaudeSource:
                                     "arguments": block.get("input") or {},
                                 },
                                 timestamp=stamp,
+                                call_id=str(block.get("id") or ""),
                             )
                         elif block.get("type") == "tool_result":
                             yield SessionEvent(
                                 kind="function_call_output",
                                 payload={"output": _content_text(block.get("content"))},
                                 timestamp=stamp,
+                                call_id=str(block.get("tool_use_id") or ""),
                             )

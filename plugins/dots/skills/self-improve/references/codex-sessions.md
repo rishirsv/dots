@@ -46,7 +46,10 @@ python3 scripts/self_improve.py --platform codex stats --json
 
 `stats` reads rollout events through the same normalized stream. Rollout records
 carry a `timestamp`, so response-gap and hour-of-day distributions are available
-here. It defaults to the whole retained window for the explicit insights route.
+here. When function calls and outputs also carry a shared `call_id`, `stats`
+pairs them for validation-cost timing; missing identifiers remain an explicit
+coverage gap. It defaults to the whole retained window for the insights
+route.
 
 The helper defaults to `CODEX_HOME` or `~/.codex`. Its transcript rendering is
 an evidence aid, not a substitute for live thread tools when those tools expose

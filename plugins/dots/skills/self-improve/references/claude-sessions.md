@@ -66,8 +66,10 @@ python3 scripts/self_improve.py --platform claude stats --json
 
 `stats` reads the same transcripts under the direct-JSONL boundary above. Session
 entries carry a `timestamp`, so response-gap and hour-of-day distributions are
-available here. It defaults to the whole retained window for the explicit
-insights route.
+available here. Tool-use ids pair validation calls with their results for timing
+when both sides and their timestamps are present; missing ids remain an explicit
+coverage gap. It defaults to the whole retained window for the insights
+route.
 
 Transcripts and history are plaintext and may contain file contents, command
 output, pasted text, or credentials. Restrict every review to the minimum

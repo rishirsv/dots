@@ -9,6 +9,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 
 
 PLUGIN_ROOT = Path(__file__).resolve().parents[1]
@@ -67,10 +68,16 @@ class PlatformSeamTests(unittest.TestCase):
                             "model": "test-model",
                             "content": [
                                 {"type": "text", "text": "I will inspect it."},
-                                {"type": "tool_use", "name": "Read", "input": {"file_path": str(source_file)}},
+                                {"type": "tool_use", "id": "read-1", "name": "Read", "input": {"file_path": str(source_file)}},
                                 {"type": "tool_use", "name": "Skill", "input": {"skill": "review"}},
                             ],
                         },
+                    },
+                    {
+                        "type": "user", "sessionId": "session-1", "cwd": str(project),
+                        "timestamp": "2026-07-01T10:01:10Z", "message": {"content": [
+                            {"type": "tool_result", "tool_use_id": "read-1", "content": "file contents"}
+                        ]},
                     },
                     {"type": "future-entry", "sessionId": "session-1", "unknown": True},
                 ],
@@ -97,6 +104,38 @@ class PlatformSeamTests(unittest.TestCase):
             self.assertEqual(
                 helper._tool_skill_name(skill_call, {"review"}), "review"
             )
+            read_call = next(event for event in events if event.kind == "function_call" and event.call_id)
+            read_output = next(event for event in events if event.kind == "function_call_output")
+            self.assertEqual(read_call.call_id, "read-1")
+            self.assertEqual(read_output.call_id, "read-1")
+
+    def test_codex_preserves_call_ids_without_inventing_missing_ids(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            rollout = root / "rollout.jsonl"
+            rollout.write_text("", encoding="utf-8")
+            thread = session_sources.SessionRecord(
+                "codex-id", "Codex", "codex", str(root), 1, 2, False, "model",
+                str(rollout), "codex",
+            )
+            raw_events = [
+                SimpleNamespace(
+                    kind="function_call", role="", text="", timestamp="1",
+                    payload={"name": "exec", "call_id": "call-1", "arguments": {"cmd": "pytest"}},
+                ),
+                SimpleNamespace(
+                    kind="function_call_output", role="", text="", timestamp="2",
+                    payload={"call_id": "call-1", "output": "ok"},
+                ),
+                SimpleNamespace(
+                    kind="function_call", role="", text="", timestamp="3",
+                    payload={"name": "exec", "arguments": {"cmd": "pytest"}},
+                ),
+            ]
+            source = session_sources.CodexSource(root, lambda *_args, **_kwargs: raw_events)
+            events = list(source.events(thread))
+
+        self.assertEqual([event.call_id for event in events], ["call-1", "call-1", ""])
 
     def test_codex_source_never_discovers_claude_sessions(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
