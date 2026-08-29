@@ -27,7 +27,7 @@ them.
 
 ## Generalization gate
 
-Before proposing a skill change:
+Before generalizing beyond the task:
 
 1. Name the reusable failure class in behavioral terms.
 2. State the rule without copying the incident's names, wording, counts, or
@@ -37,12 +37,10 @@ Before proposing a skill change:
 4. Give a counterexample or falsifier that would show the rule is too broad or
    the diagnosis is wrong.
 
-Reject or narrow the proposal when it cannot pass all four checks. A direct
-user correction can establish the need for a rule, but the correction's
-surface form is not automatically the portable rule. When the user explicitly
-requests an exact durable behavior, preserve it at that scope. Generalize only
-around it; do not weaken, reinterpret, or replace the requested rule with a
-broader abstraction.
+Reject or narrow a generalized proposal when it cannot pass all four checks.
+One task can still support a correction local to that task or an exact durable
+behavior the user explicitly requests. Preserve that behavior at its stated
+scope; do not replace it with a broader abstraction.
 
 ## File references
 
@@ -95,11 +93,3 @@ Choose one primary destination:
 Prefer the cheapest durable home. Mechanical requirements belong in checks;
 judgment that must load every session belongs in instructions; long procedures
 belong in skills or docs; generated facts and preferences belong in memory.
-
-## Privacy
-
-Local transcripts may contain source files, command output, pasted text,
-credentials, and private user content. Read the minimum needed, return concise
-evidence summaries, and never include raw secrets or private contents in a
-proposal. File paths are evidence only when the user needs them to evaluate the
-change.

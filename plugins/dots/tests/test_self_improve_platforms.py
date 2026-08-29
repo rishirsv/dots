@@ -161,36 +161,28 @@ class PlatformSeamTests(unittest.TestCase):
             rows = source.list_sessions(limit=10, archived="all")
             self.assertEqual([(row.id, row.platform) for row in rows], [("codex-id", "codex")])
 
-    def test_platforms_keep_decisions_and_instruction_roots_separate(self) -> None:
+    def test_platforms_keep_stats_caches_separate(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             codex_home = root / ".codex"
             claude_home = root / ".claude"
             codex_home.mkdir()
             (claude_home / "projects").mkdir(parents=True)
-            env = {**os.environ, "CODEX_HOME": str(codex_home), "CLAUDE_CONFIG_DIR": str(claude_home)}
-
-            subprocess.run(
-                [sys.executable, str(SCRIPT), "--platform", "claude", "decide", "accept", "claude-key"],
-                check=True, capture_output=True, text=True, env=env,
-            )
-            self.assertTrue((claude_home / "self_improve_decisions.json").exists())
-            self.assertFalse((codex_home / "self_improve_decisions.json").exists())
             helper = load_module("self_improve_platform_paths", SCRIPT)
             helper.CODEX_HOME = codex_home
             helper.CLAUDE_HOME = claude_home
             self.assertEqual(
-                helper.platform_paths("claude")["instructions"],
-                claude_home / "CLAUDE.md",
+                helper.platform_paths("claude")["stats_cache"],
+                claude_home / "self_improve_stats_cache.json",
             )
             self.assertEqual(
-                helper.platform_paths("codex")["instructions"],
-                codex_home / "AGENTS.md",
+                helper.platform_paths("codex")["stats_cache"],
+                codex_home / "self_improve_stats_cache.json",
             )
             helper.configure_platform("claude")
-            self.assertEqual(helper.DECISIONS_FILE, claude_home / "self_improve_decisions.json")
+            self.assertEqual(helper.STATS_CACHE_FILE, claude_home / "self_improve_stats_cache.json")
             helper.configure_platform("codex")
-            self.assertEqual(helper.DECISIONS_FILE, codex_home / "self_improve_decisions.json")
+            self.assertEqual(helper.STATS_CACHE_FILE, codex_home / "self_improve_stats_cache.json")
 
     def test_claude_cli_show_and_files(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

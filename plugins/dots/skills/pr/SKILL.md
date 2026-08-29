@@ -6,7 +6,7 @@ description: "Commits and pushes finished changes, then opens or updates a non-d
 # Publish PR
 
 For commit messages, the pull-request title, and its description, apply
-[Technical writing guidance](../docs-writer/references/technical-writing-guidance.md)
+[Technical writing guidance](../../references/technical-writing-guidance.md)
 as an editing standard. `$pr` still owns these publishing artifacts.
 
 1. Confirm the GitHub repository and active account. If necessary, run
@@ -41,17 +41,19 @@ rest of the title must still describe the result clearly.
 
 ## Description
 
-Write for someone who will not read the code. Open with:
+Lead with what changes for users or the system:
 
 - what changes when this is merged;
 - what was wrong before;
 - why the change matters.
 
-Then state what was tested and what remains unverified. Preserve fields required
-by the repository's pull-request template.
+Then include the implementation details needed to review the approach, risks,
+and affected boundaries. State what was tested and what remains unverified.
+Preserve fields required by the repository's pull-request template.
 
-Do not fill the description with file names, class names, database tables,
-framework details, commit history, generic checklists, or agent narration.
+Omit file-by-file narration, raw commit history, generic checklists, and agent
+narration. Mention files, symbols, schemas, frameworks, or data flows when they
+help a reviewer verify the change.
 
 ## Visual Evidence
 
@@ -83,10 +85,10 @@ reference, it appends the file; set appended-image alt text with a quoted
 gh pr edit 123 --attach './settings.png#Account status in Settings'
 ```
 
-If support is uncertain, check `gh pr create --help`; `--attach` first appeared
-in the `2.99.0-attach-preview` build. After publishing, confirm that the saved
-body contains `github.com/user-attachments` links instead of local paths and
-that each image or video renders.
+Before using `--attach`, check the selected command's `--help` output for the
+flag. After publishing, confirm that the saved body contains
+`github.com/user-attachments` links instead of local paths and that each image
+or video renders.
 
 If `gh` lacks `--attach` or the upload fails, use a signed-in GitHub browser:
 edit the description, upload through the attachment control or drag-and-drop

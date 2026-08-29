@@ -1,6 +1,6 @@
 ---
 name: design-review
-description: "Use when independently critiquing or auditing existing UI, screenshots, prototypes, flows, accessibility, design-system conformance, or motion. Produces evidence-backed findings and ship-readiness verdicts without changing product source; for making or polishing UI, use design."
+description: "Review existing product UI, screenshots, prototypes, or flows for visual quality, accessibility, design-system conformance, motion, and ship readiness. Returns actionable findings without changing product source; use design to create, implement, redesign, or polish UI."
 ---
 
 # Design Review
@@ -26,10 +26,8 @@ most specific repository instruction, product-specific guidance, accepted
 decisions and targets, the established system and product evidence, then this
 skill's generic standards.
 
-State what is being judged, the user goal, the governing quality bar, and the
-available evidence. Treat implementation rationale and prior self-review as
-evidence, not as the verdict. Do not invent a new product direction during
-review.
+Identify what is being judged and the available evidence. Do not invent a new
+product direction during review.
 
 ## Choose The Review
 
@@ -47,11 +45,10 @@ general code review elsewhere.
 
 ## Judge From Current Evidence
 
-Compare the work with the user goal, repository authority, accepted target or
-brief, and relevant platform standards. Use nearby shipped behavior only when
-it governs the same product and context. Distinguish contract violations from
-preferences, visible defects from implementation hypotheses, and missing proof
-from a failed result.
+Compare the work with the user goal, repository design guidelines, accepted target or brief, and relevant platform standards. Use nearby shipped behavior
+only when it governs the same product and context. Distinguish contract
+violations from preferences, visible defects from implementation hypotheses,
+and missing proof from a failed result.
 
 Use purpose, agency, clarity, accessibility, consistency, and craft as prompts,
 not a scorecard. Mention a principle only when it explains a material finding
@@ -94,8 +91,7 @@ user or fidelity impact, one concrete correction, and an acceptance check. Add
 `Verification needed` and confidence when stronger proof is unavailable. Merge
 duplicate symptoms under their root cause and remove unsupported candidates.
 
-Lead with the verdict or audit outcome, then findings in descending consequence
-and the smallest coherent repair order. State evidence limits that affect the
+Lead with the verdict or audit outcome, then findings in descending consequence and the smallest coherent repair order. State evidence limits that affect the
 result. Return a positive-null result when no substantive issue survives.
 
 Answer in chat unless the user or repository requires a saved report. Saving a

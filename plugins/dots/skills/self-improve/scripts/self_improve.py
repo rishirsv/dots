@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Surface session evidence for a Codex or Claude Code workflow review.
+"""Collect session evidence for a Codex or Claude Code workflow review.
 
-The helper ranks evidence, distinguishes skill mentions from invocations,
-derives usage statistics, and records proposal decisions. It never edits source.
+The helper ranks evidence, extracts structured file activity, distinguishes
+skill mentions from invocations, and derives aggregate statistics. It never
+interprets findings or edits source.
 """
 from __future__ import annotations
 
@@ -37,8 +38,6 @@ from session_sources import (  # noqa: E402
 CODEX_HOME = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")).expanduser()
 CLAUDE_HOME = Path(os.environ.get("CLAUDE_CONFIG_DIR", Path.home() / ".claude")).expanduser()
 SOURCE_SKILLS_ROOT = Path(__file__).resolve().parents[2]
-# Durable record of proposal decisions so weekly runs don't resurface settled items.
-DECISIONS_FILE = CODEX_HOME / "self_improve_decisions.json"
 # Derived per-session statistics, keyed by schema version + session id + mtime.
 STATS_CACHE_FILE = CODEX_HOME / "self_improve_stats_cache.json"
 STATS_SCHEMA = 5
@@ -51,8 +50,6 @@ def platform_paths(platform: str) -> dict[str, Any]:
     plugin_cache = home / "plugins" / "cache"
     return {
         "home": home,
-        "instructions": home / ("AGENTS.md" if platform == "codex" else "CLAUDE.md"),
-        "decisions": home / "self_improve_decisions.json",
         "stats_cache": home / "self_improve_stats_cache.json",
         "skill_roots": (home / "skills", Path.home() / ".agents" / "skills", SOURCE_SKILLS_ROOT, plugin_cache),
         "plugin_cache": plugin_cache,
@@ -76,10 +73,9 @@ def resolve_platform(requested: str) -> str:
 
 def configure_platform(platform: str) -> None:
     global PLATFORM, SESSION_SOURCE
-    global DECISIONS_FILE, STATS_CACHE_FILE, SKILL_ROOTS
+    global STATS_CACHE_FILE, SKILL_ROOTS
     PLATFORM = platform
     paths = platform_paths(platform)
-    DECISIONS_FILE = paths["decisions"]
     STATS_CACHE_FILE = paths["stats_cache"]
     SKILL_ROOTS = paths["skill_roots"]
     SESSION_SOURCE = CodexSource(CODEX_HOME, iter_session_events) if platform == "codex" else ClaudeSource(CLAUDE_HOME)
@@ -262,10 +258,6 @@ SKILL_ID_RE = re.compile(
 
 def utc(ts: int) -> str:
     return datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%SZ")
-
-
-def now_iso() -> str:
-    return datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def shorten(value: str, width: int) -> str:
@@ -612,25 +604,6 @@ def triage_thread(thread: Thread) -> dict[str, Any]:
         "score": max(0, score),
         "reasons": sorted(set(reasons)),
     }
-
-
-# --- proposal decision state -------------------------------------------------
-
-def load_decisions() -> dict[str, dict[str, Any]]:
-    if not DECISIONS_FILE.exists():
-        return {}
-    try:
-        data = json.loads(DECISIONS_FILE.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        return {}
-    return data.get("decided", {}) if isinstance(data, dict) else {}
-
-
-def save_decisions(decided: dict[str, dict[str, Any]]) -> None:
-    DECISIONS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    DECISIONS_FILE.write_text(
-        json.dumps({"decided": decided}, indent=2, sort_keys=True), encoding="utf-8"
-    )
 
 
 # --- derived session statistics ----------------------------------------------
@@ -1255,153 +1228,18 @@ def cmd_skill_usage(args: argparse.Namespace) -> None:
     )
 
 
-def _print_counter_rows(title: str, rows: list[tuple[Any, int]], limit: int) -> None:
-    print(f"### {title}\n")
-    if not rows:
-        print("No data in range.\n")
-        return
-    for label, count in rows[:limit]:
-        print(f"- {label}: {count}")
-    if len(rows) > limit:
-        print(f"- ...{len(rows) - limit} more")
-    print()
-
-
 def cmd_stats(args: argparse.Namespace) -> None:
-    """Quantitative profile for insights and workflow-audit routes.
-
-    This mode supplies facts only: durations, message and tool volumes, language
-    mix, failure buckets, paired validation timing, response gaps, and which
-    installed skills went unused. The agent interprets them. Coverage is
-    reported so the report can state its own limits instead of implying it saw
-    everything."""
+    """Emit structured aggregate evidence for downstream interpretation."""
     rows = threads(limit=args.limit, archived=args.archived, days=args.days, query=args.query, cwd=args.cwd)
     entries, coverage = collect_session_stats(rows, max_new=args.max_new, refresh=args.refresh)
     summary = aggregate_session_stats(entries)
-
-    if args.json:
-        print(json.dumps({"summary": summary, "coverage": coverage, "sessions": entries}, indent=2))
-        return
-
-    print(f"## Usage Statistics ({PLATFORM})\n")
-    if not entries:
-        print("No sessions with enough signal in range.\n")
-    else:
-        totals = summary["totals"]
-        window = f"last {args.days} days" if args.days is not None else "whole retained window"
-        print(f"- Window: {summary['date_range']['start']} to {summary['date_range']['end']} ({window})")
-        print(f"- Sessions analyzed: {summary['sessions']} of {coverage['listed']} listed")
-        print(f"- Messages: {totals['user_messages']} from the user, {totals['assistant_messages']} from the agent "
-              f"({totals['injected_messages']} host-injected blocks excluded)")
-        if totals["stamped_events"]:
-            print(f"- Engaged time: {summary['hours_engaged']}h "
-                  f"(gaps over {IDLE_GAP_SECONDS // 60}m excluded; total session span {summary['hours_span']}h)")
-        else:
-            print(f"- Session span: {summary['hours_span']}h (no stamped events; span includes idle and resumed time)")
-        print(f"- Tool calls: {totals['tool_calls']} ({totals['tool_errors']} failed outputs)")
-        if totals["validation_calls"]:
-            print(
-                f"- Validation calls: {totals['validation_calls']} · "
-                f"paired: {totals['validation_paired']} · timed: {totals['validation_timed']} · "
-                f"failed: {totals['validation_failed']} · repeated: {totals['validation_repeats']}"
-            )
-            if totals["validation_timed"]:
-                print(
-                    f"- Observed validation time: {totals['validation_total_seconds']}s · "
-                    f"longest paired call: {summary['validation_longest_seconds']}s"
-                )
-            print(
-                f"- Validation leads: {totals['failure_edit_retest_cycles']} failure/edit/retest cycles · "
-                f"{totals['validation_after_completion_claims']} calls after a completion claim"
-            )
-        print(f"- Commits: {totals['commits']} · pushes: {totals['pushes']}")
-        print(f"- Interruption markers: {totals['interruptions']} · friction cues: {totals['friction_cues']}")
-        unmeasurable = []
-        if not totals["interruptions"]:
-            unmeasurable.append("no interrupt sentinel found — this host may not record interruptions")
-        if not totals["tool_errors"]:
-            unmeasurable.append("no tool-output failure markers matched this host's tool surface")
-        if not totals["stamped_events"]:
-            unmeasurable.append("no stamped events, so timing distributions are unavailable")
-        if totals["validation_calls"] and totals["validation_unpaired"]:
-            unmeasurable.append(
-                f"{totals['validation_unpaired']} validation calls lacked a paired output or call identifier"
-            )
-        if totals["validation_calls"] and not totals["validation_timed"]:
-            unmeasurable.append("validation calls could not be timed from paired stamped events")
-        if totals["validation_ambiguous_outputs"]:
-            unmeasurable.append(
-                f"{totals['validation_ambiguous_outputs']} validation outputs had ambiguous pairing"
-            )
-        for note in unmeasurable:
-            print(f"- Unmeasurable: {note}")
-        print()
-
-        _print_counter_rows("Projects", summary["projects"], args.top)
-        _print_counter_rows("Tools", summary["tools"], args.top)
-        _print_counter_rows("Languages", summary["languages"], args.top)
-        _print_counter_rows("Failure Buckets", summary["error_categories"], args.top)
-        _print_counter_rows("Validation Calls", summary["validation_categories"], args.top)
-        if summary["validation_seconds_by_category"]:
-            _print_counter_rows(
-                "Observed Validation Seconds", summary["validation_seconds_by_category"], args.top
-            )
-        _print_counter_rows("Skills Used", summary["skills_used"], args.top)
-        _print_counter_rows("Models", summary["models"], args.top)
-
-        unused = summary["skills_installed_unused"]
-        print("### Installed But Unused Skills\n")
-        if unused:
-            print(f"- {', '.join(unused[: args.top * 2])}")
-            print("- Absence of a marker is a lead, not proof the skill never ran.\n")
-        else:
-            print("Every installed skill appeared at least once.\n")
-
-        print("### User Response Gaps\n")
-        if summary["response_gap_samples"]:
-            for label, count in summary["response_gap_histogram"].items():
-                print(f"- {label}: {count}")
-            print(f"- Samples: {summary['response_gap_samples']}\n")
-        else:
-            print("The host did not stamp enough events to measure response gaps.\n")
-
-    print("### Coverage\n")
-    print(f"- Listed: {coverage['listed']} · cached: {coverage['cached']} · computed: {coverage['computed']}")
-    if coverage["capped"]:
-        print(f"- Capped: {coverage['capped']} sessions were not computed this run (raise --max-new)")
-    print(f"- Excluded: {coverage['low_signal']} low-signal, {coverage['self_referential']} report runs, "
-          f"{coverage['missing_transcript']} missing transcripts")
-    if coverage["malformed"]:
-        print(f"- Malformed rollout lines encountered in {coverage['malformed']} session(s)")
-    print("- Retention: absence of an older session is not evidence the work never happened.")
-
-
-def cmd_decide(args: argparse.Namespace) -> None:
-    decided = load_decisions()
-    if args.action == "status":
-        if not decided:
-            print("No recorded proposal decisions.")
-            return
-        print("## Recorded Proposal Decisions\n")
-        for key, record in sorted(decided.items(), key=lambda kv: kv[1].get("at", "")):
-            note = f" — {record['note']}" if record.get("note") else ""
-            print(f"- `{key}` {record.get('decision', '?')} at {record.get('at', '?')}{note}")
-        return
-    if not args.key:
-        raise SystemExit("accept/reject/apply require a proposal key (see the `key` field in proposals)")
-    decided[args.key] = {
-        "decision": {"accept": "accepted", "reject": "rejected", "apply": "applied"}[args.action],
-        "at": now_iso(),
-        "note": args.note or "",
-    }
-    save_decisions(decided)
-    print(f"Recorded `{args.key}` as {decided[args.key]['decision']}.")
+    print(json.dumps({"summary": summary, "coverage": coverage, "sessions": entries}, indent=2))
 
 
 # --- parser ------------------------------------------------------------------
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Mine Codex or Claude Code sessions for durable improvement proposals.")
+    parser = argparse.ArgumentParser(description="Collect Codex or Claude Code session evidence.")
     parser.add_argument("--platform", choices=("auto", "codex", "claude"), default="auto")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
@@ -1432,24 +1270,16 @@ def build_parser() -> argparse.ArgumentParser:
     usage_p.add_argument("--cwd")
     usage_p.set_defaults(func=cmd_skill_usage)
 
-    stats_p = sub.add_parser("stats", help="Quantitative usage profile for the insights route")
+    stats_p = sub.add_parser("stats", help="Collect aggregate session evidence")
     stats_p.add_argument("--limit", type=int)
     stats_p.add_argument("--archived", choices=("active", "archived", "all"), default="all")
     stats_p.add_argument("--days", type=int)
     stats_p.add_argument("--query")
     stats_p.add_argument("--cwd")
-    stats_p.add_argument("--top", type=int, default=10)
     stats_p.add_argument("--max-new", type=int, default=200,
                          help="cap on sessions derived this run; capped sessions are reported")
     stats_p.add_argument("--refresh", action="store_true", help="ignore the cache and recompute")
-    stats_p.add_argument("--json", action="store_true", help="emit the full structured profile")
     stats_p.set_defaults(func=cmd_stats)
-
-    decide_p = sub.add_parser("decide", help="Record a human decision on a proposal so it stops resurfacing")
-    decide_p.add_argument("action", choices=("accept", "reject", "apply", "status"))
-    decide_p.add_argument("key", nargs="?", help="proposal key from a proposals report")
-    decide_p.add_argument("--note")
-    decide_p.set_defaults(func=cmd_decide)
 
     return parser
 

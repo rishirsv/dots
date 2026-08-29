@@ -5,6 +5,7 @@
 # Host-managed restrictions still take precedence.
 approval_policy = "never"
 default_permissions = "dots"
+web_search = "live"
 model = "gpt-5.6-sol"
 model_reasoning_effort = "low"
 

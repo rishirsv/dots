@@ -1,5 +1,9 @@
 # Writing style
 
+Use this for conversational, explanatory, editorial, or narrative prose whose
+voice matters to the result. Do not combine it with
+`technical-writing-guidance.md`; each artifact uses one writing reference.
+
 Use this as a drafting and editing pass for substantial prose. Preserve quoted
 text, code, commands, identifiers, and required terminology.
 
@@ -7,10 +11,12 @@ Edit text to remove AI patterns and add human voice.
 
 ## Process
 
-- Scan for the patterns below.
-- Rewrite. Preserve meaning, match intended tone.
-- Add soul (see next section).
-- Self-audit: "What makes this obviously AI generated?" Fix remaining tells.
+1. Identify the reader, intended effect, and controlling facts or source
+   material.
+2. Build the structure and voice with the guidance in "Adding soul."
+3. Scan for unsupported claims, mechanical patterns, and the AI tells below.
+   Rewrite without flattening the voice.
+4. Read the result aloud. Fix anywhere attention, orientation, or trust breaks.
 
 ## Adding soul
 
@@ -22,6 +28,23 @@ Removing patterns is half the job. Sterile, voiceless writing is just as obvious
 - **Use "I" when it fits.** First person isn't unprofessional.
 - **Let some mess in.** Perfect structure looks machine-made.
 - **Be specific.** Not "this is concerning" but "there's something unsettling about agents churning away at 3am."
+
+Give that voice a structure:
+
+- **Choose a spine.** Organize the piece around chronology, causality, questions,
+  or an argument so the reader always knows what is moving forward.
+- **Give each paragraph a job.** Advance events, explain a mechanism, present
+  evidence, interpret it, or turn to the next idea.
+- **Move between abstract and concrete.** Follow a general claim with a fact,
+  action, image, or example the reader can picture.
+- **Earn reactions.** Put surprise, judgment, or feeling after the evidence that
+  prompts it instead of using a reaction in place of evidence.
+- **Repeat anchors on purpose.** Keep important nouns and motifs stable. Vary the
+  surrounding syntax instead of renaming the subject.
+- **Put rhythm at real turns.** Use a short sentence to land a reversal or
+  conclusion. Let a longer sentence carry a coherent chain of reasoning.
+- **Show the mind at work.** Disclose uncertainty, surprise, or a changed belief
+  when it helps the reader understand how to interpret the account.
 
 ## Patterns to detect and fix
 
@@ -72,7 +95,9 @@ Removing patterns is half the job. Sterile, voiceless writing is just as obvious
 ### Plain speech
 
 - **Say what it does, not how it feels.** "the database stays close at hand", "SQL you can read", "types that follow your schema" name a feeling. The fix names the mechanism or a number: "`.toSQL()` returns the exact string sent to the database", "a column rename fails the build". Ask what the sentence tells the reader to do or know, then write that. If you can't restate it as a concrete instruction, fact, or number, cut it. One more check: if the sentence could appear unchanged in another project's docs, it says nothing about this one. Cut it.
-- **Shorten or split dense sentences.** If the reader has to backtrack to parse a sentence, break it in two or drop clauses. One idea per sentence.
+- **Give each sentence one primary movement.** Keep related conditions,
+  contrasts, or consequences together when splitting them would obscure the
+  relationship. Split when the reader must backtrack to recover the grammar.
 - **Active voice.** Prefer it. Catch "is/are/was/were + past participle" and name the actor: "queries are validated" becomes "the compiler validates queries", "the file is parsed by the loader" becomes "the loader parses the file". Passive is fine only when the actor is unknown or genuinely doesn't matter.
 - **Cut adverbs, or use a stronger verb.** "runs quickly" becomes "is fast" or the number. "significantly improves" becomes the measured delta. An adverb propping up a weak verb means the verb is wrong.
 - **Prefer the plain word.** "utilize" becomes "use", "leverage" becomes "use", "facilitate" becomes "help", "numerous" becomes "many", "in the event that" becomes "if". The fancier synonym is rarely clearer.

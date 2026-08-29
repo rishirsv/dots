@@ -8,24 +8,23 @@ description: "Use only when the user writes `$explain`. Give a quick plain-langu
 Explain the named subject or, when none is named, the previous answer. Ask what
 to explain only when neither is clear.
 
-Match the user's existing knowledge, vocabulary, and conversation context. Fill
-the missing bridge instead of restarting the whole subject. Lead with the
-practical result, then explain the smallest mechanism needed to make it make
-sense and why it matters.
+Use plain language that does not require specialist knowledge. Give the
+background needed to answer the question without restarting the whole subject.
+Lead with the answer, then explain the relevant mechanism or distinction and
+provide the context needed to understand it.
 
-Translate rather than restate. Start with something the user can picture: an
-action, failure, or handoff. Introduce the technical term after the behavior is
-clear. Use one concrete example, comparison, or compact text diagram when it
-shortens the explanation. If the previous answer did not land, explain the
-missing idea from a different angle instead of summarizing it.
+Translate rather than restate. Prefer plain words and explain technical terms
+after the behavior. Use an example, analogy, comparison, or compact text diagram
+only when it makes the answer clearer or shorter. If the previous answer did not
+land, explain the missing idea from a different angle instead of summarizing it.
 
 When the user asks to see, diagram, or make the explanation visual, read
 [Visual explanations](../../references/visual-explanations.md) and use only its
 lightweight inline forms.
 
-Write the explanation once. Do not split it into technical and simple versions
-or use headings that narrate the explanation. Use a heading only when it names
-the subject. Prefer the plain word and stop when the user can follow the result.
+Finish after answering the question, explaining the needed mechanism or
+distinction, and correcting any misconception shown by the context. Include a
+next action only when useful.
 
 Read the shared [writing style](../../references/writing-style.md) only for a
 substantial or writing-heavy explanation.

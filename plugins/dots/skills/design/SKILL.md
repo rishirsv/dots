@@ -5,9 +5,8 @@ description: "Use when creating, redesigning, implementing, or polishing visible
 
 # Design
 
-Design and implement visible product UI. Work inside the user's authorization
-and the repository's product direction, then apply the generic craft guidance
-only where local authority leaves room.
+Work inside the user's authorization and the repository's product direction,
+then apply the generic craft guidance only where local authority leaves room.
 
 ## Start With Product Authority
 
@@ -57,10 +56,10 @@ Choose one implementation path:
 
 ### Resolve the direction
 
-State a compact executable direction from the governing product authority,
-change freedom, real content, and technical constraints. Ask only when a choice
-would materially change the product, scope, or costly implementation and cannot
-be derived safely.
+Choose a clear direction based on the product's existing design, the scope of
+the requested change, the content the interface must support, and the technical
+constraints. Ask the user only when an unresolved choice would substantially
+change the product, expand the scope, or require an expensive implementation.
 
 Use Image Gen concepts when seeing materially different compositions would
 improve a real decision, or when needed raster assets do not exist. Skip them
@@ -93,9 +92,6 @@ data through recoverable errors, support relevant text scaling and
 localization, keep focus and input behavior usable, and provide reduced-motion
 behavior where motion is present.
 
-Implementation is complete when the requested surface and applicable states
-work within the governing product and design contracts.
-
 ### Inspect and refine
 
 When repository policy and the user's authorization permit rendering, inspect
@@ -115,12 +111,8 @@ when rendered evidence is required. Target-driven, acceptance-critical,
 brand-sensitive, and accessibility-sensitive work needs comparison at matching
 viewports and states. Functional checks do not establish visual fidelity.
 
-Stop when no material issue remains in the evidence the task authorizes, or
-report the concrete blocker and proof still needed.
-
 ## Finish
 
-Report the chosen direction, product and repository guidance followed, files or
-surfaces changed, rendered validation performed, intentional deviations, and
-remaining risks. Remove only temporary artifacts created by the current task;
-preserve pre-existing user files.
+Report the chosen direction, files or surfaces changed, rendered validation,
+intentional deviations, and remaining risks. Remove only temporary artifacts
+created by the current task; preserve pre-existing user files.

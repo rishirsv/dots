@@ -24,8 +24,7 @@ Run the statistics pass first, then read a small number of representative
 sessions to explain what the numbers mean:
 
 ```bash
-python3 scripts/self_improve.py stats --top 10
-python3 scripts/self_improve.py stats --json
+python3 scripts/self_improve.py stats
 ```
 
 `stats` derives per-session facts and caches them by schema version, session id,
@@ -86,24 +85,8 @@ Write in second person. Skip a section rather than padding it.
    suggestions that amount to "give more context" or "confirm before acting".
 6. **On The Horizon** — three ambitious workflows that better models make
    reachable: autonomous loops, parallel agents, iterating against tests.
-7. **Leads For The Improvement Review** — anything that looks durable, each with
-   the proposal key it would carry so `decide` can settle it later.
-
-Before writing **Quick Wins** and **Leads**, read the decisions store
-(`decide status`) and drop anything already recorded rejected or applied.
-
-## Privacy
-
-This report is meant to be shareable, which raises the bar above an ordinary
-review. The body carries aggregate counts, behavioral patterns, and at most
-paraphrased examples. Keep out of the body:
-
-- transcript excerpts, command output, and pasted content;
-- session ids, thread ids, and local transcript paths;
-- repository paths beyond a project name the user would recognize;
-- anything resembling a credential, token, or private third-party detail.
-
-Provenance belongs in the terminal reply, not the artifact.
+7. **Leads For The Improvement Review** — anything that looks durable enough
+   for a separate improvement review.
 
 ## Coverage
 
@@ -144,7 +127,7 @@ not embed an HTML template in this skill.
 ## Quick Wins
 ## On The Horizon
 ## Leads For The Improvement Review
-- Lead: <pattern>  (key <proposal-key>)
+- Lead: <pattern>
   Why it might be durable: <one sentence>
   Next step: run the improvement review on this lead
 

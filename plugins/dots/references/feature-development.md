@@ -40,11 +40,13 @@ one unusual task.
    settle, apply `$prototype`. Ask the user only for product choices,
    preferences, authority, or information a focused probe cannot establish.
 4. **Choose the design.** Select the smallest coherent approach that fits the
-   existing system. For a consequential new boundary, sketch the caller, public
-   contract, data or state shape, responsible module, and verification seam.
-   Develop multiple shapes only when the decision is costly to reverse or the
-   first shape has no strong precedent. Apply `$design` when visible product UI
-   needs its full workflow, then return here.
+   existing system. Apply `$architect` when a consequential new or changed
+   boundary needs its caller experience, public contract, data or state shape,
+   responsible module, or verification seam settled before implementation.
+   Use Architect for the design phases only, then return here for implementation,
+   proof, review, and completion.
+   Apply `$design` when visible product UI needs its full workflow, then return
+   here.
 5. **Implement.** Build the complete authorized change in checkable units.
    Verify each meaningful unit before depending on it. A bounded unit with
    settled behavior, source anchors, and an executable check may go to a
@@ -56,9 +58,9 @@ one unusual task.
    integration or visible behavior. Bugs use the original reproduction;
    refactors compare the pinned behavior; performance work repeats the frozen
    measurement.
-7. **Review and finish.** Apply `$review`, repair retained in-scope findings,
-   rerun affected checks, inspect the final diff, and summarize the result,
-   proof, intentional exclusions, and remaining risk.
+7. **Review and finish.** Apply `$code-quality-review`, repair retained in-scope
+   findings, rerun affected checks, inspect the final diff, and summarize the
+   result, proof, intentional exclusions, and remaining risk.
 
 ## Stop at a planning handoff when requested
 
@@ -81,18 +83,8 @@ verified material and reading order to `$html`. HTML changes the review surface,
 not the planning method. Do not make a durable artifact for a localized change
 whose handoff fits clearly in chat.
 
-Scale review to the change:
-
-- **Low:** one localized, reversible change with a narrow proof surface and no
-  material security, data, migration, permission, concurrency, or public-contract
-  risk. One reviewer applies all core lenses.
-- **Default:** normal multi-file product work or a change whose blast radius is
-  not obviously narrow. Independent Correctness, Simplicity, and Systems lanes
-  inspect the complete change.
-- **Deep:** security-sensitive, data-changing, migration-heavy, cross-system,
-  concurrency-sensitive, difficult-to-reverse, or otherwise high-blast-radius
-  work. Add relevant specialists, independent verification, and a gap sweep.
-- **Challenge:** use only when the user explicitly asks for adversarial review.
+`$code-quality-review` owns review scope, subagent strategy, findings, repairs,
+and final independent review. Do not recreate that procedure here.
 
 The playbook is complete when the requested behavior works through its real
 path, proof supports the result, review is complete at the selected depth, and

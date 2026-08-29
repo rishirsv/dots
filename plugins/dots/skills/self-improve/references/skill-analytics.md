@@ -45,8 +45,10 @@ candidates. For each cluster:
 2. Decide whether any friction was caused by the skill, by its trigger, or by
    unrelated work in the thread.
 3. Compare successful runs to failures and state the repeatable happy path.
-4. Treat one cluster as an incident, not a rule. Pass the generalization gate in
-   [thread-evidence.md](thread-evidence.md) before proposing a skill change.
+4. Require repeated clusters when generalizing beyond the task. One cluster can
+   still support a narrow correction or an exact behavior the user requests.
+   Pass broader changes through the generalization gate in
+   [thread-evidence.md](thread-evidence.md).
 
 Prioritize repeated causal friction across invocation clusters. A heavily used
 skill with clean representative runs may need no change.

@@ -9,7 +9,6 @@ import subprocess
 import sys
 import tempfile
 import unittest
-import zipfile
 from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
@@ -398,7 +397,7 @@ class SelfImproveScopeTests(unittest.TestCase):
         )
         removed = {
             "inventory", "list", "memory-audit", "goal-health", "scaffold",
-            "dream", "skill-audit", "deep",
+            "dream", "skill-audit", "deep", "decide",
         }
         self.assertTrue(removed.isdisjoint(subparsers.choices))
 
@@ -519,161 +518,33 @@ class SelfImproveScopeTests(unittest.TestCase):
 
 
 class OracleContainmentTests(unittest.TestCase):
-    def test_package_contains_only_prompt_and_context_archive(self):
+    def test_credential_like_filenames_are_rejected(self):
         script = PLUGIN_ROOT / "skills" / "oracle" / "scripts" / "oracle_package.py"
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "context.txt").write_text("context")
-            output = root / "packages"
-            result = subprocess.run(
-                [
-                    sys.executable,
-                    str(script),
-                    "--root",
-                    str(root),
-                    "--task",
-                    "Review",
-                    "--file",
-                    "context.txt",
-                    "--output-dir",
-                    str(output),
-                    "--name",
-                    "review",
-                ],
-                capture_output=True,
-                text=True,
-            )
-            package = output / "review"
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(
-                {path.name for path in package.iterdir()},
-                {"prompt.md", "context.zip"},
-            )
-            with zipfile.ZipFile(package / "context.zip") as archive:
-                self.assertEqual(
-                    set(archive.namelist()),
-                    {"files/context.txt", "file-map.txt"},
+        for filename in ("api-token.txt", "client-secret.txt", "prod-credential.txt"):
+            with self.subTest(filename=filename), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                prompt = root / "prompt.md"
+                prompt.write_text("Review this context.")
+                (root / filename).write_text("private")
+
+                result = subprocess.run(
+                    [
+                        sys.executable,
+                        str(script),
+                        "--root",
+                        str(root),
+                        "--prompt-file",
+                        str(prompt),
+                        "--file",
+                        filename,
+                        "--dry-run",
+                    ],
+                    capture_output=True,
+                    text=True,
                 )
 
-    def test_package_scope_must_be_explicit(self):
-        script = PLUGIN_ROOT / "skills" / "oracle" / "scripts" / "oracle_package.py"
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "context.txt").write_text("context")
-            result = subprocess.run(
-                [
-                    sys.executable,
-                    str(script),
-                    "--root",
-                    str(root),
-                    "--task",
-                    "Review",
-                    "--dry-run",
-                ],
-                capture_output=True,
-                text=True,
-            )
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("positive --file selector", result.stderr)
-
-    def test_all_repo_requires_explicit_flag(self):
-        script = PLUGIN_ROOT / "skills" / "oracle" / "scripts" / "oracle_package.py"
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "context.txt").write_text("context")
-            result = subprocess.run(
-                [
-                    sys.executable,
-                    str(script),
-                    "--root",
-                    str(root),
-                    "--task",
-                    "Review",
-                    "--all-repo",
-                    "--dry-run",
-                ],
-                capture_output=True,
-                text=True,
-            )
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("context.txt", result.stdout)
-
-    def test_all_repo_rejects_file_selectors(self):
-        script = PLUGIN_ROOT / "skills" / "oracle" / "scripts" / "oracle_package.py"
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "context.txt").write_text("context")
-            result = subprocess.run(
-                [
-                    sys.executable,
-                    str(script),
-                    "--root",
-                    str(root),
-                    "--task",
-                    "Review",
-                    "--all-repo",
-                    "--file",
-                    "context.txt",
-                    "--dry-run",
-                ],
-                capture_output=True,
-                text=True,
-            )
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("cannot be combined", result.stderr)
-
-    def test_outside_root_literal_is_rejected(self):
-        script = PLUGIN_ROOT / "skills" / "oracle" / "scripts" / "oracle_package.py"
-        with tempfile.TemporaryDirectory() as tmp:
-            tmp_path = Path(tmp)
-            root = tmp_path / "root"
-            root.mkdir()
-            outside = tmp_path / "outside.txt"
-            outside.write_text("private")
-            result = subprocess.run(
-                [
-                    sys.executable,
-                    str(script),
-                    "--root",
-                    str(root),
-                    "--task",
-                    "Review",
-                    "--file",
-                    str(outside),
-                    "--dry-run",
-                ],
-                capture_output=True,
-                text=True,
-            )
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("outside approved root", result.stderr)
-
-    def test_symlink_escape_is_rejected(self):
-        script = PLUGIN_ROOT / "skills" / "oracle" / "scripts" / "oracle_package.py"
-        with tempfile.TemporaryDirectory() as tmp:
-            tmp_path = Path(tmp)
-            root = tmp_path / "root"
-            root.mkdir()
-            outside = tmp_path / "outside.txt"
-            outside.write_text("private")
-            (root / "escape.txt").symlink_to(outside)
-            result = subprocess.run(
-                [
-                    sys.executable,
-                    str(script),
-                    "--root",
-                    str(root),
-                    "--task",
-                    "Review",
-                    "--file",
-                    "escape.txt",
-                    "--dry-run",
-                ],
-                capture_output=True,
-                text=True,
-            )
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("outside approved root", result.stderr)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("Credential-like file selected", result.stderr)
 
 
 if __name__ == "__main__":

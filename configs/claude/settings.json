@@ -1,5 +1,5 @@
 {
-  "model": "fable",
+  "model": "sonnet",
   "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
     "codex@openai-codex": true,

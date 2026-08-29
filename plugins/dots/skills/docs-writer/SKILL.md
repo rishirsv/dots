@@ -13,7 +13,7 @@ document has done its job.
 
 Load only the guidance the current job needs:
 
-- Read [technical-writing-guidance.md](references/technical-writing-guidance.md)
+- Read [technical-writing-guidance.md](../../references/technical-writing-guidance.md)
   for a substantial rewrite or style-heavy edit.
 - Read the selected recipe in
   [document-types.md](references/document-types.md) after choosing the

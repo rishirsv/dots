@@ -37,6 +37,23 @@ url = "https://developers.openai.com/mcp"
 defaultTerminalLocation = "right"
 """
 
+PERMISSION_PROFILE_PORTABLE = """\
+approval_policy = "never"
+default_permissions = "dots"
+web_search = "live"
+
+[permissions.dots]
+description = "Power user config."
+
+[permissions.dots.filesystem]
+":root" = "write"
+
+[permissions.dots.network]
+enabled = true
+allow_local_binding = true
+dangerously_allow_all_unix_sockets = true
+"""
+
 LEGACY = """\
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
@@ -272,6 +289,42 @@ class CodexConfigHelperTests(unittest.TestCase):
             self.assertNotIn("default_permissions", live)
             self.assertNotRegex(live, r"\[permissions(?:\.|\])")
 
+    def test_permission_profile_ignores_app_sandbox_writeback_and_keeps_live_web_search(
+        self,
+    ):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.toml"
+            target = root / "config.toml"
+            source.write_text(PERMISSION_PROFILE_PORTABLE)
+            runtime_portable = PERMISSION_PROFILE_PORTABLE.replace(
+                'web_search = "live"\n',
+                'web_search = "live"\n'
+                'sandbox_mode = "danger-full-access"\n',
+            )
+            target.write_text(
+                SYNC_CODEX_CONFIG.BEGIN_MARKER
+                + "\n"
+                + runtime_portable
+                + SYNC_CODEX_CONFIG.END_MARKER
+                + "\n"
+            )
+            os.chmod(target, 0o600)
+
+            status_result = self.run_helper("status", source, target)
+            self.assertEqual(status_result.returncode, 0, status_result.stdout)
+
+            capture_result = self.run_helper("capture", source, target)
+            self.assertEqual(capture_result.returncode, 0, capture_result.stderr)
+            self.assertEqual(source.read_text(), PERMISSION_PROFILE_PORTABLE)
+
+            apply_result = self.run_helper("apply", source, target)
+            self.assertEqual(apply_result.returncode, 0, apply_result.stderr)
+            live = target.read_text()
+            self.assertIn('default_permissions = "dots"', live)
+            self.assertIn('web_search = "live"', live)
+            self.assertNotIn("sandbox_mode", live)
+
     def test_portable_source_rejects_two_permission_systems(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -370,6 +423,7 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             live_config = config.read_text()
             self.assertIn('approval_policy = "never"', live_config)
             self.assertIn('default_permissions = "dots"', live_config)
+            self.assertIn('web_search = "live"', live_config)
             self.assertNotIn("sandbox_mode", live_config)
             self.assertIn("[permissions.dots]", live_config)
             self.assertIn("[permissions.dots.filesystem]", live_config)
@@ -404,6 +458,7 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
                 {path.name for path in agent_profiles.glob("*.toml")},
                 {
                     "adversary.toml",
+                    "architect.toml",
                     "explorer.toml",
                     "leaf.toml",
                     "planner.toml",

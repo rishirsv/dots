@@ -92,6 +92,11 @@ template, checklist, or scoring system.
 - **Make the work concrete before making it shorter.** Write the actions,
   artifacts, roles, and decisions plainly. Then remove repetition without
   replacing those details with umbrella nouns or compressed policy language.
+- **Use normal English.** Prefer concrete actions, objects, and decisions to
+  compressed labels. For example, say which files changed, name the decision
+  the reader faces, or list the tests that failed. Use a specialized term only
+  when it is standard for the audience or clearly defined and used
+  consistently.
 - **Say what it does, not how it feels.** Prefer a concrete instruction,
   mechanism, fact, or observable consequence. If a sentence only says that the
   result should be rigorous, trustworthy, useful, or high quality, state what

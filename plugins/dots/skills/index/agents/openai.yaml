@@ -1,0 +1,10 @@
+interface:
+  display_name: "Dots"
+  short_description: "Route work to the right Dots workflow"
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
+  brand_color: "#36C5A7"
+  default_prompt: "Use $index to choose and run the right Dots workflow for this request."
+
+policy:
+  allow_implicit_invocation: true

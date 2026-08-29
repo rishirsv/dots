@@ -2,160 +2,132 @@
 set -euo pipefail
 
 ROOT="${0:A:h:h}"
-TARGETS=()
+typeset -A TARGETS
 
 usage() {
   cat <<'EOF'
 Usage: scripts/sync-plugins.sh [--all|--codex|--claude]
 
-Registers the repo-root plugin marketplace and refreshes installed local
-plugins. The --codex target also refreshes ~/.codex-personal when that home
-exists. Defaults to --all.
+Refreshes repo-owned plugins and verifies their installed versions. Codex also
+syncs ~/.codex-personal when it exists. Defaults to --all.
 EOF
-}
-
-add_target() {
-  local target="$1"
-  if [[ "$target" == "all" ]]; then
-    TARGETS=(codex claude)
-    return
-  fi
-  TARGETS+=("$target")
 }
 
 while (( $# )); do
   case "$1" in
-    --all)
-      add_target all
-      ;;
-    --codex)
-      add_target codex
-      ;;
-    --claude)
-      add_target claude
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    *)
-      echo "Unknown argument: $1" >&2
-      usage >&2
-      exit 2
-      ;;
+    --all) TARGETS=([codex]=1 [claude]=1) ;;
+    --codex) TARGETS[codex]=1 ;;
+    --claude) TARGETS[claude]=1 ;;
+    -h|--help) usage; exit ;;
+    *) echo "Unknown argument: $1" >&2; usage >&2; exit 2 ;;
   esac
   shift
 done
+(( ${#TARGETS} )) || TARGETS=([codex]=1 [claude]=1)
 
-if (( ${#TARGETS[@]} == 0 )); then
-  add_target all
-fi
-
-CODEX_MARKETPLACE="$ROOT"
-CLAUDE_MARKETPLACE="rishirsv/dots"
-CODEX_PLUGIN_NAMES=("${(@f)$(
-  python3 - "$ROOT/.agents/plugins/marketplace.json" <<'PY'
-import json
-import sys
+catalog_specs() {
+  python3 - "$ROOT" "$1" "$2" <<'PY'
+import json, sys
 from pathlib import Path
 
-catalog = json.loads(Path(sys.argv[1]).read_text())
-for plugin in catalog.get("plugins", []):
-    print(plugin["name"])
+root, catalog_path, product = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3]
+catalog = json.loads(catalog_path.read_text())
+for entry in catalog["plugins"]:
+    source_value = entry["source"]
+    source_path = source_value["path"] if isinstance(source_value, dict) else source_value
+    source = (root / source_path).resolve()
+    manifest = source / f".{product}-plugin/plugin.json"
+    if not manifest.is_file():
+        raise SystemExit(f"Missing {product} plugin manifest for {entry['name']}: {manifest}")
+    data = json.loads(manifest.read_text())
+    if data.get("name") != entry["name"] or not data.get("version"):
+        raise SystemExit(f"Invalid plugin manifest: {manifest}")
+    print(f"{entry['name']}\t{data['version']}")
 PY
-)}")
-CLAUDE_PLUGIN_NAMES=("${(@f)$(
-  python3 - "$ROOT/.claude-plugin/marketplace.json" <<'PY'
-import json
-import sys
-from pathlib import Path
+}
 
-catalog = json.loads(Path(sys.argv[1]).read_text())
-for plugin in catalog.get("plugins", []):
-    print(plugin["name"])
-PY
-)}")
+CODEX_SPECS=("${(@f)$(catalog_specs "$ROOT/.agents/plugins/marketplace.json" codex)}")
+CLAUDE_SPECS=("${(@f)$(catalog_specs "$ROOT/.claude-plugin/marketplace.json" claude)}")
+
+stale_ids() {
+  python3 -c '
+import json, sys
+marketplace, expected = sys.argv[1], {item.split("\t", 1)[0] for item in sys.argv[2:]}
+data = json.load(sys.stdin)
+plugins = data["installed"] if isinstance(data, dict) else data
+for plugin in plugins:
+    plugin_id = plugin.get("pluginId", plugin.get("id", ""))
+    name, separator, owner = plugin_id.partition("@")
+    if separator and owner == marketplace and name not in expected: print(plugin_id)
+' "$@"
+}
+
+codex_for() {
+  local home="$1"
+  shift
+  if [[ -n "$home" ]]; then
+    CODEX_HOME="$home" command codex "$@"
+  else
+    command codex "$@"
+  fi
+}
 
 sync_codex_home() {
-  local label="$1"
-  local home="$2"
+  local label="$1" home="$2" spec name version installed stale
+  [[ -z "$home" || -d "$home" ]] || { echo "Skipping $label: $home does not exist"; return; }
 
-  if [[ -n "$home" && ! -d "$home" ]]; then
-    echo "Skipping $label: $home does not exist"
-    return
-  fi
+  echo "Syncing $label"
+  codex_for "$home" plugin marketplace add "$ROOT" >/dev/null
+  for spec in "${CODEX_SPECS[@]}"; do
+    IFS=$'\t' read -r name version <<< "$spec"
+    codex_for "$home" plugin add "$name@dots" >/dev/null
+  done
 
-  echo "Syncing Codex plugins for $label"
-  if [[ -n "$home" ]]; then
-    CODEX_HOME="$home" codex plugin marketplace add "$CODEX_MARKETPLACE"
-    for plugin in "${CODEX_PLUGIN_NAMES[@]}"; do
-      CODEX_HOME="$home" codex plugin add "$plugin@dots"
-    done
-  else
-    codex plugin marketplace add "$CODEX_MARKETPLACE"
-    for plugin in "${CODEX_PLUGIN_NAMES[@]}"; do
-      codex plugin add "$plugin@dots"
-    done
-  fi
-}
-
-claude_plugin_installed() {
-  local plugin_id="$1"
-  local installed_json
-  installed_json="$(claude plugin list --json)"
+  installed="$(codex_for "$home" plugin list --json)"
+  for stale in "${(@f)$(stale_ids dots "${CODEX_SPECS[@]}" <<< "$installed")}"; do
+    [[ -n "$stale" ]] && codex_for "$home" plugin remove "$stale" >/dev/null
+  done
+  installed="$(codex_for "$home" plugin list --json)"
   python3 -c '
-import json
-import sys
-
-plugin_id = sys.argv[1]
-installed = json.load(sys.stdin)
-raise SystemExit(0 if any(plugin.get("id") == plugin_id for plugin in installed) else 1)
-' "$plugin_id" <<< "$installed_json"
+import json, sys
+expected = dict(item.split("\t", 1) for item in sys.argv[1:])
+installed = {p["pluginId"]: p["version"] for p in json.load(sys.stdin)["installed"]}
+errors = ["%s@dots: expected %s, got %s" % (name, version, installed.get(name + "@dots", "not installed")) for name, version in expected.items() if installed.get(name + "@dots") != version]
+if errors: raise SystemExit("Codex verification failed:\n  " + "\n  ".join(errors))
+' "${CODEX_SPECS[@]}" <<< "$installed"
 }
 
-claude_stale_plugin_ids() {
-  claude plugin list --json | python3 -c '
-import json
-import sys
-
-desired = set(sys.argv[1:])
-for plugin in json.load(sys.stdin):
-    plugin_id = plugin.get("id", "")
-    name, separator, marketplace = plugin_id.partition("@")
-    if separator and marketplace == "dots" and name not in desired:
-        print(plugin_id)
-' "${CLAUDE_PLUGIN_NAMES[@]}"
-}
-
-sync_claude_plugins() {
-  claude plugin marketplace add "$CLAUDE_MARKETPLACE" --scope user
-  for plugin in "${CLAUDE_PLUGIN_NAMES[@]}"; do
-    local plugin_id="$plugin@dots"
-    if claude_plugin_installed "$plugin_id"; then
-      claude plugin update "$plugin_id" --scope user
+sync_claude() {
+  local spec name version plugin_id installed stale
+  echo "Syncing Claude"
+  claude plugin marketplace add rishirsv/dots --scope user >/dev/null
+  installed="$(claude plugin list --json)"
+  for spec in "${CLAUDE_SPECS[@]}"; do
+    IFS=$'\t' read -r name version <<< "$spec"
+    plugin_id="$name@dots"
+    if python3 -c 'import json,sys; raise SystemExit(not any(p.get("id") == sys.argv[1] for p in json.load(sys.stdin)))' "$plugin_id" <<< "$installed"; then
+      claude plugin update "$plugin_id" --scope user >/dev/null
     else
-      claude plugin install "$plugin_id" --scope user
+      claude plugin install "$plugin_id" --scope user >/dev/null
     fi
   done
-  local stale_plugin_id
-  for stale_plugin_id in "${(@f)$(claude_stale_plugin_ids)}"; do
-    [[ -n "$stale_plugin_id" ]] || continue
-    claude plugin uninstall "$stale_plugin_id" --scope user
+
+  installed="$(claude plugin list --json)"
+  for stale in "${(@f)$(stale_ids dots "${CLAUDE_SPECS[@]}" <<< "$installed")}"; do
+    [[ -n "$stale" ]] && claude plugin uninstall "$stale" --scope user >/dev/null
   done
+  installed="$(claude plugin list --json)"
+  python3 -c '
+import json, sys
+expected = dict(item.split("\t", 1) for item in sys.argv[1:])
+plugins = {p["id"]: p for p in json.load(sys.stdin)}
+errors = ["%s@dots: expected %s, got %s" % (name, version, plugins.get(name + "@dots", {}).get("version", "not installed")) for name, version in expected.items() if plugins.get(name + "@dots", {}).get("version") != version]
+if errors: raise SystemExit("Claude verification failed:\n  " + "\n  ".join(errors))
+' "${CLAUDE_SPECS[@]}" <<< "$installed"
 }
 
-for target in "${TARGETS[@]}"; do
-  case "$target" in
-    codex)
-      sync_codex_home "default Codex" ""
-      sync_codex_home "Codex personal" "$HOME/.codex-personal"
-      ;;
-    claude)
-      sync_claude_plugins
-      ;;
-    *)
-      echo "Unknown target: $target" >&2
-      exit 2
-      ;;
-  esac
-done
+if (( ${+TARGETS[codex]} )); then
+  sync_codex_home "default Codex" "${CODEX_HOME:-}"
+  sync_codex_home "Codex personal" "$HOME/.codex-personal"
+fi
+(( ${+TARGETS[claude]} )) && sync_claude

@@ -5,8 +5,6 @@ description: "Use only when the user selects `$clarify` to resolve underspecifie
 
 # Clarify
 
-## Goal
-
 Ask the minimum set of clarifying questions needed to avoid wrong work. Before
 implementing, confirm the resulting shared understanding unless the user
 explicitly approves proceeding with stated assumptions.
@@ -33,7 +31,7 @@ change any of these:
 ### 2. Ask the must-have questions
 
 Ask one to three questions in the first pass. Prefer the question that removes
-the largest branch of possible work.
+the largest branch of possible work or the highest-value unresolved questions.
 
 Make each question easy to answer:
 

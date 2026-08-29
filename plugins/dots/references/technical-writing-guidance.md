@@ -1,5 +1,9 @@
 # Technical writing guidance
 
+Use this for technical artifacts that readers need to review, follow, or act
+on. Do not combine it with `writing-style.md`; each artifact uses one writing
+reference.
+
 Write for a tired engineer who needs to understand the text on the first read.
 Make the reader's next action or understanding obvious. Apply these defaults
 only when repository or user-named guidance does not decide the point.
