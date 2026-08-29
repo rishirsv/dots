@@ -108,6 +108,6 @@ Before delivery:
 - confirm adaptive versus fixed structural authority is unambiguous; and
 - review every changed source file directly.
 
-When behavior evidence is requested or material uncertainty remains, hand the
-  required content, manifest handling, adaptive or fixed behavior, missing
-  assets, and HTML handoff cases to `skill-evaluator`.
+When behavior evidence is requested or material uncertainty remains, use the
+loaded creator's independent forward-testing guidance. Cover required content,
+manifest handling, adaptive or fixed behavior, missing assets, and HTML handoff.

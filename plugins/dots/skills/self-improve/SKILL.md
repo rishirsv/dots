@@ -11,8 +11,6 @@ as leads; base conclusions on the underlying conversations, tool calls, files,
 and observed outcomes.
 
 This improves shared instructions, skills, scripts, harnesses, or workflows.
-Use `$automate-me` when the desired artifact is a personal mode that captures
-one user's stable working preferences.
 
 ## Classify, then route
 

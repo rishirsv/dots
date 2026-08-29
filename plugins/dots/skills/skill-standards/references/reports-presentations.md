@@ -198,9 +198,9 @@ Write concrete branches for common failure modes:
 Avoid vague instructions such as “ensure quality” or “make it polished.” Name
 the observable check, the condition that fails it, and the corrective action.
 
-## Prepare The Evaluator Cases
+## Prepare Forward-Test Cases
 
-When behavioral evidence is needed, load `skill-evaluator` and use requests
+When behavioral evidence is needed, use independent forward tests with requests
 that test the workflow's decisions rather than a single preferred page order.
 Include these cases when they fit the skill:
 

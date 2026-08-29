@@ -1,6 +1,6 @@
 ---
 name: architecture-review
-description: "Finds structural refactor candidates, ownership problems, weak seams, duplicated policy, and hard-cut cleanup opportunities across a codebase or subsystem. Use for broad architecture audits; use review for a completed diff and how for explaining a named architecture."
+description: "Audit a codebase or subsystem for structural refactors, misplaced ownership, duplicated policy, weak boundaries, and code to consolidate or delete. Use for broad architecture and cleanup reviews; use review for completed changes and how for explanation-only requests."
 ---
 
 # Architecture Review

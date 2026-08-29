@@ -243,9 +243,9 @@ metadata and search bookkeeping out of the main narrative unless the user asks
 for an audit trail; make it available through concise citations or a source
 section instead.
 
-## Prepare The Evaluator Cases
+## Prepare Forward-Test Cases
 
-When behavioral evidence is needed, load `skill-evaluator` and use requests
+When behavioral evidence is needed, use independent forward tests with requests
 that test research judgment rather than a preferred outline. Include these
 cases when they fit the skill:
 

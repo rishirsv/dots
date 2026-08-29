@@ -5,6 +5,8 @@
 # Host-managed restrictions still take precedence.
 approval_policy = "never"
 default_permissions = "dots"
+model = "gpt-5.6-sol"
+model_reasoning_effort = "low"
 
 [permissions.dots]
 description = "Power user config."
@@ -37,9 +39,6 @@ enabled = true
 [plugins."browser@openai-bundled"]
 enabled = true
 
-[plugins."pulse@dots"]
-enabled = true
-
 [plugins."documents@openai-primary-runtime"]
 enabled = true
 
@@ -59,6 +58,9 @@ enabled = true
 enabled = true
 
 [plugins."messages@openai-bundled"]
+enabled = true
+
+[plugins."sites@openai-bundled"]
 enabled = true
 
 [desktop]

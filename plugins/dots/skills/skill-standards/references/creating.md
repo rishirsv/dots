@@ -58,7 +58,3 @@ Ordinary skill creation does not require a subagent review.
 
 Finish when the source matches the job, applicable validation passes, and every
 supported material review finding is resolved or reported as a blocker.
-
-When the user needs behavioral readiness rather than source readiness, load
-`skill-evaluator` after source validation. Let it design the cases, approval
-contract, workers, graders, and evidence; do not recreate that workflow here.

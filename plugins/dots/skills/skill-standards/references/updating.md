@@ -71,8 +71,3 @@ behavior matters.
 
 Finish when the requested behavior is implemented, the preserved contract is
 intact, applicable validation passes, and remaining uncertainty is stated.
-
-When existing evaluation receipts or authored suites cover the changed seam,
-hand the changed dependency IDs and hashes back to `skill-evaluator`. It decides
-which evidence is stale and reruns only what the user's evaluation request
-authorizes; a source update does not make behavioral evaluation automatic.

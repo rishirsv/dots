@@ -2,7 +2,7 @@
 
 Read this when a refactor candidate changes test placement, adds coverage, removes coverage, or consolidates duplicate tests.
 
-Purpose: place each invariant in one owning test layer only.
+Purpose: preserve regression signal, not test count. Prove each durable invariant once at the layer or verification surface that truthfully owns it.
 
 Definitions:
 
@@ -11,6 +11,17 @@ Definitions:
 - Canonical suite: the normal existing suite for that owning layer.
 
 Default: reuse an existing canonical suite. Do not create a new standalone regression test unless the exception rule below allows it.
+
+## Gate 0: Should This Test Exist?
+
+Before choosing test APIs or placement:
+
+1. Name the durable invariant and its owning layer.
+2. Name the plausible regression and resulting user or system harm.
+3. Search for an existing test or other proof that already owns it.
+4. Prefer static analysis, rendered evidence, or manual platform verification when those prove the invariant more truthfully than an automated test.
+5. Reject coverage that requires broad fakes or repeats the same invariant at another layer.
+6. Before deleting a mixed suite, inventory its privacy, persistence, concurrency, retry, lifecycle, and external-system contracts.
 
 ## Hard Rules
 
@@ -22,6 +33,16 @@ Default: reuse an existing canonical suite. Do not create a new standalone regre
 - Do not add tests that lock in implementation details unless that implementation unit itself owns the invariant.
 - Do not create a standalone regression test because it is faster or easier.
 - If the invariant and owning layer cannot be named, stop and report that placement is not justified.
+
+## Regression Signal
+
+Review changed tests for regression signal rather than test count. Reconsider:
+
+- a test double that computes the production outcome;
+- exact copy, style, haptic, or timing assertions without an external contract;
+- assertions about repository or collaborator calls when the durable result can be asserted;
+- a new test file created only to mirror a new production symbol; and
+- test-only launch flags, hooks, or fixtures without a current owner and removal condition.
 
 ## Required Decision Order
 

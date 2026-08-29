@@ -159,7 +159,7 @@ until the input is supplied. Stop a deterministic build when its schema,
 formula controls, or required reconciliation fails; return the failed check and
 the location to fix rather than a workbook that appears complete.
 
-When behavioral evidence is needed, load `skill-evaluator` and use a small
+When behavioral evidence is needed, use independent forward tests with a small
 valid model, a missing-required-input case, a broken reconciliation, a wrong
 formula reference, a scenario that must change a known output, and a workbook
 with an external link, spreadsheet error, or intentional circularity. Specify

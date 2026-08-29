@@ -1,8 +1,7 @@
 # Skill Practices
 
 This is the shared Dots quality standard for agent skills. `skill-standards`
-uses it when creating, updating, or reviewing skill source. `skill-evaluator`
-uses the same standard when deciding what behavior an evaluation should test.
+uses it when creating, updating, or reviewing skill source.
 
 Use the host's validity requirements first. Let the environment's default
 `skill-creator` or `plugin-creator` own schemas, scaffolding, packaging,

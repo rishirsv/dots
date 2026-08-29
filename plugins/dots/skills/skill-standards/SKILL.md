@@ -30,9 +30,8 @@ before changing source and report the missing dependency. Plugin scaffolding,
 manifests, packaging, marketplace entries, installation, and cache updates
 belong to the environment's default `plugin-creator`.
 
-Behavioral trials belong to `skill-evaluator`. Static review does not prove how
-a skill behaves in use, and behavioral evaluation does not authorize source
-changes.
+Static review does not prove how a skill behaves in use. For complex or risky
+changes, use the loaded creator's independent forward-testing guidance.
 
 Return the changed source or review verdict, the checks that support it, and
 any uncertainty that still affects use.

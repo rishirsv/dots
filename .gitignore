@@ -5,7 +5,6 @@
 /.claude/
 
 # Skill companion workspaces keep generated state ignored.
-**/.skill-evaluator/
 **/.[a-z0-9_-]*/runs/
 **/.[a-z0-9_-]*/worktrees/
 **/.[a-z0-9_-]*/tmp/
@@ -32,10 +31,6 @@ venv/
 node_modules/
 build/
 dist/
-!plugins/pulse/server/dist/
-!plugins/pulse/server/dist/index.cjs
-!plugins/pulse/server/x-search/server/dist/
-!plugins/pulse/server/x-search/server/dist/index.js
 
 # Local secrets and logs
 .env

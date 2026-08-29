@@ -276,7 +276,7 @@ task requires while preserving and verifying the retained format with the
 required fidelity. Report the missing operation rather than substituting a
 look-alike workflow whose preservation cannot be checked.
 
-When behavioral evidence is needed, load `skill-evaluator` and use cases that
+When behavioral evidence is needed, use independent forward tests with cases that
 exercise the specific template contract: a valid fill, a missing required
 field, an optional blank, a repeated-section addition, a longer replacement that tests
 layout, an existing formula or chart dependency, an ambiguous anchor, and an

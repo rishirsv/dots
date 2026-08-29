@@ -150,7 +150,7 @@ requested calculation depends on unavailable inputs. Report the affected
 sheet/range, failed control, and the smallest needed correction. Do not invent
 replacement values or quietly switch to a different calculation.
 
-When behavioral evidence is needed, load `skill-evaluator` and use a valid
+When behavioral evidence is needed, use independent forward tests with a valid
 workbook, a duplicate at a known grain, an unmatched join key, a mixed-unit
 column, a missing required header, a formula copied to the wrong period, a
 formula error, and a row or column addition that must extend dependent

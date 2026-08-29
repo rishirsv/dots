@@ -73,23 +73,8 @@ for name, entry in claude_by_name.items():
                 raise SystemExit(f"{name} metadata drift for {field}")
 
 agent_only_names = [name for name in codex_names if name not in claude_by_name]
-if agent_only_names != ["pulse"]:
-    raise SystemExit(f"Agent-only marketplace plugins must be exactly ['pulse']: {agent_only_names!r}")
-if "x-search" in codex_by_name or "x-search" in claude_by_name:
-    raise SystemExit("x-search must be bundled inside pulse, not registered as a standalone plugin")
-
-pulse_root = root / "plugins/pulse"
-pulse_skills = sorted(path.name for path in (pulse_root / "skills").iterdir() if path.is_dir())
-if pulse_skills != ["pulse"]:
-    raise SystemExit(f"pulse must expose exactly one skill named pulse: {pulse_skills!r}")
-pulse_mcp = json.loads((pulse_root / "mcp.json").read_text()).get("mcpServers", {})
-expected_mcp = {
-    "x-search": ["${PLUGIN_ROOT}/server/x-search/server/dist/index.js"],
-    "reddit-search": ["${PLUGIN_ROOT}/server/dist/index.cjs"],
-}
-actual_mcp = {name: server.get("args") for name, server in pulse_mcp.items()}
-if actual_mcp != expected_mcp:
-    raise SystemExit(f"pulse MCP capabilities must be bundled X and Reddit servers: {actual_mcp!r}")
+if agent_only_names:
+    raise SystemExit(f"Unexpected Agent-only marketplace plugins: {agent_only_names!r}")
 PY
 
 echo "==> Claude marketplace validation"
@@ -116,15 +101,6 @@ PY
 for plugin in "${PLUGIN_NAMES[@]}"; do
   CODEX_HOME="$CODEX_VERIFY_HOME" codex plugin add "$plugin@dots" >/dev/null
 done
-
-echo "==> Pulse MCP builds and upstream X tests"
-npm --prefix plugins/pulse/server ci --ignore-scripts >/dev/null
-npm --prefix plugins/pulse/server run typecheck
-npm --prefix plugins/pulse/server run build
-npm --prefix plugins/pulse/server/x-search/server ci --ignore-scripts >/dev/null
-npm --prefix plugins/pulse/server/x-search/server test
-npm --prefix plugins/pulse/server/x-search/server run build
-scripts/verify-x-search-import.sh
 
 echo "==> Dots-specific skill checks"
 python3 plugins/dots/scripts/validate_plugin.py

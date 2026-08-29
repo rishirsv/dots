@@ -61,5 +61,5 @@ decision the source did not make.
 - **Comparison:** criteria -> meaningful differences -> trade-offs -> decision or
   explicit absence of one.
 
-When `how` or `plan` supplies researched content and a reading order,
+When `how` or planning work supplies researched content and a reading order,
 follow it instead of these generic forms.

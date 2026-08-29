@@ -42,16 +42,6 @@
       "boundary": "Keep confirmed facts, inference, and open investigation distinct."
     },
     {
-      "name": "implementation-plan",
-      "title": "Implementation plan",
-      "file": "../../../plan/assets/reference.html",
-      "job": "Make a change executable with clear responsibilities, proof, and rollback.",
-      "layout": "wide",
-      "treatment": "editorial",
-      "shape": ["chosen outcome", "responsibility map", "phases", "proof", "rollback"],
-      "boundary": "Mutable prototypes and production UI belong to design; this page explains what to build."
-    },
-    {
       "name": "pr-walkthrough",
       "title": "PR walkthrough",
       "file": "../../../how/assets/examples/pr-walkthrough.html",

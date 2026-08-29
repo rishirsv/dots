@@ -1,7 +1,7 @@
 # Reviewing a skill
 
-Diagnose the skill from source and existing evidence. Keep the source unchanged
-and leave new behavioral trials to `skill-evaluator`.
+Diagnose the skill from source and existing evidence. Keep the source unchanged;
+new behavioral trials require a separate, explicitly authorized workflow.
 
 ## 1. Set the review contract
 
@@ -67,5 +67,6 @@ every placeholder, hash every inspected file that supports the verdict or a
 finding, and keep the finished receipt immutable. Recheck relevant hashes
 before consuming it later.
 
-Use `skill-evaluator` when a claim needs fresh behavioral evidence. Change
-source only after the user requests an update.
+When a claim needs fresh behavioral evidence, state the limitation and the
+smallest useful forward test. Change source only after the user requests an
+update.
