@@ -78,7 +78,9 @@ if agent_only_names:
 PY
 
 echo "==> Claude marketplace validation"
-claude plugin validate . >/dev/null
+node scripts/generate-claude-agents.mjs --check >/dev/null
+claude plugin validate . --strict >/dev/null
+claude plugin validate plugins/dots --strict >/dev/null
 
 echo "==> Codex marketplace smoke test"
 CODEX_VERIFY_HOME="$(mktemp -d /tmp/dots-codex-verify.XXXXXX)"

@@ -98,9 +98,25 @@ if errors: raise SystemExit("Codex verification failed:\n  " + "\n  ".join(error
 }
 
 sync_claude() {
-  local spec name version plugin_id installed stale
+  local spec name version plugin_id installed marketplaces marketplace_status stale details
   echo "Syncing Claude"
-  claude plugin marketplace add rishirsv/dots --scope user >/dev/null
+  node "$ROOT/scripts/generate-claude-agents.mjs" --check >/dev/null
+  claude plugin validate "$ROOT/plugins/dots" --strict >/dev/null
+
+  marketplaces="$(claude plugin marketplace list --json)"
+  marketplace_status="$(python3 -c '
+import json, sys
+matches = [entry for entry in json.load(sys.stdin) if entry.get("name") == "dots"]
+if not matches:
+    print("missing")
+elif len(matches) == 1 and matches[0].get("source") == "github" and matches[0].get("repo") == "rishirsv/dots":
+    print("present")
+else:
+    raise SystemExit("Claude marketplace dots does not point to rishirsv/dots")
+' <<< "$marketplaces")"
+  [[ "$marketplace_status" == "present" ]] || claude plugin marketplace add rishirsv/dots --scope user >/dev/null
+  claude plugin marketplace update dots >/dev/null
+
   installed="$(claude plugin list --json)"
   for spec in "${CLAUDE_SPECS[@]}"; do
     IFS=$'\t' read -r name version <<< "$spec"
@@ -124,6 +140,33 @@ plugins = {p["id"]: p for p in json.load(sys.stdin)}
 errors = ["%s@dots: expected %s, got %s" % (name, version, plugins.get(name + "@dots", {}).get("version", "not installed")) for name, version in expected.items() if plugins.get(name + "@dots", {}).get("version") != version]
 if errors: raise SystemExit("Claude verification failed:\n  " + "\n  ".join(errors))
 ' "${CLAUDE_SPECS[@]}" <<< "$installed"
+
+  for spec in "${CLAUDE_SPECS[@]}"; do
+    IFS=$'\t' read -r name version <<< "$spec"
+    plugin_id="$name@dots"
+    details="$(claude plugin details "$plugin_id")"
+    python3 -c '
+import re, sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+details = sys.stdin.read()
+expected = {
+    "Skills": sorted(path.parent.name for path in (root / "skills").glob("*/SKILL.md")),
+    "Agents": sorted(path.stem for path in (root / "agents").glob("*.md")),
+}
+errors = []
+for kind, names in expected.items():
+    match = re.search(rf"^  {kind} \((\d+)\)(?:  (.*))?$", details, re.MULTILINE)
+    actual = sorted(filter(None, (match.group(2) if match else "").split(", ")))
+    count = int(match.group(1)) if match else -1
+    if count != len(names) or actual != names:
+        errors.append(f"{kind.lower()}: expected {names}, got {actual}")
+if errors:
+    raise SystemExit("Claude component verification failed:\n  " + "\n  ".join(errors))
+' "$ROOT/plugins/$name" <<< "$details"
+  done
+  echo "Claude plugin changes require /reload-plugins or a restart in existing sessions."
 }
 
 if (( ${+TARGETS[codex]} )); then
