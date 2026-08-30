@@ -1,12 +1,13 @@
 # Dots
 
-Source-first repository for Rishi's plugins, agent workflows, and machine
-configuration.
+Opinionated plugins and agent workflows for planning, building, reviewing,
+documenting, and shipping software in Codex and Claude Code.
 
 ## Install
 
-Follow [INSTALL.md](INSTALL.md). It is the single setup and update path for all
-repo-owned plugins and configs.
+Follow [INSTALL.md](INSTALL.md) to install the Dots plugin. The repository also
+contains optional, opinionated machine configuration; inspect each config before
+syncing it.
 
 ## Source map
 
@@ -20,3 +21,8 @@ repo-owned plugins and configs.
 Keep secrets, authentication state, sessions, caches, generated local output,
 and machine-local shell overrides outside this repository. Store shell
 overrides in `~/.zshrc.local`.
+
+## License
+
+Unless a component includes its own license, this repository is available under
+the [MIT License](LICENSE).

@@ -1,12 +1,12 @@
 # Install
 
-Install every repo-owned plugin and machine config on a Mac from the canonical
-checkout at `~/Code/dots`.
+Install Dots on a Mac from a local checkout. Machine configuration is optional
+and should be reviewed before use.
 
 ## Prerequisites
 
-Put `git`, `python3`, `zsh`, `codex`, and `claude` on `PATH`. Authenticate Codex
-and Claude before syncing plugins.
+Put `git`, `python3`, and `zsh` on `PATH`. Install and authenticate the plugin
+host you plan to use: Codex, Claude Code, or both.
 
 ## Install or update
 
@@ -22,31 +22,34 @@ and Claude before syncing plugins.
    cd ~/Code/dots
    ```
 
-2. Preview every config change. Resolve unexpected replacements before
-   continuing.
+2. Install the plugin for one or both hosts.
 
    ```sh
-   scripts/sync-configs.sh --dry-run --all
+   scripts/sync-plugins.sh --codex
+   scripts/sync-plugins.sh --claude
    ```
 
-3. Apply every config and refresh every repo-owned plugin.
+3. Confirm that the selected host can load the plugin.
 
    ```sh
-   scripts/sync-configs.sh --all
-   scripts/sync-plugins.sh --all
-   ```
-
-4. Confirm that every config target is current and both plugin hosts can load
-   their inventories.
-
-   ```sh
-   scripts/sync-configs.sh --status --all
    codex plugin list
    claude plugin list
    ```
 
-Installation is complete when all three commands exit successfully and new
-Codex tasks show **Custom (config.toml)** in the permissions picker.
+Installation is complete when the relevant commands exit successfully.
+
+## Optional machine configuration
+
+The files under `configs/` are opinionated defaults, not plugin requirements.
+Preview a specific target before applying it:
+
+```sh
+scripts/sync-configs.sh --dry-run --claude
+scripts/sync-configs.sh --claude
+```
+
+Run `scripts/sync-configs.sh --help` for available targets. Use `--all` only
+after reviewing every source under `configs/`.
 
 ## Boundaries
 
@@ -67,5 +70,4 @@ Codex tasks show **Custom (config.toml)** in the permissions picker.
   key; Dots does not write it.
 - Keep secrets and machine-local shell overrides in `~/.zshrc.local`.
 
-Run `scripts/sync-configs.sh --help` or `scripts/sync-plugins.sh --help` only
-when a scoped sync or source capture is required.
+Run `scripts/sync-plugins.sh --help` for host-specific plugin updates.

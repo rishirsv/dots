@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "dots",
-  "description": "Rishi's personal plugin marketplace.",
+  "description": "Dots plugins and reusable agent workflows.",
   "owner": {
     "name": "Rishi"
   },

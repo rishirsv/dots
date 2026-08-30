@@ -1,6 +1,6 @@
 # Dots
 
-Source repo for Rishi's personal plugins, agent workflows, and machine config.
+Source repo for Dots plugins, agent workflows, and optional machine config.
 
 ## Source
 

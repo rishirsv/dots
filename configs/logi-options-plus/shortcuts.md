@@ -1,7 +1,7 @@
 # Wispr Flow and Logitech MX setup
 
-Use this snapshot to reproduce Rishi's dictation, keyboard, and mouse behavior
-on another Mac. The critical link is:
+Use this snapshot to reproduce the documented dictation, keyboard, and mouse
+behavior on another Mac. The critical link is:
 
 > The MX Master 4 top button sends **Right Control**, and **Right Control** is
 > one of Wispr Flow's hands-free start/stop shortcuts.
