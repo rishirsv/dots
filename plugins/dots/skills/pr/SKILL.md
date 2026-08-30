@@ -51,6 +51,12 @@ Then include the implementation details needed to review the approach, risks,
 and affected boundaries. State what was tested and what remains unverified.
 Preserve fields required by the repository's pull-request template.
 
+For a material change, describe its complexity impact when the repository
+template supports it: concepts added and removed; new durable state, routes,
+settings, protocols, or long-lived tasks; losing paths deleted; and intentional
+complexity with the current requirement that makes it necessary. Omit this for
+a trivial change when it communicates nothing.
+
 Omit file-by-file narration, raw commit history, generic checklists, and agent
 narration. Mention files, symbols, schemas, frameworks, or data flows when they
 help a reviewer verify the change.

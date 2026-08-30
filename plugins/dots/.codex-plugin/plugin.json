@@ -1,6 +1,6 @@
 {
   "name": "dots",
-  "version": "0.2.148",
+  "version": "0.2.149",
   "description": "Opinionated development workflows and reusable skills for planning, building, reviewing, documenting, and shipping software.",
   "author": {
     "name": "Rishi"
@@ -22,7 +22,7 @@
       "Read",
       "Write"
     ],
-    "defaultPrompt": "Use $index to choose and run the right Dots workflow for this request.",
+    "defaultPrompt": "Work directly unless a Dots workflow changes the result. Use $index for ambiguous ownership or material work spanning workflows.",
     "brandColor": "#36C5A7",
     "composerIcon": "./assets/icon.png",
     "logo": "./assets/logo.png",

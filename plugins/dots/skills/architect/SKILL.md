@@ -1,23 +1,33 @@
 ---
 name: architect
-description: "Design consequential code boundaries before implementation by grounding the current system, comparing independent architecture sketches, and keeping implementation aligned with the chosen shape. Use for 'architect this,' new APIs or module boundaries, and changes whose types, ownership, or state model must be settled first."
+description: "Design a consequential new or changed code boundary after the architecture admission gate passes. Use when a current lifecycle, external contract, atomicity boundary, or demonstrated duplicate ownership cannot stay in an existing owner."
 license: MIT
 ---
 
-# Architect
+# Boundary Design
 
-Design before implementing. Sketch types, function signatures, class shapes,
-and module boundaries with `not implemented` bodies and pseudocode. Synthesize
-across independent perspectives, then fill in code against the chosen sketch.
-If implementation proves the sketch wrong, throw it out and redesign.
+Design a consequential boundary only after current requirements show that an
+existing owner cannot absorb the change cleanly. Sketch types, function
+signatures, class shapes, and module boundaries with `not implemented` bodies
+and pseudocode, then fill in code against the selected shape. If implementation
+proves the shape wrong, throw it out and redesign.
 
-Work through five phases:
+Work through these phases:
 
-1. Ground
-2. Sketch
-3. Agree
-4. Implement
-5. Scrap
+0. Admit the architecture work
+A. Ground the problem
+B. Design
+C. Agree
+D. Implement against the sketch
+E. Scrap when the architecture is wrong
+
+## Phase 0: Admit the architecture work
+
+Read the [architecture admission gate](../../references/simplicity-first-development.md#architecture-admission-gate).
+Answer every question from current source and requirements before designing a
+boundary. If the answers reveal a local correction, make or recommend that
+correction instead. A direct local correction and a decision not to build are
+valid outputs.
 
 ## Phase A: Ground the problem
 
@@ -32,18 +42,22 @@ shape so its rationale becomes a constraint, not a guess.
 Skip this phase only when the work is genuinely greenfield with no surrounding
 system to integrate.
 
-## Phase B: Sketch
+## Phase B: Design
 
-Read [the runner prompt](references/runner-prompt.md) and
-[rationale template](references/rationale-template.md). Run at least two fresh,
-read-only candidate agents in parallel, using the configured `architect` role
-when available. Give each the task, Phase A grounding, and the runner prompt.
-Candidate agents do not delegate. If fresh agents are unavailable, produce two
-independent candidates sequentially before comparing them.
+Read [the rationale template](references/rationale-template.md). Start with
+Candidate A: the best complete shape using existing owners and no new durable
+boundary. A module is not an improvement merely because it makes simple callers
+look smaller. The absence of a new boundary is a valid selected design.
 
-Design it twice. Require structurally distinct candidates even when the first
-looks sufficient. Explore whole shapes, not point fixes inside one shape. Each
-candidate writes the caller's usage first, then derives its type sketch,
+Produce Candidate B only when Candidate A cannot satisfy a consequential
+current requirement. State the exact requirement, the new boundary and its
+exclusive invariant, every current caller, what it deletes, and its lifecycle,
+migration, concurrency, and verification costs. When an independent candidate
+would improve this decision, give a fresh read-only `architect` agent the task,
+grounding, and [runner prompt](references/runner-prompt.md). Do not manufacture
+structural difference for process compliance.
+
+Write the caller's usage first, then derive each candidate's type sketch,
 function signatures, module map, and rationale.
 
 Screen every candidate against
@@ -51,22 +65,22 @@ Screen every candidate against
 modules, information leakage, temporal decomposition, and pass-through
 methods.
 
-Compare viable candidates on interface depth. Prefer the design that hides more
-complexity behind a smaller, simpler public surface. A rich interface can keep
-call chains short by concentrating capability instead of scattering it across
-layers.
+Compare viable candidates on interface depth. Prefer an interface that hides
+current necessary complexity. Do not create a module merely to make simple
+callers look smaller. A rich interface can keep call chains short by
+concentrating capability instead of scattering it across layers.
 
-Synthesize one design package. Record which candidate became the base, why it
-won, what was adapted from the others, and what was rejected.
+Select one design package. When Candidate B exists, record which candidate
+became the base, why it won, what was adapted, and what was rejected.
 
 ## Phase C: Agree
 
-When the request authorizes implementation, proceed with the synthesized
+When the request authorizes implementation, proceed with the selected
 design. For a design-only request, return the design package and stop before
 editing product source.
 
 When Feature Development invokes Architect during its design step, return the
-synthesized design after this phase. Feature Development resumes with
+selected design after this phase. Feature Development resumes with
 implementation and owns proof, review, and completion. A direct Architect
 request may continue through the remaining phases when implementation is
 authorized.
@@ -83,7 +97,7 @@ the design rather than deferring them to code review.
 ## Phase D: Implement against the sketch
 
 Replace `not implemented` bodies with code and pseudocode with logic. The
-synthesized sketch is the contract.
+selected sketch is the contract.
 
 Treat deviations as signals, not friction to absorb silently. If a function
 needs a parameter the sketch did not anticipate, determine whether the sketch
@@ -118,7 +132,8 @@ When scrapping a design:
 1. Re-run `$how` over what was built so implementation lessons become inputs.
 2. Redesign as if the new constraints had been assumptions from the start.
 3. Remove obsolete structure before adding to the replacement.
-4. Return to Phase B and compare fresh candidates.
+4. Return to Phase B and produce a new Candidate A. Add Candidate B only when
+   the revised Candidate A cannot satisfy a consequential current requirement.
 
 ## Output
 
@@ -126,7 +141,7 @@ Write the caller's usage first and derive the type sketch from it. Use one file
 with new types and signatures for a small change; use a module map plus type
 definitions for larger work. Shape the rationale with
 [the template](references/rationale-template.md), including the usage sketch
-and synthesis decision.
+and selection decision.
 
 Return the design package in chat by default. Create or commit a durable design
 artifact only when the user asks or the repository requires one.

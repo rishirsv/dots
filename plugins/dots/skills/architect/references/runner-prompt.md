@@ -39,5 +39,4 @@ Apply this discipline:
   complexity.
 
 You are one independent runner. Take a clear position and produce the strongest
-complete shape you can. Do not hedge toward what other candidates might choose;
-differences between candidates are useful to synthesis.
+complete shape you can. Do not hedge toward the coordinator's likely choice.

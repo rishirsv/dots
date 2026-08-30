@@ -1,10 +1,10 @@
 interface:
-  display_name: "Architect"
-  short_description: "Design code boundaries before implementation"
+  display_name: "Boundary Design"
+  short_description: "Design an admitted consequential code boundary"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
   brand_color: "#36C5A7"
-  default_prompt: "Use $architect to design this code boundary before implementation."
+  default_prompt: "Use $architect after the architecture admission gate passes to design this consequential code boundary."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true
