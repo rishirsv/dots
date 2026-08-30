@@ -40,7 +40,8 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
   every relevant repo sync command. Use `scripts/sync-plugins.sh --all` for
   plugin changes. For config changes, follow the dry-run and scoped sync rule
   below. Never include unrelated working-tree changes.
-- Bump the owning `plugin.json` version when a release changes skill behavior.
+- Bump the owning `plugin.json` version only when the release content is final
+  and ready to commit. Do not bump versions during iterative editing.
 - Before syncing configs, run `scripts/sync-configs.sh --dry-run --all`; then
   apply scoped syncs such as `--zsh` or `--vscode`.
 - Skill creation and mechanical validation belong to the active environment's

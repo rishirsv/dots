@@ -1,7 +1,7 @@
 # Design red flags
 
-Screen every candidate before selection. A red flag is a reason to revise or
-reject the shape.
+Screen every candidate before choosing a design. A red flag is a reason to
+revise or reject the shape.
 
 ## Shallow module
 

@@ -3,13 +3,15 @@ set -euo pipefail
 
 ROOT="${0:A:h:h}"
 typeset -A TARGETS
+typeset -i ALLOW_DIRTY=0
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-plugins.sh [--all|--codex|--claude]
+Usage: scripts/sync-plugins.sh [--all|--codex|--claude] [--allow-dirty]
 
 Refreshes repo-owned plugins and verifies their installed versions. Codex also
-syncs ~/.codex-personal when it exists. Defaults to --all.
+syncs ~/.codex-personal when it exists. Defaults to --all. Refuses uncommitted
+plugin source unless --allow-dirty is passed for development testing.
 EOF
 }
 
@@ -18,12 +20,27 @@ while (( $# )); do
     --all) TARGETS=([codex]=1 [claude]=1) ;;
     --codex) TARGETS[codex]=1 ;;
     --claude) TARGETS[claude]=1 ;;
+    --allow-dirty) ALLOW_DIRTY=1 ;;
     -h|--help) usage; exit ;;
     *) echo "Unknown argument: $1" >&2; usage >&2; exit 2 ;;
   esac
   shift
 done
 (( ${#TARGETS} )) || TARGETS=([codex]=1 [claude]=1)
+
+sync_paths=(plugins)
+(( ${+TARGETS[codex]} )) && sync_paths+=(.agents/plugins/marketplace.json)
+(( ${+TARGETS[claude]} )) && sync_paths+=(.claude-plugin/marketplace.json)
+dirty_source="$(git -C "$ROOT" status --porcelain=v1 --untracked-files=all -- "${sync_paths[@]}")"
+if [[ -n "$dirty_source" ]]; then
+  if (( ! ALLOW_DIRTY )); then
+    echo "Refusing to sync uncommitted plugin source:" >&2
+    echo "$dirty_source" >&2
+    echo "Commit it first, or pass --allow-dirty for development testing." >&2
+    exit 1
+  fi
+  echo "Warning: syncing uncommitted plugin source as development state (--allow-dirty)." >&2
+fi
 
 catalog_specs() {
   python3 - "$ROOT" "$1" "$2" <<'PY'

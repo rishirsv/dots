@@ -39,4 +39,4 @@ Apply this discipline:
   complexity.
 
 You are one independent runner. Take a clear position and produce the strongest
-complete shape you can. Do not hedge toward the coordinator's likely choice.
+complete design you can. Do not defer to or synthesize hypothetical alternatives.

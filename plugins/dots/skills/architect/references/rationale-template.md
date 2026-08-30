@@ -23,10 +23,11 @@ invariants encoded in types, validation boundaries, responsible modules, and
 what the system deliberately does not do. State what complexity the public
 surface hides and what remains exposed to callers.*
 
-## Selection decision
+## Decision
 
-*Record why the selected shape won. When Candidate B exists, state which
-candidate became the base, what was adapted, and what was rejected.*
+*State why this is the smallest design that satisfies the requirement. When
+another viable candidate exists, say why this design won, what was adapted, and
+what was rejected.*
 
 ## Tradeoffs accepted
 
@@ -35,9 +36,8 @@ future reader might otherwise mistake for an oversight.*
 
 ## Alternatives considered
 
-*When Candidate B or another serious alternative exists, name it and why it
-lost. Judge alternatives on interface depth, not implementation simplicity
-alone. Do not invent or list several flavors of the same shape.*
+*Include this section only when another serious design was considered. Explain
+why it lost without inventing alternatives to fill the template.*
 
 ## Open questions and risks
 
