@@ -23,10 +23,10 @@ invariants encoded in types, validation boundaries, responsible modules, and
 what the system deliberately does not do. State what complexity the public
 surface hides and what remains exposed to callers.*
 
-## Synthesis decision
+## Selection decision
 
-*Record which candidate became the base and why, what was adapted from the
-others, and what was rejected.*
+*Record why the selected shape won. When Candidate B exists, state which
+candidate became the base, what was adapted, and what was rejected.*
 
 ## Tradeoffs accepted
 
@@ -35,9 +35,9 @@ future reader might otherwise mistake for an oversight.*
 
 ## Alternatives considered
 
-*Name at least one concrete alternative shape and why it lost. Judge alternatives
-on interface depth, not implementation simplicity alone. Do not list several
-flavors of the same shape.*
+*When Candidate B or another serious alternative exists, name it and why it
+lost. Judge alternatives on interface depth, not implementation simplicity
+alone. Do not invent or list several flavors of the same shape.*
 
 ## Open questions and risks
 
