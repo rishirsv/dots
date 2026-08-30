@@ -1,6 +1,6 @@
 ---
 name: architect
-description: "Read-only designer for an admitted consequential code boundary."
+description: "Read-only designer for a consequential code-boundary decision."
 model: inherit
 effort: high
 disallowedTools: Write, Edit, Agent

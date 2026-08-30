@@ -1,13 +1,14 @@
 ---
 name: architect
-description: "Design a consequential new or changed code boundary after the architecture admission gate passes. Use when a current lifecycle, external contract, atomicity boundary, or demonstrated duplicate ownership cannot stay in an existing owner."
+description: "Settle a consequential code-boundary decision when a current lifecycle, external contract, atomicity concern, or demonstrated duplicate ownership makes a local implementation insufficient or uncertain."
 license: MIT
 ---
 
 # Boundary Design
 
-Design a consequential boundary only after current requirements show that an
-existing owner cannot absorb the change cleanly. Sketch types, function
+Settle a consequential boundary decision only when current requirements make
+ownership or contract design necessary before implementation. Test the best
+existing-owner shape before adding a boundary. Sketch types, function
 signatures, class shapes, and module boundaries with `not implemented` bodies
 and pseudocode, then fill in code against the selected shape. If implementation
 proves the shape wrong, throw it out and redesign.
@@ -23,11 +24,26 @@ E. Scrap when the architecture is wrong
 
 ## Phase 0: Admit the architecture work
 
-Read the [architecture admission gate](../../references/simplicity-first-development.md#architecture-admission-gate).
-Answer every question from current source and requirements before designing a
-boundary. If the answers reveal a local correction, make or recommend that
-correction instead. A direct local correction and a decision not to build are
-valid outputs.
+Before designing a boundary, answer these questions from current source and
+requirements:
+
+1. Which current accepted behavior creates a consequential ownership,
+   lifecycle, contract, atomicity, or dependency decision that should be
+   settled before implementation?
+2. Which existing owner is closest, and what would it need to absorb?
+3. Who calls the proposed boundary today?
+4. What nontrivial rule would a new boundary own that no caller or sibling owns?
+5. Which competing owner, duplicated policy, call chain, state, or code could
+   it remove?
+6. Will it create stored state, a migration, wire format, route, setting, or
+   compatibility obligation?
+7. Which scenario proves the boundary rather than merely proving that its
+   implementation compiles?
+8. What materially breaks if the boundary is deferred for six months?
+
+If the answers reveal a local correction, make or recommend that correction
+instead. A direct local correction and a decision not to build are valid
+outputs.
 
 ## Phase A: Ground the problem
 

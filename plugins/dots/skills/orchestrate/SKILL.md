@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description: "Coordinate subagents when the user requests them or independent parallel lanes materially improve substantial work. Not for ordinary implementation, feature planning, or workflows that already define their own team."
+description: "Coordinate agents on substantial tasks. Use when the user requests subagents or parallel work would improve speed or breadth; not for trivial work or workflows that already define their own team."
 ---
 
 # Orchestrate
@@ -23,10 +23,6 @@ broader coverage, specialized work, or independent challenge. If the root can
 complete the work just as well without delegation, work directly. When
 delegating, give each agent its objective, ownership, constraints, relevant
 artifacts, and required verification.
-
-Do not delegate framing, the selected product decision, or final integration.
-Parallelize distinct evidence lanes. Keep one implementer for conceptually
-coupled product or architecture work, even when several files are involved.
 
 Use the smallest sufficient inherited context: `none` for a self-contained
 brief, recent turns for focused context, and `all` only when the conversation

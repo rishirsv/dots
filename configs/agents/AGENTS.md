@@ -4,22 +4,6 @@ Implement only what the task requires. Prefer the simplest complete solution.
 Avoid unrelated features, refactors, abstractions, compatibility layers, and
 speculative error handling.
 
-Default to direct work for a localized change with a clear owner. Do not route
-ordinary work through a multi-stage workflow merely because a skill exists.
-Use a workflow when it supplies distinct judgment, evidence, authorization, or
-coordination that changes the result.
-
-For material product work, frame the person and moment, intended outcome,
-non-goals, machinery budget, existing owner, and observable definition of done
-before designing architecture. Treat a budget as a stop-and-report threshold,
-not a quota to game.
-
-Do not introduce a protocol, service, repository, coordinator, registry,
-factory, cache, persisted shape, route, setting, or long-lived task unless a
-current requirement creates a real lifecycle, external boundary, atomicity
-boundary, or consolidation of demonstrated duplicate owners. Start by testing
-the best shape that adds no new boundary.
-
 Surface bold alternatives when they could materially improve the outcome, but
 do not implement them without approval.
 

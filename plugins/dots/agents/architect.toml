@@ -1,5 +1,5 @@
 name = "architect"
-description = "Read-only designer for an admitted consequential code boundary."
+description = "Read-only designer for a consequential code-boundary decision."
 model = "gpt-5.6-sol"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"

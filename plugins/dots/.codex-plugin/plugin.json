@@ -22,7 +22,7 @@
       "Read",
       "Write"
     ],
-    "defaultPrompt": "Work directly unless a Dots workflow changes the result. Use $index for ambiguous ownership or material work spanning workflows.",
+    "defaultPrompt": "Use $index to choose and run the right Dots workflow for this request.",
     "brandColor": "#36C5A7",
     "composerIcon": "./assets/icon.png",
     "logo": "./assets/logo.png",

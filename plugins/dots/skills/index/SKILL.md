@@ -1,22 +1,12 @@
 ---
 name: index
-description: "Route broad, ambiguous, or genuinely multi-stage Dots work, including material software changes that need Feature Development. Focused requests and localized changes use their clear owner directly."
+description: "Route broad or multi-stage Dots work to the smallest applicable skill, shared reference, or Feature Development workflow. Use when Dots is invoked directly, when planning or implementing a material code change, or when several Dots workflows may apply. Focused requests use their owning skill."
 ---
 
 # Dots Index
 
-Route broad, ambiguous, or multi-stage requests to the smallest Dots workflow
-that owns them. The index chooses and loads owners; it does not repeat or
-replace their instructions.
-
-## Decide whether routing is needed
-
-- Work directly when the request is localized, its owner is clear, and no
-  distinct workflow would change the result.
-- Load one focused skill directly when it clearly owns the job.
-- Use this index when ownership is ambiguous, the request spans distinct jobs,
-  or a material change needs Feature Development to coordinate several focused
-  skills.
+Route the request to the smallest Dots workflow that owns it. The index chooses
+and loads owners; it does not repeat or replace their instructions.
 
 ## Route only
 
@@ -30,19 +20,16 @@ replace their instructions.
 
 ## Develop software
 
-Choose the development route before loading a workflow:
+For a material feature, bug fix, refactor, measured performance change,
+behavior-changing configuration, or implementation plan, read and follow
+[Feature Development](../../references/feature-development.md) as the primary
+workflow. It routes into focused skills as its phases require.
 
-- **Direct:** make a local fix or deletion when the behavior and owner are
-  clear and focused proof can establish the result.
-- **Feature Development:** for material behavior or cross-file implementation,
-  read and follow [Feature Development](../../references/feature-development.md).
-- **Architect:** use `$architect` only after the architecture admission gate in
-  [Simplicity-First Development](../../references/simplicity-first-development.md)
-  passes.
-
-Use `$design` for visible product UI, `$prototype` for a choice best settled by
-observation, and risk-proportional `$code-quality-review` before finishing a
-completed material or boundary change.
+Use `$architect` before implementation when a consequential new or changed
+boundary needs its caller experience, types, ownership, state model, or module
+shape settled. Use `$design` for visible product UI, `$prototype` for a choice
+best settled by observation, and `$code-quality-review` before finishing the
+completed change.
 
 ## Choose the focused owner
 
@@ -72,9 +59,6 @@ selects that mode. Their descriptions define the exact boundary.
 
 - Read [Feature Development](../../references/feature-development.md) for the
   material software-change routes named above.
-- Read [Simplicity-First Development](../../references/simplicity-first-development.md)
-  for feature framing, architecture admission, proportional review, or a
-  subtraction audit.
 - Read [Hard-Cut Policy](../../references/hard-cut-policy.md) when replacing a
   schema, contract, persisted shape, route, configuration, value set, or
   architecture, unless the selected skill already loads it.

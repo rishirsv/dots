@@ -27,36 +27,19 @@ nearby code when that is needed for a clean solution.
 
 ## Subagent strategy
 
-Read the [review and delegation tiers](../../references/simplicity-first-development.md#review-and-delegation-tiers)
-and select the tier from the demonstrated risk.
+### Default reviewer
 
-### Direct tier
-
-- The implementer reviews the complete diff and surrounding path.
-- Run a focused static or behavioral check.
-- Use an independent reviewer only when the user or repository requires it.
-
-### Material tier
-
-- Spawn one fresh, read-only adversarial reviewer.
+- Spawn one fresh, read-only adversarial reviewer for every review.
 - Use an adversary or reviewer role when one is available. Otherwise, use a
   fresh subagent and have it load this skill.
 - An agent that implemented any part of the change must not review that code.
 - Give the reviewer the fixed target, intended behavior, applicable repository
   instructions, and access to the surrounding code and tests.
 - Reviewers return candidate findings without editing or delegating.
-- Repair retained findings and run focused proof of the real behavior.
-
-### Boundary tier
-
-- Spawn one fresh reviewer by default.
-- Fan out only when distinct execution paths justify independent lanes.
-- Report residual proof gaps explicitly.
 
 ### When to fan out
 
-When the selected tier requires independent review, use one reviewer by default.
-Fan out when:
+Use one reviewer by default. Fan out when:
 
 - the user asks;
 - the change spans several independent subsystems or execution paths; or
@@ -78,8 +61,8 @@ lanes exist and capacity allows.
 
 - Merge duplicate candidates, check them against the code, call sites, and
   tests, and apply the finding contract.
-- When the selected tier requires an independent review, report if no fresh
-  reviewer is available.
+- If no fresh reviewer is available, report that the required independent
+  review did not run.
 
 ## Review guidelines
 
@@ -216,10 +199,9 @@ task scope. A standalone review remains read-only unless the user asks for
 repair. Review helpers never modify files, create commits, push, or post
 comments.
 
-Before finishing repairs for material or boundary work, have a reviewer that
-did not write them inspect the final diff. For direct work, do this only when
-the user or repository requires it. Then run focused validation and report any
-finding left unresolved because it requires new authority or expands the task.
+Before finishing after repairs, have a reviewer that did not write them inspect
+the final diff. Then run focused validation and report any finding left
+unresolved because it requires new authority or expands the task.
 
 For a review-only result, present findings first in priority order:
 

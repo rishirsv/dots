@@ -23,7 +23,7 @@ invariants encoded in types, validation boundaries, responsible modules, and
 what the system deliberately does not do. State what complexity the public
 surface hides and what remains exposed to callers.*
 
-## Synthesis decision
+## Selection decision
 
 *Record why the selected shape won. When Candidate B exists, state which
 candidate became the base, what was adapted, and what was rejected.*

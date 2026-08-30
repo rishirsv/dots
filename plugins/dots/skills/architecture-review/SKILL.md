@@ -1,6 +1,6 @@
 ---
 name: architecture-review
-description: "Audit existing code for structural refactors, misplaced ownership, duplicated policy, weak boundaries, and product or code to delete. Use architect to design a consequential new boundary, code-quality-review for completed changes, and how for explanation-only requests."
+description: "Audit a codebase or subsystem for structural refactors, misplaced ownership, duplicated policy, weak boundaries, and code to consolidate or delete. Use for broad architecture and cleanup reviews; use code-quality-review for completed changes and how for explanation-only requests."
 ---
 
 # Architecture Review
@@ -17,8 +17,6 @@ except where persisted data or an external contract requires compatibility.
 - Read [duplicate-ownership.md](../../references/duplicate-ownership.md) when a finding involves a second source of truth, copied policy, normalization, or competing rule owners.
 - Read [test-consolidation.md](references/test-consolidation.md) when a refactor changes test placement, duplicates tests, or creates a new test surface.
 - Read [hard-cut-policy.md](../../references/hard-cut-policy.md) for every architecture review or refactor. It defines the default hard-cut posture, exception rule, and cleanup checklist.
-- Read the [subtraction audit library](../../references/simplicity-first-development.md#subtraction-audit-library)
-  when the user asks what can be cut, simplified, removed, retired, or reduced.
 - Read [interface-design.md](references/interface-design.md) only after the user selects a candidate and wants alternative interface designs.
 
 ## Scope
@@ -55,23 +53,6 @@ duplicated call patterns, flaky or failing tests, and files accumulating
 unrelated responsibilities.
 
 Use fresh explorer or researcher subagents for large scans when available. Pass each subagent the compact repo guidance summary, relevant architecture docs, required domain skills, and the vocabulary from [architecture-language.md](references/architecture-language.md). Keep the parent agent responsible for the final recommendation.
-
-## Subtraction mode
-
-Use when the user asks what can be cut, simplified, removed, retired, or reduced
-before MVP. Visible product behavior is in scope unless the user excludes it.
-Do not assume every retained user job needs a replacement feature.
-
-Rank candidates as:
-
-- delete now;
-- needs one product or compatibility decision;
-- keep because it protects a core job or boundary.
-
-For each candidate name the current user job, concrete evidence, user loss,
-retained alternative if one exists, complete implementation surface that would
-disappear, confidence, and required proof. Do not propose replacement
-architecture unless it is required to preserve an explicitly retained core job.
 
 ## Candidate Bar
 

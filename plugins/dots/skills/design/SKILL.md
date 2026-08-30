@@ -8,10 +8,6 @@ description: "Use when creating, redesigning, implementing, or polishing visible
 Work inside the user's authorization and the repository's product direction,
 then apply the generic craft guidance only where local authority leaves room.
 
-Frame visible work around the person, moment, and observable outcome before
-choosing a system. Ambitious craft language raises the felt-result bar; it does
-not authorize broader navigation, state, data, or component architecture.
-
 ## Start With Product Authority
 
 Read [grounding.md](references/grounding.md) before choosing a direction or
@@ -86,23 +82,15 @@ governs the work. Where the authorized direction requires new design, define
 the smallest coherent set of type, color, spacing, material, components,
 assets, and motion needed by the surface.
 
-Implement the full requested surface and only the states reachable under the
-accepted v1 contract, with realistic content. Do not add states because a
-generalized component could support them. Keep interactive text, navigation,
-controls, and state code-native.
+Implement the full requested surface and its reachable states with realistic
+content. Keep interactive text, navigation, controls, and state code-native.
 Use raster assets for visual material that genuinely belongs in an image, not
 as a substitute for functional UI.
 
-Keep a repeated element local until current stable consumers need the same
-behavior and accessibility contract. Visual similarity alone does not require a
-shared component. Extract only when the result is simpler than the concrete
-implementations it replaces. Preserve entered data through recoverable errors,
-support relevant text scaling and localization, keep focus and input behavior
-usable, and provide reduced-motion behavior where motion is present.
-
-A prototype answers one decision and is then deleted. Do not harden a prototype
-into production by default; reimplement the accepted behavior through current
-production owners.
+Treat repeated elements as one system with explicit variants. Preserve entered
+data through recoverable errors, support relevant text scaling and
+localization, keep focus and input behavior usable, and provide reduced-motion
+behavior where motion is present.
 
 ### Inspect and refine
 
