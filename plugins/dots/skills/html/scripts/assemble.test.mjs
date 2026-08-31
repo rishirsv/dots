@@ -1,12 +1,32 @@
 // node --test scripts/assemble.test.mjs
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { assemble } from "./assemble.mjs";
+import { assemble, assembleSet } from "./assemble.mjs";
+
+function pageSetFixture() {
+  const root = mkdtempSync(join(tmpdir(), "dots-html-set-"));
+  for (const name of ["intro", "build", "review"]) {
+    writeFileSync(join(root, `${name}.body.html`), `<section id="${name}"><h2>${name}</h2><p>Complete.</p></section>`);
+  }
+  return {
+    root,
+    manifest: {
+      schemaVersion: 1,
+      title: "Atelier agentique",
+      lang: "fr",
+      pages: [
+        { id: "intro", label: "Introduction", title: "Start here", body: "intro.body.html", output: "index.html" },
+        { id: "build", label: "Build", title: "Build a slice", body: "build.body.html", output: "chapters/build.html", components: ["process-steps"] },
+        { id: "review", label: "Review", title: "Review the result", body: "review.body.html", output: "review.html" },
+      ],
+    },
+  };
+}
 
 test("assembles one self-contained page and deduplicates selected component CSS", () => {
   const body = `<section id="result"><h2>Result</h2>
@@ -121,4 +141,47 @@ test("rejects ambiguous or unsupported embedded image sources", () => {
     body: "<section><h2>One</h2></section>",
     layout: "dashboard",
   }), /unknown layout/);
+});
+
+test("assembles ordered page sets from one manifest", () => {
+  const { root, manifest } = pageSetFixture();
+  try {
+    const rendered = assembleSet({ manifest, manifestRoot: root });
+    assert.deepEqual([...rendered.keys()], ["index.html", "chapters/build.html", "review.html"]);
+    assert.match(rendered.get("index.html"), /href="chapters\/build\.html" rel="next"/);
+    assert.doesNotMatch(rendered.get("index.html"), /rel="prev"/);
+    assert.match(rendered.get("chapters/build.html"), /href="\.\.\/index\.html" rel="prev"/);
+    assert.match(rendered.get("chapters/build.html"), /href="\.\.\/review\.html" rel="next"/);
+    assert.doesNotMatch(rendered.get("review.html"), /rel="next"/);
+    for (const html of rendered.values()) {
+      assert.match(html, /<html lang="fr">/);
+      assert.equal((html.match(/<a[^>]+aria-current="page"/g) ?? []).length, 1);
+      assert.doesNotMatch(html, /class="sequence-time"><\/span>/);
+      assert.ok(!/(?:href|src)="https?:/i.test(html));
+    }
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("assemble CLI publishes a complete page set and rejects unsafe manifests", () => {
+  const { root, manifest } = pageSetFixture();
+  const script = fileURLToPath(new URL("./assemble.mjs", import.meta.url));
+  const manifestPath = join(root, "manifest.json");
+  const outDir = join(root, "published");
+  writeFileSync(manifestPath, JSON.stringify(manifest));
+  try {
+    const ok = spawnSync(process.execPath, [script, "--manifest", manifestPath, "--out", outDir], { encoding: "utf8" });
+    assert.equal(ok.status, 0, ok.stderr);
+    assert.ok(existsSync(join(outDir, "chapters", "build.html")));
+
+    const overwrite = spawnSync(process.execPath, [script, "--manifest", manifestPath, "--out", outDir], { encoding: "utf8" });
+    assert.equal(overwrite.status, 1);
+    assert.match(overwrite.stderr, /output directory already exists/);
+
+    manifest.pages[1].output = "../outside.html";
+    assert.throws(() => assembleSet({ manifest, manifestRoot: root }), /stay inside the output directory/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });

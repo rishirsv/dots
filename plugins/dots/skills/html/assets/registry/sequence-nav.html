@@ -1,0 +1,154 @@
+<!-- component: sequence-nav
+title: Sequence navigation
+type: ui
+when: A linked page set has a real order and each page needs the same peer rail,
+  active state, position, optional context/time, and previous/next movement.
+  Use toc-rail for sections within one page instead.
+deps: page-shell, page-behavior
+variants: default (top rail + fixed previous/next controls).
+gotchas: Generate every label, href, active state, and previous/next target from
+  one ordered manifest. Do not hand-maintain copies across pages. Keep links
+  usable without JavaScript; page-behavior only enhances reading progress.
+-->
+<style>
+  .sequence-nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    border-bottom: 1px solid var(--a12);
+    background: var(--background);
+  }
+  .sequence-nav-inner {
+    max-width: var(--canvas);
+    margin: 0 auto;
+    padding: 12px 24px 0;
+  }
+  .sequence-topline {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: baseline;
+    gap: 16px;
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+  .sequence-position { text-align: center; font-variant-numeric: tabular-nums; }
+  .sequence-time { text-align: right; font-variant-numeric: tabular-nums; }
+  .sequence-links {
+    display: flex;
+    gap: 22px;
+    margin-top: 10px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    white-space: nowrap;
+  }
+  .sequence-links::-webkit-scrollbar { display: none; }
+  .sequence-links a {
+    flex: 0 0 auto;
+    padding: 5px 0 10px;
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+  .sequence-links a:hover { color: var(--foreground); text-decoration: none; }
+  .sequence-links a[aria-current="page"] {
+    color: var(--accent-deep);
+    font-weight: 600;
+    box-shadow: inset 0 -2px currentColor;
+  }
+  .sequence-index {
+    margin-right: 5px;
+    color: var(--a55);
+    font-variant-numeric: tabular-nums;
+  }
+  .sequence-reading-progress {
+    height: 1px;
+    margin-top: -1px;
+    background: var(--a12);
+  }
+  .sequence-reading-progress-bar {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--foreground);
+  }
+  .sequence-controls {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: 44px auto 44px;
+    align-items: center;
+    border: 1px solid var(--a20);
+    border-radius: var(--r-card);
+    background: var(--background);
+  }
+  .sequence-controls a,
+  .sequence-controls .sequence-control-empty {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    color: var(--foreground);
+  }
+  .sequence-controls a:hover { background: var(--a4); text-decoration: none; }
+  .sequence-controls svg { width: 16px; height: 16px; }
+  .sequence-controls .sequence-control-empty { color: var(--a40); }
+  .sequence-controls-position {
+    padding: 0 10px;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+  }
+  .has-sequence-nav .page { padding-top: 48px; padding-bottom: 144px; }
+  @media (min-width: 681px) {
+    .has-sequence-nav .page > header h1 {
+      max-width: 16ch;
+      font-size: 56px;
+      line-height: 60px;
+      letter-spacing: -3.2px;
+    }
+  }
+  @media (max-width: 680px) {
+    .sequence-nav-inner { padding-inline: 20px; }
+    .sequence-topline { grid-template-columns: minmax(0, 1fr) auto; }
+    .sequence-position { text-align: right; }
+    .sequence-time {
+      grid-column: 1 / -1;
+      margin-top: -7px;
+      text-align: left;
+    }
+    .sequence-time:empty { display: none; }
+    .sequence-links { gap: 18px; }
+    .sequence-controls {
+      position: static;
+      width: max-content;
+      margin: 0 20px 24px auto;
+    }
+    .has-sequence-nav .page { padding-top: 36px; padding-bottom: 64px; }
+  }
+</style>
+
+<nav data-component="sequence-nav" class="sequence-nav" aria-label="Workshop pages">
+  <div class="sequence-nav-inner">
+    <div class="sequence-topline">
+      <span>Agentic product workshop</span>
+      <span class="sequence-position">Page 02 of 04</span>
+      <span class="sequence-time">10:00–11:15</span>
+    </div>
+    <div class="sequence-links">
+      <a href="index.html"><span class="sequence-index">01</span>Introduction</a>
+      <a href="build.html" aria-current="page"><span class="sequence-index">02</span>Build</a>
+      <a href="debug.html"><span class="sequence-index">03</span>Debug</a>
+      <a href="wrap-up.html"><span class="sequence-index">04</span>Wrap-up</a>
+    </div>
+  </div>
+  <div class="sequence-reading-progress" role="progressbar" aria-label="Page reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <span class="sequence-reading-progress-bar"></span>
+  </div>
+</nav>
+<nav class="sequence-controls" aria-label="Previous and next page">
+  <a href="index.html" rel="prev" aria-label="Previous page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11.75 4.75 6.5 10l5.25 5.25M7 10h7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <span class="sequence-controls-position">02 / 04</span>
+  <a href="debug.html" rel="next" aria-label="Next page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m8.25 4.75 5.25 5.25-5.25 5.25M13 10H6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+</nav>
