@@ -2,16 +2,6 @@
   "$comment": "Outcome references teach reading order and editorial judgment. They are complete sample pages, not scaffolds. Select the nearest job, inspect one page, then compose real content from the component registry.",
   "items": [
     {
-      "name": "workshop-page-set",
-      "title": "Workshop page set",
-      "file": "workshop-page-set/index.html",
-      "job": "Guide participants through an ordered workshop whose chapters need independent URLs.",
-      "layout": "page-set",
-      "treatment": "editorial",
-      "shape": ["orientation and agenda", "focused lab", "review and next action"],
-      "boundary": "Keep a short workshop on one page; use a page set only when the parts benefit from independent URLs."
-    },
-    {
       "name": "decision-comparison",
       "title": "Decision comparison",
       "file": "decision-comparison.html",
