@@ -1,4 +1,4 @@
-# Build a page or fragment
+# Build a page, linked page set, or fragment
 
 Use this when turning source material into a finished page or fragment. The
 visual style and shared component rules live in
@@ -134,6 +134,59 @@ so the next editor can find their source.
 When the original body fragment is available, edit that source and reassemble;
 use component-level editing of the finished file when it is the only source.
 
+## Linked page sets
+
+Use a linked page set when the user requests multiple pages or when a real
+ordered sequence needs independent URLs, such as a workshop, course,
+walkthrough, or multi-part guide. Keep a short document on one page; do not
+split it merely to imitate a website.
+
+1. Read [form-factors.md](form-factors.md#workshops-courses-and-other-page-sets)
+   and outline each page by the reader question it answers and the transition
+   it creates to the next page.
+2. Write one body fragment per page. Choose the page's layout and existing
+   content components independently; the shared navigation is not a reason to
+   force every page into the same composition.
+3. Put sequence order, page ids, labels, optional time/context, titles, body
+   paths, output filenames, layouts, and component names in one manifest. Do
+   not copy cross-page links into the body fragments:
+
+   ```json
+   {
+     "schemaVersion": 1,
+     "title": "Agentic product workshop",
+     "lang": "en",
+     "navigationLabel": "Workshop pages",
+     "pages": [
+       {
+         "id": "introduction",
+         "label": "Introduction",
+         "time": "09:00–09:30",
+         "title": "Start with one real task",
+         "body": "01-introduction.body.html",
+         "output": "index.html",
+         "layout": "wide",
+         "components": ["timeline", "wide-figure"]
+       }
+     ]
+   }
+   ```
+
+   `id`, `label`, `title`, `body`, and `output` are required per page. Optional
+   page fields are `time`, `context`, `dek`, `footer`, `layout`, and
+   `components`.
+4. Run `scripts/assemble.mjs --manifest <manifest.json> --out <directory>`.
+   The target directory must not already exist. The script validates and
+   renders the complete set before publishing it, and refuses to overwrite an
+   existing set.
+5. Use `sequence-nav` for movement between pages. Use `toc-rail` only when one
+   page also has six or more substantial sections or needs non-linear lookup
+   within that page.
+
+Every generated file is self-contained except for relative links to its peers.
+Move or share the directory as one unit. A page must still read coherently when
+opened directly.
+
 ## Fragment delivery
 
 A fragment is one component shipped for embedding in a surface we don't
@@ -163,12 +216,15 @@ The same visual style and real-content rules apply.
 
 Prefer the platform's HTML creation tool when present. Otherwise write to the
 location the user named — or ask where when it will be kept — and open it in
-the browser. Name files for the content (`sync-rollout-brief.html`), not the skill.
+the browser. Name files and page-set directories for the content
+(`sync-rollout-brief.html`, `agentic-product-workshop/`), not the skill.
 
 Treat delivery states precisely:
 
 - **Standalone** means the local self-contained file is ready to open and
   share.
+- **Linked page set** means every page is ready and the directory preserves the
+  relative peer links. It does not mean the set is hosted.
 - **Published** means the user explicitly asked for hosting, an available
   publishing workflow completed, and the resulting URL was opened and verified.
 - If publishing is unavailable or fails, return the standalone file and state

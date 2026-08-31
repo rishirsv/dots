@@ -1,7 +1,8 @@
 <!-- component: page-behavior
 title: Page behavior
 type: behavior
-when: A page uses motion, one-time reveals, TOC scroll-spy, or a theme toggle.
+when: A page uses motion, one-time reveals, TOC scroll-spy, a theme toggle, or
+  reading progress for a linked page set.
   This is optional progressive enhancement; omit it for a static page.
 deps: page-shell
 variants: none
@@ -10,7 +11,7 @@ gotchas: Everything must remain complete and navigable without this script.
 -->
 <script data-component="page-behavior">
   /* Optional page behavior: motion opt-in, one-time reveals, TOC scroll-spy,
-     and theme toggle. Everything works without this script. */
+     reading progress, and theme toggle. Everything works without this script. */
   (function () {
     var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!reduced) document.documentElement.classList.add("js-motion");
@@ -48,6 +49,36 @@ gotchas: Everything must remain complete and navigable without this script.
         });
       }, { rootMargin: "-15% 0px -70% 0px" });
       targets.forEach(function (t) { spy.observe(t); });
+    }
+
+    // Reading progress (no-op when no linked page-set navigation is present)
+    var progress = document.querySelector(".sequence-reading-progress");
+    if (progress) {
+      var progressBar = progress.querySelector(".sequence-reading-progress-bar");
+      var updateProgress = function () {
+        var max = document.documentElement.scrollHeight - innerHeight;
+        var value = max > 0 ? Math.max(0, Math.min(100, Math.round(scrollY / max * 100))) : 100;
+        progress.setAttribute("aria-valuenow", String(value));
+        if (progressBar) progressBar.style.width = value + "%";
+      };
+      addEventListener("scroll", updateProgress, { passive: true });
+      addEventListener("resize", updateProgress);
+      updateProgress();
+    }
+
+    // Keep the current page visible in an overflowing peer rail.
+    var sequenceLinks = document.querySelector(".sequence-links");
+    var currentPage = sequenceLinks && sequenceLinks.querySelector('[aria-current="page"]');
+    if (sequenceLinks && currentPage) {
+      var centerCurrentPage = function () {
+        if (sequenceLinks.scrollWidth <= sequenceLinks.clientWidth) return;
+        var railBox = sequenceLinks.getBoundingClientRect();
+        var currentBox = currentPage.getBoundingClientRect();
+        var currentCenter = currentBox.left - railBox.left + sequenceLinks.scrollLeft + currentBox.width / 2;
+        sequenceLinks.scrollLeft = Math.max(0, currentCenter - sequenceLinks.clientWidth / 2);
+      };
+      addEventListener("resize", centerCurrentPage);
+      centerCurrentPage();
     }
 
     // Theme toggle (no-op when no .theme-toggle present)

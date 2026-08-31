@@ -1,13 +1,15 @@
 ---
 name: html
-description: "Creates and edits self-contained browser-openable HTML pages, fragments, static product mocks, templates, and HTML assets for template-driven skills. Not for production UI implementation, interactive data visualizations, underlying research or planning, durable documentation, or non-HTML skill authoring."
+description: "Creates and edits self-contained browser-openable HTML pages, linked page sets, fragments, static product mocks, templates, and HTML assets for template-driven skills. Not for production UI implementation, interactive data visualizations, underlying research or planning, durable documentation, or non-HTML skill authoring."
 ---
 
 # HTML
 
-Create one self-contained page or one embeddable fragment that a reader can
-open, understand, and share. Read [authoring.md](references/authoring.md) before
-building; it explains how to build, edit, check, and deliver the result.
+Create one self-contained page or one embeddable fragment by default. Create a
+linked page set only when the user requests multiple pages or the supplied
+material has a real ordered sequence whose parts need independent URLs. Read
+[authoring.md](references/authoring.md) before building; it explains how to
+build, edit, check, and deliver the result.
 
 ## Build from prepared material
 
