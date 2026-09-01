@@ -1,14 +1,16 @@
 <!-- component: sequence-nav
 title: Sequence navigation
 type: ui
-when: A linked page set has a real order and each page needs the same peer rail,
+when: A linked page set has a real order and each page needs a peer rail,
   active state, position, optional context/time, and previous/next movement.
   Use toc-rail for sections within one page instead.
 deps: page-shell, page-behavior
-variants: default (top rail + fixed previous/next controls).
+variants: flat (one set-wide rail) | hierarchical (rail scoped to siblings,
+  with page-shell breadcrumbs and generated chapter-index on parent pages).
 gotchas: Generate every label, href, active state, and previous/next target from
-  one ordered manifest. Do not hand-maintain copies across pages. Keep links
-  usable without JavaScript; page-behavior only enhances reading progress.
+  one ordered manifest. In a hierarchy, previous/next stays within the current
+  sibling group. Keep links usable without JavaScript; page-behavior only
+  enhances reading progress.
 -->
 <style>
   .sequence-nav {
@@ -60,6 +62,24 @@ gotchas: Generate every label, href, active state, and previous/next target from
     color: var(--a55);
     font-variant-numeric: tabular-nums;
   }
+  .sequence-breadcrumbs {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .sequence-breadcrumb-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .sequence-breadcrumb-links a { color: var(--accent-deep); }
+  .sequence-breadcrumb-position {
+    flex: 0 0 auto;
+    font-variant-numeric: tabular-nums;
+  }
+  .sequence-breadcrumbs + .sequence-page-context { margin-top: -12px; }
   .sequence-reading-progress {
     height: 1px;
     margin-top: -1px;
@@ -126,6 +146,7 @@ gotchas: Generate every label, href, active state, and previous/next target from
       margin: 0 20px 24px auto;
     }
     .has-sequence-nav .page { padding-top: 36px; padding-bottom: 64px; }
+    .sequence-breadcrumbs { align-items: flex-start; }
   }
 </style>
 

@@ -1101,6 +1101,44 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
     color: var(--text-muted);
   }
 
+  .chapter-index { margin-top: var(--section); }
+  .chapter-index-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  .chapter-index-heading h2 { margin: 0; font-size: 18px; line-height: 24px; }
+  .chapter-index-heading > span { color: var(--text-muted); font-size: 12px; }
+  .chapter-index-group + .chapter-index-group { margin-top: 28px; }
+  .chapter-index-group > a { margin-bottom: 10px; border: 0; font-size: 18px; }
+  .chapter-index ol {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    list-style: none;
+  }
+  .chapter-index li + li { border-top: 1px solid var(--a12); }
+  .chapter-index a {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) 18px;
+    align-items: start;
+    gap: 12px;
+    padding: 14px 16px;
+    color: var(--foreground);
+  }
+  .chapter-index a:hover { background: var(--a4); text-decoration: none; }
+  .chapter-index-number { color: var(--text-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .chapter-index-copy strong { display: block; font-size: 14px; line-height: 20px; }
+  .chapter-index-copy small { display: block; margin-top: 2px; color: var(--text-muted); font-size: 12px; line-height: 17px; }
+  .chapter-index-arrow { color: var(--a40); }
+  @media (max-width: 680px) {
+    .chapter-index a { grid-template-columns: 42px minmax(0, 1fr) 14px; gap: 8px; padding: 13px 14px; }
+  }
+
 .theme-toggle {
     position: fixed;
     top: 20px;
@@ -1501,6 +1539,16 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
       </div>
     </details>
   </nav></section>
+  <section id="chapter-index"><h2>Chapter index</h2><p class="reading-column">A hierarchical linked page set needs a generated contents or chapter curriculum with child links and short descriptions.</p><section id="curriculum" data-component="chapter-index" class="chapter-index">
+    <div class="chapter-index-heading"><h2>Chapters</h2><span>2 chapters</span></div>
+    <div class="chapter-index-group">
+      <a href="#chapter-index"><span class="chapter-index-number">1</span><span class="chapter-index-copy"><strong>Foundations</strong><small>Build a reliable model of the system.</small></span><span class="chapter-index-arrow" aria-hidden="true">↗</span></a>
+      <ol>
+        <li><a href="#chapter-index"><span class="chapter-index-number">1.1</span><span class="chapter-index-copy"><strong>A useful mental model</strong><small>Name the loop and its responsibilities.</small></span><span class="chapter-index-arrow" aria-hidden="true">↗</span></a></li>
+        <li><a href="#chapter-index"><span class="chapter-index-number">1.2</span><span class="chapter-index-copy"><strong>Boundaries and ownership</strong><small>Give each decision and side effect one owner.</small></span><span class="chapter-index-arrow" aria-hidden="true">↗</span></a></li>
+      </ol>
+    </div>
+  </section></section>
   <section id="stat-tiles"><h2>Stat tiles</h2><p class="reading-column">Two to five supplied headline measures are central to the first read and are not already labeled on a chart.</p><div data-component="stat-tiles" class="kpi-grid">
     <div class="kpi-tile">
       <div class="kpi-value">14</div>

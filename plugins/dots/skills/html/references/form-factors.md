@@ -74,6 +74,14 @@ manifest and generate `sequence-nav` from it. Each page remains a normal HTML
 page assembled through `page-shell`; the sequence does not create a second
 content-component system.
 
+For a learning site, use one root contents page, make chapter landing pages its
+children, and make lessons children of their chapter. A chapter landing should
+explain the local learning arc; the generated `chapter-index` then exposes its
+lessons. `sequence-nav` stays scoped to the current sibling group, while
+breadcrumbs preserve the route back to the chapter and contents. Keep live
+simulations, tutoring, search, and mutable progress outside a static HTML page
+set.
+
 ## Table gate
 
 Use a table only for genuinely tabular information: repeated items, shared

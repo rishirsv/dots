@@ -82,13 +82,18 @@ function orderedComponents(requested) {
   return ordered;
 }
 
-function pageShell({ title, context, dek, footer, body, layout }) {
+function pageShell({ title, context, contextMarkup, dek, footer, body, layout }) {
   let shell = sourceFor("page-shell").match(/<div data-component="page-shell"[\s\S]*$/)?.[0];
   if (!shell) fail("page-shell markup is missing");
 
+  const renderedContext = [
+    contextMarkup,
+    context ? `<p class="context-line${contextMarkup ? " sequence-page-context" : ""}">${escapeText(context)}</p>` : "",
+  ].filter(Boolean).join("\n    ");
+
   shell = shell
     .replace('data-layout="article"', `data-layout="${layout}"`)
-    .replace(/<p class="context-line">[\s\S]*?<\/p>/, context ? `<p class="context-line">${escapeText(context)}</p>` : "")
+    .replace(/<p class="context-line">[\s\S]*?<\/p>/, renderedContext)
     .replace(/<h1>[\s\S]*?<\/h1>/, `<h1>${escapeText(title)}</h1>`)
     .replace(/<p class="dek">[\s\S]*?<\/p>/, dek ? `<p class="dek">${escapeText(dek)}</p>` : "")
     .replace(/\s*<!-- slot: toc-rail[^\n]*-->/, "")
@@ -98,7 +103,7 @@ function pageShell({ title, context, dek, footer, body, layout }) {
   return shell;
 }
 
-export function assemble({ title, context = "", dek = "", footer = "", body, components = [], lang = "en", assetRoot, layout = "article" }) {
+export function assemble({ title, context = "", contextMarkup = "", dek = "", footer = "", body, components = [], lang = "en", assetRoot, layout = "article" }) {
   if (!title) fail("title is required");
   if (body == null) fail("body is required");
   if (!["article", "wide", "canvas"].includes(layout)) fail(`unknown layout "${layout}"`);
@@ -113,7 +118,7 @@ export function assemble({ title, context = "", dek = "", footer = "", body, com
   const scripts = componentSources
     .flatMap((source) => [...source.matchAll(/^<script(?:\s[^>]*)?>[\s\S]*?^<\/script>/gim)].map((match) => match[0].trim()))
     .join("\n\n");
-  const shell = pageShell({ title, context, dek, footer, body: embedLocalImages(body, assetRoot), layout });
+  const shell = pageShell({ title, context, contextMarkup, dek, footer, body: embedLocalImages(body, assetRoot), layout });
 
   return `<!doctype html>
 <html lang="${escapeText(lang)}">
@@ -157,6 +162,8 @@ function readManifestPage(page, index, manifestRoot) {
   if (typeof page.id !== "string" || !/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(page.id)) fail(`${label}.id must use lowercase letters, digits, and internal hyphens`);
   if (typeof page.label !== "string" || !page.label.trim()) fail(`${label}.label is required`);
   if (typeof page.title !== "string" || !page.title.trim()) fail(`${label}.title is required`);
+  if (page.parent != null && (typeof page.parent !== "string" || !/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(page.parent))) fail(`${label}.parent must be a page id`);
+  if (page.number != null && (typeof page.number !== "string" || !page.number.trim())) fail(`${label}.number must be a non-empty string`);
   for (const field of ["time", "context", "dek", "footer"]) {
     if (page[field] != null && typeof page[field] !== "string") fail(`${label}.${field} must be a string`);
   }
@@ -164,7 +171,15 @@ function readManifestPage(page, index, manifestRoot) {
   if (page.components != null && (!Array.isArray(page.components) || page.components.some((item) => typeof item !== "string" || !item))) fail(`${label}.components must be an array of component names`);
   const bodyPath = localPath(manifestRoot, page.body, `${label}.body`);
   if (!existsSync(bodyPath) || !lstatSync(bodyPath).isFile()) fail(`${label}.body does not resolve to a file`);
-  return { ...page, label: page.label.trim(), title: page.title.trim(), output: outputPath(page.output, `${label}.output`), bodyPath };
+  return {
+    ...page,
+    label: page.label.trim(),
+    title: page.title.trim(),
+    parent: page.parent?.trim(),
+    number: page.number?.trim(),
+    output: outputPath(page.output, `${label}.output`),
+    bodyPath,
+  };
 }
 
 export function validateManifest(manifest, manifestRoot) {
@@ -183,6 +198,25 @@ export function validateManifest(manifest, manifestRoot) {
     ids.add(page.id);
     outputs.add(page.output);
   }
+  const hierarchical = pages.some((page) => page.parent != null);
+  if (hierarchical) {
+    const roots = pages.filter((page) => page.parent == null);
+    if (roots.length !== 1) fail("hierarchical manifests must contain exactly one root page");
+    for (const page of pages) {
+      if (page.parent != null && !ids.has(page.parent)) fail(`page "${page.id}" references missing parent "${page.parent}"`);
+      if (page.parent === page.id) fail(`page "${page.id}" cannot be its own parent`);
+    }
+    const byId = new Map(pages.map((page) => [page.id, page]));
+    for (const page of pages) {
+      const visited = new Set([page.id]);
+      let current = page.parent ? byId.get(page.parent) : null;
+      while (current) {
+        if (visited.has(current.id)) fail(`page hierarchy contains a cycle at "${current.id}"`);
+        visited.add(current.id);
+        current = current.parent ? byId.get(current.parent) : null;
+      }
+    }
+  }
   return { ...manifest, title: manifest.title.trim(), lang: manifest.lang?.trim() || "en", pages };
 }
 
@@ -190,7 +224,7 @@ function pageHref(from, to) {
   return posix.relative(posix.dirname(from), to) || posix.basename(to);
 }
 
-function sequenceMarkup(manifest, page, index) {
+function flatSequenceMarkup(manifest, page, index) {
   const total = manifest.pages.length;
   const number = String(index + 1).padStart(2, "0");
   const totalText = String(total).padStart(2, "0");
@@ -231,21 +265,127 @@ function sequenceMarkup(manifest, page, index) {
   };
 }
 
+function hierarchyFor(manifest) {
+  const byId = new Map(manifest.pages.map((page) => [page.id, page]));
+  const children = new Map(manifest.pages.map((page) => [page.id, []]));
+  for (const page of manifest.pages) {
+    if (page.parent) children.get(page.parent).push(page);
+  }
+  return { byId, children };
+}
+
+function ancestorsOf(page, byId) {
+  const ancestors = [];
+  let current = page.parent ? byId.get(page.parent) : null;
+  while (current) {
+    ancestors.unshift(current);
+    current = current.parent ? byId.get(current.parent) : null;
+  }
+  return ancestors;
+}
+
+function hierarchyBreadcrumbs(page, hierarchy) {
+  const ancestors = ancestorsOf(page, hierarchy.byId);
+  if (!ancestors.length) return "";
+  const siblings = hierarchy.children.get(page.parent) ?? [];
+  const index = siblings.findIndex((peer) => peer.id === page.id);
+  const links = ancestors.map((ancestor) => `<a href="${escapeText(pageHref(page.output, ancestor.output))}">${escapeText(ancestor.label)}</a>`).join('<span aria-hidden="true">›</span>');
+  const position = siblings.length > 1 ? `<span class="sequence-breadcrumb-position" lang="en">${index + 1} of ${siblings.length}</span>` : "";
+  return `<nav class="context-line sequence-breadcrumbs" aria-label="Breadcrumb"><span class="sequence-breadcrumb-links">${links}</span>${position}</nav>`;
+}
+
+function hierarchicalSequenceMarkup(manifest, page, hierarchy) {
+  const siblings = page.parent ? hierarchy.children.get(page.parent) : hierarchy.children.get(page.id);
+  const index = siblings.findIndex((peer) => peer.id === page.id);
+  const total = siblings.length;
+  const parent = page.parent ? hierarchy.byId.get(page.parent) : null;
+  const context = parent
+    ? `${parent.number ? `${parent.number} · ` : ""}${parent.label}`
+    : manifest.title;
+  const position = index >= 0 ? `${index + 1} of ${total}` : page.label;
+  const links = siblings.map((peer, peerIndex) => {
+    const current = peer.id === page.id ? ' aria-current="page"' : "";
+    const number = peer.number ?? String(peerIndex + 1).padStart(2, "0");
+    return `<a href="${escapeText(pageHref(page.output, peer.output))}"${current}><span class="sequence-index">${escapeText(number)}</span>${escapeText(peer.label)}</a>`;
+  }).join("\n        ");
+  const previousIcon = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11.75 4.75 6.5 10l5.25 5.25M7 10h7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const nextIcon = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="m8.25 4.75 5.25 5.25-5.25 5.25M13 10H6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const previous = index > 0
+    ? `<a href="${escapeText(pageHref(page.output, siblings[index - 1].output))}" rel="prev" aria-label="Previous page" lang="en">${previousIcon}</a>`
+    : `<span class="sequence-control-empty" aria-hidden="true">${previousIcon}</span>`;
+  const next = index >= 0 && index < total - 1
+    ? `<a href="${escapeText(pageHref(page.output, siblings[index + 1].output))}" rel="next" aria-label="Next page" lang="en">${nextIcon}</a>`
+    : `<span class="sequence-control-empty" aria-hidden="true">${nextIcon}</span>`;
+  const time = page.time ? `<span class="sequence-time">${escapeText(page.time)}</span>` : "";
+  return {
+    top: `<nav data-component="sequence-nav" class="sequence-nav is-hierarchical" aria-label="${escapeText(manifest.navigationLabel || manifest.title)}">
+  <div class="sequence-nav-inner">
+    <div class="sequence-topline">
+      <span>${escapeText(context)}</span>
+      <span class="sequence-position" lang="en">${escapeText(position)}</span>
+      ${time}
+    </div>
+    <div class="sequence-links">
+      ${links}
+    </div>
+  </div>
+  <div class="sequence-reading-progress" role="progressbar" aria-label="Page reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" lang="en">
+    <span class="sequence-reading-progress-bar"></span>
+  </div>
+</nav>`,
+    controls: index >= 0 ? `<nav class="sequence-controls" aria-label="Previous and next page" lang="en">
+  ${previous}
+  <span class="sequence-controls-position">${index + 1} / ${total}</span>
+  ${next}
+</nav>` : "",
+  };
+}
+
+function chapterIndexMarkup(page, hierarchy) {
+  const children = hierarchy.children.get(page.id) ?? [];
+  if (!children.length) return "";
+  const grouped = children.some((child) => (hierarchy.children.get(child.id) ?? []).length);
+  const kind = page.parent == null ? "Chapters" : "Lessons";
+  const count = `${children.length} ${children.length === 1 ? kind.slice(0, -1).toLowerCase() : kind.toLowerCase()}`;
+  const item = (child, from) => {
+    const dek = child.dek ? `<small>${escapeText(child.dek)}</small>` : "";
+    const peers = hierarchy.children.get(child.parent) ?? [];
+    const number = child.number ?? String(peers.findIndex((peer) => peer.id === child.id) + 1);
+    return `<a href="${escapeText(pageHref(from.output, child.output))}"><span class="chapter-index-number">${escapeText(number)}</span><span class="chapter-index-copy"><strong>${escapeText(child.label)}</strong>${dek}</span><span class="chapter-index-arrow" aria-hidden="true">↗</span></a>`;
+  };
+  const content = grouped
+    ? children.map((child) => {
+      const descendants = hierarchy.children.get(child.id) ?? [];
+      return `<div class="chapter-index-group">${item(child, page)}${descendants.length ? `<ol>${descendants.map((descendant) => `<li>${item(descendant, page)}</li>`).join("")}</ol>` : ""}</div>`;
+    }).join("")
+    : `<ol>${children.map((child) => `<li>${item(child, page)}</li>`).join("")}</ol>`;
+  return `<section id="curriculum" data-component="chapter-index" class="chapter-index">
+  <div class="chapter-index-heading"><h2>${kind}</h2><span>${count}</span></div>
+  ${content}
+</section>`;
+}
+
 export function assembleSet({ manifest, manifestRoot }) {
   const validated = validateManifest(manifest, manifestRoot);
+  const hierarchical = validated.pages.some((page) => page.parent != null);
+  const hierarchy = hierarchical ? hierarchyFor(validated) : null;
   const rendered = new Map();
   validated.pages.forEach((page, index) => {
-    const markup = sequenceMarkup(validated, page, index);
+    const markup = hierarchical
+      ? hierarchicalSequenceMarkup(validated, page, hierarchy)
+      : flatSequenceMarkup(validated, page, index);
+    const chapterIndex = hierarchical ? chapterIndexMarkup(page, hierarchy) : "";
     const html = assemble({
       title: page.title,
-      context: page.context ?? `${validated.title} / ${page.label}`,
+      context: page.context ?? (hierarchical && page.parent ? "" : `${validated.title} / ${page.label}`),
+      contextMarkup: hierarchical ? hierarchyBreadcrumbs(page, hierarchy) : "",
       dek: page.dek ?? "",
       footer: page.footer ?? "",
       lang: validated.lang,
       layout: page.layout ?? "article",
-      body: readFileSync(page.bodyPath, "utf8"),
+      body: [readFileSync(page.bodyPath, "utf8"), chapterIndex].filter(Boolean).join("\n\n"),
       assetRoot: dirname(page.bodyPath),
-      components: [...new Set([...(page.components ?? []), "sequence-nav"])],
+      components: [...new Set([...(page.components ?? []), ...(chapterIndex ? ["chapter-index"] : []), "sequence-nav"])],
     });
     rendered.set(page.output, html
       .replace("<body>", `<body class="has-sequence-nav">\n${markup.top}`)

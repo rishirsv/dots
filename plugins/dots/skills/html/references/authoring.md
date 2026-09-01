@@ -173,15 +173,29 @@ split it merely to imitate a website.
    ```
 
    `id`, `label`, `title`, `body`, and `output` are required per page. Optional
-   page fields are `time`, `context`, `dek`, `footer`, `layout`, and
-   `components`.
+   page fields are `time`, `context`, `dek`, `footer`, `layout`, `components`,
+   `parent`, and `number`.
+
+   For a learning site, give the manifest one root contents page, set each
+   chapter's `parent` to that root id, and set each lesson's `parent` to its
+   chapter id. Use `number` for reader-facing labels such as `2` or `2.1`:
+
+   ```json
+   { "id": "tool-use", "parent": "contents", "number": "2", "label": "Tool use", "title": "Tool use", "body": "tool-use.body.html", "output": "chapters/tool-use/index.html" }
+   ```
+
+   Sibling order still follows manifest order. The assembler rejects missing
+   parents, multiple roots, and cycles.
 4. Run `scripts/assemble.mjs --manifest <manifest.json> --out <directory>`.
    The target directory must not already exist. The script validates and
    renders the complete set before publishing it, and refuses to overwrite an
    existing set.
-5. Use `sequence-nav` for movement between pages. Use `toc-rail` only when one
-   page also has six or more substantial sections or needs non-linear lookup
-   within that page.
+5. Use `sequence-nav` for movement between pages. In a hierarchical manifest,
+   the assembler scopes that rail and previous/next controls to siblings,
+   generates breadcrumbs, and adds `chapter-index` to parent pages. Do not copy
+   curriculum links into body fragments. Use `toc-rail` only when one page also
+   has six or more substantial sections or needs non-linear lookup within that
+   page.
 
 Every generated file is self-contained except for relative links to its peers.
 Move or share the directory as one unit. A page must still read coherently when
