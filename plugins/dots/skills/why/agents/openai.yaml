@@ -7,4 +7,4 @@ interface:
   default_prompt: "Use $why to investigate the historical evidence behind this code or design decision and separate what is known, inferred, and unknown."
 
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

@@ -10,6 +10,8 @@ behavior required by the task, including its features, outputs, and external
 contracts. Improve the implementation when authorized, including restructuring
 nearby code when that is needed for a clean solution.
 
+Review only after the implementation task is complete.
+
 ## Review target
 
 - Use the target named by the user. Otherwise review the current branch and its
@@ -34,7 +36,8 @@ nearby code when that is needed for a clean solution.
   fresh subagent and have it load this skill.
 - An agent that implemented any part of the change must not review that code.
 - Give the reviewer the fixed target, intended behavior, applicable repository
-  instructions, and access to the surrounding code and tests.
+  instructions, and changed paths. Use the smallest sufficient context and
+  default to no inherited conversation history.
 - Reviewers return candidate findings without editing or delegating.
 
 ### When to fan out
@@ -45,8 +48,8 @@ Use one reviewer by default. Fan out when:
 - the change spans several independent subsystems or execution paths; or
 - broad or high-risk boundaries need separate coverage.
 
-Use the number the user requests. Otherwise, use three reviewers when distinct
-lanes exist and capacity allows.
+Use the number the user requests. Otherwise, use up to three reviewers when
+distinct lanes exist.
 
 ### Assign lanes
 
@@ -124,10 +127,10 @@ against the relevant code and tests before keeping it.
    - Remove obsolete dual paths when callers can migrate; preserve
      compatibility when persisted data or an external contract requires it.
 
-4. **Tests and verification**
+4. **Tests**
 
-   - Run the applicable required tests or inspect current results, and report
-     relevant coverage that remains unverified.
+   - Inspect changed tests and relevant existing results. Validation belongs to
+     the owning implementation workflow.
    - Confirm that tests exercise the intended behavior rather than merely the
      implementation.
    - Require a regression test for a demonstrated bug, and flag other missing
@@ -200,8 +203,8 @@ repair. Review helpers never modify files, create commits, push, or post
 comments.
 
 Before finishing after repairs, have a reviewer that did not write them inspect
-the final diff. Then run focused validation and report any finding left
-unresolved because it requires new authority or expands the task.
+the repaired diff. Report any finding left unresolved because it requires new
+authority or expands the task.
 
 For a review-only result, present findings first in priority order:
 
@@ -209,6 +212,6 @@ For a review-only result, present findings first in priority order:
 
 Follow each title with one short paragraph explaining the affected scenario and
 impact. Say `No findings.` when none qualify. For a post-change review, summarize
-the fixes and validation instead of repeating repaired findings. Include only
+the fixes and review outcome instead of repeating repaired findings. Include only
 unresolved findings in the standard format. Omit rejected candidates, reviewer
 process, and empty sections unless the user requested Challenge posture.
