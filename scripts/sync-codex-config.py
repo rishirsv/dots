@@ -28,7 +28,6 @@ LOCAL_TABLE_PREFIXES = (
 )
 PORTABLE_TABLE_EXCEPTIONS = (("mcp_servers", "openaiDeveloperDocs"),)
 APP_RUNTIME_TABLE_KEYS = {("features",): {"chronicle", "js_repl"}}
-APP_RUNTIME_ROOT_KEYS = {"sandbox_mode"}
 APP_RUNTIME_ROOT_DEFAULT_VALUES = {"approvals_reviewer": '"user"'}
 APP_RUNTIME_DEFAULT_VALUES = {
     ("features",): {"default_mode_request_user_input": "false"},
@@ -171,25 +170,13 @@ def split_toml(text: str) -> Tuple[List[str], List[Tuple[Tuple[str, ...], List[s
 def strip_app_runtime_keys(text: str) -> str:
     """Ignore settings Codex Desktop writes into the portable marker block."""
     root, tables = split_toml(text)
-    has_permission_profile = any(
-        (match := ASSIGNMENT_RE.match(line))
-        and match.group(1) == "default_permissions"
-        for line in root
-    )
     parts = [
         line
         for line in root
         if not (
-            has_permission_profile
-            and (match := ASSIGNMENT_RE.match(line))
-            and (
-                match.group(1) in APP_RUNTIME_ROOT_KEYS
-                or (
-                    (value_match := ASSIGNMENT_VALUE_RE.match(line))
-                    and APP_RUNTIME_ROOT_DEFAULT_VALUES.get(value_match.group(1))
-                    == value_match.group(2)
-                )
-            )
+            (value_match := ASSIGNMENT_VALUE_RE.match(line))
+            and APP_RUNTIME_ROOT_DEFAULT_VALUES.get(value_match.group(1))
+            == value_match.group(2)
         )
     ]
     for path, lines in tables:

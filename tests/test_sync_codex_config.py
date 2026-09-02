@@ -289,19 +289,15 @@ class CodexConfigHelperTests(unittest.TestCase):
             self.assertNotIn("default_permissions", live)
             self.assertNotRegex(live, r"\[permissions(?:\.|\])")
 
-    def test_permission_profile_ignores_app_sandbox_writeback_and_keeps_live_web_search(
-        self,
-    ):
+    def test_direct_full_access_ignores_app_default_reviewer_writeback(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "source.toml"
             target = root / "config.toml"
-            source.write_text(PERMISSION_PROFILE_PORTABLE)
-            runtime_portable = PERMISSION_PROFILE_PORTABLE.replace(
-                'web_search = "live"\n',
-                'web_search = "live"\n'
-                'sandbox_mode = "danger-full-access"\n'
-                'approvals_reviewer = "user"\n',
+            source.write_text(PORTABLE)
+            runtime_portable = PORTABLE.replace(
+                'model = "portable-model"\n',
+                'model = "portable-model"\napprovals_reviewer = "user"\n',
             )
             target.write_text(
                 SYNC_CODEX_CONFIG.BEGIN_MARKER
@@ -317,20 +313,19 @@ class CodexConfigHelperTests(unittest.TestCase):
 
             capture_result = self.run_helper("capture", source, target)
             self.assertEqual(capture_result.returncode, 0, capture_result.stderr)
-            self.assertEqual(source.read_text(), PERMISSION_PROFILE_PORTABLE)
+            self.assertEqual(source.read_text(), PORTABLE)
 
             apply_result = self.run_helper("apply", source, target)
             self.assertEqual(apply_result.returncode, 0, apply_result.stderr)
             live = target.read_text()
-            self.assertIn('default_permissions = "dots"', live)
-            self.assertIn('web_search = "live"', live)
-            self.assertNotIn("sandbox_mode", live)
+            self.assertIn('sandbox_mode = "danger-full-access"', live)
+            self.assertNotIn("default_permissions", live)
             self.assertNotIn("approvals_reviewer", live)
 
-    def test_permission_profile_keeps_explicit_nondefault_approvals_reviewer(self):
-        portable = PERMISSION_PROFILE_PORTABLE.replace(
-            'web_search = "live"\n',
-            'web_search = "live"\napprovals_reviewer = "auto_review"\n',
+    def test_keeps_explicit_nondefault_approvals_reviewer(self):
+        portable = PORTABLE.replace(
+            'model = "portable-model"\n',
+            'model = "portable-model"\napprovals_reviewer = "auto_review"\n',
         )
 
         self.assertIn(
@@ -435,11 +430,9 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             self.assertEqual(stat.S_IMODE(config.stat().st_mode), 0o600)
             live_config = config.read_text()
             self.assertIn('approval_policy = "never"', live_config)
-            self.assertIn(
-                'default_permissions = ":danger-full-access"', live_config
-            )
+            self.assertIn('sandbox_mode = "danger-full-access"', live_config)
             self.assertIn('web_search = "live"', live_config)
-            self.assertNotIn("sandbox_mode", live_config)
+            self.assertNotIn("default_permissions", live_config)
             self.assertNotRegex(live_config, r"\[permissions(?:\.|\])")
             self.assertNotIn("approvals_reviewer", live_config)
             self.assertIn('[apps._default]', live_config)
