@@ -29,6 +29,7 @@ LOCAL_TABLE_PREFIXES = (
 PORTABLE_TABLE_EXCEPTIONS = (("mcp_servers", "openaiDeveloperDocs"),)
 APP_RUNTIME_TABLE_KEYS = {("features",): {"chronicle", "js_repl"}}
 APP_RUNTIME_ROOT_KEYS = {"sandbox_mode"}
+APP_RUNTIME_ROOT_DEFAULT_VALUES = {"approvals_reviewer": '"user"'}
 APP_RUNTIME_DEFAULT_VALUES = {
     ("features",): {"default_mode_request_user_input": "false"},
     ("desktop",): {
@@ -181,7 +182,14 @@ def strip_app_runtime_keys(text: str) -> str:
         if not (
             has_permission_profile
             and (match := ASSIGNMENT_RE.match(line))
-            and match.group(1) in APP_RUNTIME_ROOT_KEYS
+            and (
+                match.group(1) in APP_RUNTIME_ROOT_KEYS
+                or (
+                    (value_match := ASSIGNMENT_VALUE_RE.match(line))
+                    and APP_RUNTIME_ROOT_DEFAULT_VALUES.get(value_match.group(1))
+                    == value_match.group(2)
+                )
+            )
         )
     ]
     for path, lines in tables:

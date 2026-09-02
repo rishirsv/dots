@@ -300,7 +300,8 @@ class CodexConfigHelperTests(unittest.TestCase):
             runtime_portable = PERMISSION_PROFILE_PORTABLE.replace(
                 'web_search = "live"\n',
                 'web_search = "live"\n'
-                'sandbox_mode = "danger-full-access"\n',
+                'sandbox_mode = "danger-full-access"\n'
+                'approvals_reviewer = "user"\n',
             )
             target.write_text(
                 SYNC_CODEX_CONFIG.BEGIN_MARKER
@@ -324,6 +325,18 @@ class CodexConfigHelperTests(unittest.TestCase):
             self.assertIn('default_permissions = "dots"', live)
             self.assertIn('web_search = "live"', live)
             self.assertNotIn("sandbox_mode", live)
+            self.assertNotIn("approvals_reviewer", live)
+
+    def test_permission_profile_keeps_explicit_nondefault_approvals_reviewer(self):
+        portable = PERMISSION_PROFILE_PORTABLE.replace(
+            'web_search = "live"\n',
+            'web_search = "live"\napprovals_reviewer = "auto_review"\n',
+        )
+
+        self.assertIn(
+            'approvals_reviewer = "auto_review"',
+            SYNC_CODEX_CONFIG.strip_app_runtime_keys(portable),
+        )
 
     def test_portable_source_rejects_two_permission_systems(self):
         with tempfile.TemporaryDirectory() as directory:
