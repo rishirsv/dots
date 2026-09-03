@@ -58,9 +58,10 @@ one unusual task.
    integration or visible behavior. Bugs use the original reproduction;
    refactors compare the pinned behavior; performance work repeats the frozen
    measurement.
-7. **Review and finish.** Apply `$code-quality-review`, repair retained in-scope
-   findings, rerun affected checks, inspect the final diff, and summarize the
-   result, proof, intentional exclusions, and remaining risk.
+7. **Review and finish.** Apply `$code-quality-review` and report its result. If
+   the user explicitly asked to address review findings, repair the complete
+   retained set sequentially, rerun affected checks, and inspect the final diff.
+   Summarize the result, proof, intentional exclusions, and remaining risk.
 
 ## Stop at a planning handoff when requested
 
@@ -83,8 +84,8 @@ verified material and reading order to `$html`. HTML changes the review surface,
 not the planning method. Do not make a durable artifact for a localized change
 whose handoff fits clearly in chat.
 
-`$code-quality-review` owns review scope, subagent strategy, findings, repairs,
-and final independent review. Do not recreate that procedure here.
+`$code-quality-review` owns review scope, subagent strategy, findings, and the
+optional repair path. Do not recreate that procedure here.
 
 The playbook is complete when the requested behavior works through its real
 path, proof supports the result, review is complete at the selected depth, and
