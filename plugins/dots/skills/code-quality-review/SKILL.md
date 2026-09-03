@@ -16,6 +16,8 @@ Review only after the implementation task is complete.
 
 - Use the target named by the user. Otherwise review the current branch and its
   staged, unstaged, and untracked changes.
+- If the selected target has no changes, report that there is no reviewable
+  diff and stop before spawning a reviewer.
 - For a pull request, use its actual base and head.
 - For a base-branch review, compare what would actually merge. Use the base
   branch's configured upstream when it exists and is ahead of the local base;
@@ -34,11 +36,14 @@ Review only after the implementation task is complete.
 - Spawn one fresh, read-only adversarial reviewer for every review.
 - Use an adversary or reviewer role when one is available. Otherwise, use a
   fresh subagent and have it load this skill.
-- An agent that implemented any part of the change must not review that code.
+- An agent that implemented any part of the change must not serve as its
+  independent reviewer.
 - Give the reviewer the fixed target, intended behavior, applicable repository
   instructions, and changed paths. Use the smallest sufficient context and
   default to no inherited conversation history.
-- Reviewers return candidate findings without editing or delegating.
+- Reviewers return only candidate findings and material coverage gaps without
+  editing or delegating. Do not summarize clean areas or praise the
+  implementation.
 
 ### When to fan out
 
@@ -56,16 +61,17 @@ distinct lanes exist.
 - Divide changed paths by subsystem, owner, or execution flow.
 - Give every path one primary lane. Add an integration lane when interactions
   between lanes need review.
-- Each reviewer applies all review guidelines to its lane and may inspect
-  outside it for context, but reports only findings in its lane.
+- Each reviewer applies every relevant review guideline to its lane and may
+  inspect outside it for context, but reports only findings in its lane. Do not
+  manufacture coverage for guidelines that do not apply.
 - Do not give every reviewer the same undivided diff.
 
 ### Coordinate results
 
-- Merge duplicate candidates, check them against the code, call sites, and
-  tests, and apply the finding contract.
-- If no fresh reviewer is available, report that the required independent
-  review did not run.
+- Merge duplicate candidates and apply the finding contract.
+- If no fresh reviewer is available, perform the complete review inline and
+  label the result `Independent review unavailable.` Do not present it as an
+  independent review.
 
 ## Review guidelines
 
@@ -95,18 +101,26 @@ against the relevant code and tests before keeping it.
    - Clarify the implementation with descriptive, project-consistent names,
      grouped logic, and direct control flow. Prefer explicit code to dense
      expressions, nested ternaries, or clever brevity.
-   - Consolidate new or repeated conditionals into a clear model, helper,
-     state, or policy when one owner can remove the branching.
+   - Collapse repeated branches when one existing owner can express the
+     behavior directly. Add a helper or model only when it removes duplicated
+     policy rather than renaming it.
    - Before deleting, inlining, or collapsing code, identify the invariant,
      constraint, or ownership it serves. Consult history only when the current
      code, tests, and documentation do not explain it.
    - Remove duplication, dead or derivable state, no-op artifacts, and comments
      that restate obvious or deleted code.
-   - Retain wrappers and abstractions only when they remove more complexity
-     than they add. Challenge speculative flexibility, unnecessary casts or
-     optionality, and ad-hoc shapes that obscure the real invariant.
-   - Keep a cleanup finding only when the concrete maintenance cost and a
-     simpler alternative can be named.
+   - Prefer the standard library, platform API, or existing canonical repository
+     utility over hand-rolled machinery or a new dependency. Keep a dependency
+     only when its current value exceeds its API, update, binary, and lifecycle
+     cost.
+   - Reject a new wrapper, protocol, service, adapter, configuration layer, or
+     dependency unless a current duplicate behavior, second real
+     implementation, or required platform boundary justifies it and the change
+     reduces production concepts. Inline single-use flexibility when no such
+     boundary exists.
+   - Keep a simplification finding only when it names the current maintenance
+     cost and shows the shorter concrete form: code to delete, logic to inline,
+     or the existing owner or platform facility that replaces it.
 
 3. **Modularity and ownership**
 
@@ -118,9 +132,10 @@ against the relevant code and tests before keeping it.
    - Preserve cohesion. Flag added coupling, blurred state ownership, crossed
      module boundaries, or unrelated responsibilities. Judge file and
      component size by scanability, not a fixed line count.
-   - Follow an established pattern when it fits. Introduce a new pattern only
-     when the requirements justify it, and document it when future work needs
-     to follow it.
+   - Reuse an established pattern only when its ownership and cost fit this
+     change. Do not copy a pattern whose only purpose is speculative
+     flexibility. Introduce a new pattern only for a current requirement that
+     existing owners cannot meet.
    - Separate orchestration from low-level detail. Check whether work is more
      sequential or less atomic than it needs to be, and whether lifecycle and
      integration boundaries remain clear.
@@ -129,27 +144,22 @@ against the relevant code and tests before keeping it.
 
 4. **Tests**
 
-   - Inspect changed tests and relevant existing results. Validation belongs to
-     the owning implementation workflow.
-   - Confirm that tests exercise the intended behavior rather than merely the
-     implementation.
-   - Require a regression test for a demonstrated bug, and flag other missing
-     tests only when the uncovered behavior is material and the repository
-     would normally test it.
-   - Verify the real path and outputs at boundaries and in asynchronous work.
-   - For changed tests, review regression signal rather than test count. Flag:
-     - the same invariant tested at multiple layers;
-     - a test double that computes production outcomes;
-     - exact copy, style, haptic, or timing assertions without an external
-       contract;
-     - a new test file created only because a production symbol was added;
-     - test-only launch flags, hooks, or fixtures without a current owner and
-       removal condition;
-     - assertions about repository calls where the durable result could be
-       asserted; and
-     - wholesale deletion of a mixed suite without mapping its privacy,
-       persistence, concurrency, retry, lifecycle, and external-system
-       contracts.
+   - Review tests as durable product contracts, not an inventory of changed
+     code. Inspect applicable existing results; do not run builds or test suites
+     as part of review.
+   - A test earns its place only when it protects material behavior, would fail
+     for a plausible regression, has one owning layer, and cannot be proved more
+     truthfully by types, static checks, rendered or manual evidence, or an
+     existing lower-level test. A bug does not automatically require a new test.
+   - Flag duplicate coverage and assertions about exact copy, layout, styling,
+     motion, haptics, calls, forwarding, or source structure unless an external,
+     privacy, accessibility, persistence, or compatibility contract requires
+     that exact value.
+   - Prefer real boundaries and durable outputs. A double may configure, record,
+     delay, fail, or cancel; it must not calculate production outcomes. Before
+     deleting a mixed suite, identify the privacy, data-integrity, concurrency,
+     retry, lifecycle, persistence, and external-system contracts that need a
+     surviving owner.
 
 5. **Security and performance**
 
@@ -177,19 +187,17 @@ Keep a finding only when all of these are true:
 
 Reject speculation, pre-existing problems, intentional behavior within the
 stated scope, and style nits that do not obscure the code. Anchor each finding
-to the smallest useful changed-line range. Return every qualifying finding
-without padding or a numeric cap. For a structural finding, name the smallest
-restructuring that removes the problem.
+to the smallest useful changed-line range. State the evidence, affected scenario
+and impact, and smallest credible repair. When a finding depends on a
+specification or repository rule, cite the exact source and requirement. Return
+every qualifying finding without padding or a numeric cap.
 
 Use `P0` for a universal release blocker or critical failure, `P1` for an urgent
 defect, `P2` for an ordinary defect that should be fixed, and `P3` for a
 low-impact issue that is still worth fixing.
 
-Use Challenge posture only when the user explicitly asks. Stress-test the
-implementation without changing the stated intent or lowering the finding bar.
-A concern that is not yet a finding must identify its changed-line anchor,
-evidence, material impact, and the missing proof. Use `$architecture-review`
-instead when the user wants a broad structural audit beyond the change.
+Use `$architecture-review` when the user wants a broad structural audit beyond
+the selected change.
 
 For pull requests, finish the independent review before reading existing review
 discussion. Then inspect current checks and unresolved threads. Return findings
@@ -202,8 +210,9 @@ task scope. A standalone review remains read-only unless the user asks for
 repair. Review helpers never modify files, create commits, push, or post
 comments.
 
-Before finishing after repairs, have a reviewer that did not write them inspect
-the repaired diff. Report any finding left unresolved because it requires new
+Reuse the original reviewer to inspect the repaired diff when it did not author
+the repairs. Use a new reviewer only if independence was lost or the review
+scope changed. Report any finding left unresolved because it requires new
 authority or expands the task.
 
 For a review-only result, present findings first in priority order:
@@ -211,7 +220,10 @@ For a review-only result, present findings first in priority order:
 `[P1] Imperative finding title — path/to/file.ext:line`
 
 Follow each title with one short paragraph explaining the affected scenario and
-impact. Say `No findings.` when none qualify. For a post-change review, summarize
-the fixes and review outcome instead of repeating repaired findings. Include only
-unresolved findings in the standard format. Omit rejected candidates, reviewer
-process, and empty sections unless the user requested Challenge posture.
+impact. A material coverage gap is an unresolved candidate that could change the
+review outcome but lacks available proof. After the findings, list each one under
+`Needs evidence` with its changed-line anchor, attempted check, potential impact,
+and missing proof. Say `No findings.` when none qualify. For a post-change review,
+summarize the fixes and review outcome instead of repeating repaired findings.
+Include only unresolved findings in the standard format. Omit rejected
+candidates, reviewer process, and empty sections.

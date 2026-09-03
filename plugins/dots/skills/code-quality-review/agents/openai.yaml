@@ -7,4 +7,4 @@ interface:
   default_prompt: "Use $code-quality-review before merging this change. Review correctness, readability, simplicity, modularity, tests, security, and performance; repair verified findings when authorized."
 
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

@@ -57,15 +57,12 @@ Non-obvious things, surprising behavior, historical context, sharp edges. Skip t
 
 ## Communication Style
 
-- Use concrete language, not abstractions-about-abstractions
-- Say "the `UserService` calls `AuthClient.refresh()`" not "the service delegates to the client"
-- Name the runtime actor and responsibility before the file or symbol. Source
-  locations support the explanation; they are not the explanation
-- When something is complex, explain why it's complex. Don't just describe the complexity
-- When something is simple, don't pad it out
-- If there's a helpful analogy, use it; if there isn't, don't force one
-- If the explorers flagged open questions or gaps, acknowledge them honestly rather than papering over them
-- Keep source links beside distinct causal claims. Concentrate navigation-only
-  links in Where Things Live
-- Make every consequential handoff understandable without requiring the reader
-  to open the repository
+Use concrete language: say "the `UserService` calls `AuthClient.refresh()`",
+not "the service delegates to the client". Name the runtime actor and its
+responsibility before the file or symbol; source locations support the
+explanation rather than being it. Keep a source link beside each distinct
+causal claim and concentrate navigation-only links in Where Things Live, so
+every consequential handoff is understandable without opening the repository.
+When something is complex, explain why it is complex. When the explorers
+flagged gaps or open questions, carry them into the explanation rather than
+papering over them.
