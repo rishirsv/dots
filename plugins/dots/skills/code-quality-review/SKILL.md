@@ -26,7 +26,7 @@ explicitly asks.
 - Keep the target fixed during review. Restart if it changes unexpectedly. Ask
   only when ambiguity would materially change what success means.
 
-## Coordinate one review wave
+## Coordinate review
 
 Use this section only when coordinating the review. A delegated reviewer skips
 it and follows **Review the assigned change** directly.
@@ -35,9 +35,10 @@ it and follows **Review the assigned change** directly.
    role when one is available; otherwise use a fresh subagent and have it load
    this skill. An agent that implemented any part of the change must not serve
    as its independent reviewer.
-2. Give the reviewer the fixed target, intended behavior, applicable repository
-   instructions, and changed paths. Use the smallest sufficient context and
-   default to no inherited conversation history.
+2. Give the reviewer the fixed target, intended behavior, any review focus the
+   user requested, applicable repository instructions, and changed paths. Use
+   the smallest sufficient context and default to no inherited conversation
+   history.
 3. Use one reviewer by default. Fan out only when the user asks, the change has
    distinct subsystems or execution paths, or a high-risk boundary needs
    separate coverage. Use the requested count; otherwise use up to three.
@@ -59,10 +60,9 @@ review.
 
 ## Review the assigned change
 
-A delegated reviewer inspects the assigned target directly. Do not spawn
-another reviewer, edit files, or delegate. Return only the complete set of
-supported findings and material coverage gaps; do not summarize clean areas or
-praise the implementation.
+A delegated reviewer inspects the assigned target directly and returns its
+findings to the coordinating agent. It does not spawn or delegate another
+reviewer, edit files, create commits, push branches, or post review comments.
 
 Inspect the complete diff for the selected target or assigned lane and enough
 surrounding code, call sites, and tests to understand each changed path.
@@ -114,9 +114,9 @@ returning it.
 
 ### Tests
 
-- Review tests as durable product contracts, not an inventory of changed code.
-  Inspect applicable existing results; do not run builds or test suites as part
-  of review.
+- Treat tests as durable product contracts, not as a checklist of changed code.
+  Review applicable existing test results, but do not run builds or test suites
+  during the review.
 - Keep tests that protect material behavior and would fail for a plausible
   regression. Prefer one owning layer, and remove coverage already enforced by
   types, static checks, or a more truthful existing test.
@@ -124,7 +124,8 @@ returning it.
   replacement for durable regression protection when automation is practical.
 - Flag assertions about exact copy, layout, styling, motion, haptics, calls,
   forwarding, or source structure unless an external, privacy, accessibility,
-  persistence, or compatibility contract requires that exact value.
+  persistence, or compatibility contract requires that exact value. If the
+  repository has a product design skill, use it.
 - Prefer real boundaries and durable outputs. A double may configure, record,
   delay, fail, or cancel; it must not calculate production outcomes. Before
   deleting a mixed suite, identify the privacy, data-integrity, concurrency,
@@ -161,37 +162,41 @@ scenario, impact, and smallest credible repair. Cite the exact source and
 requirement for a specification or repository-rule finding. Return every
 qualifying finding without padding or a numeric cap.
 
-Use `P0` for a universal release blocker or critical failure, `P1` for an urgent
-defect, `P2` for an ordinary defect that should be fixed, and `P3` for a
-low-impact issue that is still worth fixing.
-
-A material coverage gap is an unresolved candidate that could change the review
-outcome but remains unprovable after checking the available code, callers,
-tests, results, and repository rules. Report it under `Needs evidence` with its
-changed-line anchor, attempted check, potential impact, and missing proof.
-
 Use `$architecture-review` when the user wants a broad structural audit beyond
 the selected change.
 
 For pull requests, finish the independent review before reading existing review
-discussion. Then inspect current checks and unresolved threads. Return findings
-locally unless the user explicitly asks to post them.
+discussion. Then inspect current checks and unresolved threads. The coordinating
+agent posts findings only when the user explicitly asks; otherwise report them
+locally.
 
 ## Report, then optionally repair
 
-Present findings first in priority order:
+Present findings first, ordered by severity. Use one entry per issue in this
+form:
 
-`[P1] Imperative finding title — path/to/file.ext:line`
+`[P1] Imperative finding title — path/to/file.rs:line`
 
-Follow each title with one short paragraph explaining the affected scenario and
-impact. Then list any material coverage gaps under `Needs evidence`. Say
-`No findings.` when neither exists. Omit rejected candidates, reviewer process,
-clean-area summaries, praise, and empty sections.
+Follow the title with one short paragraph explaining the affected scenario and
+why the behavior is wrong. Keep the cited range as small as possible and make
+sure it overlaps the reviewed diff.
+
+Use these priorities:
+
+- `P0`: universal release blocker or critical failure.
+- `P1`: urgent defect that should be fixed next.
+- `P2`: ordinary defect that should be fixed.
+- `P3`: low-impact issue that is still worth fixing.
+
+If there are no qualifying findings, say `No findings.` Do not invent a finding
+to fill the result. After the findings, add a brief overall assessment and
+mention any material test gaps or residual risks. Omit rejected candidates,
+reviewer process, clean-area summaries, and praise.
 
 If the user explicitly asked to address findings, the coordinating agent repairs
-the complete retained set sequentially after synthesis. Review helpers remain
-read-only. Do not repair a finding that requires new authority or expands the
-original task; report it unresolved. Run affected checks, inspect the final diff,
-and report repairs, unresolved findings, proof, and remaining risk. Do not start
-another review after ordinary repairs. Start a new review only when the user asks
-or the repairs materially change the original review scope.
+the complete retained set sequentially after synthesis. Do not repair a finding
+that requires new authority or expands the original task; report it unresolved.
+Run affected checks, inspect the final diff, and report repairs, unresolved
+findings, proof, and remaining risk. Do not start another review after ordinary
+repairs. Start a new review only when the user asks or the repairs materially
+change the original review scope.
