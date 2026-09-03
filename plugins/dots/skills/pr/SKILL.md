@@ -60,9 +60,10 @@ help a reviewer verify the change.
 Upload visual evidence only when the completed task already produced a
 screenshot or short video; `$pr` does not capture or recapture it.
 
-Use `gh pr create` or `gh pr edit` with `--attach` first. Write the description
-to a Markdown file, reference each image where it belongs using its local path,
-then attach that path. For example:
+Use `gh pr create` or `gh pr edit` with `--attach`. Write the description to a
+Markdown file, reference each image or video where it belongs using its local
+path, then attach that path. Put a video reference in its own paragraph so it
+renders as a player. For example:
 
 ```bash
 gh pr create --title "Show account status in Settings" \
@@ -85,12 +86,6 @@ reference, it appends the file; set appended-image alt text with a quoted
 gh pr edit 123 --attach './settings.png#Account status in Settings'
 ```
 
-Before using `--attach`, check the selected command's `--help` output for the
-flag. After publishing, confirm that the saved body contains
+After publishing, confirm that the saved body contains
 `github.com/user-attachments` links instead of local paths and that each image
-or video renders.
-
-If `gh` lacks `--attach` or the upload fails, use a signed-in GitHub browser:
-edit the description, upload through the attachment control or drag-and-drop
-target, wait for GitHub to insert its `github.com/user-attachments` link, save,
-and confirm that it renders. Never paste a local path into the pull request.
+or video renders. Never leave a local path in the pull request.
