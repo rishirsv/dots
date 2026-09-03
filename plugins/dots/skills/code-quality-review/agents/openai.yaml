@@ -4,7 +4,7 @@ interface:
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
   brand_color: "#36C5A7"
-  default_prompt: "Use $code-quality-review before merging this change. Review correctness, readability, simplicity, modularity, tests, security, and performance; repair verified findings when authorized."
+  default_prompt: "Use $code-quality-review to report findings for this completed change; address them only if I explicitly ask."
 
 policy:
   allow_implicit_invocation: false
