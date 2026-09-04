@@ -48,20 +48,25 @@ one unusual task.
    Apply `$design` when visible product UI needs its full workflow, then return
    here.
 5. **Implement.** Build the complete authorized change in checkable units.
-   Verify each meaningful unit before depending on it. A bounded unit with
-   settled behavior, source anchors, and an executable check may go to a
-   cheaper worker; the coordinator retains design decisions, integration,
-   review, and final proof. Reopen step 4 when repeated implementation friction
-   shows that the selected boundary or data shape is wrong.
+   Verify a unit before depending on it when failure would compound. Reuse
+   current proof and rerun a check only after a relevant change, a failure, or
+   an unresolved concern. A bounded unit with settled behavior, source anchors,
+   and an executable check may go to a cheaper worker; the coordinator retains
+   design decisions, integration, review, and final proof. Reopen step 4 when
+   repeated implementation friction shows that the selected boundary or data
+   shape is wrong.
 6. **Prove it.** Run focused repository checks and exercise the real product
    path when one exists. A build or unit test does not by itself prove an
    integration or visible behavior. Bugs use the original reproduction;
    refactors compare the pinned behavior; performance work repeats the frozen
    measurement.
-7. **Review and finish.** Apply `$code-quality-review` and report its result. If
-   the user explicitly asked to address review findings, repair the complete
-   retained set sequentially, rerun affected checks, and inspect the final diff.
-   Summarize the result, proof, intentional exclusions, and remaining risk.
+7. **Review and finish.** Apply `$code-quality-review` and consume its result.
+   An implementation request authorizes repair of supported findings that stay
+   inside the original goal; do not ask again. Repair the retained set
+   sequentially, rerun affected checks, and inspect the final diff. For a
+   review-only or planning-only request, or a finding that needs new authority
+   or expands the goal, report rather than repair. Summarize the result, proof,
+   intentional exclusions, and remaining risk.
 
 ## Stop at a planning handoff when requested
 
@@ -85,7 +90,8 @@ not the planning method. Do not make a durable artifact for a localized change
 whose handoff fits clearly in chat.
 
 `$code-quality-review` owns review scope, subagent strategy, findings, and the
-optional repair path. Do not recreate that procedure here.
+repair procedure. Pass it the implementation workflow's original authorization
+instead of recreating that procedure here.
 
 The playbook is complete when the requested behavior works through its real
 path, proof supports the result, review is complete at the selected depth, and

@@ -5,7 +5,10 @@ description: "Audit a codebase or subsystem for structural refactors, misplaced 
 
 # Architecture Review
 
-Review a codebase or subsystem for structural refactor candidates and architecture improvement opportunities. Surface candidates first; do not start a broad refactor until the user chooses a candidate or explicitly asks for implementation.
+Review a codebase or subsystem for structural refactor candidates and
+architecture improvement opportunities. Surface candidates first. A review-only
+request stops after a ranked recommendation. An implementation request
+continues with the strongest supported candidate unless the user named one.
 
 Default to hard-cut architecture: one canonical owner and one current path,
 except where persisted data or an external contract requires compatibility.
@@ -17,11 +20,13 @@ except where persisted data or an external contract requires compatibility.
 - Read [duplicate-ownership.md](../../references/duplicate-ownership.md) when a finding involves a second source of truth, copied policy, normalization, or competing rule owners.
 - Read [test-consolidation.md](references/test-consolidation.md) when a refactor changes test placement, duplicates tests, or creates a new test surface.
 - Read [hard-cut-policy.md](../../references/hard-cut-policy.md) for every architecture review or refactor. It defines the default hard-cut posture, exception rule, and cleanup checklist.
-- Read [interface-design.md](references/interface-design.md) only after the user selects a candidate and wants alternative interface designs.
+- Read [interface-design.md](references/interface-design.md) only after a candidate is selected and the work needs alternative interface designs.
 
 ## Scope
 
-Start by clarifying the review target from the user request, current branch, touched subsystem, or named files. If the user asks for a broad scan, map the top-level repository structure before drilling into a subsystem.
+Start by resolving the review target from the user request, current branch,
+touched subsystem, or named files. If the user asks for a broad scan, map the
+top-level repository structure before drilling into a subsystem.
 
 Read applicable `AGENTS.md` and other review guidance before recommending changes: architecture docs, ADRs/design docs, ownership docs, module READMEs, and relevant tests.
 
@@ -72,20 +77,23 @@ Default to a ranked candidate report in chat unless the user asks for a file or 
 
 Write for the repo owner deciding what to do next: lead with the strongest candidate and why, keep candidates scannable, and skip dimensions that don't apply rather than filling in every field.
 
-Ask which candidate the user wants to explore before designing interfaces or editing code. If the user has already asked to implement, pick the strongest candidate, state the plan, and keep the patch scoped to that candidate.
+For a review-only request, recommend the strongest candidate and stop with a
+concrete report rather than adding a confirmation question. If implementation
+is already authorized, select the strongest supported candidate, state its
+scope, and continue.
 
 ## Candidate Loop
 
-After the user chooses a candidate:
+After a candidate is selected:
 
 1. Restate the problem space, constraints, dependency category, and current seam.
 2. Identify the behavior that must stay true, the current tests or commands that prove it, and the owning invariant. If the behavior is important and untested, characterize it before making behavior-adjacent edits.
 3. If the interface is not obvious, use [interface-design.md](references/interface-design.md) to generate alternative interface designs.
 4. Compare designs by depth, locality, seam placement, adapter need, and test surface.
 5. Recommend one path. Be opinionated.
-6. Only then implement, and only inside the approved candidate scope.
+6. Implement only inside the selected candidate scope.
 
 ## Boundaries
 
 - Do not turn a broad scan into a drive-by refactor.
-- Do not propose interfaces before the user chooses a candidate unless the user explicitly asks.
+- Do not propose interfaces before a candidate is selected unless the user explicitly asks.

@@ -6,8 +6,10 @@ looking at the real rendered surface, not reasoning about the code.
 
 ## Tool Order
 
-- **Web/HTML**: Codex Browser first, Chrome only as fallback. Never Playwright
-  unless the user asks.
+- **Web/HTML**: Codex Browser first, Chrome only as fallback. Use Playwright only
+  when browser-native inspection cannot verify a repeatable interaction or
+  state. Do not add it merely to prove static rendering or as a production
+  dependency.
 - **iOS**: the user's simulator via XcodeBuildMCP (`build_run_sim`,
   `screenshot`, `snapshot_ui`). Check `session_show_defaults` before the first
   build in a session.
@@ -20,14 +22,16 @@ looking at the real rendered surface, not reasoning about the code.
    Fall back to a throwaway localhost server (`python3 -m http.server` in the
    artifact directory) instead of declaring the artifact broken.
 2. **Wrong tab/window.** Confirm the inspected tab is the artifact you just
-   built — open the file URL in a fresh window when in doubt. Screenshotting
-   an unrelated tab and calling it proof has happened before.
+   built. Open the file URL in a fresh window when in doubt. Screenshotting an
+   unrelated tab and calling it proof has happened before.
 3. **Viewport misses.** Check desktop, 375px, and 320px widths. Flag any
    horizontal overflow; wide content must scroll inside its own container.
 
 ## Proof Standard
 
 - A claim that something renders correctly requires a screenshot or an
-  in-browser inspection from this run — never inferred from code.
+  in-browser inspection from this run, never an inference from code.
+- Reuse valid evidence from the current run. Capture it again only after a
+  relevant change or when the existing evidence does not cover the claim.
 - Name what was verified (URL/screen, viewport, state) and what was not.
 - Before sharing evidence, confirm screenshots and logs contain no secrets.

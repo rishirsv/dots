@@ -1,7 +1,10 @@
 # Reviewing a skill
 
-Diagnose the skill from source and existing evidence. Keep the source unchanged;
-new behavioral trials require a separate, explicitly authorized workflow.
+Diagnose the skill from source and available evidence. Keep the source unchanged
+for a review-only request. Existing read-only validators and lightweight
+non-mutating trials may run when they can resolve a material uncertainty; do not
+create durable evaluation artifacts, modify external state, or edit the skill
+unless the request authorizes that work.
 
 ## 1. Set the review contract
 
@@ -67,6 +70,7 @@ every placeholder, hash every inspected file that supports the verdict or a
 finding, and keep the finished receipt immutable. Recheck relevant hashes
 before consuming it later.
 
-When a claim needs fresh behavioral evidence, state the limitation and the
-smallest useful forward test. Change source only after the user requests an
-update.
+When a claim needs fresh behavioral evidence, run the smallest permitted
+non-mutating test when one is available. Otherwise state the limitation and the
+test that would resolve it. Change source only when the user requested an
+update or the calling workflow already authorizes one.

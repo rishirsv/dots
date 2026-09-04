@@ -5,9 +5,10 @@ description: "Use only when the user selects `$clarify` to resolve underspecifie
 
 # Clarify
 
-Ask the minimum set of clarifying questions needed to avoid wrong work. Before
-implementing, confirm the resulting shared understanding unless the user
-explicitly approves proceeding with stated assumptions.
+Ask the minimum set of questions needed to avoid wrong work. Complete every
+useful inspection or preparation step that does not depend on the answers. Once
+the user answers or tells you to proceed with assumptions, continue without a
+second confirmation pause.
 
 ## Workflow
 
@@ -43,21 +44,23 @@ Make each question easy to answer:
   and
 - separate must-have questions from optional preferences when both exist.
 
-### 3. Pause only for answers that change the work
+### 3. Pause only the dependent decision
 
-Do not edit files or produce a detailed implementation plan while a must-have
-decision is unresolved. Low-risk repository inspection may continue.
+Do not commit to an implementation choice while a must-have decision is
+unresolved. Continue repository inspection, reversible preparation, and any
+work whose result does not depend on that answer.
 
 If the user tells you to proceed without answering, state the assumptions that
-could affect the result and continue. Do not require another confirmation after
-the user has already approved that path.
+could affect the result and continue immediately. Do not require another
+confirmation after the user has approved that path.
 
 ### 4. Record the shared understanding when it helps
 
 For work with meaningful scope or risk, summarize the agreed outcome,
 definition of done, scope and non-goals, constraints, and remaining assumptions.
-Keep it short. Clarify owns alignment, not a repo-grounded implementation plan.
+Keep it short. This summary is a handoff into the work, not another approval
+gate. Clarify owns alignment, not a repo-grounded implementation plan.
 
 Finish when every blocking ambiguity is answered, explicitly deferred, or
 covered by an assumption the user authorized. If later evidence changes one of
-those decisions, surface the change before continuing.
+those decisions, surface the change while continuing all unaffected work.
