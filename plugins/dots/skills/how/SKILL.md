@@ -41,8 +41,10 @@ Choose the exploration path:
 - **Simple:** a single module, small utility, or narrow function. Explore and
   explain it directly in the current context.
 - **Complex:** a subsystem spread across several files or services, a
-  cross-cutting feature, or a broad architectural overview. Use one to three
-  read-only explorer agents with distinct parts of the system to trace.
+  cross-cutting feature, or a broad architectural overview. Trace it directly
+  when one coherent pass can cover the consequential paths. Add read-only
+  explorers only when the work divides into independent paths or parallel
+  investigation materially improves coverage or latency.
 
 When in doubt, start simple. Add an explorer only when the source stops fitting
 comfortably in one coherent pass.
@@ -53,8 +55,8 @@ Start broad enough to find the real entry point, then follow the thread through
 callers, callees, types, state changes, data flow, boundaries, and observable
 effects. Read the code. Do not guess from file names.
 
-For complex questions, divide the work by parts that answer different pieces of
-the question. A rate limiter might split into:
+When delegating a complex question, divide the work by parts that answer
+different pieces of the question. A rate limiter might split into:
 
 - data model and state management;
 - request path and enforcement; and

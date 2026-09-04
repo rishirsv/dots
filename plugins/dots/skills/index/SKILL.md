@@ -27,9 +27,10 @@ workflow. It routes into focused skills as its phases require.
 
 Use `$architect` before implementation when a consequential new or changed
 boundary needs its caller experience, types, ownership, state model, or module
-shape settled. Use `$design` for visible product UI, `$prototype` for a choice
-best settled by observation, and `$code-quality-review` before finishing the
-completed change.
+shape settled. Use `$design` for visible product UI and `$prototype` for a
+choice best settled by observation. Let Feature Development decide whether a
+`$code-quality-review` is warranted before completion and whether its retained
+in-scope findings are repaired under existing authorization.
 
 ## Choose the focused owner
 

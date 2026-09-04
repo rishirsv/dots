@@ -1,13 +1,14 @@
 ---
 name: code-quality-review
-description: "Review completed code changes before merging for correctness, readability, simplicity, and maintainability. Returns a read-only finding report by default and repairs findings only when the user explicitly asks."
+description: "Review completed code changes before merging for correctness, readability, simplicity, and maintainability. Returns findings by default; repairs retained in-scope findings when invoked by an authorized implementation workflow, otherwise only when the user explicitly asks."
 ---
 
 # Code Quality Review
 
 Review a completed change against its intended behavior and repository
-constraints. Report findings by default. Repair them only when the user
-explicitly asks.
+constraints. Report findings by default. Repair retained in-scope findings when
+this review is a required step inside an authorized implementation workflow;
+otherwise repair only when the user explicitly asks.
 
 ## Fix the review target
 
@@ -31,32 +32,41 @@ explicitly asks.
 Use this section only when coordinating the review. A delegated reviewer skips
 it and follows **Review the assigned change** directly.
 
-1. Spawn one fresh, read-only adversarial reviewer. Use an adversary or reviewer
-   role when one is available; otherwise use a fresh subagent and have it load
-   this skill. An agent that implemented any part of the change must not serve
-   as its independent reviewer.
-2. Give the reviewer the fixed target, intended behavior, any review focus the
+1. Decide whether an independent reviewer can add meaningful coverage. Use one
+   for a consequential boundary, a broad or cross-cutting diff, an explicitly
+   requested independent review, or a change authored in the active context
+   where a second reading could change the result. Review a narrow, local diff
+   inline when it does not meet that bar.
+2. When using an independent reviewer, spawn one fresh, read-only adversarial
+   reviewer. Use an adversary or reviewer role when one is available; otherwise
+   use a fresh subagent and have it load this skill. An agent that implemented
+   any part of the change must not serve as its independent reviewer.
+3. Give the reviewer the fixed target, intended behavior, any review focus the
    user requested, applicable repository instructions, and changed paths. Use
    the smallest sufficient context and default to no inherited conversation
    history.
-3. Use one reviewer by default. Fan out only when the user asks, the change has
-   distinct subsystems or execution paths, or a high-risk boundary needs
-   separate coverage. Use the requested count; otherwise use up to three.
-4. When fanning out, give every changed path one primary lane. Add an
+4. Fan out only when the user asks, the change has distinct subsystems or
+   execution paths, or a high-risk boundary needs separate coverage. Use the
+   requested count; otherwise use up to three.
+5. When fanning out, give every changed path one primary lane. Add an
    integration lane only when interactions need separate review. A reviewer may
    inspect outside its lane for context but reports findings only for its lane.
    Do not give every reviewer the same undivided diff.
-5. Wait for every reviewer to finish. Each reviewer returns its complete lane
-   findings in one response before synthesis or repair begins.
-6. Merge duplicates and combine related findings without weakening the finding
-   contract. Resolve material disagreement only when needed; do not repeat each
-   reviewer's investigation. The reviewer owns verification of its findings.
-7. If the user did not ask to address findings, report the synthesized result
-   and stop. Otherwise pass the complete set to the repair path below.
+6. Wait for every reviewer to finish. Each reviewer returns its complete lane
+   findings in one response before synthesis or repair begins. Merge duplicates
+   and combine related findings without weakening the finding contract. Resolve
+   material disagreement only when needed; do not repeat each reviewer's
+   investigation. The reviewer owns verification of its findings.
+7. For a standalone review, report the synthesized result and stop unless the
+   user asked to address findings. When this review is a required step inside
+   an authorized implementation workflow, pass only retained findings whose
+   repair stays within that workflow's original scope to the repair path below.
+   Report any finding that needs new authority or expands that scope.
 
-If no fresh reviewer is available, perform the complete review inline and label
-the result `Independent review unavailable.` Do not present it as an independent
-review.
+When independent review is not warranted, perform the complete review inline.
+If it was warranted but no fresh reviewer is available, label the result
+`Independent review unavailable.` Do not present an inline review as
+independent.
 
 ## Review the assigned change
 
@@ -193,9 +203,12 @@ to fill the result. After the findings, add a brief overall assessment and
 mention any material test gaps or residual risks. Omit rejected candidates,
 reviewer process, clean-area summaries, and praise.
 
-If the user explicitly asked to address findings, the coordinating agent repairs
-the complete retained set sequentially after synthesis. Do not repair a finding
-that requires new authority or expands the original task; report it unresolved.
+If the user explicitly asked to address findings, or this review is a required
+step inside an authorized implementation workflow, the coordinating agent
+repairs the complete retained set sequentially after synthesis. In the latter
+case, repair only findings that stay within the workflow's original scope. Do
+not repair a finding that requires new authority or expands the original task;
+report it unresolved.
 Run affected checks, inspect the final diff, and report repairs, unresolved
 findings, proof, and remaining risk. Do not start another review after ordinary
 repairs. Start a new review only when the user asks or the repairs materially

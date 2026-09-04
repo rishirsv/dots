@@ -24,13 +24,12 @@ Work through five phases:
 
 ## Phase A: Ground the problem
 
-Build a real mental model of every system the new code touches. Apply `$how`
-to the relevant subsystems, using its critique mode when the existing structure
-is the constraint or the design must push back on it.
-
-Naming a file is not grounding. Produce the traced model `$how` prescribes. If
-the design redefines ownership or layering, also apply `$why` to the existing
-shape so its rationale becomes a constraint, not a guess.
+Build a real mental model of every system the new code touches: trace the
+relevant callers, state, invariants, and integration boundaries. Naming a file
+is not grounding. Use `$how` when the existing runtime path is non-obvious or
+a source-traced explanation would materially reduce design risk. Use `$why`
+when historical rationale could constrain the proposed ownership or layering;
+do not infer that need merely because the design changes either one.
 
 Skip this phase only when the work is genuinely greenfield with no surrounding
 system to integrate.
@@ -133,7 +132,9 @@ shape is the redesign signal.
 
 When scrapping a design:
 
-1. Re-run `$how` over what was built so implementation lessons become inputs.
+1. Re-trace the affected callers, state, and invariants so implementation
+   lessons become design inputs. Use `$how` when a source-traced explanation
+   would materially reduce uncertainty before redesigning.
 2. Redesign as if the new constraints had been assumptions from the start.
 3. Remove obsolete structure before adding to the replacement.
 4. Return to Phase B. Start with the best design using existing owners and add

@@ -7,16 +7,18 @@ description: "Coordinate agents on substantial tasks. Use when the user requests
 
 Remain available to the user while delegating substantive work.
 
-| Need | Agent | Runtime |
-|---|---|---|
-| Bounded leaf task | `leaf` | Luna / max leaf |
-| Read-only investigation | `explorer` | Terra / medium peer |
-| Implementation-ready plan | `planner` | Sol / high peer |
-| Bounded implementation | `worker` | Sol / medium peer |
-| Independent challenge | `adversary` | Sol / medium peer |
+| Need | Agent |
+|---|---|
+| Bounded leaf task | `leaf` |
+| Read-only investigation | `explorer` |
+| Implementation-ready plan | `planner` |
+| Bounded implementation | `worker` |
+| Independent challenge | `adversary` |
 
-Use Sol and Terra as collaborative peers that may message other agents. The
-root owns spawning because agent depth is one.
+Use the available role definitions for model, reasoning effort, tool access,
+and delegation limits. Honor explicit model choices and preserve deliberately
+configured cost and capability tiers. The coordinator owns task assignment and
+integration; use the host's current concurrency and nesting limits.
 
 Delegate only when an agent has a clear expected benefit: faster completion,
 broader coverage, specialized work, or independent challenge. If the root can
@@ -29,8 +31,8 @@ brief, recent turns for focused context, and `all` only when the conversation
 materially affects the work. Messaging remains available regardless of
 inheritance.
 
-Use Luna only for bounded leaf work and always at `max`. If the task becomes
-ambiguous, wider, coordinated, or materially risky, return it to the root.
+Use `leaf` for bounded independent work. If the assignment needs wider scope,
+coordination, or a consequential decision, return that issue to the parent.
 
 Run independent read-only work in parallel. Keep one implementer unless changes
 are clearly independent. Before multiple implementation lanes work across a

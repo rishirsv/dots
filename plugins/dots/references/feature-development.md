@@ -35,10 +35,12 @@ one unusual task.
    ownership, interfaces, constraints, sequencing, or proof. Leave ordinary
    local discovery to implementation. Use read-only investigators only when
    distinct evidence lanes make the work faster or broader.
-3. **Settle decisions.** Answer repository-owned questions from source. Before
-   asking the user about a choice that running or viewing something could
-   settle, apply `$prototype`. Ask the user only for product choices,
-   preferences, authority, or information a focused probe cannot establish.
+3. **Settle decisions.** Answer repository-owned questions from source. Use a
+   focused probe when observation can resolve a consequential uncertainty;
+   apply `$prototype` when an isolated experiment is needed. Make reasonable
+   assumptions for routine choices within the requested scope. Ask the user
+   for product choices, preferences, authority, or information that would
+   materially change the result, and continue work independent of the answer.
 4. **Choose the design.** Select the smallest coherent approach that fits the
    existing system. Apply `$architect` when a consequential new or changed
    boundary needs its caller experience, public contract, data or state shape,
@@ -58,10 +60,13 @@ one unusual task.
    integration or visible behavior. Bugs use the original reproduction;
    refactors compare the pinned behavior; performance work repeats the frozen
    measurement.
-7. **Review and finish.** Apply `$code-quality-review` and report its result. If
-   the user explicitly asked to address review findings, repair the complete
-   retained set sequentially, rerun affected checks, and inspect the final diff.
-   Summarize the result, proof, intentional exclusions, and remaining risk.
+7. **Review and finish.** Inspect the final diff against the requested outcome.
+   Apply `$code-quality-review` when the user requests a review, repository
+   policy requires it, or consequential behavior needs independent challenge.
+   Give the reviewer the task's diff and intended behavior. During implementation, repair supported defects caused by the change within
+   the authorized scope, rerun affected checks, and finish the requested work.
+   A standalone review remains read-only unless repairs are requested. Report
+   the result, proof, and material remaining gaps.
 
 ## Stop at a planning handoff when requested
 
@@ -88,7 +93,8 @@ whose handoff fits clearly in chat.
 optional repair path. Do not recreate that procedure here.
 
 The playbook is complete when the requested behavior works through its real
-path, proof supports the result, review is complete at the selected depth, and
+path, proof supports the result, the final diff has been inspected and any
+required review is complete, and
 every material gap is stated honestly.
 
 For planning-only work, it is complete when the execution handoff is grounded
