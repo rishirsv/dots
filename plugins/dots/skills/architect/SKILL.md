@@ -11,14 +11,14 @@ when that design cannot satisfy a current consequential requirement.
 
 Sketch the caller's usage, types, function signatures, class shapes, and module
 boundaries before implementing them. Select one design, then implement against
-it. If implementation repeatedly exposes a flaw in the design, discard it and
-redesign.
+it when authorized. If implementation repeatedly exposes a flaw in the design,
+discard it and redesign.
 
 Work through five phases:
 
 1. Ground
 2. Sketch
-3. Agree
+3. Decide
 4. Implement
 5. Scrap
 
@@ -73,14 +73,14 @@ methods.
 Compare viable candidates on interface depth. Prefer an interface that hides
 necessary complexity without adding a new owner merely to make callers smaller.
 
+## Phase C: Decide and continue
+
 Select one design. When Candidate B exists, record why the selected design won,
 what was adapted, and what was rejected.
 
-## Phase C: Agree
-
-When the request authorizes implementation, proceed with the selected design.
-For a design-only request, return the design package and stop before
-editing product source.
+When the request authorizes implementation, continue with the selected design
+without another approval pause. For a design-only request, return the design
+package and stop before editing product source.
 
 When Feature Development invokes Architect during its design step, return the
 selected design after this phase. Feature Development resumes with
@@ -88,10 +88,13 @@ implementation and owns proof, review, and completion. A direct Architect
 request may continue through the remaining phases when implementation is
 authorized.
 
-Pause for approval when the user asks for a checkpoint or when an unresolved
-product, scope, compatibility, or costly implementation choice would materially
-change the result. If the user pushes back on the shape, treat that as Phase A
-evidence, re-ground, and re-run Phase B before writing more code.
+Pause only when the user requested a checkpoint or an unresolved product,
+scope, compatibility, or costly implementation choice would materially change
+the result and cannot be settled from the repository or a focused probe.
+Complete all other design work first, then present the exact choice, the
+recommended default, and its consequence. If the user pushes back on the shape,
+treat that as Phase A evidence, re-ground, and re-run Phase B before writing
+more code.
 
 Before implementation, use a fresh adversary when the design changes a durable
 external contract, migration, shared state, irreversible operation, or has been

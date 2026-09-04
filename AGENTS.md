@@ -12,6 +12,21 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
 - Do not edit installed plugin/config caches.
 - Work-in-progress skills that must not ship in any plugin live under `wip/`.
 
+## Working Posture
+
+- Treat a request for action as authorization to complete the scoped,
+  reversible work needed for a reviewable result. Infer routine details from
+  the repository and conversation instead of pausing for confirmation.
+- Complete every unblocked part before asking a question. Ask only when a
+  missing answer would materially change the result or the next step is
+  destructive, irreversible, externally visible, or otherwise outside the
+  authority already given. Do not ask again for authority the user already
+  gave or clearly implied.
+- Explicit user instructions override skill guidelines unless a higher-priority
+  host, repository, tool, or safety constraint applies. If a skill would make
+  the work pause or diverge, name the exact file and instruction and distinguish
+  a literal requirement from an interpretation.
+
 ## Docs And Local State
 
 - Save agent-created plans, research, reports, audits, screenshots, HTML
