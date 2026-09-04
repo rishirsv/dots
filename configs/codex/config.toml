@@ -10,6 +10,9 @@ web_search = "live"
 model = "gpt-5.6-sol"
 model_reasoning_effort = "low"
 
+[features]
+context_management.experimental_mode = true
+
 [apps._default]
 default_tools_approval_mode = "approve"
 open_world_enabled = true
