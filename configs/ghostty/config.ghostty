@@ -21,7 +21,7 @@ shell-integration = zsh
 macos-option-as-alt = true
 
 # Drop-down terminal shown on the active display.
-keybind = global:ctrl+backquote=toggle_quick_terminal
+keybind = global:ctrl+alt+backquote=toggle_quick_terminal
 quick-terminal-position = top
 quick-terminal-size = 42%
 quick-terminal-screen = main

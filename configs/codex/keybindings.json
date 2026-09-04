@@ -62,5 +62,9 @@
   {
     "command": "searchChats",
     "key": "Ctrl+Command+Alt+Shift+K"
+  },
+  {
+    "command": "toggleTerminal",
+    "key": "Ctrl+Shift+`"
   }
 ]

@@ -7,8 +7,8 @@
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 web_search = "live"
-model = "gpt-5.6-sol"
-model_reasoning_effort = "low"
+model = "gpt-6-astra"
+model_reasoning_effort = "medium"
 
 [apps._default]
 default_tools_approval_mode = "approve"
@@ -54,6 +54,9 @@ enabled = true
 [plugins."sites@openai-bundled"]
 enabled = true
 
+[plugins."unified-computer-use@openai-bundled"]
+enabled = true
+
 [desktop]
 followUpQueueMode = "queue"
 conversationDetailMode = "STEPS_COMMANDS"
@@ -61,6 +64,8 @@ defaultTerminalLocation = "right"
 reviewDelivery = "detached"
 show-context-window-usage = true
 git-pull-request-merge-method = "squash"
+worktree-upstream-refresh-mode = "best-effort"
+preventSleepWhileRunning = true
 
 [desktop.appearanceLightChromeTheme.fonts]
 code = "SF Mono Terminal"
