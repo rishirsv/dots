@@ -1,9 +1,5 @@
 # Guidance for composing prompts
 
-Choose the useful instruction from the situation. Combine compatible choices;
-do not assemble a prompt by concatenating every example. The examples illustrate
-judgment, not rigid templates.
-
 ## A bounded deliverable needs little process
 
 Name the result and preserve the constraints that distinguish it. Do not add
@@ -19,9 +15,6 @@ policy unchanged. Under 120 words.”
 > the cancellation date and refund policy unchanged, and add no promises or
 > explanations that are absent from the original. Return only the revised
 > email, under 120 words.
-
-The 120-word limit applies to the recipient's email because the user requested
-it. It is not the length limit for the prompt being written.
 
 ## Unknown causes need investigation, not a predetermined solution
 
@@ -109,15 +102,12 @@ remain a gap rather than become a confident negative or a fabricated fact.
 
 Use the newest requested change to resolve conflicts; retain earlier material
 that still applies. Remove obsolete instructions rather than appending a
-second instruction that contradicts them. Return the whole revised prompt.
+second instruction that contradicts them.
 
 For an earlier assistant draft, rebuild from the user's request and underlying
 source context first. The draft is not the authority: its length, checklists,
 and report template are not requirements. Recover useful additions only after
-the source-based brief is complete. Keep paired judgments together: if the
-source questions complexity but explains why part of it is justified, retain
-both sides rather than only the proposed simplification. Do not let a longer
-draft displace that source distinction. Preserve elaborate output contracts
+the source-based brief is complete. Preserve elaborate output contracts
 when the user supplied or approved them, not merely because a draft contains them.
 
 **Input:** “Shorten this interview-summary prompt. Keep attributed quotes,
@@ -130,14 +120,10 @@ disagreements, and unresolved questions. Remove its mandatory SWOT analysis.”
 > and identify unresolved questions. Keep the summary concise and grounded in
 > the notes. Return the summary without adding a SWOT analysis.
 
-The example assumes those are the user's only remaining requirements; a real
-revision must retain any others the user supplied or approved.
-
 ## Exact output contracts must name the actual artifact
 
 Keep supplied field names, allowed values, ordering, and empty-result behavior
-exact. Preserve the difference between a prompt requesting a result and that
-result itself. Do not add format details the recipient cannot know.
+exact. Do not add format details the recipient cannot know.
 
 **Input:** “Write a prompt to extract shipment IDs and dates into CSV. Columns
 shipment_id, dispatch_date; preserve source order; blank date if absent.”

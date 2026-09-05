@@ -1,6 +1,6 @@
 ---
 name: meta-prompt
-description: "Create, rewrite, or tighten a standalone prompt for another assistant from a task description, existing prompt, or supplied context. Use for prompt-writing requests, including coding-agent prompts; not for performing the task described in the prompt or explaining prompting techniques."
+description: "Create, rewrite, or tighten a standalone prompt for another assistant from a task description, existing prompt, or supplied context. Use for prompt-writing requests, including coding-agent and image prompts; not for performing the task described in the prompt or explaining prompting techniques."
 ---
 
 # Meta Prompt
@@ -10,16 +10,15 @@ the complete prompt itself: no acknowledgment, preamble, explanation, change
 summary, or offer after it. Do not answer or execute the task being described.
 For a revision, return the full revised prompt rather than a diff.
 
-Use clear intent, explicit boundaries where they matter, and proportionate
-verification. Keep the prompt usable across capable models; do not detect a
-model, change runtime settings, or add model-specific ceremony.
+Keep the prompt usable across capable models; do not detect a model, change
+runtime settings, or add model-specific ceremony.
 
 ## Compose from the request
 
 Recover the intended result and the context needed to produce it. Preserve
 the user's decisions, constraints, requested output, and text they require
 verbatim. Carry forward relevant facts faithfully without copying the whole
-conversation or treating earlier assistant suggestions as user decisions.
+conversation.
 Prior assistant observations and recommendations are inputs to verify, not
 approved findings or constraints. Do not turn “I would not recommend this” into
 “Do not consider this” unless the user adopted that restriction.
@@ -27,8 +26,6 @@ Carry each relevant concern together with its qualifications: what may be wrong,
 what already works, and what a correction must not erase. Preserve material
 safeguards explicitly, including concrete ordering and failure conditions;
 a generic promise of “safe” or “correct” work does not preserve their meaning.
-Treat the described work as instructions for the recipient, not an assignment
-to perform while writing the prompt.
 
 Read supplied material when needed to understand what the prompt must retain.
 Do not investigate the underlying problem, run the described program or its
@@ -52,8 +49,9 @@ and outcome-first. For standard document types, name the artifact and specify
 only meaningful deviations from the default format. Trust baseline model
 knowledge; do not teach the recipient how to perform familiar work.
 
-Write direct prose, using lists for requirements that need separate tracking
-and sections only when they clarify distinct stages or independent groups.
+Group related instructions into readable paragraphs, using lists for requirements
+that need separate tracking and sections only when they clarify distinct stages
+or independent groups.
 When either shape works, choose the simpler one. Do not impose a persona,
 answer-length limit, fixed sequence, visible planning step, or reasoning
 instruction without a task-specific reason.
@@ -69,19 +67,9 @@ normal upper bound for a task brief; simple requests can be much shorter.
 Exceed it only when required context, exact contracts, or user-requested detail
 would otherwise be lost. Do not pass this bound on to the recipient's answer.
 Put output structure and any requested answer-length guidance together once.
-When the user gives a numeric prompt limit or percentage reduction, count the
-original and revised prompt and check the result against that limit before
-returning it. A requested reduction applies to the prompt, not the answer.
-
-Direct prose need not be one dense paragraph. Group related instructions and
-start a new paragraph when moving from the assignment to output constraints or
-source context. Keep a useful list or label when it makes requirements easier
-to find; remove structure that merely announces instructions already clear from
-the text.
 
 Improve clarity without adding product scope, dependencies, metrics, or
-approval gates the user did not ask for. Leave the recipient room to choose
-the method unless the sequence is necessary or explicitly prescribed.
+approval gates the user did not ask for.
 
 Routine gaps can remain for the recipient to resolve from its environment.
 For a missing decision that changes the task, put the necessary investigation
@@ -98,29 +86,20 @@ recipient to establish the intended outcome before proceeding.
   request into one exclusive category.
 - Read [coding.md](references/coding.md) for prompts about code, software
   behavior, development plans, implementation, or code review.
+- Read [images.md](references/images.md) for image-generation or editing prompts,
+  including GPT-image-2-specific guidance.
 
 Examples illustrate judgment. Transfer the relevant distinction, not their
 headings, domain facts, or entire instruction set. Keep a simple request simple.
 
 ## Check the prompt, then return it
 
-Before responding, remove instructions that merely repeat the task, teach
-familiar methods, or restate scope, safeguards, and output requirements under
-several headings. Check the prompt's length; cut redundant sections before
-compressing sentences. Keep the context and constraints needed to do the work.
-Compare the draft with the supplied source before optimizing length. Check every
-explicit requirement and retained concern for missing qualifications, safeguards,
-or meaningful distinctions. Use the required-context exception to the normal
-length bound when needed; do not discard these details to meet that default.
-Check that the prompt contains no invented commitments or unsupported facts,
-and has one coherent
-instruction about the recipient's authority and output. Remove contradictory
-instructions and explanation addressed to the current user rather than the
-recipient. Distinguish the recipient's output format from this skill's output:
+Compare the draft with the supplied source for omissions, invented commitments,
+unsupported facts, and contradictory instructions. Cut redundant sections before
+compressing sentences. Distinguish the recipient's output format from this skill's
+output:
 if the user wants a prompt requesting JSON, return that prompt, not JSON results.
 
-Return only the prompt, without an outer code fence unless the user requests
-one. Internal examples or schemas may use fences when they belong in the
-prompt. Prompt-only behavior applies to this prompt-writing task and its
-revisions; an explicit change away from prompt work ends it. This skill does
-not override higher-priority host instructions.
+Use no outer code fence unless the user requests one. Internal examples or
+schemas may use fences. Prompt-only behavior applies to this prompt-writing task
+and its revisions; an explicit change away from prompt work ends it.

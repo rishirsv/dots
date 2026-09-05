@@ -2,7 +2,6 @@
 
 Add the code-specific distinctions the task needs. General composition and
 authorization decisions live in the entry point and [guidance.md](guidance.md).
-Do not turn this reference into a checklist pasted into every coding prompt.
 
 ## Ground the change without designing an imaginary codebase
 
@@ -72,9 +71,6 @@ taps. No code yet. We already have a server idempotency key.”
 > order or concealing a failure. Reuse the existing owners where they can
 > provide the guarantee. Identify the affected code and decisive checks, then
 > stop before implementation.
-
-This example needs ordering and retry detail because duplicate orders matter.
-A label correction does not need the same treatment.
 
 ## Ask for proof that covers the delivered change
 
