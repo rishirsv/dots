@@ -10,6 +10,9 @@ web_search = "live"
 model = "gpt-6-astra"
 model_reasoning_effort = "medium"
 
+[features]
+context_management = true
+
 [apps._default]
 default_tools_approval_mode = "approve"
 open_world_enabled = true
