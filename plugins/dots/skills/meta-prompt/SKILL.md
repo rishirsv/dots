@@ -17,7 +17,16 @@ model, change runtime settings, or add model-specific ceremony.
 ## Compose from the request
 
 Recover the intended result and the context needed to produce it. Preserve
-the user's decisions, facts, exact text, constraints, and requested output.
+the user's decisions, constraints, requested output, and text they require
+verbatim. Carry forward relevant facts faithfully without copying the whole
+conversation or treating earlier assistant suggestions as user decisions.
+Prior assistant observations and recommendations are inputs to verify, not
+approved findings or constraints. Do not turn “I would not recommend this” into
+“Do not consider this” unless the user adopted that restriction.
+Carry each relevant concern together with its qualifications: what may be wrong,
+what already works, and what a correction must not erase. Preserve material
+safeguards explicitly, including concrete ordering and failure conditions;
+a generic promise of “safe” or “correct” work does not preserve their meaning.
 Treat the described work as instructions for the recipient, not an assignment
 to perform while writing the prompt.
 
@@ -38,13 +47,31 @@ Choose which instructions materially affect the result:
   publish, and what event ends the authorized work.
 - What the answer or artifact must contain and how completion can be checked.
 
-These are composition decisions, not required headings. Write a simple request
-as direct prose. Use a list when its items need to be tracked separately; reserve
-sections for complex prompts with distinct stages or substantial groups of
-requirements. Avoid generic “Instructions” and “Output Format” scaffolding when
-the same information fits naturally in the prompt. Do not impose a persona,
-word budget, fixed sequence, visible plan, or reasoning instruction without a
-task-specific reason.
+These are composition decisions, not required headings. Keep structure minimal
+and outcome-first. For standard document types, name the artifact and specify
+only meaningful deviations from the default format. Trust baseline model
+knowledge; do not teach the recipient how to perform familiar work.
+
+Write direct prose, using lists for requirements that need separate tracking
+and sections only when they clarify distinct stages or independent groups.
+When either shape works, choose the simpler one. Do not impose a persona,
+answer-length limit, fixed sequence, visible planning step, or reasoning
+instruction without a task-specific reason.
+
+Match the prompt's detail to the decisions the recipient needs, not the size of
+the downstream job. A whole-system review can need only a brief: the goal,
+boundaries, known concerns, and expected deliverable. Let the recipient derive
+the inspection steps. Do not expand each concern into a checklist or prescribe
+every section of the eventual report unless the user needs that detail.
+
+Keep prompt brevity separate from answer verbosity. Treat 220 words as the
+normal upper bound for a task brief; simple requests can be much shorter.
+Exceed it only when required context, exact contracts, or user-requested detail
+would otherwise be lost. Do not pass this bound on to the recipient's answer.
+Put output structure and any requested answer-length guidance together once.
+When the user gives a numeric prompt limit or percentage reduction, count the
+original and revised prompt and check the result against that limit before
+returning it. A requested reduction applies to the prompt, not the answer.
 
 Direct prose need not be one dense paragraph. Group related instructions and
 start a new paragraph when moving from the assignment to output constraints or
@@ -55,7 +82,6 @@ the text.
 Improve clarity without adding product scope, dependencies, metrics, or
 approval gates the user did not ask for. Leave the recipient room to choose
 the method unless the sequence is necessary or explicitly prescribed.
-Preserve meaningful constraints even when they make the prompt longer.
 
 Routine gaps can remain for the recipient to resolve from its environment.
 For a missing decision that changes the task, put the necessary investigation
@@ -78,11 +104,16 @@ headings, domain facts, or entire instruction set. Keep a simple request simple.
 
 ## Check the prompt, then return it
 
-Before responding, remove repeated instructions and process that does not change
-the recipient's work. Prefer useful detail over an arbitrary word count; retain
-the context, constraints, and necessary sequence that make the prompt complete.
-Check that the prompt preserves every explicit requirement, contains no
-invented commitments or unsupported facts, and has one coherent
+Before responding, remove instructions that merely repeat the task, teach
+familiar methods, or restate scope, safeguards, and output requirements under
+several headings. Check the prompt's length; cut redundant sections before
+compressing sentences. Keep the context and constraints needed to do the work.
+Compare the draft with the supplied source before optimizing length. Check every
+explicit requirement and retained concern for missing qualifications, safeguards,
+or meaningful distinctions. Use the required-context exception to the normal
+length bound when needed; do not discard these details to meet that default.
+Check that the prompt contains no invented commitments or unsupported facts,
+and has one coherent
 instruction about the recipient's authority and output. Remove contradictory
 instructions and explanation addressed to the current user rather than the
 recipient. Distinguish the recipient's output format from this skill's output:

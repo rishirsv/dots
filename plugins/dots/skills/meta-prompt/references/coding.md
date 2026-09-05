@@ -110,5 +110,3 @@ and unnecessary complexity. Don't rewrite it.”
 > and source behavior, and recommend the smallest correction. Distinguish
 > confirmed issues from assumptions that need checking. Do not rewrite the
 > plan or change code. If no actionable issues are supported, say so.
-
-Keep the examples' domain details out of unrelated prompts.

@@ -20,8 +20,8 @@ policy unchanged. Under 120 words.”
 > explanations that are absent from the original. Return only the revised
 > email, under 120 words.
 
-The length limit belongs here because the user supplied it. It is not a
-default limit for other prompts.
+The 120-word limit applies to the recipient's email because the user requested
+it. It is not the length limit for the prompt being written.
 
 ## Unknown causes need investigation, not a predetermined solution
 
@@ -111,6 +111,15 @@ Use the newest requested change to resolve conflicts; retain earlier material
 that still applies. Remove obsolete instructions rather than appending a
 second instruction that contradicts them. Return the whole revised prompt.
 
+For an earlier assistant draft, rebuild from the user's request and underlying
+source context first. The draft is not the authority: its length, checklists,
+and report template are not requirements. Recover useful additions only after
+the source-based brief is complete. Keep paired judgments together: if the
+source questions complexity but explains why part of it is justified, retain
+both sides rather than only the proposed simplification. Do not let a longer
+draft displace that source distinction. Preserve elaborate output contracts
+when the user supplied or approved them, not merely because a draft contains them.
+
 **Input:** “Shorten this interview-summary prompt. Keep attributed quotes,
 disagreements, and unresolved questions. Remove its mandatory SWOT analysis.”
 
@@ -121,8 +130,8 @@ disagreements, and unresolved questions. Remove its mandatory SWOT analysis.”
 > and identify unresolved questions. Keep the summary concise and grounded in
 > the notes. Return the summary without adding a SWOT analysis.
 
-The example assumes those are the original prompt's only remaining
-requirements; a real revision must retain any other requirements in its input.
+The example assumes those are the user's only remaining requirements; a real
+revision must retain any others the user supplied or approved.
 
 ## Exact output contracts must name the actual artifact
 
