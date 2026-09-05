@@ -50,6 +50,7 @@ in-scope findings are repaired under existing authorization.
 | Publish finished work as a pull request | `$pr` |
 | Keep a pull request moving | `$babysit-pr` |
 | Prepare work for another agent, task, or phase | `$handoff` |
+| Write or revise a standalone prompt for another assistant | `$meta-prompt` |
 | Create, update, or review a Dots skill | `$skill-standards` |
 
 The user-controlled modes `$clarify`, `$scout`, `$explain`, `$oracle`,
