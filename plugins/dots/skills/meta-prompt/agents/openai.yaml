@@ -1,6 +1,8 @@
 interface:
   display_name: "Meta Prompt"
   short_description: "Write focused prompts from intent and context"
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
   default_prompt: "Use $meta-prompt to turn these notes into a complete standalone prompt. Return only the prompt."
 policy:
   allow_implicit_invocation: true
