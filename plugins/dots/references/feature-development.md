@@ -1,6 +1,11 @@
 # Feature Development
 
-Use this playbook to plan or make a material software change. It owns features,
+Use this playbook only when the user explicitly selects Dots, `$index`, or
+Dots Feature Development for software planning or implementation. An ordinary
+feature, bug-fix, refactor, or planning request does not select this workflow;
+handle it directly with any applicable focused skills.
+
+Once selected, this playbook owns features,
 bug fixes, refactors, measured performance work, and behavior-changing
 configuration. Keep one compact working record in the active task with the
 outcome, non-goals, settled decisions, responsible code, chosen direction,

@@ -48,8 +48,9 @@ interactive-visualization workflow for exploratory simulations or analysis led
 by filters. Use `docs-writer` for repository documentation; do not use HTML for
 slides.
 
-If the task still needs software planning, apply the planning-only boundary in
-[Feature Development](../../references/feature-development.md) first. Use
+If the task still needs software planning, settle the plan before rendering it.
+When the user explicitly selected Dots, `$index`, or Dots Feature Development,
+apply its [planning-only boundary](../../references/feature-development.md). Use
 `$how` when the missing input is an explanation of current code. If a
 product-UI choice is unresolved, settle it through product design or
 `$prototype` before building the page. Those workflows decide the product
