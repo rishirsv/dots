@@ -26,12 +26,19 @@ relative strength, repository access, attachment support, or context limits.
   archive.
 - If the advisor needs attachments, create a prompt and the smallest context
   archive that supports the decision.
+- If the user requests ChatGPT Pro or a direct ChatGPT desktop consultation,
+  use Computer Use and follow
+  [chatgpt-desktop.md](references/chatgpt-desktop.md). Select Pro with High
+  reasoning, use a relevant ChatGPT project, and retrieve the answer.
 - If the user names no provider, create a local Desktop handoff containing the
   prompt and any required local context. Do not call or upload it.
 
 Before an external call or upload, name the provider, the content being sent,
-and any likely cost, then get approval. Never send credentials. Get explicit
-approval before sending private or proprietary material.
+and any known cost or visible usage constraint. Proceed when the user's request
+already authorizes that provider and content; otherwise get approval for the
+prepared request. Never send credentials. Private or proprietary material needs
+explicit authorization covering that material and destination. Do not repeat
+approval already established in the session unless the scope changes.
 
 ## Frame the request
 
