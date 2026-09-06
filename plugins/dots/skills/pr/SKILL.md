@@ -51,6 +51,20 @@ Then include the implementation details needed to review the approach, risks,
 and affected boundaries. State what was tested and what remains unverified.
 Preserve fields required by the repository's pull-request template.
 
+By default, present each substantive change as a top-level bullet with one to
+three explanatory sub-bullets. Keep the main bullet precise enough to review;
+use the sub-bullets to explain what it means, how the relevant behavior works,
+and why it matters.
+
+Write these explanations for a reader without specialist knowledge of the
+codebase. Use a conversational, respectful ELI5 tone: familiar words, concrete
+behavior, and enough background to understand the change without teaching the
+whole subject. Translate the technical claim rather than repeating it with
+simpler synonyms. Explain the behavior first, then define necessary technical
+terms where they appear. Use a small example or analogy only when it makes the
+mechanism clearer or shorter. Preserve the distinctions and caveats needed for
+an accurate review; plain language should not hide them.
+
 Omit file-by-file narration, raw commit history, generic checklists, and agent
 narration. Mention files, symbols, schemas, frameworks, or data flows when they
 help a reviewer verify the change.
