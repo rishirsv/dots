@@ -11,7 +11,7 @@ Remain available to the user while delegating substantive work.
 |---|---|
 | Bounded leaf task | `leaf` |
 | Read-only investigation | `explorer` |
-| Implementation-ready plan | `planner` |
+| Advice or implementation-ready plan | `advisor` |
 | Bounded implementation | `worker` |
 | Independent challenge | `adversary` |
 
@@ -30,6 +30,18 @@ Use the smallest sufficient inherited context: `none` for a self-contained
 brief, recent turns for focused context, and `all` only when the conversation
 materially affects the work. Messaging remains available regardless of
 inheritance.
+
+Agents may consult `advisor` when uncertainty or a consequential choice would
+benefit from a second opinion. The coordinator starts or reuses an Advisor and
+shares its identifier with agents that may need advice. Include that route in
+their briefs so consultation does not depend on loading this skill. Send a
+focused question with relevant evidence, constraints, and options; Advisor
+returns advice while the assigned agent retains ownership of the work.
+
+Use peer messaging when available and permitted by the role. Otherwise, route
+the question and answer through the parent; consultation does not require
+nested delegation. Scope changes and shared-interface decisions still go to
+the coordinator.
 
 Use `leaf` for bounded independent work. If the assignment needs wider scope,
 coordination, or a consequential decision, return that issue to the parent.
