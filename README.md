@@ -16,6 +16,7 @@ syncing it.
 - `.claude-plugin/marketplace.json`: Claude marketplace source.
 - `configs/`: portable machine configuration.
 - `scripts/`: sync and validation entrypoints.
+- `tools/oracle-repo-mcp/`: [local Oracle repository MCP runtime](tools/oracle-repo-mcp/README.md).
 - `AGENTS.md`: repository instructions for agents.
 
 Keep secrets, authentication state, sessions, caches, generated local output,
