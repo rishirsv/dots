@@ -8,7 +8,7 @@ This is a personal tool with normal macOS user permissions and network access. C
 
 Requires macOS, Node.js 22+, Git, and Apple command line tools for the small Swift Keychain helper. `rg` improves source searching; the repository reader has a bounded fallback.
 
-Run these commands from `mcp/oracle-repo-mcp` in the Dots checkout:
+Run these commands from `mcp/oracle` in the Dots checkout:
 
 ```sh
 npm ci
