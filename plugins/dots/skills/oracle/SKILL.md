@@ -48,7 +48,9 @@ choosing the necessary evidence is difficult.
 
 Name the destination and content before sending; existing authorization carries
 forward. Preserve drafts, reuse the matching conversation, and verify one
-submission before waiting. Read the finished answer and return its link plus
+submission before waiting. For live repository work, publish browser observations
+and consume bridge events using the linked workflow; quiescence alone never
+proves the answer finished. Read the finished answer and return its link plus
 the useful result. Report pending answers or tool blocks accurately.
 
 For repository work, pause and confirm ready/Codex control before local writes
