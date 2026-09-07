@@ -1,90 +1,56 @@
 ---
 name: oracle
-description: "Use only when the user selects `$oracle` to request critique, missing-proof checks, or implementation guidance from an external or differently specialized model; not for routine local work, subagent review, or orchestration."
+description: "Use when the user selects Oracle to ask ChatGPT a question, request a review, or authorize implementation with live repository access. Not for ordinary local work without a consultation request."
 ---
 
 # Oracle
 
-Get advice from an external or differently specialized model. The oracle
-advises; the primary agent applies, verifies, and owns the work.
+Ask ChatGPT, retrieve the answer, and verify claims that affect the user's next
+decision. Honor a named provider or model; otherwise use ChatGPT web in the
+in-app browser with its current settings.
 
-Use Oracle when a second model could change a decision about a plan,
-implementation, architecture, missing proof, or stalled investigation. Do not
-use it for routine local work, subagent review, orchestration, or implementation
-handoff.
+## Keep the prompt small
 
-## Choose the handoff
+Send the question, essential context, and desired result. Aim for a short
+paragraph; add detail only when it changes the answer. Do not paste this skill,
+tool schemas, generic safety lists, or the whole workflow into the prompt.
+Follow-ups carry only the new question or changed context and renewed MCP scope.
 
-Inspect the available advisors and how each can receive context. Honor a
-provider the user names when it is available. Do not assume model names,
-relative strength, repository access, attachment support, or context limits.
+Ask for a concise answer in plain language, leading with the result. Use a table
+only for a comparison. Make routine assumptions and proceed within the user's
+scope; ask only when missing information changes the outcome. User instructions
+override this skill. For coding, request checks proportional to the change and
+stop after relevant checks pass unless a failure needs investigation.
 
-- If the advisor can inspect the repository, give it the repository, revision,
-  and a few useful file or symbol pointers. Attach only essential local changes
-  or evidence it cannot access.
-- If the advisor can read the local workspace, use exact paths rather than an
-  archive.
-- If the advisor needs attachments, create a prompt and the smallest context
-  archive that supports the decision.
-- If the user requests ChatGPT Pro or a direct ChatGPT desktop consultation,
-  use Computer Use and follow
-  [chatgpt-desktop.md](references/chatgpt-desktop.md). Select Pro with High
-  reasoning, use a relevant ChatGPT project, and retrieve the answer.
-- If the user names no provider, create a local Desktop handoff containing the
-  prompt and any required local context. Do not call or upload it.
+These choices apply [OpenAI's Astra guidance](https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices)
+on explicit writing preferences, instruction conflicts, follow-through, and
+proportionate verification. They do not select or switch the user's model.
 
-Before an external call or upload, name the provider, the content being sent,
-and any known cost or visible usage constraint. Proceed when the user's request
-already authorizes that provider and content; otherwise get approval for the
-prepared request. Never send credentials. Private or proprietary material needs
-explicit authorization covering that material and destination. Do not repeat
-approval already established in the session unless the scope changes.
+Example: “Find Toronto events for September 11–13, 2026. Give your best picks
+with times, prices, and official links. Keep it concise.”
 
-## Frame the request
+## Connect the right context
 
-State the question or decision and the advice needed. Add the current
-hypothesis, alternatives, or evidence that would change the answer only when
-they help the advisor decide. Do not turn a focused question into a general
-review.
+General questions use ChatGPT search; leave the repository bridge off.
+For live repository review or authorized edits, read
+[live-repository.md](references/live-repository.md). Keep reviews advisory
+unless edits are requested. The app is included in Dots; the bridge requires
+the existing local Oracle Repo MCP installation.
 
-Package evidence only when the advisor cannot reach it directly. Include a file,
-excerpt, error, test, or constraint only when a likely claim depends on it. Point
-to an accessible review method or repository source instead of copying its full
-procedure into the prompt. Read
-[context-development.md](references/context-development.md) only when the right
-evidence boundary is unclear.
+For Pro or desktop requests, use
+[chatgpt-desktop.md](references/chatgpt-desktop.md).
+For a requested file handoff, use [oracle_package.py](scripts/oracle_package.py)
+with `--prompt-file`, optional `--file`, and `--dry-run` before packaging.
+Read [context-development.md](references/context-development.md) only when
+choosing the necessary evidence is difficult.
 
-Write a standalone prompt that identifies the decision, relevant facts and
-constraints, available context, and the answer the primary agent needs next.
-Tell the advisor to identify the smallest missing context that would materially
-change its answer rather than guessing.
+## Complete the consultation
 
-## Build an attachment handoff
+Name the destination and content before sending; existing authorization carries
+forward. Preserve drafts, reuse the matching conversation, and verify one
+submission before waiting. Read the finished answer and return its link plus
+the useful result. Report pending answers or tool blocks accurately.
 
-Use [oracle_package.py](scripts/oracle_package.py) only for a Desktop or
-attachment handoff. Prepare the authored prompt under `.agents/tmp/`, preview
-the exact package, then build it:
-
-```bash
-python3 plugins/dots/skills/oracle/scripts/oracle_package.py \
-  --prompt-file .agents/tmp/oracle-prompt.md \
-  --file src/parser.ts \
-  --file tests/parser.test.ts \
-  --dry-run
-
-python3 plugins/dots/skills/oracle/scripts/oracle_package.py \
-  --prompt-file .agents/tmp/oracle-prompt.md \
-  --file src/parser.ts \
-  --file tests/parser.test.ts
-```
-
-Omit `--file` for a prompt-only handoff. The default destination is
-`~/Desktop/oracle-<prompt-topic>/`; pass `--output-dir` when the user chooses a
-different exact directory. Inspect `prompt.md` and any `context.zip` entries
-before reporting the handoff ready.
-
-## Use the answer
-
-Explain the recommendation and any material disagreement with local evidence.
-Verify claims that affect the next decision before adopting them. If no provider
-was called, say that the handoff is ready and no model answer has been retrieved.
+For repository work, pause and confirm ready/Codex control before local writes
+or checks that write. Verify actual changes and keep the task-owned connection
+warm for follow-ups; stop it when the task finishes or is cancelled.
