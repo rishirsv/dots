@@ -69,8 +69,8 @@ call is not automatically equivalent to a ChatGPT Pro desktop conversation.
    attachments. Click **Send** in the Quick chat panel once. Confirm the new
    user message and response activity in that conversation. If submission is
    uncertain, inspect its latest messages before retrying to avoid duplicates.
-4. Wait for the response to finish, checking at reasonable intervals while
-   keeping the user informed. Read the complete answer, expanding or scrolling
+4. Follow [Oracle's background waiting policy](../SKILL.md#wait-in-the-background)
+   while the response runs. Read the complete answer, expanding or scrolling
    as needed; visible reasoning activity or a partial response is not the final
    advice. Preserve the conversation identity if a usage limit, error, or user
    interruption prevents completion, and report what remains outstanding.

@@ -97,15 +97,17 @@ canonical UUID automatically on observation. Do not derive the UUID yourself.
 A different canonical conversation requires a new `begin`.
 
 Use `oracle-repo wait --instance-id <id> --task-id <task> --after <cursor>
---timeout-ms 5000` to wait for changes without repeatedly spawning status
-checks. Save the returned cursor and inspect its consultation, blockers, and
-events. During active MCP work, a wait up to 15000 ms is reasonable; after work
-quiets, inspect the browser about every five seconds until final or blocked.
-Events do not inspect the browser: Codex must keep publishing observations.
-A separate monitor can consume the same endpoint while the observing task runs.
+--timeout-ms 5000` during each scheduled check to consume bridge changes. Save
+the returned cursor and inspect its consultation, blockers, and events. Follow
+[Oracle's background waiting policy](../SKILL.md#wait-in-the-background) between
+checks rather than looping on this endpoint. Events do not inspect the browser:
+Codex must inspect the retained conversation and publish a fresh observation at
+each check.
 
 Observations older than 60 seconds report `unknown`, with the previous state
-and timestamp retained for diagnosis. Resume invalidates previous evidence;
+and timestamp retained for diagnosis. This is expected between scheduled checks;
+stale observations alone do not mean failure or require faster polling.
+Resume invalidates previous evidence;
 start a new tracked turn for the new epoch. An expired event cursor returns a
 current snapshot and `cursor_expired`; continue from its new cursor. Preserve
 instance and task scope across waits. A stopped receipt ends monitoring.

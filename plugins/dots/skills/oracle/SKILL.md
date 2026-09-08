@@ -50,9 +50,36 @@ Name the destination and content before sending; existing authorization carries
 forward. Preserve drafts, reuse the matching conversation, and verify one
 submission before waiting. For live repository work, publish browser observations
 and consume bridge events using the linked workflow; quiescence alone never
-proves the answer finished. Read the finished answer and return its link plus
-the useful result. Report pending answers or tool blocks accurately.
+proves the answer finished.
 
-For repository work, pause and confirm ready/Codex control before local writes
-or checks that write. Verify actual changes and keep the task-owned connection
-warm for follow-ups; stop it when the task finishes or is cancelled.
+### Wait in the background
+
+Once submission is verified and the answer is still running, use the host's
+scheduled follow-up mechanism to check every ten minutes unless the user chose
+another cadence. In Codex, use a heartbeat attached to the originating task;
+reuse its existing consultation monitor instead of creating a duplicate. Retain
+the conversation identity, browser/tab or app target, and submitted question so
+each check can identify this response. For live repository work, also retain
+the lifecycle command, root, task ID, instance ID, access epoch, consultation
+turn ID, and event cursor. Put this scope and the check instructions in the
+scheduled handoff, not just in transient tool variables.
+
+Confirm the monitor was scheduled, tell the user the next check interval, and
+yield. Each check inspects the same conversation and, for live access, verifies
+the retained bridge scope before publishing a fresh observation. While the
+answer is still running, stay quiet and leave the next check scheduled. On a
+finished answer, retrieve it and disable that response's monitor before
+returning its link and useful result. On a failure, required user input, or lost
+access to the conversation, disable the monitor and report the concrete blocker.
+Cancellation also ends monitoring; a follow-up question starts a new monitored
+response. Do not resubmit a prompt to recover a pending answer.
+
+If scheduling is unavailable or fails, say the answer is pending and automatic
+checks are not scheduled; do not promise a later check or fall back to rapid
+foreground polling.
+
+For repository work, background waiting leaves Oracle's access active. After
+retrieving the answer, pause and confirm ready/Codex control before local writes
+or checks that write. Verify actual changes and material claims, and keep the
+task-owned connection warm for follow-ups; stop it when the task finishes or is
+cancelled.
