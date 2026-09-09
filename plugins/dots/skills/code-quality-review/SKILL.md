@@ -130,6 +130,8 @@ returning it.
 - Keep tests that protect material behavior and would fail for a plausible
   regression. Prefer one owning layer, and remove coverage already enforced by
   types, static checks, or a more truthful existing test.
+- Derive expected results independently of the implementation. Identify a
+  plausible broken implementation that the assertion would reject.
 - Treat rendered or manual evidence as proof of the current result, not a
   replacement for durable regression protection when automation is practical.
 - Flag assertions about exact copy, layout, styling, motion, haptics, calls,
