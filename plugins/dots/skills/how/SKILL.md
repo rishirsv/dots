@@ -9,16 +9,7 @@ Explore the codebase to answer “how does X work?” questions. Produce clear
 architectural explanations at the level of a senior engineer onboarding onto a
 subsystem. Enough to build a working mental model, not annotated source code.
 
-How has two modes:
-
-1. **Explain** is the default. Explore the codebase and explain how the system
-   or change works.
-2. **Critique** explains first, then reviews the architecture through
-   `architecture-review`.
-
-## Explain mode
-
-### 1. Understand the question and choose the depth
+## 1. Understand the question and choose the depth
 
 How questions usually ask about one of these:
 
@@ -49,7 +40,7 @@ Choose the exploration path:
 When in doubt, start simple. Add an explorer only when the source stops fitting
 comfortably in one coherent pass.
 
-### 2. Trace the source
+## 2. Trace the source
 
 Start broad enough to find the real entry point, then follow the thread through
 callers, callees, types, state changes, data flow, boundaries, and observable
@@ -68,7 +59,7 @@ input to output or trigger to effect without hand-waving a step. It returns the
 components found, flow traced, files read, and anything surprising or easy to
 misunderstand.
 
-### 3. Build one explanation
+## 3. Build one explanation
 
 Reconcile the exploration into one mental model. Synthesize the reports in the
 current context unless they are large, conflicting, or independently complex.
@@ -107,21 +98,6 @@ easier to understand. Skip it when prose already makes the flow clear.
 
 For change mode, derive the teaching story from `changes.md` rather than
 forcing subsystem headings onto a diff.
-
-## Critique mode
-
-Critique mode starts when the user asks for architectural problems,
-improvements, or a critical review. Run the full explanation first. You must
-understand the architecture before judging it.
-
-Then read and use `../architecture-review/SKILL.md`. Apply its architecture
-review lenses, candidate bar, and evidence standard. Keep the review read-only
-and architecture-level. Report only supported structural problems, cite the
-code that demonstrates them, explain their practical impact, and distinguish
-action-worthy problems from intentional tradeoffs or style preferences.
-
-Present the explanation first, then the ranked critique. The explanation should
-stand on its own for a reader who did not ask for the review.
 
 ## Delivery and completion
 
