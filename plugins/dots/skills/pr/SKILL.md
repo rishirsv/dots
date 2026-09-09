@@ -51,10 +51,12 @@ Then include the implementation details needed to review the approach, risks,
 and affected boundaries. State what was tested and what remains unverified.
 Preserve fields required by the repository's pull-request template.
 
-By default, present each substantive change as a top-level bullet with one to
-three explanatory sub-bullets. Keep the main bullet precise enough to review;
-use the sub-bullets to explain what it means, how the relevant behavior works,
-and why it matters.
+Keep the description readable in about a minute. Link detailed investigation
+logs and supporting metric tables. For a performance change, report the primary
+measurement with its unit as before → after.
+
+Use paragraphs or bullets according to the change. Add explanatory sub-bullets
+only when they help a reviewer understand the behavior, mechanism, or reason.
 
 Write these explanations for a reader without specialist knowledge of the
 codebase. Use a conversational, respectful ELI5 tone: familiar words, concrete
