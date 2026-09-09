@@ -26,7 +26,6 @@ Removing patterns is half the job. Sterile, voiceless writing is just as obvious
 - **Vary rhythm.** Short sentences. Then longer ones that take their time. Mix it up.
 - **Acknowledge complexity.** "Impressive but also kind of unsettling" beats "impressive."
 - **Use "I" when it fits.** First person isn't unprofessional.
-- **Let some mess in.** Perfect structure looks machine-made.
 - **Be specific.** Not "this is concerning" but "there's something unsettling about agents churning away at 3am."
 
 Give that voice a structure:
@@ -59,7 +58,7 @@ Give that voice a structure:
 
 ### Language
 
-- **AI vocabulary.** Additionally, crucial, delve, enduring, enhance, fostering, garner, interplay, intricate, landscape (abstract), pivotal, showcase, tapestry (abstract), testament, underscore, vibrant. Replace with plain words.
+- **Word choice.** Replace inflated or vague words when a familiar word preserves the meaning. Keep precise domain terms.
 - **Fancy ways to say "is".** "serves as", "stands as", "boasts", "features". Just say "is" or "has".
 - **"Not just X, but Y."** State the point directly instead.
 - **Rule of three.** Forcing ideas into groups of three. Use the natural number.
@@ -68,7 +67,7 @@ Give that voice a structure:
 
 ### Style
 
-- **Em dash overuse.** Avoid em dashes entirely. Use periods or commas only (no parentheses, no en dashes, no hyphen-as-dash substitutes). Em dashes are an AI tell, and reaching for parentheses instead just trades one tell for another. If a thought needs separation, end the sentence or use a comma.
+- **Punctuation.** Prefer periods or commas to em dashes. Split a sentence when an aside obscures its main point.
 - **Colon overuse.** Colons are fine before a list or example. Not as mid-sentence connectors. "If you're coming from traditional automation: instead of registering event handlers, you describe conditions" adds nothing with the colon. Rewrite to let the point stand on its own without comparison framing. "Describing when the scheduler should fire works best as plain English." Same meaning, no crutch punctuation.
 - **Boldface overuse.** Don't bold every proper noun or acronym.
 - **Inline-header lists.** The tell is a bold label and colon that restates the line: "**Performance:** Performance improved...". Convert those to prose. A bold lead-in that ends in a period, names the item, and is followed by genuinely new detail ("**Schema in TypeScript.** Tables live in one file.") is fine, not a tell.
@@ -103,4 +102,4 @@ Give that voice a structure:
 - **Prefer the plain word.** "utilize" becomes "use", "leverage" becomes "use", "facilitate" becomes "help", "numerous" becomes "many", "in the event that" becomes "if". The fancier synonym is rarely clearer.
 
 - **Mannered prose.** Metaphor or flourish where a literal phrase exists: aphorisms ("wire it or delete it"), rhetorical fragments for effect, personified code ("the plan holds it"), figurative verbs ("rides along", "stands on"), stock framing phrases. "A dial worth turning" becomes "a parameter worth varying". Say what you mean. The Jargon section covers the metaphor nouns.
-- **Over-compression.** Dropped articles, verbless fragments, symbol-speak, and abbreviations that make the reader decode instead of read. "Parser rejects bad date → exit 2, no write" becomes "The parser rejects a bad date, exits with code 2, and writes nothing." Write whole sentences with their articles and verbs, and spell out arrows and abbreviations.
+- **Over-compression.** Restore articles, verbs, or expanded terms when their omission makes the reader decode the sentence. "Parser rejects bad date → exit 2, no write" becomes "The parser rejects a bad date, exits with code 2, and writes nothing." Keep familiar notation when it improves clarity.

@@ -1,6 +1,6 @@
 ---
 name: architecture-review
-description: "Audit a codebase or subsystem for structural refactors, misplaced ownership, duplicated policy, weak boundaries, and code to consolidate or delete. Use for broad architecture and cleanup reviews; use code-quality-review for completed changes and how for explanation-only requests."
+description: "Audit a codebase or subsystem for structural refactors, misplaced ownership, duplicated policy, weak boundaries, and code to consolidate or delete. Use for broad architecture and cleanup reviews, not explanation-only requests or reviews limited to defects introduced by a selected change."
 ---
 
 # Architecture Review
@@ -12,11 +12,11 @@ except where persisted data or an external contract requires compatibility.
 
 ## References
 
-- Read [architecture-language.md](references/architecture-language.md) before naming architecture problems. Use its terms when they sharpen the finding, while preserving the repository's established vocabulary.
+- Read [architecture-language.md](references/architecture-language.md) when terminology would clarify a structural finding or a candidate proposes deleting an abstraction. Preserve the repository's established vocabulary.
 - Read [architecture-ownership.md](references/architecture-ownership.md) when a finding involves code placement, runtime ownership, duplicate policy, or canonical long-term ownership.
 - Read [duplicate-ownership.md](../../references/duplicate-ownership.md) when a finding involves a second source of truth, copied policy, normalization, or competing rule owners.
 - Read [test-consolidation.md](references/test-consolidation.md) when a refactor changes test placement, duplicates tests, or creates a new test surface.
-- Read [hard-cut-policy.md](../../references/hard-cut-policy.md) for every architecture review or refactor. It defines the default hard-cut posture, exception rule, and cleanup checklist.
+- Read [hard-cut-policy.md](../../references/hard-cut-policy.md) when a candidate replaces a schema, contract, persisted shape, or current path. It defines the exception rule and cleanup checklist.
 - Read [interface-design.md](references/interface-design.md) only after the user selects a candidate and wants alternative interface designs.
 
 ## Scope
@@ -29,10 +29,9 @@ Keep only repo guidance that changes the recommendation; higher-priority instruc
 
 If docs are incomplete, infer the current layer model from the code and state the assumption.
 
-Architecture Review owns architecture-primary scans: structural candidates,
-ownership, seams, and interface shape. Review may report architecture
-evidence found while reviewing a diff or broad quality audit, but routes a
-primarily structural candidate search here.
+Find structural problems across the requested codebase or subsystem, including
+existing problems outside recent changes. Stay within that target; a structural
+issue found in a diff does not by itself expand the request into a broad audit.
 
 ## Exploration
 
@@ -52,7 +51,7 @@ inspect: churn around the same modules, repeated edits to the same concept,
 duplicated call patterns, flaky or failing tests, and files accumulating
 unrelated responsibilities.
 
-Use fresh explorer or researcher subagents for large scans when available. Pass each subagent the compact repo guidance summary, relevant architecture docs, required domain skills, and the vocabulary from [architecture-language.md](references/architecture-language.md). Keep the parent agent responsible for the final recommendation.
+Use fresh explorer or researcher subagents for large scans when available. Pass each subagent the compact repo guidance summary, relevant architecture docs, required domain skills, and any vocabulary needed to describe the assigned findings. Keep the parent agent responsible for the final recommendation.
 
 ## Candidate Bar
 
@@ -60,7 +59,8 @@ A good candidate should improve locality, leverage, testability, or AI-navigabil
 
 Do not list speculative refactors just because they are imaginable. A candidate needs visible friction in the code, tests, docs, or change pattern.
 
-Apply the deletion test (architecture-language.md).
+For a candidate that deletes an abstraction, apply the deletion test in
+[architecture-language.md](references/architecture-language.md).
 
 ## Output
 

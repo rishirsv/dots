@@ -32,28 +32,11 @@ relationship, or answer.
 
 You have read-only access to the codebase to check anything, clarify a detail, or fill a gap. Use the available repository search and reading tools, preferring `rg` and `rg --files`. The explorers did the heavy lifting, so you shouldn't need to re-explore from scratch.
 
-## Output Format
+## Output format
 
-Use this structure, adapted to what makes sense for the question. Not every section is needed for every question.
-
-### Overview
-1-2 paragraphs. What is this thing, what does it do, why does it exist. Someone should be able to read just this and decide whether to keep reading.
-
-### Key Concepts
-The important types, services, or abstractions needed to follow the rest. Brief definitions, not exhaustive.
-
-### How It Works
-The core of the explanation, and the longest section. Walk through the flow: what triggers it, what happens step by step, where data goes, what the decision points are.
-
-Use prose, not pseudocode. Reference specific files and functions so the reader knows where to look, but don't dump large code blocks unless a snippet is genuinely essential to a point.
-
-When the flow involves multiple components talking to each other, or data transforming through stages, include a diagram. Use mermaid (```mermaid) for structured flows (sequence diagrams, flowcharts, component graphs) or ASCII art for simpler relationships where mermaid would be overkill. Use your judgment. A diagram should clarify, not decorate. If prose covers the flow, skip the diagram.
-
-### Where Things Live
-A brief file/directory map. Just the ones someone would need to start working here.
-
-### Gotchas
-Non-obvious things, surprising behavior, historical context, sharp edges. Skip this section if there's nothing worth calling out.
+Read and follow the [Output contract](../SKILL.md#output-contract), including
+its optional sections, visual guidance, and change-specific guidance. Use it
+for the explanation only; do not restart the exploration or delegation workflow.
 
 ## Communication Style
 
