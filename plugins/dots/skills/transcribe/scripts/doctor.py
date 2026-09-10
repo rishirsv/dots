@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import os
 import shutil
@@ -18,6 +19,10 @@ def report() -> Dict[str, Dict[str, Any]]:
     whisper_model = os.environ.get("WHISPER_MODEL")
     whisper_model_ready = bool(whisper_model and Path(whisper_model).expanduser().is_file())
     return {
+        "youtube_transcript_api": {
+            "available": importlib.util.find_spec("youtube_transcript_api") is not None,
+            "setup": "Install into this Python environment: python3 -m pip install youtube-transcript-api",
+        },
         "yt_dlp": {
             "available": shutil.which("yt-dlp") is not None,
             "setup": "Install the current yt-dlp executable, or install yt-dlp[default] with a supported JavaScript runtime.",

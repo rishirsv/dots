@@ -5,8 +5,10 @@ description: "Transcribes local media and YouTube videos into Markdown, text, JS
 
 # Transcribe
 
-Turn one local media file or one YouTube video into a transcript document. Use
-YouTube captions before spending time downloading audio or running a model.
+Turn one local media file or one YouTube video into a transcript document. Fetch English
+YouTube captions with `youtube-transcript-api` first, then yt-dlp captions,
+then downloaded audio and local ASR. Successful direct retrieval skips yt-dlp
+and uses the video ID as the title. Local ASR also uses English.
 
 ## Produce the transcript
 
@@ -38,7 +40,6 @@ YouTube captions before spending time downloading audio or running a model.
 - Keep the caption-first default for YouTube. Use `--force-asr` when the user
   requests a fresh transcription or the available captions are visibly
   unusable.
-- Use `--language <code>` when the language is known. `auto` is the default.
 - Use `--backend auto` unless the user explicitly asks for `whisper-cpp`.
   Local ASR requires a GGML model path through `--model` or `WHISPER_MODEL`.
   Run local ASR jobs serially; if another run owns the host lock, wait for it

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Retrieve YouTube captions or an audio-only fallback with yt-dlp."""
+"""Fetch English YouTube captions first, with yt-dlp as fallback."""
 
 from __future__ import annotations
 
@@ -9,10 +9,11 @@ import json
 import re
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 from urllib.request import Request, urlopen
 
 
@@ -36,7 +37,7 @@ def is_youtube_url(value: str) -> bool:
 def require_ytdlp() -> str:
     executable = shutil.which("yt-dlp")
     if not executable:
-        raise YouTubeError("yt-dlp is required for YouTube URLs; run doctor.py for setup guidance")
+        raise YouTubeError("yt-dlp is required for the YouTube fallback; run doctor.py for setup guidance")
     return executable
 
 
@@ -58,36 +59,57 @@ def inspect(url: str) -> Dict[str, Any]:
         raise YouTubeError("yt-dlp returned invalid metadata") from exc
 
 
-def _language(keys: Sequence[str], requested: str, source_language: str) -> Optional[str]:
-    candidates = [key for key in keys if key != "live_chat"]
-    if not candidates:
+def video_id(url: str) -> str:
+    parsed = urlparse(url)
+    parts = parsed.path.strip("/").split("/")
+    if parsed.hostname == "youtu.be":
+        value = parts[0]
+    elif parts[0] in {"shorts", "embed", "live", "v"} and len(parts) == 2:
+        value = parts[1]
+    else:
+        value = parse_qs(parsed.query).get("v", [""])[0]
+    if not is_youtube_url(url) or not re.fullmatch(r"[A-Za-z0-9_-]{11}", value):
+        raise YouTubeError("expected one YouTube video URL")
+    return value
+
+
+def fetch_direct(url: str) -> Optional[Dict[str, Any]]:
+    identifier = video_id(url)
+    try:
+        import youtube_transcript_api as api
+        from requests import RequestException
+    except ImportError:
+        print("youtube-transcript-api unavailable; trying yt-dlp captions (see doctor.py)", file=sys.stderr)
         return None
-    preferences = []
-    if requested != "auto":
-        preferences.append(requested)
-    elif source_language:
-        preferences.append(source_language)
-    preferences.append("en")
-    for preference in preferences:
-        if preference in candidates:
-            return preference
-        prefix = preference.split("-", 1)[0]
-        for candidate in candidates:
-            if candidate.split("-", 1)[0] == prefix:
-                return candidate
-    return sorted(candidates)[0]
+    try:
+        transcript = api.YouTubeTranscriptApi().fetch(identifier, languages=["en"])
+    except (api.RequestBlocked, api.AgeRestricted, api.VideoUnavailable,
+            api.VideoUnplayable, api.PoTokenRequired) as exc:
+        raise YouTubeError(str(exc)) from exc
+    except (api.YouTubeTranscriptApiException, RequestException) as exc:
+        print(f"caption API: {exc}; trying yt-dlp captions", file=sys.stderr)
+        return None
+    segments = [
+        {"start": item.start, "end": item.start + item.duration, "text": item.text}
+        for item in transcript if item.text.strip()
+    ]
+    if not segments:
+        return None
+    return _caption_result(
+        {"id": identifier}, url,
+        "youtube-auto" if transcript.is_generated else "youtube-manual",
+        transcript.language_code, segments,
+    )
 
 
-def caption_candidates(metadata: Dict[str, Any], requested: str) -> List[Tuple[str, str]]:
-    source_language = str(metadata.get("language") or "")
+def caption_candidates(metadata: Dict[str, Any]) -> List[Tuple[str, str]]:
     candidates = []
     for provider, tracks in (
         ("youtube-manual", metadata.get("subtitles") or {}),
         ("youtube-auto", metadata.get("automatic_captions") or {}),
     ):
-        language = _language(list(tracks), requested, source_language)
-        if language:
-            candidates.append((provider, language))
+        languages = sorted(key for key in tracks if key == "en" or key.startswith("en-"))
+        candidates.extend((provider, language) for language in languages)
     return candidates
 
 
@@ -188,8 +210,9 @@ def _caption_result(
     }
 
 
-def fetch_captions(url: str, metadata: Dict[str, Any], temp_dir: Path, requested: str) -> Optional[Dict[str, Any]]:
-    for provider, language in caption_candidates(metadata, requested):
+def fetch_captions(url: str, metadata: Dict[str, Any], temp_dir: Path) -> Optional[Dict[str, Any]]:
+    errors = []
+    for provider, language in caption_candidates(metadata):
         stem = "manual" if provider == "youtube-manual" else "automatic"
         direct_output = temp_dir / f"captions.{stem}.{language}.vtt"
         track = _caption_track(metadata, provider, language)
@@ -201,13 +224,16 @@ def fetch_captions(url: str, metadata: Dict[str, Any], temp_dir: Path, requested
         template = temp_dir / f"captions.{stem}.%(language)s.%(ext)s"
         try:
             _download_caption_with_ytdlp(url, provider, language, template)
-        except YouTubeError:
+        except YouTubeError as exc:
+            errors.append(str(exc))
             continue
         caption_files = sorted(temp_dir.glob(f"captions.{stem}.*.vtt"))
         for caption_file in caption_files:
             transcript_segments = parse_vtt(caption_file)
             if transcript_segments:
                 return _caption_result(metadata, url, provider, language, transcript_segments)
+    if errors:
+        raise YouTubeError("caption retrieval failed: " + "; ".join(errors))
     return None
 
 
@@ -243,16 +269,16 @@ def download_audio(url: str, temp_dir: Path) -> Path:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("url")
-    parser.add_argument("--language", default="auto")
     parser.add_argument("--temp-dir", type=Path, required=True)
     parser.add_argument("--audio", action="store_true", help="Download audio instead of returning captions")
     args = parser.parse_args()
     args.temp_dir.mkdir(parents=True, exist_ok=True)
-    metadata = inspect(args.url)
     if args.audio:
         print(download_audio(args.url, args.temp_dir))
         return 0
-    transcript = fetch_captions(args.url, metadata, args.temp_dir, args.language)
+    transcript = fetch_direct(args.url)
+    if transcript is None:
+        transcript = fetch_captions(args.url, inspect(args.url), args.temp_dir)
     if transcript is None:
         print(json.dumps({"captions": None}))
         return 4

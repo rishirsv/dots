@@ -49,6 +49,8 @@ def clean_transcript(transcript: Dict[str, Any]) -> Dict[str, Any]:
     for segment in transcript.get("segments", []):
         text = NON_SPEECH.sub(" ", str(segment.get("text") or ""))
         text = re.sub(r"\s+", " ", text).strip()
+        if re.fullmatch(r"[\[\](){}\s]*", text):
+            continue
         if text:
             cleaned = dict(segment)
             cleaned["text"] = text
@@ -81,13 +83,16 @@ def preflight_output(requested: Optional[Path], force: bool) -> Optional[Path]:
 
 def execute(args: argparse.Namespace, temp_dir: Path) -> Dict[str, Any]:
     if youtube.is_youtube_url(args.source):
-        metadata = youtube.inspect(args.source)
+        metadata = {"id": youtube.video_id(args.source)}
         if not args.force_asr:
-            captions = youtube.fetch_captions(args.source, metadata, temp_dir, args.language)
+            captions = youtube.fetch_direct(args.source)
+            if captions is None:
+                metadata = youtube.inspect(args.source)
+                captions = youtube.fetch_captions(args.source, metadata, temp_dir)
             if captions is not None:
                 return captions
         media = youtube.download_audio(args.source, temp_dir)
-        result = asr.transcribe(media, temp_dir, args.backend, args.model, args.language)
+        result = asr.transcribe(media, temp_dir, args.backend, args.model, "en")
         return finish_asr(
             result,
             str(metadata.get("title") or metadata.get("id") or "YouTube video"),
@@ -100,7 +105,7 @@ def execute(args: argparse.Namespace, temp_dir: Path) -> Dict[str, Any]:
     if not source.is_file():
         raise ValueError(f"input is not a file: {source}")
     source = source.resolve()
-    result = asr.transcribe(source, temp_dir, args.backend, args.model, args.language)
+    result = asr.transcribe(source, temp_dir, args.backend, args.model, "en")
     return finish_asr(result, source.stem, str(source), "local")
 
 
@@ -109,7 +114,6 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("source", help="Local media path or YouTube URL")
     result.add_argument("--output", type=Path)
     result.add_argument("--format", choices=render.FORMATS, default="md")
-    result.add_argument("--language", default="auto")
     result.add_argument("--backend", choices=asr.BACKENDS, default="auto")
     result.add_argument("--model", help="Backend-specific model name or path")
     result.add_argument("--force-asr", action="store_true", help="Ignore YouTube captions and transcribe downloaded audio")

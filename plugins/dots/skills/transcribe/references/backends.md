@@ -1,16 +1,25 @@
 # Transcribe backends and setup
 
 Read only the section needed to make `scripts/doctor.py` report a viable route
-or to honor an explicit language or model choice. Commands below install
+or to choose a local model. Commands below install
 software or download model files; show the relevant command and let the user
 choose whether to run it.
 
 ## YouTube: captions first, audio second
 
-The orchestrator uses `yt-dlp --no-playlist` to inspect one video. It prefers a
-manual track in the requested/source language, then an automatic track. Only
-when neither exists, or `--force-asr` is set, does it download `bestaudio/b` and
-run local ASR.
+The orchestrator first uses `youtube-transcript-api` to fetch English captions,
+preferably manual, without downloading media or inspecting video metadata.
+Install it into the same Python environment used to run the skill:
+
+```sh
+python3 -m pip install youtube-transcript-api
+```
+
+Missing dependencies or caption retrieval failures fall back to yt-dlp captions.
+Blocked or restricted API requests stop with their diagnostic. If the fallback
+finds no usable English captions, download audio and run local ASR in English.
+`--force-asr` skips both caption routes and metadata inspection. No GCP project,
+API key, translation setup, or browser is needed.
 
 Use a current yt-dlp build. Current YouTube support also requires external
 JavaScript challenge solving. The official executable distributions include
