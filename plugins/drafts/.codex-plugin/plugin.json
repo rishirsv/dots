@@ -1,0 +1,28 @@
+{
+  "name": "drafts",
+  "version": "0.1.0",
+  "description": "In-development writing workflows for drafting and revising books and long-form prose.",
+  "author": {
+    "name": "Rishi"
+  },
+  "repository": "https://github.com/rishirsv/dots",
+  "skills": "./skills/",
+  "keywords": [
+    "writing",
+    "books",
+    "drafting"
+  ],
+  "interface": {
+    "displayName": "Drafts",
+    "shortDescription": "In-development tools for books and long-form writing.",
+    "longDescription": "Drafts is an in-development collection of workflows for writing, revising, and shaping books and other long-form prose.",
+    "developerName": "Rishi",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": "Help me develop a long-form writing draft.",
+    "brandColor": "#7B5E45",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png",
+    "screenshots": []
+  }
+}

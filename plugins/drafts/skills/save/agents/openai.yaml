@@ -1,0 +1,9 @@
+interface:
+  display_name: "Save"
+  short_description: "Save confirmed writing preferences in context files"
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
+  default_prompt: "Use $save to save a confirmed writing preference in the right context file."
+
+policy:
+  allow_implicit_invocation: true

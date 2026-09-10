@@ -1,0 +1,9 @@
+interface:
+  display_name: "Interview"
+  short_description: "Draw out your thinking before building an outline"
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
+  default_prompt: "Use $interview to explore my writing idea before outlining."
+
+policy:
+  allow_implicit_invocation: true

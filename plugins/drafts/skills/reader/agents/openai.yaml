@@ -1,0 +1,9 @@
+interface:
+  display_name: "Reader"
+  short_description: "Review your draft through a first-time reader's eyes"
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
+  default_prompt: "Use $reader to review my draft from the intended reader's perspective."
+
+policy:
+  allow_implicit_invocation: true

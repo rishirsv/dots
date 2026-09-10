@@ -1,0 +1,9 @@
+interface:
+  display_name: "Scribe"
+  short_description: "Choose a writing workflow for the task at hand"
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
+  default_prompt: "Use $scribe to help me choose the next step for my writing."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,9 @@
+interface:
+  display_name: "Developmental Edit"
+  short_description: "Review argument, structure, evidence, and payoff"
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
+  default_prompt: "Use $dev-edit to review my draft."
+
+policy:
+  allow_implicit_invocation: true
