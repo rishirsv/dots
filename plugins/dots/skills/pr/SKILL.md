@@ -51,6 +51,22 @@ Then include the implementation details needed to review the approach, risks,
 and affected boundaries. State what was tested and what remains unverified.
 Preserve fields required by the repository's pull-request template.
 
+Keep the description readable in about a minute. Link detailed investigation
+logs and supporting metric tables. For a performance change, report the primary
+measurement with its unit as before → after.
+
+Use paragraphs or bullets according to the change. Add explanatory sub-bullets
+only when they help a reviewer understand the behavior, mechanism, or reason.
+
+Write these explanations for a reader without specialist knowledge of the
+codebase. Use a conversational, respectful ELI5 tone: familiar words, concrete
+behavior, and enough background to understand the change without teaching the
+whole subject. Translate the technical claim rather than repeating it with
+simpler synonyms. Explain the behavior first, then define necessary technical
+terms where they appear. Use a small example or analogy only when it makes the
+mechanism clearer or shorter. Preserve the distinctions and caveats needed for
+an accurate review; plain language should not hide them.
+
 Omit file-by-file narration, raw commit history, generic checklists, and agent
 narration. Mention files, symbols, schemas, frameworks, or data flows when they
 help a reviewer verify the change.

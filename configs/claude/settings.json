@@ -17,10 +17,14 @@
   "effortLevel": "medium",
   "modelSettings": {
     "claude-fable-5": {
-      "effortLevel": "high"
+      "effortLevel": "xhigh"
+    },
+    "claude-fable-5-1": {
+      "effortLevel": "medium"
     }
   },
   "tui": "default",
   "skipDangerousModePermissionPrompt": true,
+  "theme": "light",
   "enableRemoteControl": false
 }

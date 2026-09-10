@@ -94,10 +94,3 @@ What you searched for and didn't find. Be specific: "Searched the issue tracker 
 
 ### Additional Leads
 Anything that suggests further investigation in a different source. For example, if a PR references a chat thread that wasn't in your source, note it so the real-time team chat investigator or a follow-up pass can pursue it.
-
-## What You're Not Doing
-
-- Writing the final answer. The synthesizer does that.
-- Picking sides in contradictions. Surface them.
-- Speculating beyond what the evidence supports. A hunch with no evidence isn't evidence.
-- Reading the code itself to figure out intent. You may read the code to understand what the target *is*, but don't confuse "what the code does" with "why."

@@ -1,11 +1,15 @@
 {
   "name": "dots",
-  "version": "0.2.152",
+  "version": "0.2.166+codex.20260910030610",
   "description": "Opinionated development workflows and reusable skills for planning, building, reviewing, documenting, and shipping software.",
   "author": {
     "name": "Rishi"
   },
-  "keywords": ["development", "workflow", "skills"],
+  "keywords": [
+    "development",
+    "workflow",
+    "skills"
+  ],
   "category": "Productivity",
   "assets": "./assets",
   "references": "./references",

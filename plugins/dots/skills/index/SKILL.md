@@ -1,6 +1,6 @@
 ---
 name: index
-description: "Route broad or multi-stage Dots work to the smallest applicable skill, shared reference, or Feature Development workflow. Use when Dots is invoked directly, when planning or implementing a material code change, or when several Dots workflows may apply. Focused requests use their owning skill."
+description: "Route work to the smallest applicable Dots skill, shared reference, or Feature Development workflow only when the user explicitly invokes Dots, $index, or Dots Feature Development. Ordinary implementation and bug-fix requests do not trigger this router. Focused requests use their owning skill."
 ---
 
 # Dots Index
@@ -20,16 +20,11 @@ and loads owners; it does not repeat or replace their instructions.
 
 ## Develop software
 
-For a material feature, bug fix, refactor, measured performance change,
+When the user explicitly selects Dots, `$index`, or Dots Feature Development
+for a material feature, bug fix, refactor, measured performance change,
 behavior-changing configuration, or implementation plan, read and follow
 [Feature Development](../../references/feature-development.md) as the primary
 workflow. It routes into focused skills as its phases require.
-
-Use `$architect` before implementation when a consequential new or changed
-boundary needs its caller experience, types, ownership, state model, or module
-shape settled. Use `$design` for visible product UI, `$prototype` for a choice
-best settled by observation, and `$code-quality-review` before finishing the
-completed change.
 
 ## Choose the focused owner
 
@@ -49,6 +44,7 @@ completed change.
 | Publish finished work as a pull request | `$pr` |
 | Keep a pull request moving | `$babysit-pr` |
 | Prepare work for another agent, task, or phase | `$handoff` |
+| Write or revise a standalone prompt for another assistant | `$meta-prompt` |
 | Create, update, or review a Dots skill | `$skill-standards` |
 
 The user-controlled modes `$clarify`, `$scout`, `$explain`, `$oracle`,
@@ -57,8 +53,6 @@ selects that mode. Their descriptions define the exact boundary.
 
 ## Load shared references by need
 
-- Read [Feature Development](../../references/feature-development.md) for the
-  material software-change routes named above.
 - Read [Hard-Cut Policy](../../references/hard-cut-policy.md) when replacing a
   schema, contract, persisted shape, route, configuration, value set, or
   architecture, unless the selected skill already loads it.

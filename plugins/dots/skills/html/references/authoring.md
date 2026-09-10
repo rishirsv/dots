@@ -233,6 +233,10 @@ location the user named — or ask where when it will be kept — and open it in
 the browser. Name files and page-set directories for the content
 (`sync-rollout-brief.html`, `agentic-product-workshop/`), not the skill.
 
+In Codex, open local HTML by entering its absolute path in the in-app browser address bar; `createBrowserTab` can misread it as an HTTPS URL.
+Inspect the rendered page before claiming visual verification; opening HTML source alone is not a render check.
+If automation is denied, respect the denial and report the exact failed operation, without implying the user cannot open the file.
+
 Treat delivery states precisely:
 
 - **Standalone** means the local self-contained file is ready to open and

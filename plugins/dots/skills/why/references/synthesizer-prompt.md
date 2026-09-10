@@ -26,14 +26,7 @@ You are answering a "why" question about a piece of code by synthesizing finding
 
 ## Epistemics Framework
 
-You MUST follow the framework in `references/epistemics.md`. Read it in full before writing the output. The key rules:
-
-1. Every claim sits in one of these tiers: **Direct**, **Supported**, **Inferred**, **Speculative**, **Unknown**. The tier determines what section the claim goes in and how it's phrased.
-2. Every Direct/Supported claim must have a citation (PR #, ticket ID, doc URL, chat permalink, commit hash, or file:line).
-3. Inferred and Speculative claims must use hedged language ("appears to", "likely", "suggests", "one possibility is").
-4. Never cite code as evidence for its own intent.
-5. Gaps in the evidence must be documented. Don't fill them with plausible-sounding guesses.
-6. If the user's question embedded a hypothesis, treat it as a candidate, not a conclusion. Check the evidence independently.
+Follow the framework in `references/epistemics.md`. Read it in full before writing the output.
 
 ## Instructions
 
@@ -46,7 +39,8 @@ You MUST follow the framework in `references/epistemics.md`. Read it in full bef
 
 ## Output Format
 
-Write the output for the user. Use this exact structure:
+Write the output for the user. Use this structure, omitting sections whose
+conditions below do not apply:
 
 ---
 
@@ -87,20 +81,18 @@ Skip this section if there's a single clear answer.
 
 ### What We Don't Know
 
-**Explicit gaps.** Things the user asked that the evidence didn't answer. Sources searched that came up empty. Sources that weren't searchable at all, such as a missing real-time team chat MCP.
-
-Be specific. "We searched the issue tracker for [query1], [query2], [query3] and found no issue discussing the rate-limit threshold" is useful. "We don't know why" is not. Include:
-
-- Specific questions that went unanswered
-- Searches that returned nothing
-- Sources that were unavailable (and why)
-- People who would likely know but who you can't ask
+Include this section only when a material question remains unanswered. Name
+specific gaps: questions the evidence did not answer, searches that returned
+nothing, unavailable sources, or people who would likely know but cannot be
+asked. "We searched the issue tracker for [query1], [query2], [query3] and found
+no issue discussing the rate-limit threshold" is useful; "We don't know why"
+is not. Do not invent a gap to satisfy the format.
 
 ### Sources Consulted
 
 Bulleted list of what was actually searched, so the user can judge coverage and redirect. Format:
 
-- **Source control history**: {file paths}, {number of commits reviewed}, PRs #{numbers}, and code comments searched. Or "Not searched. This should not happen because git and `gh` are always expected."
+- **Source control history**: {file paths}, {number of commits reviewed}, PRs #{numbers}, and code comments searched. Or "Not searched." State why the source was unavailable or would not change this focused investigation.
 - **Issue / ticket tracker**: {ticket IDs and keyword searches}. Or "Not searched. No matching MCP available in this environment."
 - **Long-form documents**: {page titles and search queries}. Or "Not searched. No matching MCP available in this environment."
 - **Real-time team chat**: {channels searched, date ranges, queries}. Or "Not searched. No matching MCP available in this environment."
@@ -123,13 +115,11 @@ Before finalizing, review your output against this checklist:
 1. Does every claim in "What We Found" have a citation? If not, add one or move the claim to "Inferred" or "Hypotheses."
 2. Is the phrasing tier-appropriate? (Direct claims can use "because"; Inferred claims cannot.)
 3. Did you surface any contradictions you noticed, or did you quietly pick one?
-4. Does the "What We Don't Know" section exist and name specific gaps? If it's empty or missing, be suspicious. Historical investigations almost always have gaps.
+4. Does the "What We Don't Know" section name each material gap? Omit it when
+   the scoped question has no material unanswered gap; do not invent one to
+   satisfy the format.
 5. If the user embedded a hypothesis in their question, did you check it against the evidence rather than rubber-stamping it?
 6. Did you cite any code as evidence for its own intent? Remove those. Code is mechanics, not motivation.
 7. Is the overall tone calibrated? A confident-sounding answer with weak evidence is the exact failure mode this skill exists to prevent.
 
 If any item fails, revise before returning.
-
-## A Final Note
-
-The value of this output comes from its honesty, not its authority. A reader who takes your answer to the original author, an engineering lead, or a product manager should be well-positioned to ask the right follow-up questions. Be clear about what's known, what's inferred, and what's missing. Don't optimize for looking decisive. Optimize for being useful.

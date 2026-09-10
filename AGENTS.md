@@ -21,9 +21,6 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
 - Keep each portable skill runtime limited to `SKILL.md` and files the agent may
   need while performing the skill. Do not put authored evals, run history,
   research, or maintainer plans inside that directory.
-- Keep skill-owned development material in the skill's hidden
-  `.<skill-name>/` companion. Track authored `evals/` there and ignore
-  generated `runs/`, `worktrees/`, `tmp/`, and `packages/`.
 - `.agents/plugins/marketplace.json` is durable Codex marketplace source, not
   local scratch state.
 - Promote only stable public contracts into `README.md`, `INSTALL.md`, owning
@@ -50,15 +47,9 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
 
 ## Validation
 
-- Use focused checks for ordinary changes, including documentation, config, and
-  a single skill.
 - After editing a skill, review the changed files directly and run relevant
   deterministic tests plus the active environment's default skill validation.
-- Never run automated HTML structural validation.
-- `scripts/verify.sh --full` is the full repository integration gate. It checks
-  plugin and marketplace metadata, validates and smoke-installs marketplace
-  plugins, checks Dots-specific skill conventions, runs deterministic HTML
-  generation/tests, dry-runs config sync, and runs Dots test suites.
+- `scripts/verify.sh --full` is the full repository integration gate.
 - Run `scripts/verify.sh --full` only when the user explicitly requests it, for
   marketplace or plugin packaging, for cross-plugin/shared integration or
   release-infrastructure changes, or when changing the gate itself.

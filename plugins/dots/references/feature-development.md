@@ -1,6 +1,11 @@
 # Feature Development
 
-Use this playbook to plan or make a material software change. It owns features,
+Use this playbook only when the user explicitly selects Dots, `$index`, or
+Dots Feature Development for software planning or implementation. An ordinary
+feature, bug-fix, refactor, or planning request does not select this workflow;
+handle it directly with any applicable focused skills.
+
+Once selected, this playbook owns features,
 bug fixes, refactors, measured performance work, and behavior-changing
 configuration. Keep one compact working record in the active task with the
 outcome, non-goals, settled decisions, responsible code, chosen direction,
@@ -22,6 +27,11 @@ current route, and proof status.
   after each candidate change. Keep demonstrated wins and remove experiments
   that did not improve the target without violating its guardrails.
 
+For debugging and performance work, after two fixes based on the same
+assumption fail the same check, state that assumption and test it before
+attempting another fix. For recurring worker or resource imbalance, read
+[Attack the premise](attack-the-premise.md) for the per-actor census procedure.
+
 If no route fits, use the common spine and state the task-specific evidence
 that will distinguish success from motion. Do not add a permanent playbook for
 one unusual task.
@@ -35,10 +45,12 @@ one unusual task.
    ownership, interfaces, constraints, sequencing, or proof. Leave ordinary
    local discovery to implementation. Use read-only investigators only when
    distinct evidence lanes make the work faster or broader.
-3. **Settle decisions.** Answer repository-owned questions from source. Before
-   asking the user about a choice that running or viewing something could
-   settle, apply `$prototype`. Ask the user only for product choices,
-   preferences, authority, or information a focused probe cannot establish.
+3. **Settle decisions.** Answer repository-owned questions from source. Use a
+   focused probe when observation can resolve a consequential uncertainty;
+   apply `$prototype` when an isolated experiment is needed. Make reasonable
+   assumptions for routine choices within the requested scope. Ask the user
+   for product choices, preferences, authority, or information that would
+   materially change the result, and continue work independent of the answer.
 4. **Choose the design.** Select the smallest coherent approach that fits the
    existing system. Apply `$architect` when a consequential new or changed
    boundary needs its caller experience, public contract, data or state shape,
@@ -58,9 +70,13 @@ one unusual task.
    integration or visible behavior. Bugs use the original reproduction;
    refactors compare the pinned behavior; performance work repeats the frozen
    measurement.
-7. **Review and finish.** Apply `$code-quality-review`, repair retained in-scope
-   findings, rerun affected checks, inspect the final diff, and summarize the
-   result, proof, intentional exclusions, and remaining risk.
+7. **Review and finish.** Inspect the final diff against the requested outcome.
+   Apply `$code-quality-review` when the user requests a review, repository
+   policy requires it, or consequential behavior needs independent challenge.
+   Give the reviewer the task's diff and intended behavior. During implementation, repair supported defects caused by the change within
+   the authorized scope, rerun affected checks, and finish the requested work.
+   A standalone review remains read-only unless repairs are requested. Report
+   the result, proof, and material remaining gaps.
 
 ## Stop at a planning handoff when requested
 
@@ -83,11 +99,12 @@ verified material and reading order to `$html`. HTML changes the review surface,
 not the planning method. Do not make a durable artifact for a localized change
 whose handoff fits clearly in chat.
 
-`$code-quality-review` owns review scope, subagent strategy, findings, repairs,
-and final independent review. Do not recreate that procedure here.
+`$code-quality-review` owns review scope, subagent strategy, findings, and the
+optional repair path. Do not recreate that procedure here.
 
 The playbook is complete when the requested behavior works through its real
-path, proof supports the result, review is complete at the selected depth, and
+path, proof supports the result, the final diff has been inspected and any
+required review is complete, and
 every material gap is stated honestly.
 
 For planning-only work, it is complete when the execution handoff is grounded

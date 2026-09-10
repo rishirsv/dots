@@ -7,4 +7,4 @@ interface:
   default_prompt: "Use $index to choose and run the right Dots workflow for this request."
 
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

@@ -6,8 +6,10 @@ looking at the real rendered surface, not reasoning about the code.
 
 ## Tool Order
 
-- **Web/HTML**: Codex Browser first, Chrome only as fallback. Never Playwright
-  unless the user asks.
+- **Web/HTML**: follow the active browser skill and the user's browser choice.
+  Default to the in-app browser. Its documented controls, including its
+  Playwright API, are supported; a standalone automation browser is a
+  separate surface.
 - **iOS**: the user's simulator via XcodeBuildMCP (`build_run_sim`,
   `screenshot`, `snapshot_ui`). Check `session_show_defaults` before the first
   build in a session.
@@ -16,14 +18,19 @@ looking at the real rendered surface, not reasoning about the code.
 
 ## Recurring Failures To Check When Relevant
 
-1. **`file://` blocked.** Browser policy often blocks local file previews.
-   Fall back to a throwaway localhost server (`python3 -m http.server` in the
-   artifact directory) instead of declaring the artifact broken.
-2. **Wrong tab/window.** Confirm the inspected tab is the artifact you just
-   built — open the file URL in a fresh window when in doubt. Screenshotting
-   an unrelated tab and calling it proof has happened before.
-3. **Viewport misses.** Check desktop, 375px, and 320px widths. Flag any
-   horizontal overflow; wide content must scroll inside its own container.
+1. **Local preview access.** Open local HTML with its absolute filesystem path
+   in the in-app browser. If that fails, distinguish a rendering failure from
+   an automation limitation and follow the active browser skill's recovery
+   guidance. If a local server is needed, serve only the artifact directory and
+   bind it to loopback.
+2. **Wrong tab/window.** Confirm the inspected tab displays the artifact you
+   just built. Obtain a fresh tab only when the existing one cannot be
+   identified or reused. Screenshotting an unrelated tab is not proof.
+3. **Viewport misses.** Inspect the intended viewing size and any responsive
+   breakpoints affected by the change. For responsive web output, include a
+   narrow viewport; use 320px only when that width is supported or requested.
+   Flag unintended horizontal overflow; wide content should scroll inside its
+   own container.
 
 ## Proof Standard
 
