@@ -137,7 +137,7 @@ After the report:
 - Writer can ask for specific focus ("Just look at the structure")
 - Writer can skip dev-edit entirely
 - Writer can run multiple passes
-- Can be combined with other feedback (asshole read, objections) for stress testing
+- Can be combined with `reader` for feedback on the reading experience
 
 ## For Agents
 
@@ -146,7 +146,3 @@ When invoked programmatically:
 - Return structured assessment (issues + severity)
 - Include "overall readiness" indicator
 - Can be composed with other review skills
-
-## Lessons
-
-[Skill-specific lessons will be added here as they're captured]

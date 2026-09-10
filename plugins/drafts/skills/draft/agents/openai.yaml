@@ -1,8 +1,9 @@
 interface:
   display_name: "Draft"
   short_description: "Turn notes or an outline into a complete draft"
-  icon_small: "../../assets/icon.png"
-  icon_large: "../../assets/logo.png"
+  icon_small: "./assets/icon.png"
+  icon_large: "./assets/icon.png"
+  brand_color: "#7B5E45"
   default_prompt: "Use $draft to turn my notes into a draft."
 
 policy:

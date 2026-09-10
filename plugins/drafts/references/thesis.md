@@ -74,7 +74,3 @@ Which feels closest? Or want me to try a different angle?
 - **Specific** — Not so broad it could apply to anything
 - **Sharp** — Cuts through; not mushy or hedged
 - **Generative** — Opens up thinking rather than closing it down
-
-## Lessons
-
-[Skill-specific lessons will be added here as they're captured]

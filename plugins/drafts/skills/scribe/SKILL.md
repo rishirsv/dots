@@ -1,19 +1,19 @@
 ---
 name: scribe
-description: Route open-ended writing work through the smallest useful Compound Writing workflow. Use when the user wants to start, continue, finish, or improve a piece and has not named a more specific skill.
+description: Route open-ended writing work through the smallest useful Drafts workflow. Use when the user wants to start, continue, finish, or improve a piece and has not named a more specific skill.
 ---
 
 # Scribe
 
-Act as the orchestration layer for Compound Writing. Orient to the writer's actual context, identify the live artifact and desired outcome, then compose only the skills needed to get there.
+Act as the orchestration layer for Drafts. Orient to the writer's actual context, identify the live artifact and desired outcome, then compose only the skills needed to get there.
 
 ## Find The Writer's Starting Point
 
 Read `../../references/context-contract.md` before substantial work. Follow its authority order, project routing, provenance, destination, and write-safety rules.
 
-At the first meaningful Compound Writing interaction, inspect the request, supplied material, current workspace, and maintained context before choosing a route.
+At the first meaningful Drafts interaction, inspect the request, supplied material, current workspace, and maintained context before choosing a route.
 
-- Treat an existing writing workspace, maintained voice or style context, or useful live artifact as a real starting point even when the Compound Writing scaffold is absent.
+- Treat an existing writing workspace, maintained voice or style context, or useful live artifact as a real starting point even when the Drafts scaffold is absent.
 - If the user brings a draft, notes, sources, an active workspace, or enough context to begin, do the immediate writing work. Do not block on setup or a calibration interview. Offer to strengthen durable context only when it would materially improve future work.
 - If there is no established writing context and no useful artifact to work from, briefly explain the benefit of one writing home: it keeps how the writer sounds, what their writing needs to do, examples, and drafts together so future sessions can start with less re-explaining.
 - Guide that writer through one simple setup without requiring them to know the skill catalog. Resolve the target folder first, then route to `setup-project` and begin `onboarding` for `VOICE.md` and `STYLE.md`.
@@ -32,17 +32,18 @@ Choose the smallest route that fits the request:
 | Explicitly asks for another self-contained writing folder | `setup-project`, then optional `onboarding` |
 | No idea yet | `brainstorm` |
 | Has a live idea and needs material | `interview` |
-| Needs the point or reader promise sharpened | Read [Thesis](../../references/thesis.md) for thesis options; `cw-promise` for the reader promise |
-| Needs the most important idea or real opening found and placed | `cw-bluf` |
+| Needs the point sharpened | Read [Thesis](../../references/thesis.md) for thesis options |
+| Needs the reader promise sharpened | `outline` |
+| Needs the most important idea or real opening found and placed | `dev-edit` |
 | Has notes and needs structure | `outline` |
 | Has an outline or partial draft and needs prose | `draft` |
 | Needs argument, structure, stakes, or evidence fixed | `dev-edit` |
 | Structure is stable and prose needs revision | `line-edit` |
 | Needs a first-time-reader or fresh-eyes cold read | `reader` |
-| Sounds generic or machine-smoothed | `ai-check`, `voice-check`, `cw-tracks` |
+| Sounds generic or machine-smoothed | `ai-check`, `voice-check` |
 | Needs publication, project, or format standards | Load the active `STYLE.md`, brief, template, or maintained workflow |
 | Needs a publication-readiness decision | `final-pass` |
-| Needs pressure from multiple perspectives | `cw-objections`, a named lens, `cw-panel`, or `cw-debate` |
+| Needs argument and reader feedback | `dev-edit`, then `reader` |
 
 The familiar sequence remains available:
 
@@ -74,11 +75,11 @@ Do not lead with a tour of every feature. The user came to write, not admire the
 
 Common compositions:
 
-- **Lede repair:** `cw-bluf` -> targeted structural revision -> optional `line-edit`
+- **Lede repair:** `dev-edit` -> targeted structural revision -> optional `line-edit`
 - **Muscular revision:** `dev-edit` -> revision -> `line-edit` -> `ai-check`
 - **Pre-publication:** `dev-edit` when needed -> `ai-check` -> `final-pass`
-- **Voice repair:** `voice-check` -> targeted revision -> `ai-check` or `cw-tracks`
-- **High-stakes stress test:** `cw-objections` or `cw-panel` -> writer judgment -> targeted revision
+- **Voice repair:** `voice-check` -> targeted revision -> `ai-check`
+- **Argument and reader review:** `dev-edit` -> `reader` -> writer judgment -> targeted revision
 
 ## Artifacts And Progress
 

@@ -5,7 +5,7 @@ description: Create or initialize a durable writing home with VOICE.md, STYLE.md
 
 # Set Up A Writing Home
 
-Create one portable folder that can travel independently of the plugin and contains the context and working surfaces Compound Writing needs.
+Create one portable folder that can travel independently of the plugin and contains the context and working surfaces Drafts needs.
 
 ## Resolve The Target
 
@@ -36,7 +36,7 @@ python3 "<plugin-root>/skills/setup-project/scripts/create_project.py" "/path/to
 
 The script copies the canonical templates from `defaults/project-template/`. It may create a new folder or populate an empty folder. It refuses to modify a non-empty folder by default and never overwrites files.
 
-For an existing folder, inspect it first. If the user explicitly wants the Compound Writing structure added, run:
+For an existing folder, inspect it first. If the user explicitly wants the Drafts structure added, run:
 
 ```bash
 python3 "<plugin-root>/skills/setup-project/scripts/create_project.py" "/path/to/writing-home" --add-missing

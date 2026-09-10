@@ -89,4 +89,4 @@ Confirm:
 - what was captured in voice versus style;
 - where both files and any supporting examples were saved;
 - which gaps remain intentionally open;
-- how future Compound Writing skills will load the writing home.
+- how future Drafts skills will load the writing home.

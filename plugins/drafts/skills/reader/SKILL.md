@@ -116,6 +116,4 @@ Omit this section when nothing is meaningfully off-putting.
 
 ## Boundaries
 
-- Use `cw-mom` for a supportive non-expert accessibility read. `reader` is neutral and calibrated to the intended audience, including specialist audiences.
-- Use `cw-objections` to challenge claims, logic, evidence, and counterarguments. `reader` reports whether the argument can be followed and trusted on first contact.
 - Use `dev-edit` for a comprehensive evaluation of argument, structure, stakes, evidence, and payoff. `reader` stays inside the lived sequence of encountering the copy.

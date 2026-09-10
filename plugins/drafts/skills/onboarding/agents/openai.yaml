@@ -1,8 +1,9 @@
 interface:
   display_name: "Onboarding"
   short_description: "Develop voice and style guides from your writing"
-  icon_small: "../../assets/icon.png"
-  icon_large: "../../assets/logo.png"
+  icon_small: "./assets/icon.png"
+  icon_large: "./assets/icon.png"
+  brand_color: "#7B5E45"
   default_prompt: "Use $onboarding to help me develop my voice and style guides."
 
 policy:

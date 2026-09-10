@@ -128,7 +128,3 @@ When invoked programmatically:
 - Return pass/fail assessment with reasoning
 - Include list of any issues found
 - Can be composed with other quality checks (ai-check, voice-check)
-
-## Lessons
-
-[Skill-specific lessons will be added here as they're captured]

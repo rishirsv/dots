@@ -1,6 +1,6 @@
 # Context Contract
 
-Use this contract whenever a Compound Writing skill needs voice, project, assignment, source, or destination context.
+Use this contract whenever a Drafts skill needs voice, project, assignment, source, or destination context.
 
 ## Load Order
 

@@ -104,7 +104,3 @@ When invoked as part of a larger workflow, this skill returns:
 - Open loops/gaps (if any)
 - Model-proposed interpretations, only when requested and clearly labeled
 - Readiness assessment for outline stage
-
-## Lessons
-
-[Skill-specific lessons will be added here as they're captured]

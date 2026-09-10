@@ -102,7 +102,3 @@ When invoked programmatically:
 - Apply all silent enforcement
 - Return complete draft
 - Flag any sections that felt weak or uncertain
-
-## Lessons
-
-[Skill-specific lessons will be added here as they're captured]

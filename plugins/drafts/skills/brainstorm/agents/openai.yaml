@@ -1,8 +1,9 @@
 interface:
   display_name: "Brainstorm"
   short_description: "Explore ideas and find material worth writing about"
-  icon_small: "../../assets/icon.png"
-  icon_large: "../../assets/logo.png"
+  icon_small: "./assets/icon.png"
+  icon_large: "./assets/icon.png"
+  brand_color: "#7B5E45"
   default_prompt: "Use $brainstorm to help me find an idea worth writing about."
 
 policy:

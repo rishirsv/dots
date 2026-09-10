@@ -82,7 +82,3 @@ When you detect excitement, offer: "It sounds like this one is resonating—want
 ## Transition
 
 When exiting brainstorm, transition to **Interview** to extract what's needed for an outline.
-
-## Lessons
-
-[Skill-specific lessons will be added here as they're captured]

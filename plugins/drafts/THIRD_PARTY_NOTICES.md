@@ -8,8 +8,7 @@ Upstream identifies Katie Parrott as the author and declares the MIT license in
 both plugin manifests and its README. That revision contains no standalone
 LICENSE file or copyright notice. Preserve this provenance with the copied files.
 
-Fork changes are limited to removing `cw-` from adopted skill names and their
-references, plus adding OpenAI UI metadata. Thesis is stored as a shared
-reference with its skill frontmatter removed and invocation guidance adapted;
-Scribe links to that reference. References to excluded upstream
-skills retain their original names and do not imply those skills are bundled.
+Fork adaptations remove the upstream skill prefix, add OpenAI UI metadata,
+use Drafts branding, remove empty lesson placeholders, and route only to bundled
+skills. Thesis is a shared reference with its invocation guidance adapted.
+The editorial guidance otherwise retains the upstream approach.

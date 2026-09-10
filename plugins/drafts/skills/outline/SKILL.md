@@ -186,7 +186,3 @@ When invoked as part of a larger workflow, this skill returns:
 - The outline (at whatever depth was appropriate)
 - Open loops (if any)
 - Readiness assessment for draft stage
-
-## Lessons
-
-[Skill-specific lessons will be added here as they're captured]

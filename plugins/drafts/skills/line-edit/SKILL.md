@@ -96,7 +96,3 @@ System handles either format.
 ## Transition
 
 When writer is satisfied, offer to move to **Final Pass**: "Ready for a final pass before publishing?"
-
-## Lessons
-
-[Skill-specific lessons will be added here as they're captured]

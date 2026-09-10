@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create the canonical Compound Writing writing-home structure without overwriting files."""
+"""Create the canonical Drafts writing-home structure without overwriting files."""
 
 from __future__ import annotations
 
