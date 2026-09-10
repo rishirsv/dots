@@ -1,0 +1,10 @@
+interface:
+  display_name: "AI Check"
+  short_description: "Remove AI residue while preserving source fidelity"
+  icon_small: "./assets/icon.png"
+  icon_large: "./assets/icon.png"
+  brand_color: "#7B5E45"
+  default_prompt: "Use $ai-check to check my prose for AI residue."
+
+policy:
+  allow_implicit_invocation: true

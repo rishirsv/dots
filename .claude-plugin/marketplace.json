@@ -20,6 +20,21 @@
         "skills"
       ],
       "homepage": "https://github.com/rishirsv/dots/tree/main/plugins/dots"
+    },
+    {
+      "name": "drafts",
+      "description": "Writing workflows for developing ideas, drafting, and revising prose while preserving your voice.",
+      "author": {
+        "name": "Rishi"
+      },
+      "source": "./plugins/drafts",
+      "category": "productivity",
+      "tags": [
+        "writing",
+        "books",
+        "drafting"
+      ],
+      "homepage": "https://github.com/rishirsv/dots/tree/main/plugins/drafts"
     }
   ]
 }

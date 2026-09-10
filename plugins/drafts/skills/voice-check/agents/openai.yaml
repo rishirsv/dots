@@ -1,0 +1,10 @@
+interface:
+  display_name: "Voice Check"
+  short_description: "Check prose against your established writing voice"
+  icon_small: "./assets/icon.png"
+  icon_large: "./assets/icon.png"
+  brand_color: "#7B5E45"
+  default_prompt: "Use $voice-check to review my draft."
+
+policy:
+  allow_implicit_invocation: true

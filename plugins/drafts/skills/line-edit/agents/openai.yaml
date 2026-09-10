@@ -1,0 +1,10 @@
+interface:
+  display_name: "Line Edit"
+  short_description: "Revise sentences while preserving meaning and voice"
+  icon_small: "./assets/icon.png"
+  icon_large: "./assets/icon.png"
+  brand_color: "#7B5E45"
+  default_prompt: "Use $line-edit to revise my draft at the sentence level."
+
+policy:
+  allow_implicit_invocation: true

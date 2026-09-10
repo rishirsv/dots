@@ -1,0 +1,10 @@
+interface:
+  display_name: "Setup Project"
+  short_description: "Create a writing home with voice and style guides"
+  icon_small: "./assets/icon.png"
+  icon_large: "./assets/icon.png"
+  brand_color: "#7B5E45"
+  default_prompt: "Use $setup-project to set up a writing home in the folder I specify."
+
+policy:
+  allow_implicit_invocation: true
