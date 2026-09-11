@@ -192,7 +192,7 @@ expected = {
 errors = []
 for kind, names in expected.items():
     match = re.search(rf"^  {kind} \((\d+)\)(?:  (.*))?$", details, re.MULTILINE)
-    actual = sorted(filter(None, (match.group(2) if match else "").split(", ")))
+    actual = sorted(filter(None, (match.group(2) if match and match.group(2) else "").split(", ")))
     count = int(match.group(1)) if match else -1
     if count != len(names) or actual != names:
         errors.append(f"{kind.lower()}: expected {names}, got {actual}")
