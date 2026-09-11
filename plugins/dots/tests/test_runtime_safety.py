@@ -517,35 +517,5 @@ class SelfImproveScopeTests(unittest.TestCase):
         self.assertIsNone(self_improve._validation_category("echo testing took too long"))
 
 
-class OracleContainmentTests(unittest.TestCase):
-    def test_credential_like_filenames_are_rejected(self):
-        script = PLUGIN_ROOT / "skills" / "oracle" / "scripts" / "oracle_package.py"
-        for filename in ("api-token.txt", "client-secret.txt", "prod-credential.txt"):
-            with self.subTest(filename=filename), tempfile.TemporaryDirectory() as tmp:
-                root = Path(tmp)
-                prompt = root / "prompt.md"
-                prompt.write_text("Review this context.")
-                (root / filename).write_text("private")
-
-                result = subprocess.run(
-                    [
-                        sys.executable,
-                        str(script),
-                        "--root",
-                        str(root),
-                        "--prompt-file",
-                        str(prompt),
-                        "--file",
-                        filename,
-                        "--dry-run",
-                    ],
-                    capture_output=True,
-                    text=True,
-                )
-
-                self.assertNotEqual(result.returncode, 0)
-                self.assertIn("Credential-like file selected", result.stderr)
-
-
 if __name__ == "__main__":
     unittest.main()

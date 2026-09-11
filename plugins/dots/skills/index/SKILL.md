@@ -47,7 +47,7 @@ workflow. It routes into focused skills as its phases require.
 | Write or revise a standalone prompt for another assistant | `$meta-prompt` |
 | Create, update, or review a Dots skill | `$skill-standards` |
 
-The user-controlled modes `$clarify`, `$scout`, `$explain`, `$oracle`,
+The user-controlled modes `$clarify`, `$scout`, and `$explain`,
 `$recall`, and `$self-improve` remain explicit. Load them only when the user
 selects that mode. Their descriptions define the exact boundary.
 
