@@ -1,6 +1,6 @@
 ---
 name: explain
-description: "Use only when the user writes `$explain`. Give a quick plain-language or ELI5 explanation of any subject, or the previous answer when none is named; not for rigorous code investigation, critique, review, or implementation."
+description: "Use only when the user writes `$explain`. Give a plain-language or ELI5 explanation of any subject, or the previous answer when none is named, building intuition through examples and diagrams for code-related subjects; not for rigorous code investigation, critique, review, or implementation."
 ---
 
 # Explain
@@ -21,6 +21,15 @@ land, explain the missing idea from a different angle instead of summarizing it.
 When the user asks to see, diagram, or make the explanation visual, read
 [Visual explanations](../../references/visual-explanations.md) and use only its
 lightweight inline forms.
+
+For code-related subjects, plan a logical progression from the problem to the
+important entities, what they represent, who owns what, how they relate, and
+how they behave. Build intuition with generous concrete examples and inline
+diagrams, reading [Visual explanations](../../references/visual-explanations.md)
+as useful. Carry examples through the explanation; for diffs, show the same
+scenario before and after. Build on introduced concepts rather than file order,
+use the available code and context, and scale depth to the subject and requested
+brevity.
 
 Finish after answering the question, explaining the needed mechanism or
 distinction, and correcting any misconception shown by the context. Include a
