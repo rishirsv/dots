@@ -8,8 +8,8 @@ Read [standards.md](standards.md) before judging.
 
 | Scope | Evidence | Result |
 | --- | --- | --- |
-| `interaction` | Live UI or recording | Evidenced findings and pass/block verdict |
-| `diff` | Changed animation and interaction code | `Approve` or `Block`, with playback checks for feel |
+| `interaction` | Live UI or recording | Evidenced findings; verdict for a requested gate |
+| `diff` | Changed animation and interaction code | Implementation findings with playback checks for feel |
 | `codebase` | In-scope motion source and conventions | Prioritized findings by leverage |
 
 Read [ios-motion.md](../../design/references/ios-motion.md) only for native
@@ -50,9 +50,8 @@ properties cannot be judged at normal speed. A still image can support
 composition but cannot establish timing, easing, interruption, velocity,
 haptics, dropped frames, or feel.
 
-Return `passed` when no blocking motion defect remains and required dynamic
-states were inspected. Return `blocked` when required playback is missing or a
-`P0`/`P1` remains.
+Use the parent's acceptance rules for a requested motion gate. Required dynamic
+states need playback evidence; still images cannot establish those claims.
 
 ## Review A Diff
 
@@ -61,12 +60,9 @@ values, broad transitions, keyframes, missing reduced-motion handling, and
 likely interruption risks. Label feel and runtime performance `Needs testing`
 until played.
 
-Return one findings table with `file:line`, current behavior, exact correction,
-impact, and verification. Close with:
-
-- `Approve` when no blocking implementation defect remains and every
-  feel-dependent claim has a named playback check;
-- `Block` when a feel-breaking defect or unsafe implementation remains.
+Use the parent's finding format with `file:line` and a named playback check for
+feel-dependent claims. For a requested gate, state whether it covers source
+conformance or runtime experience; source alone cannot pass the latter.
 
 ## Audit A Codebase
 

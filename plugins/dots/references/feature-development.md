@@ -27,11 +27,6 @@ current route, and proof status.
   after each candidate change. Keep demonstrated wins and remove experiments
   that did not improve the target without violating its guardrails.
 
-For debugging and performance work, after two fixes based on the same
-assumption fail the same check, state that assumption and test it before
-attempting another fix. For recurring worker or resource imbalance, read
-[Attack the premise](attack-the-premise.md) for the per-actor census procedure.
-
 If no route fits, use the common spine and state the task-specific evidence
 that will distinguish success from motion. Do not add a permanent playbook for
 one unusual task.

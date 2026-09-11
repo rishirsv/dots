@@ -77,13 +77,13 @@ Keep a candidate only when all three proofs exist:
    direct contradiction in presentation or copy within the same task.
 2. **Runtime:** prove the cited owner, value, or behavior reaches the audited
    surface.
-3. **Correction:** state one change required by the evidence, naming the
+3. **Correction:** recommend a concrete repair supported by the evidence, naming the
    existing token, primitive, variant, component, or governing rule when one
    exists.
 
-Reject the candidate when the evidence supports several corrections, the
-intended rule is ambiguous, the proposal invents product intent, or the primary
-problem is functional behavior rather than design-system conformance.
+Reject the candidate when the intended rule is ambiguous, the proposal invents
+product intent, or the primary problem is functional behavior rather than
+design-system conformance.
 
 Source can prove token, type, color, spacing, copy, component, variant,
 responsive-presentation, and explicit contract violations. Hierarchy,
@@ -94,6 +94,9 @@ Exclude accessibility semantics, broken routes, data wiring, actions,
 performance, architecture, and general code quality unless the user requested
 that scope or a binding design contract governs it.
 
+Several valid repairs do not invalidate a proven violation. Recommend one and
+name any product decision needed to choose between them.
+
 ## Falsify And Report
 
 Re-open every cited source and implementation. Delete a candidate when:
@@ -101,15 +104,12 @@ Re-open every cited source and implementation. Delete a candidate when:
 - the cited rule does not govern this property or surface;
 - counterevidence makes the difference valid;
 - the implementation was misread;
-- the correction remains ambiguous;
+- no correction can be grounded in the evidence;
 - another finding already describes the root cause.
 
-Report:
-
-1. the reconstructed design language;
-2. findings that survived contract, runtime, correction, and falsification;
-3. the first improvement to make;
-4. claims that still require rendered evidence.
+Use the parent's compact report and acceptance rules. Include the governing
+sources and runtime owners with the findings, then the first improvement to
+make and claims that still require rendered evidence.
 
 Return a positive-null result when no candidate survives. Finish only when each
 finding names the governing owner, traced consumer, exact correction, and

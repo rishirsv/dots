@@ -1,7 +1,6 @@
 ---
 name: architect
 description: "Design a consequential new or changed code boundary before implementation when current requirements force decisions about ownership, lifecycle, contracts, atomicity, or state. Use for 'architect this,' new APIs or module boundaries, and changes whose types, ownership, or state model must be settled first."
-license: MIT
 ---
 
 # Architect

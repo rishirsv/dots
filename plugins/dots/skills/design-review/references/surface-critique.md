@@ -1,35 +1,12 @@
 # Surface Critique
 
-Judge one rendered surface on its own terms or against an accepted visual
-target. A focused critique returns the strongest findings. A full acceptance
-review returns `passed` or `blocked`.
+Judge one rendered surface against its user task, governing brief, and accepted
+product intent. For comparison with a visual target, use
+[fidelity-review.md](fidelity-review.md).
 
-## Establish The Comparison
-
-Choose one mode:
-
-- **Target comparison:** inspect both the source visual target and the rendered
-  implementation.
-- **Single-surface critique:** inspect the rendered implementation and any
-  governing brief, specification, prompt, or acceptance criteria.
-
-Return `final result: blocked` when required evidence cannot be opened,
-captured, or compared. Do not call a target comparison complete from separate
-image descriptions.
-
-For a target comparison:
-
-1. Match viewport, state, theme, density, route, content, authentication, and
-   interaction state before judging.
-2. Align crop, scale, and device frame. Put the target and implementation in the
-   same comparison input.
-3. Inspect the whole view for composition, hierarchy, density, and responsive
-   structure, then inspect focused regions where type, alignment, imagery,
-   icons, controls, or states are not readable at full-view scale.
-
-For a single-surface critique, state the intended user task and quality bar,
-then capture the smallest set of viewports and reachable states needed to judge
-them.
+State the intended task and quality bar, then inspect the smallest set of
+viewports and reachable states needed to judge them. Continue with supported
+findings when some evidence is unavailable and state the resulting limits.
 
 ## Inspect The Applicable Surfaces
 
@@ -60,32 +37,14 @@ Also inspect when applicable:
 Do not treat every pixel difference as a defect when intent and acceptance hold.
 Do not accept a full-view pass when material details are unreadable.
 
-## Decide The Result
+For a full review of one surface, also use the applicable state, adaptation,
+and accessibility probes in [experience-audit.md](experience-audit.md), without
+expanding to an unrelated journey.
 
-Return `final result: passed` when the surface is ready for its stated handoff
-and every remaining difference is classified as acceptable, expected, or
-non-blocking polish.
+## Report And Finish
 
-Return `final result: blocked` when:
-
-- required evidence is missing;
-- a target comparison cannot establish fidelity;
-- a required fidelity surface has an unresolved acceptance issue;
-- any `P0` or `P1` remains; or
-- a `P2` breaks the stated bar, target fidelity, usability, accessibility, or
-  responsive quality.
-
-`P3` does not block unless the user set a stricter bar.
-
-## Report
-
-Lead with:
-
-1. `final result: passed|blocked`;
-2. what was compared and at which states or viewports;
-3. findings using the parent finding contract;
-4. the ordered implementation checklist when useful;
-5. material evidence limits.
-
-Finish when every required surface is covered or explicitly inapplicable, each
-finding has an acceptance check, and the result follows the rules above.
+Use the parent's compact report and acceptance rules. Return a verdict only for
+a requested acceptance or readiness gate. Finish when the scoped surfaces are
+covered or their evidence gaps named, every finding has an acceptance check,
+and any verdict follows the evidence. Preserve meaningful visual character and
+deliberate omissions when recommending corrections.

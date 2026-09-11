@@ -45,13 +45,28 @@ Judge structure before style: task flow, orientation, hierarchy, grouping,
 spacing, contrast, readability, feedback, and state clarity precede decoration
 or polish.
 
+## Check Outcomes And Adaptation When Applicable
+
+For recording, editing, saving, or asynchronous flows, trace action, immediate
+feedback, committed outcome, failure/recovery, and return. Check truthful success,
+preserved input, duplicate-action risk on retry, and distinctions between missing,
+zero, partial, stale, and failed data. Do not infer a permission failure from
+absence alone. Use source to substantiate visible consequences, not to expand
+into a backend audit.
+
+Select affected cases for long content, units and dates, constrained space,
+large text, keyboard occlusion, themes, and relevant assistive settings. Preserve
+reachable actions, value/unit relationships, and task context. Check a gesture's
+accessible alternative where applicable. One populated screenshot cannot prove
+other state branches; report unexercised paths as coverage gaps.
+
 ## Walk The Path
 
 For each important step or supplied state:
 
 1. Reach the state without crossing an unapproved side-effect boundary.
-2. Wait for a live screen to become stable; reject loading, blank, blocked, or
-   incorrect captures.
+2. Reach the intended state and reject incorrect or accidental transitional
+   captures. Deliberately inspect loading or empty UI when that is the subject.
 3. Inspect or capture the evidence.
 4. Exercise navigation, focus, validation, recovery, state change, and motion
    only when they affect the user goal.
@@ -79,11 +94,11 @@ from screenshots.
 
 ## Decide Completion
 
-Return a blocked audit when the core flow cannot be completed, an important
-step cannot be inspected, the source changes during review, a required saved
-artifact cannot be produced, or the requested claim needs unavailable evidence.
+An unavailable step limits coverage; continue inspecting independent steps. Use
+the parent's acceptance rules only when a gate was requested. A core-flow defect
+and an uninspectable flow are different reasons for a blocked verdict.
 
-Otherwise finish when:
+Finish when:
 
 - every important step has current evidence or a named limit;
 - every `P0` and `P1` has the strongest available verification;
@@ -93,35 +108,7 @@ Otherwise finish when:
 
 ## Report
 
-Use one compact structure and omit empty sections:
-
-```markdown
-# Experience Audit
-
-## Verdict And Scope
-- Mode, user goal, flow, and evidence limits
-
-## Top Findings
-- Findings in descending severity
-
-## Step Health
-1. Step — good | mixed | poor | blocked: concise evidence-grounded read
-
-## System Themes
-- Supported cross-step patterns
-
-## Strong Decisions To Preserve
-- Non-obvious strengths that changes should retain
-
-## Ship-Now Fixes
-- Ordered repairs tied to the core task or major risk
-
-## Later Polish
-- Non-blocking refinements
-
-## Verification Gaps
-- Missing interaction, accessibility, source, analytics, or user evidence
-```
-
-Lead the reader-facing report with the verdict and top findings, not tool logs,
-provenance, or a screenshot inventory.
+Use the parent's compact chat format. Include step health or cross-step themes
+only when they explain the findings or coverage. Keep consequential opportunities
+separate from core-task repairs, and preserve non-obvious strengths. Tool logs
+and screenshot inventories do not lead the report.

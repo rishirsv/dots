@@ -1,5 +1,7 @@
 # AGENTS.md
 
+You should infer the user's intent and task scope from the instructions and prior conversation context. Your job is to bias towards action and carry the user's intended task to completion.
+
 Implement only what the task requires. Prefer the simplest complete solution.
 Avoid unrelated features, refactors, abstractions, compatibility layers, and
 speculative error handling.
