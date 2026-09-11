@@ -14,9 +14,8 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
 
 ## Docs And Local State
 
-- Save agent-created plans, research, reports, audits, screenshots, HTML
-  artifacts, and working notes under `.agents/plans/`, `.agents/outputs/`, or
-  `.agents/tmp/`; treat them as local/private unless explicitly asked to publish.
+- Treat agent-created plans, research, reports, audits, screenshots, HTML
+  artifacts, and working notes as local/private unless explicitly asked to publish.
 - Put reusable, area-specific documentation under `docs/<area>/`.
 - Keep each portable skill runtime limited to `SKILL.md` and files the agent may
   need while performing the skill. Do not put authored evals, run history,
