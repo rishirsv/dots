@@ -90,7 +90,7 @@ codex_for() {
 }
 
 sync_codex_home() {
-  local label="$1" home="$2" spec name version installed stale
+  local label="$1" home="$2" profile_home agent_source agent_target backup spec name version installed stale
   [[ -z "$home" || -d "$home" ]] || { echo "Skipping $label: $home does not exist"; return; }
 
   echo "Syncing $label"
@@ -112,6 +112,23 @@ installed = {p["pluginId"]: p["version"] for p in json.load(sys.stdin)["installe
 errors = ["%s@dots: expected %s, got %s" % (name, version, installed.get(name + "@dots", "not installed")) for name, version in expected.items() if installed.get(name + "@dots") != version]
 if errors: raise SystemExit("Codex verification failed:\n  " + "\n  ".join(errors))
 ' "${CODEX_SPECS[@]}" <<< "$installed"
+
+  profile_home="${home:-$HOME/.codex}"
+  agent_source="$ROOT/plugins/dots/agents"
+  agent_target="$profile_home/agents"
+  if [[ ! -d "$agent_target" || -L "$agent_target" ]] || ! diff -qr "$agent_source" "$agent_target" >/dev/null; then
+    mkdir -p "$profile_home"
+    if [[ -e "$agent_target" || -L "$agent_target" ]]; then
+      backup="${agent_target}.bak.$(date +%Y%m%d%H%M%S)"
+      cp -pR "$agent_target" "$backup"
+      echo "Backed up $agent_target -> $backup"
+      rm -rf "$agent_target"
+    fi
+    cp -pR "$agent_source" "$agent_target"
+    echo "Synced Codex agents to $agent_target"
+  else
+    echo "Codex agents already current at $agent_target"
+  fi
 }
 
 sync_claude() {
@@ -190,4 +207,6 @@ if (( ${+TARGETS[codex]} )); then
   sync_codex_home "default Codex" "${CODEX_HOME:-}"
   sync_codex_home "Codex personal" "$HOME/.codex-personal"
 fi
-(( ${+TARGETS[claude]} )) && sync_claude
+if (( ${+TARGETS[claude]} )); then
+  sync_claude
+fi

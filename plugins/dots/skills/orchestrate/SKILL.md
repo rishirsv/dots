@@ -9,7 +9,7 @@ Remain available to the user while delegating substantive work.
 
 | Need | Agent |
 |---|---|
-| Bounded leaf task | `leaf` |
+| Bounded independent task | `luna` |
 | Read-only investigation | `explorer` |
 | Advice or implementation-ready plan | `advisor` |
 | Bounded implementation | `worker` |
@@ -43,7 +43,7 @@ the question and answer through the parent; consultation does not require
 nested delegation. Scope changes and shared-interface decisions still go to
 the coordinator.
 
-Use `leaf` for bounded independent work. If the assignment needs wider scope,
+Use `luna` for bounded independent work. If the assignment needs wider scope,
 coordination, or a consequential decision, return that issue to the parent.
 
 Run independent read-only work in parallel. Keep one implementer unless changes
