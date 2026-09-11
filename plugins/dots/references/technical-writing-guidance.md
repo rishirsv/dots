@@ -80,6 +80,10 @@ The revision replaces a dense noun cluster with a concrete action, moves the
 condition before the command, turns the vague `only` sentence into an explicit
 precondition, and replaces an ambiguous `it` with the exact object.
 
+## Evidence in claims
+
+- **Every claim carries its evidence or its label in the same sentence.** Measured, inferred, or guess. A prediction or an unseen cause is a guess. Never hand the human a check you could run.
+
 ## Editing pass
 
 1. Identify claims, caveats, examples, commands, and links that must remain

@@ -123,3 +123,5 @@ Before finalizing, review your output against this checklist:
 7. Is the overall tone calibrated? A confident-sounding answer with weak evidence is the exact failure mode this skill exists to prevent.
 
 If any item fails, revise before returning.
+
+You may lightly edit for clarity or add context from the conversation, but **do not rewrite the confidence language**.

@@ -76,7 +76,9 @@ one unusual task.
    Give the reviewer the task's diff and intended behavior. During implementation, repair supported defects caused by the change within
    the authorized scope, rerun affected checks, and finish the requested work.
    A standalone review remains read-only unless repairs are requested. Report
-   the result, proof, and material remaining gaps.
+   the result, proof, and material remaining gaps. Apply
+   [Evidence in claims](technical-writing-guidance.md#evidence-in-claims)
+   when writing the completion report.
 
 ## Stop at a planning handoff when requested
 
