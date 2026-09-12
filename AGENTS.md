@@ -12,21 +12,6 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
 - Do not edit installed plugin/config caches.
 - Work-in-progress skills that must not ship in any plugin live under `wip/`.
 
-## Docs And Local State
-
-- Treat agent-created plans, research, reports, audits, screenshots, HTML
-  artifacts, and working notes as local/private unless explicitly asked to publish.
-- Put reusable, area-specific documentation under `docs/<area>/`.
-- Keep each portable skill runtime limited to `SKILL.md` and files the agent may
-  need while performing the skill. Do not put authored evals, run history,
-  research, or maintainer plans inside that directory.
-- `.agents/plugins/marketplace.json` is durable Codex marketplace source, not
-  local scratch state.
-- Promote only stable public contracts into `README.md`, `INSTALL.md`, owning
-  plugin docs, skill references, config docs, or `docs/<area>/`.
-- Do not commit secrets. Zsh secrets and machine-local shell overrides belong in
-  `~/.zshrc.local`, not `configs/zsh/`.
-
 ## Commands
 
 - Sync repo-owned marketplace plugins and installed local plugin caches with
@@ -48,7 +33,9 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
 
 - After editing a skill, review the changed files directly and run relevant
   deterministic tests plus the active environment's default skill validation.
-- `scripts/verify.sh --full` is the full repository integration gate.
-- Run `scripts/verify.sh --full` only when the user explicitly requests it, for
+- `scripts/verify.py --plugins` checks both source plugin packages.
+- `scripts/verify.py --full` is the full repository integration gate; use
+  Python 3.10+ for either mode.
+- Run `scripts/verify.py --full` only when the user explicitly requests it, for
   marketplace or plugin packaging, for cross-plugin/shared integration or
   release-infrastructure changes, or when changing the gate itself.

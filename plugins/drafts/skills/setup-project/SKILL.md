@@ -1,6 +1,6 @@
 ---
 name: setup-project
-description: Create or initialize a durable writing home with VOICE.md, STYLE.md, examples/, and drafts/. Use when Scribe identifies a first-time writer with no established writing context after resolving the target, or when the user explicitly asks to set up, scaffold, initialize, or migrate a self-contained writing folder.
+description: "Create or initialize a writing home with VOICE.md, STYLE.md, examples/, and drafts/. Use for explicit setup or migration, or Scribe's first-use setup route."
 ---
 
 # Set Up A Writing Home

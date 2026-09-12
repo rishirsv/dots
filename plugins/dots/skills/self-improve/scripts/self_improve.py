@@ -40,7 +40,7 @@ CLAUDE_HOME = Path(os.environ.get("CLAUDE_CONFIG_DIR", Path.home() / ".claude"))
 SOURCE_SKILLS_ROOT = Path(__file__).resolve().parents[2]
 # Derived per-session statistics, keyed by schema version + session id + mtime.
 STATS_CACHE_FILE = CODEX_HOME / "self_improve_stats_cache.json"
-STATS_SCHEMA = 5
+STATS_SCHEMA = 6
 PLATFORM = "codex"
 SESSION_SOURCE: SessionSource = CodexSource(CODEX_HOME, iter_session_events)
 
@@ -337,7 +337,7 @@ def _output_text(output: Any) -> str:
     if isinstance(output, str):
         return output
     if isinstance(output, dict):
-        return " ".join(str(v) for v in output.values() if isinstance(v, (str, int, float)))
+        return " ".join(_output_text(v) for v in output.values())
     # Hosts also emit tool output as a list of content blocks; flattening it is
     # required or error markers in block-form output are never seen.
     if isinstance(output, list):
@@ -411,14 +411,13 @@ def thread_signals(thread: Thread, known_skills: set[str]) -> ThreadSignals:
                 for cue in FRICTION_CUES:
                     if cue in lowered:
                         sig.friction_cues += 1
-            elif kind == "function_call":
+            elif kind in {"function_call", "custom_tool_call"}:
                 sig.tool_calls += 1
                 invoked = _tool_skill_name(payload, known_skills)
                 if invoked:
                     sig.invocations[invoked] += 1
-            elif kind == "function_call_output":
-                text = _output_text(payload.get("output"))[:2000].lower()
-                if any(marker in text for marker in ERROR_MARKERS):
+            elif kind in {"function_call_output", "custom_tool_call_output"}:
+                if _output_failed(payload):
                     sig.error_outputs += 1
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
@@ -626,16 +625,21 @@ def save_stats_cache(entries: dict[str, dict[str, Any]]) -> None:
     )
 
 
-def stats_cache_key(thread: Thread) -> str:
+def stats_cache_key(thread: Thread, window_start: int | None = None, window_end: int | None = None) -> str:
     """Invalidate on transcript mtime so a growing session is recomputed.
 
     Bump STATS_SCHEMA whenever a derived field is added, removed, or redefined;
     otherwise a cached entry from an older shape is read as current."""
     try:
-        mtime = int(Path(thread.rollout_path).stat().st_mtime)
+        mtime = Path(thread.rollout_path).stat().st_mtime_ns
     except OSError:
         mtime = thread.updated_at
-    return f"v{STATS_SCHEMA}:{PLATFORM}:{thread.id}:{mtime}"
+    # Closed records wholly inside successive windows share a cache key. Only
+    # a boundary crossing an actual record invalidates its derivation.
+    bounded_start = max(window_start, thread.created_at) if window_start is not None else thread.created_at
+    bounded_end = min(window_end, thread.updated_at) if window_end is not None else thread.updated_at
+    bounded = window_start is not None or window_end is not None
+    return f"v{STATS_SCHEMA}:{PLATFORM}:{thread.id}:{mtime}:{bounded}:{bounded_start}:{bounded_end}:{thread.source}"
 
 
 def _arg_dict(payload: dict[str, Any]) -> dict[str, Any]:
@@ -671,7 +675,15 @@ def _command_fingerprint(command: str) -> str:
 
 
 def _output_failed(payload: dict[str, Any]) -> bool:
-    text = _output_text(payload.get("output"))[:2000].lower()
+    if isinstance(payload.get("exit_code"), int):
+        return payload["exit_code"] != 0
+    if isinstance(payload.get("is_error"), bool):
+        return payload["is_error"]
+    if payload.get("status") in {"failed", "declined", "cancelled"}:
+        return True
+    if payload.get("status") == "completed":
+        return False
+    text = _output_text(payload.get("output")).lower()
     if any(marker in text for marker in ERROR_MARKERS):
         return True
     exit_code = payload.get("exit_code")
@@ -691,7 +703,7 @@ def _is_self_referential(early_user_text: str) -> bool:
     return any(marker in early_user_text for marker in SELF_REFERENTIAL_MARKERS)
 
 
-def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, Any]:
+def derive_session_stats(thread: Thread, known_skills: set[str], *, window_start: int | None = None, window_end: int | None = None) -> dict[str, Any]:
     """Derive one session's quantitative profile from its normalized event stream.
 
     Counts only what the stream states. Anything the host does not record stays
@@ -739,20 +751,74 @@ def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, An
     validation_call_ids: set[str] = set()
     pending_validation: dict[str, dict[str, Any]] = {}
     failed_validation_after_edit: dict[str, bool] = {}
+    outer_calls = wrapper_calls = structured_calls = duplicate_calls = 0
+    unknown_outcomes = inferred_failures = unstamped_events = 0
+    seen_calls: set[str] = set()
+    measured_calls: set[str] = set()
+    outcomes: set[str] = set()
+    output_fingerprints: dict[str, str] = {}
+    wrappers: set[str] = set()
+    token_totals: Counter = Counter()
+    token_missing_fields: Counter = Counter()
+    token_field_samples: Counter = Counter()
+    token_previous: dict[str, int] | None = None
+    token_previous_stamp: int | None = None
+    token_samples = token_resets = token_unbounded = 0
+    token_fields = ("input_tokens", "cached_input_tokens", "output_tokens", "reasoning_output_tokens")
+    parent = parent_thread_id(thread)
+    inherited_events = 0
 
     try:
         for event in SESSION_SOURCE.events(thread):
             payload = event.payload or {}
             stamp = parse_timestamp(event.timestamp) if event.timestamp else None
+            in_window = stamp is not None and (window_start is None or stamp >= window_start) and (window_end is None or stamp <= window_end)
+            inherited = parent is not None and stamp is not None and stamp < thread.created_at
+            if event.kind == "token_count":
+                info = payload.get("info") or {}
+                current = info.get("total_token_usage") or {}
+                current = {k: current[k] for k in token_fields if isinstance(current.get(k), int) and current[k] >= 0}
+                if in_window and not inherited:
+                    token_samples += 1
+                    token_missing_fields.update(k for k in token_fields if k not in current)
+                    baseline = token_previous
+                    if baseline is None and parent is None and (window_start is None or thread.created_at >= window_start):
+                        baseline = {k: 0 for k in token_fields}
+                    if baseline is None or (token_previous is not None and token_previous_stamp is None) or (window_start is not None and token_previous_stamp is not None and token_previous_stamp < window_start):
+                        # A cumulative sample straddling the boundary is not an
+                        # exact window delta. Retain it only as the next baseline.
+                        token_unbounded += 1
+                    elif any(current[k] < baseline[k] for k in current if k in baseline):
+                        token_resets += 1
+                    else:
+                        measured_fields = current.keys() & baseline.keys()
+                        token_totals.update({k: current[k] - baseline[k] for k in measured_fields})
+                        token_field_samples.update(measured_fields)
+                        if measured_fields != current.keys():
+                            token_unbounded += 1
+                token_previous = current
+                token_previous_stamp = stamp
+                continue
+            if inherited:
+                inherited_events += 1
+                continue
+            if stamp is None:
+                unstamped_events += 1
+                if window_start is not None or window_end is not None:
+                    continue
+            elif not in_window:
+                continue
             if stamp is not None:
                 stamped_events += 1
                 first_ts = stamp if first_ts is None else min(first_ts, stamp)
                 last_ts = stamp if last_ts is None else max(last_ts, stamp)
-                if previous_ts is not None:
-                    delta = stamp - previous_ts
-                    if 0 <= delta <= IDLE_GAP_SECONDS:
-                        engaged_seconds += delta
-                previous_ts = stamp
+                synthetic_start = getattr(event, "provenance", "outer") == "structured_operation" and event.kind == "function_call"
+                if not synthetic_start:
+                    if previous_ts is not None:
+                        delta = stamp - previous_ts
+                        if 0 <= delta <= IDLE_GAP_SECONDS:
+                            engaged_seconds += delta
+                    previous_ts = stamp
             if event.kind == "message":
                 if event.role == "user":
                     injected_skill = _injected_skill_name(event.text, known_skills)
@@ -781,9 +847,25 @@ def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, An
                         completion_claim_seen = True
                     if stamp is not None:
                         last_assistant_ts = stamp
-            elif event.kind == "function_call":
-                tool_calls += 1
+            elif event.kind in {"function_call", "custom_tool_call"}:
+                structured = getattr(event, "provenance", "outer") == "structured_operation"
+                if not structured:
+                    outer_calls += 1
+                if event.call_id and event.call_id in seen_calls:
+                    duplicate_calls += 1
+                    continue
+                if event.call_id:
+                    seen_calls.add(event.call_id)
                 name = str(payload.get("name") or "").strip()
+                if event.kind == "custom_tool_call" and name.rsplit(".", 1)[-1] == "exec":
+                    wrapper_calls += 1
+                    if event.call_id:
+                        wrappers.add(event.call_id)
+                    continue
+                structured_calls += int(structured)
+                tool_calls += 1
+                if event.call_id:
+                    measured_calls.add(event.call_id)
                 if name:
                     tool_counts[name] += 1
                 arguments = _arg_dict(payload)
@@ -830,12 +912,28 @@ def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, An
                 invoked = _tool_skill_name(payload, known_skills)
                 if invoked:
                     skills[invoked] += 1
-            elif event.kind == "function_call_output":
-                text = _output_text(payload.get("output"))[:2000].lower()
+            elif event.kind in {"function_call_output", "custom_tool_call_output"}:
+                if event.call_id in wrappers:
+                    continue  # A wrapper's success does not prove its children succeeded.
+                text = _output_text(payload.get("output")).lower()
                 failed = _output_failed(payload)
+                structured_outcome = isinstance(payload.get("exit_code"), int) or isinstance(payload.get("is_error"), bool) or payload.get("status") in {"completed", "failed", "declined", "cancelled"}
+                duplicate_output = bool(event.call_id and event.call_id in outcomes)
+                output_fingerprint = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
+                if duplicate_output:
+                    if event.call_id in validation_call_ids and output_fingerprints.get(event.call_id) != output_fingerprint:
+                        validation_ambiguous_outputs += 1
+                    continue
+                if event.call_id:
+                    output_fingerprints[event.call_id] = output_fingerprint
+                if event.call_id:
+                    outcomes.add(event.call_id)
+                if not structured_outcome:
+                    unknown_outcomes += 1
+                    inferred_failures += int(failed)
                 if failed:
                     tool_errors += 1
-                category = _error_category(text)
+                category = _error_category(text) if failed else None
                 if category:
                     error_categories[category] += 1
                 if event.call_id in validation_call_ids:
@@ -860,16 +958,34 @@ def derive_session_stats(thread: Thread, known_skills: set[str]) -> dict[str, An
 
     validation_unpaired += len(pending_validation)
     span_minutes = max(0, thread.updated_at - thread.created_at) // 60
-    # Prefer the stamped event window; a record's span can predate a resume.
     if first_ts is not None and last_ts is not None:
-        span_minutes = min(span_minutes, max(0, last_ts - first_ts) // 60) or span_minutes
+        span_minutes = max(0, last_ts - first_ts) // 60
+    elif window_start is not None or window_end is not None:
+        span_minutes = 0
     return {
         "session_id": thread.id,
         "platform": PLATFORM,
         "cwd": thread.cwd,
         "model": thread.model,
-        "start": thread.created_at,
-        "end": thread.updated_at,
+        "start": first_ts if first_ts is not None else max(thread.created_at, window_start or thread.created_at),
+        "end": last_ts if last_ts is not None else min(thread.updated_at, window_end or thread.updated_at),
+        "parent_session_id": parent,
+        "inherited_events_skipped": inherited_events,
+        "unstamped_events": unstamped_events,
+        "outer_tool_calls": outer_calls,
+        "wrapper_calls": wrapper_calls,
+        "structured_operation_calls": structured_calls,
+        "duplicate_tool_calls": duplicate_calls,
+        "unknown_tool_outcomes": unknown_outcomes + len(measured_calls - outcomes),
+        "inferred_tool_failures": inferred_failures,
+        "wrapper_child_attribution": "unknown" if wrapper_calls else "not_applicable",
+        "token_usage": dict(token_totals) if token_samples else None,
+        "token_samples": token_samples,
+        "token_missing_fields": dict(token_missing_fields),
+        "token_field_samples": dict(token_field_samples),
+        "token_counter_resets": token_resets,
+        "token_unbounded_intervals": token_unbounded,
+        "token_usage_complete": bool(token_samples) and not (token_resets or token_unbounded or token_missing_fields or parent),
         "duration_minutes": span_minutes,
         "engaged_minutes": engaged_seconds // 60,
         "stamped_events": stamped_events,
@@ -914,18 +1030,26 @@ def is_low_signal(entry: dict[str, Any]) -> bool:
 
 
 def collect_session_stats(
-    rows: list[Thread], *, max_new: int, refresh: bool
-) -> tuple[list[dict[str, Any]], dict[str, int]]:
+    rows: list[Thread], *, max_new: int | None = None, refresh: bool = False,
+    window_start: int | None = None, window_end: int | None = None,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Return per-session stats plus a coverage record naming what was skipped."""
     known = known_skill_names()
     cache = load_stats_cache()
     coverage = {
         "listed": len(rows),
+        "eligible": len(rows),
+        "analyzed": 0,
+        "included": 0,
+        "interrupted": False,
+        "window_start": utc(window_start) if window_start is not None else None,
+        "window_end": utc(window_end) if window_end is not None else None,
         "cached": 0,
         "computed": 0,
         "capped": 0,
         "missing_transcript": 0,
         "low_signal": 0,
+        "low_signal_excluded": 0,
         "self_referential": 0,
         "malformed": 0,
     }
@@ -935,18 +1059,23 @@ def collect_session_stats(
         if not Path(thread.rollout_path).exists():
             coverage["missing_transcript"] += 1
             continue
-        key = stats_cache_key(thread)
+        key = stats_cache_key(thread, window_start, window_end)
         entry = None if refresh else cache.get(key)
         if entry is None:
-            if coverage["computed"] >= max_new:
+            if max_new is not None and coverage["computed"] >= max_new:
                 coverage["capped"] += 1
                 continue
-            entry = derive_session_stats(thread, known)
+            try:
+                entry = derive_session_stats(thread, known, window_start=window_start, window_end=window_end)
+            except KeyboardInterrupt:
+                coverage["interrupted"] = True
+                break
             cache[key] = entry
             updated = True
             coverage["computed"] += 1
         else:
             coverage["cached"] += 1
+        coverage["analyzed"] += 1
         if entry.get("malformed"):
             coverage["malformed"] += 1
         if entry.get("self_referential"):
@@ -954,8 +1083,18 @@ def collect_session_stats(
             continue
         if is_low_signal(entry):
             coverage["low_signal"] += 1
-            continue
+            entry["low_signal_narrative"] = True
+            # A one-prompt task or delegated child can contain substantial work.
+            # Keep its operational evidence even when its prose is too sparse
+            # to describe interaction style.
+            if not (entry.get("tool_calls") or entry.get("wrapper_calls") or entry.get("token_samples")):
+                coverage["low_signal_excluded"] += 1
+                continue
         entries.append(entry)
+    coverage["included"] = len(entries)
+    coverage["skipped"] = len(rows) - coverage["analyzed"]
+    coverage["complete"] = not (coverage["skipped"] or coverage["malformed"] or coverage["interrupted"])
+    coverage["completeness_scope"] = "scan completed; narrative/self-review exclusions and missing event metadata still apply"
     if updated:
         save_stats_cache(cache)
     entries.sort(key=lambda item: -item["end"])
@@ -1000,6 +1139,9 @@ def aggregate_session_stats(entries: list[dict[str, Any]]) -> dict[str, Any]:
             "validation_unpaired", "validation_ambiguous_outputs", "validation_failed",
             "validation_repeats", "validation_total_seconds",
             "validation_after_completion_claims", "failure_edit_retest_cycles",
+            "outer_tool_calls", "wrapper_calls", "structured_operation_calls",
+            "duplicate_tool_calls", "unknown_tool_outcomes", "inferred_tool_failures",
+            "unstamped_events", "inherited_events_skipped",
         ):
             totals[field_name] += entry.get(field_name, 0)
 
@@ -1011,9 +1153,27 @@ def aggregate_session_stats(entries: list[dict[str, Any]]) -> dict[str, Any]:
                 break
 
     installed = sorted(known_skill_names())
+    included_ids = {entry["session_id"] for entry in entries}
+    token_totals: Counter = Counter()
+    for entry in entries:
+        token_totals.update(entry.get("token_usage") or {})
     return {
         "platform": PLATFORM,
         "sessions": len(entries),
+        "lineage": {
+            "root_records": sum(not entry.get("parent_session_id") for entry in entries),
+            "child_records": sum(bool(entry.get("parent_session_id")) for entry in entries),
+            "parents_outside_included_set": sorted({entry["parent_session_id"] for entry in entries if entry.get("parent_session_id") and entry["parent_session_id"] not in included_ids}),
+            "aggregation": "record activity; declared children exclude events before creation; unknown forks/retries are not deduplicated",
+        },
+        "token_usage": {
+            "recorded_deltas": dict(token_totals),
+            "records_with_samples": sum(bool(e.get("token_samples")) for e in entries),
+            "records_without_samples": sum(not e.get("token_samples") for e in entries),
+            "counter_resets": sum(e.get("token_counter_resets", 0) for e in entries),
+            "unbounded_intervals": sum(e.get("token_unbounded_intervals", 0) for e in entries),
+            "semantics": "bounded nondecreasing cumulative deltas only; cached input is part of input, reasoning is part of output; excludes reset/boundary intervals; not billing or independent-task totals",
+        },
         "date_range": {
             "start": utc(min(entry["start"] for entry in entries)) if entries else "",
             "end": utc(max(entry["end"] for entry in entries)) if entries else "",
@@ -1230,8 +1390,25 @@ def cmd_skill_usage(args: argparse.Namespace) -> None:
 
 def cmd_stats(args: argparse.Namespace) -> None:
     """Emit structured aggregate evidence for downstream interpretation."""
-    rows = threads(limit=args.limit, archived=args.archived, days=args.days, query=args.query, cwd=args.cwd)
-    entries, coverage = collect_session_stats(rows, max_new=args.max_new, refresh=args.refresh)
+    if args.days is not None and args.days <= 0:
+        raise SystemExit("--days must be positive")
+    if args.max_new is not None and args.max_new < 0:
+        raise SystemExit("--max-new must be nonnegative")
+    if args.limit is not None and args.limit < 0:
+        raise SystemExit("--limit must be nonnegative")
+    window_end = int(datetime.now(timezone.utc).timestamp())
+    window_start = window_end - args.days * 86400 if args.days is not None else None
+    # Discover first, then apply the explicit cap so coverage keeps its denominator.
+    rows = threads(limit=None, archived=args.archived, days=None, query=args.query, cwd=args.cwd)
+    rows = [row for row in rows if row.created_at <= window_end and (window_start is None or row.updated_at >= window_start)]
+    eligible = len(rows)
+    if args.limit is not None:
+        rows = rows[:args.limit]
+    entries, coverage = collect_session_stats(rows, max_new=args.max_new, refresh=args.refresh, window_start=window_start, window_end=window_end)
+    coverage["eligible"] = eligible
+    coverage["limit_skipped"] = eligible - len(rows)
+    coverage["skipped"] += coverage["limit_skipped"]
+    coverage["complete"] = coverage["complete"] and not coverage["limit_skipped"]
     summary = aggregate_session_stats(entries)
     print(json.dumps({"summary": summary, "coverage": coverage, "sessions": entries}, indent=2))
 
@@ -1276,8 +1453,8 @@ def build_parser() -> argparse.ArgumentParser:
     stats_p.add_argument("--days", type=int)
     stats_p.add_argument("--query")
     stats_p.add_argument("--cwd")
-    stats_p.add_argument("--max-new", type=int, default=200,
-                         help="cap on sessions derived this run; capped sessions are reported")
+    stats_p.add_argument("--max-new", type=int,
+                         help="optional explicit cap on newly derived sessions; default scans the full selected window")
     stats_p.add_argument("--refresh", action="store_true", help="ignore the cache and recompute")
     stats_p.set_defaults(func=cmd_stats)
 

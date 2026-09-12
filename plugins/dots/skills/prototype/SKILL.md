@@ -58,7 +58,7 @@ apply only when the prototype is choosing a technical shape; do not impose an
 architecture exercise on a visual or timing question.
 
 Place the work in the repository's private scratch location, or under
-`.agents/tmp/prototypes/<topic>/` when none is defined. Keep it separate from
+`tmp/prototypes/<topic>/` when none is defined. Keep it separate from
 production source. Use the lightest available stack, in-memory or disposable
 state, and only enough error handling to make the experiment reliable. Do not
 add production abstractions, compatibility layers, or tests for code meant to

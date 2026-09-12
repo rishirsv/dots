@@ -1,3 +1,4 @@
+/tmp/
 # Local agent state
 /.agents/*
 !/.agents/plugins/

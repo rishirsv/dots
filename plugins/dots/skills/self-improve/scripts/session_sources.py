@@ -40,6 +40,9 @@ class SessionEvent:
     # Raw host timestamp when the rollout records one. Empty when the host does
     # not stamp the event; callers must degrade instead of assuming coverage.
     timestamp: str = ""
+    # Structured completed operations may occur inside a wrapper. No parent is
+    # inferred from ordering when the host omits that relationship.
+    provenance: str = "outer"
 
 
 class SessionSource(Protocol):
@@ -186,6 +189,39 @@ class CodexSource:
             return
         for event in self._event_reader(path, strict=True):
             payload = event.payload or {}
+            if event.kind == "item_completed":
+                item = payload.get("item") or {}
+                item_kind = item.get("type")
+                if item_kind not in {"CommandExecution", "McpToolCall"}:
+                    continue
+                call_id = str(item.get("id") or "")
+                if item_kind == "CommandExecution":
+                    command = item.get("command", "")
+                    # The recorded argv is data, never a command to execute.
+                    if isinstance(command, list):
+                        command = command[-1] if len(command) >= 3 and command[-2] in {"-c", "-lc"} else " ".join(command)
+                    name = "exec_command"
+                    arguments = {"cmd": command}
+                    output = item.get("aggregated_output", item.get("stdout", ""))
+                else:
+                    name = str(item.get("server", "")) + "." + str(item.get("tool", ""))
+                    arguments = item.get("arguments") or {}
+                    output = item.get("result")
+                start = payload.get("started_at_ms")
+                start_stamp = datetime.fromtimestamp(start / 1000, timezone.utc).isoformat() if isinstance(start, (int, float)) else ""
+                yield SessionEvent(
+                    "function_call", payload={"name": name, "arguments": arguments},
+                    call_id=call_id, timestamp=start_stamp, provenance="structured_operation",
+                )
+                yield SessionEvent(
+                    "function_call_output", payload={
+                        "output": output, "exit_code": item.get("exit_code"),
+                        "status": item.get("status"),
+                        "is_error": (output or {}).get("isError") if isinstance(output, dict) else None,
+                    }, call_id=call_id, timestamp=event.timestamp,
+                    provenance="structured_operation",
+                )
+                continue
             yield SessionEvent(
                 kind=event.kind,
                 role=event.role or "",
@@ -304,7 +340,7 @@ class ClaudeSource:
                             if isinstance(block, dict) and block.get("type") == "tool_result":
                                 yield SessionEvent(
                                     kind="function_call_output",
-                                    payload={"output": _content_text(block.get("content"))},
+                                    payload={"output": _content_text(block.get("content")), "is_error": block.get("is_error")},
                                     timestamp=stamp,
                                     call_id=str(block.get("tool_use_id") or ""),
                                 )
@@ -334,7 +370,7 @@ class ClaudeSource:
                         elif block.get("type") == "tool_result":
                             yield SessionEvent(
                                 kind="function_call_output",
-                                payload={"output": _content_text(block.get("content"))},
+                                payload={"output": _content_text(block.get("content")), "is_error": block.get("is_error")},
                                 timestamp=stamp,
                                 call_id=str(block.get("tool_use_id") or ""),
                             )

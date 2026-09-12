@@ -77,7 +77,7 @@ def iter_session_events(path: Path, *, strict: bool = False) -> Iterator[Session
                     text = text_from_content(payload.get("content"))
                     if text:
                         yield SessionEvent(timestamp, "message", role, text, payload)
-                elif payload_type in {"function_call", "function_call_output"}:
+                elif payload_type in {"function_call", "function_call_output", "custom_tool_call", "custom_tool_call_output"}:
                     yield SessionEvent(timestamp, str(payload_type), payload=payload)
                 continue
 
@@ -89,5 +89,5 @@ def iter_session_events(path: Path, *, strict: bool = False) -> Iterator[Session
                 text = str(payload.get("message") or "")
                 if text:
                     yield SessionEvent(timestamp, "message", role, text, payload)
-            elif payload_type in {"function_call", "function_call_output"}:
+            elif payload_type in {"function_call", "function_call_output", "custom_tool_call", "custom_tool_call_output", "token_count", "item_completed"}:
                 yield SessionEvent(timestamp, str(payload_type), payload=payload)

@@ -1,7 +1,9 @@
 # Skill Practices
 
 This is the shared Dots quality standard for agent skills. `skill-standards`
-uses it when creating, updating, or reviewing skill source.
+uses it when creating, updating, or reviewing skill source. Authoring mechanics
+belong to the environment's default `skill-creator`; this reference adds Dots
+editorial judgment, preservation standards, and domain methods.
 
 Use the host's validity requirements first. Let the environment's default
 `skill-creator` or `plugin-creator` own schemas, scaffolding, packaging,
@@ -21,20 +23,6 @@ Apply only the sections relevant to the skill. This reference is not a fixed
 template, checklist, or scoring system.
 
 ## Guidelines
-
-### Give the skill a job worth loading
-
-- **Start with the recurring job.** A useful skill handles work that comes up
-  again and has a recognizable result.
-- **Add missing leverage.** The skill should supply judgment, knowledge,
-  resources, or tools that change how a capable agent works.
-- **Use the narrowest durable owner.** Put repository conventions in project
-  instructions, stable preferences in configuration or memory, mechanical work
-  in a script, reader-facing decisions in documents, and authenticated actions
-  in apps or services. Use a skill for portable judgment.
-- **Keep one job together.** Several branches do not require several skills.
-  Split only when a branch needs independent discovery or a real context
-  boundary.
 
 ### Make discovery sound like the request
 
@@ -56,30 +44,6 @@ template, checklist, or scoring system.
   mode as free.
 - **Collapse synonyms.** Give each distinct trigger branch one strong phrase
   instead of listing every way to say the same thing.
-
-### Match the structure to the work
-
-- **Lead with the common path.** Put the job, default approach, and important
-  judgment where the agent sees them first.
-- **Separate steps from reference.** Steps say what the agent does now.
-  Reference supplies definitions, rules, facts, examples, or templates used
-  while doing it.
-- **Number real sequences.** Use numbered steps when order affects correctness.
-  Use bullets for principles, choices, tests, applications, and guardrails.
-- **Keep judgment flexible.** Use prose and decision points when several
-  approaches can work.
-- **Make fragile work exact.** Use a short fixed sequence, script, or validator
-  when mistakes are costly and the operation does not vary much.
-- **Use headings to carry meaning.** A heading should tell the reader what the
-  section helps them do, not merely name a category.
-- **Put detail where it is needed.** Keep common guidance in `SKILL.md`. Move
-  branch-specific facts and procedures into a reference with a direct
-  read-when link.
-- **Disclose by branch.** Keep material inline when every path needs it. Put
-  material behind a pointer when only one path needs it. Do not split a file
-  merely to make the top level shorter.
-- **Keep concepts together.** Put a definition, its rules, and its caveats in
-  one place instead of scattering them across the payload.
 
 ### Write instructions that change behavior
 
@@ -162,17 +126,6 @@ template, checklist, or scoring system.
 - **Name useful failure behavior.** Say whether the skill asks, makes an
   assumption, preserves partial work, reports a positive-null result, or stops.
 
-### Build only useful runtime resources
-
-- **Use references for conditional knowledge.** A reference should have a
-  caller and a clear branch that needs it.
-- **Use scripts for repeated execution.** A script should replace logic that is
-  safer, cheaper, or more reliable to run than to reconstruct in prose.
-- **Use assets for output material.** Templates, media, and source artifacts
-  belong in assets when the skill uses them to build the user's deliverable.
-- **Keep the runtime portable.** Prefer relative links, stable identifiers, and
-  host-supported configuration over machine-specific paths and private state.
-
 ### Ground important decisions in evidence
 
 - **Trace important rules.** Support them with an explicit user requirement,
@@ -221,17 +174,6 @@ designing an evaluation for that kind of skill:
 
 ## Rules
 
-### Respect authority and scope
-
-- **Follow host validity requirements.** A Dots preference cannot make the
-  skill invalid in its target environment.
-- **Follow repository instructions.** Use the repository's source locations,
-  validation policy, packaging conventions, and authorization boundaries.
-- **Preserve explicit user decisions.** Do not weaken or reinterpret a stated
-  requirement to make the skill cleaner or shorter.
-- **Do not expand the job silently.** A source edit does not authorize
-  installation, publication, external writes, or unrelated refactors.
-
 ### Preserve existing skills deliberately
 
 - **Preserve accepted wording.** Keep language the user praised or asked to
@@ -271,18 +213,6 @@ designing an evaluation for that kind of skill:
   to the current agent. Say to read, load, or apply that skill. Reserve
   `handoff`, `pass`, and `give` for a real change of owner or context, such as a
   subagent, another task, or an external system.
-
-### Make instructions safe and executable
-
-- **Reserve hard absolutes for real guardrails.** Use `must`, `always`, and
-  `never` for safety, irreversible actions, explicit user constraints, or a
-  costly observed failure.
-- **Put conditions before guarded actions.** The agent should know when a rule
-  applies before it acts.
-- **Name side effects.** A script or tool instruction must make writes,
-  external actions, deletion, and failure behavior clear.
-- **Define stop conditions.** Stop when required authority, input, evidence, or
-  tool access is missing and a reasonable assumption would change the result.
 
 ### Prove the result honestly
 

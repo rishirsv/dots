@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -221,6 +222,166 @@ class PlatformSeamTests(unittest.TestCase):
             path.write_text("{}\nnot-json\n", encoding="utf-8")
             with self.assertRaisesRegex(ValueError, f"{path}:2"):
                 list(session_sources.iter_jsonl(path))
+
+
+
+
+class StatsEvidenceTests(unittest.TestCase):
+    def setUp(self):
+        self.helper = load_module("self_improve_evidence_fixture", SCRIPT)
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.path = self.root / "rollout.jsonl"
+        self.start = session_sources.parse_timestamp("2026-07-01T10:00:00Z")
+
+    def stats(self, events, *, created=None, source="", start=None, end=None):
+        write_jsonl(self.path, events)
+        thread = self.helper.Thread(
+            "root", "task", source, str(self.root),
+            self.start if created is None else created, self.start + 600,
+            False, "model", str(self.path),
+        )
+        adapter = self.helper.CodexSource(self.root, self.helper.iter_session_events)
+        with mock.patch.object(self.helper, "SESSION_SOURCE", adapter):
+            return self.helper.derive_session_stats(thread, set(), window_start=start, window_end=end)
+
+    def test_wrapper_operations_failures_and_duplicate_completions(self):
+        def operation(id, seconds, code, output):
+            return {"type": "event_msg", "timestamp": f"2026-07-01T10:00:{seconds:02d}Z", "payload": {
+                "type": "item_completed", "started_at_ms": (self.start + seconds - 2) * 1000,
+                "item": {"type": "CommandExecution", "id": id, "command": ["/bin/zsh", "-lc", "pytest tests/unit"],
+                         "exit_code": code, "status": "completed", "aggregated_output": output},
+            }}
+        failed = operation("exec-1", 10, 1, "x" * 3000 + " failed")
+        stats = self.stats([
+            {"type": "response_item", "timestamp": "2026-07-01T10:00:01Z", "payload": {
+                "type": "custom_tool_call", "name": "exec", "call_id": "wrapper",
+                "input": "await tools.exec_command({cmd: 'pytest tests/unit'}); await tools.exec_command({cmd: 'pytest tests/unit'});",
+            }},
+            failed, failed,
+            operation("exec-2", 15, 0, "documentation says exit code 1 but this command passed"),
+            {"type": "response_item", "timestamp": "2026-07-01T10:00:16Z", "payload": {
+                "type": "custom_tool_call_output", "call_id": "wrapper", "output": "Script completed",
+            }},
+        ])
+        self.assertEqual(stats["outer_tool_calls"], 1)
+        self.assertEqual(stats["wrapper_calls"], 1)
+        self.assertEqual(stats["structured_operation_calls"], 2)
+        self.assertEqual(stats["tool_calls"], 2)
+        self.assertEqual(stats["tool_errors"], 1)
+        self.assertEqual(stats["validation_calls"], 2)
+        self.assertEqual(stats["validation_failed"], 1)
+        self.assertEqual(stats["validation_total_seconds"], 4)
+        self.assertEqual(stats["unknown_tool_outcomes"], 0)
+        self.assertEqual(stats["wrapper_child_attribution"], "unknown")
+        self.assertEqual(stats["duplicate_tool_calls"], 1)
+
+    def test_mcp_metadata_and_unknown_direct_outcomes(self):
+        stats = self.stats([
+            {"type": "event_msg", "timestamp": "2026-07-01T10:00:05Z", "payload": {
+                "type": "item_completed", "started_at_ms": (self.start + 1) * 1000,
+                "item": {"type": "McpToolCall", "id": "mcp-1", "server": "repo", "tool": "read",
+                         "arguments": {}, "status": "completed", "result": {"isError": True, "content": []}},
+            }},
+            {"type": "response_item", "timestamp": "2026-07-01T10:00:06Z", "payload": {
+                "type": "custom_tool_call", "name": "apply_patch", "call_id": "patch", "input": "unparsed patch data",
+            }},
+            {"type": "response_item", "timestamp": "2026-07-01T10:00:07Z", "payload": {
+                "type": "custom_tool_call_output", "call_id": "patch", "output": "some text",
+            }},
+        ])
+        self.assertEqual(stats["tool_counts"], {"repo.read": 1, "apply_patch": 1})
+        self.assertEqual(stats["tool_errors"], 1)
+        self.assertEqual(stats["unknown_tool_outcomes"], 1)
+
+    def token(self, minute, input_tokens, cached=None, output=10):
+        usage = {"input_tokens": input_tokens, "output_tokens": output, "reasoning_output_tokens": 2}
+        if cached is not None:
+            usage["cached_input_tokens"] = cached
+        return {"type": "event_msg", "timestamp": f"2026-07-01T10:{minute:02d}:00Z", "payload": {
+            "type": "token_count", "info": {"total_token_usage": usage},
+        }}
+
+    def test_token_boundaries_resets_missing_fields_and_repeated_samples(self):
+        stats = self.stats([
+            self.token(0, 100, 50), self.token(2, 200, 100), self.token(3, 250, 120, 20),
+            self.token(3, 250, 120, 20), self.token(4, 10, 0, 1), self.token(5, 30, 10, 3),
+            self.token(6, 1000, 900, 50),
+        ], created=self.start - 600, start=self.start + 60, end=self.start + 300)
+        self.assertEqual(stats["token_usage"]["input_tokens"], 70)
+        self.assertEqual(stats["token_usage"]["cached_input_tokens"], 30)
+        self.assertEqual(stats["token_counter_resets"], 1)
+        self.assertEqual(stats["token_unbounded_intervals"], 1)
+        self.assertFalse(stats["token_usage_complete"])
+        missing = self.stats([self.token(0, 100), self.token(1, 150)])
+        self.assertEqual(missing["token_usage"]["input_tokens"], 150)
+        self.assertNotIn("cached_input_tokens", missing["token_usage"])
+        self.assertEqual(missing["token_missing_fields"]["cached_input_tokens"], 2)
+        self.assertFalse(missing["token_usage_complete"])
+
+    def test_child_inherited_history_does_not_count_as_new_activity(self):
+        stats = self.stats([
+            {"type": "response_item", "timestamp": "2026-07-01T10:00:00Z", "payload": {
+                "type": "function_call", "name": "Read", "call_id": "old", "arguments": {},
+            }},
+            self.token(0, 100, 50),
+            {"type": "response_item", "timestamp": "2026-07-01T10:02:00Z", "payload": {
+                "type": "function_call", "name": "Read", "call_id": "new", "arguments": {},
+            }},
+            self.token(2, 120, 60),
+        ], created=self.start + 60, source=json.dumps({"subagent": {"thread_spawn": {"parent_thread_id": "parent"}}}))
+        self.assertEqual(stats["tool_calls"], 1)
+        self.assertEqual(stats["inherited_events_skipped"], 1)
+        self.assertEqual(stats["parent_session_id"], "parent")
+        self.assertEqual(stats["token_usage"]["input_tokens"], 20)
+        self.assertFalse(stats["token_usage_complete"])
+
+    def test_closed_session_cache_reuse_and_explicit_cap_coverage(self):
+        self.path.write_text("")
+        threads = [self.helper.Thread(str(i), "task", "", str(self.root), self.start, self.start + 60, False, "", str(self.path)) for i in range(3)]
+        first, second = self.start + 120, self.start + 240
+        self.assertEqual(self.helper.stats_cache_key(threads[0], self.start - 100, first), self.helper.stats_cache_key(threads[0], self.start - 50, second))
+        self.assertNotEqual(self.helper.stats_cache_key(threads[0], self.start + 1, first), self.helper.stats_cache_key(threads[0], self.start + 2, first))
+        self.assertIsNone(self.helper.build_parser().parse_args(["stats"]).max_new)
+        derived = {"malformed": None, "self_referential": False, "user_messages": 2, "duration_minutes": 1, "end": self.start + 60}
+        with mock.patch.object(self.helper, "load_stats_cache", return_value={}), mock.patch.object(self.helper, "save_stats_cache"), mock.patch.object(self.helper, "known_skill_names", return_value=set()), mock.patch.object(self.helper, "derive_session_stats", return_value=derived):
+            _, coverage = self.helper.collect_session_stats(threads, max_new=1)
+        self.assertEqual(coverage["eligible"], 3)
+        self.assertEqual(coverage["analyzed"], 1)
+        self.assertEqual(coverage["skipped"], 2)
+        self.assertFalse(coverage["complete"])
+        with mock.patch.object(self.helper, "load_stats_cache", return_value={}), mock.patch.object(self.helper, "save_stats_cache"), mock.patch.object(self.helper, "known_skill_names", return_value=set()), mock.patch.object(self.helper, "derive_session_stats", side_effect=[derived, KeyboardInterrupt]):
+            _, coverage = self.helper.collect_session_stats(threads)
+        self.assertEqual(coverage["analyzed"], 1)
+        self.assertTrue(coverage["interrupted"])
+        self.assertEqual(coverage["skipped"], 2)
+
+
+    def test_one_prompt_and_child_workload_survive_narrative_filter(self):
+        events = [
+            {"type": "response_item", "timestamp": "2026-07-01T10:00:01Z", "payload": {
+                "type": "message", "role": "user", "content": [{"type": "input_text", "text": "Do it."}],
+            }},
+            {"type": "response_item", "timestamp": "2026-07-01T10:00:02Z", "payload": {
+                "type": "function_call", "name": "Read", "call_id": "read-1", "arguments": {},
+            }},
+            {"type": "response_item", "timestamp": "2026-07-01T10:00:03Z", "payload": {
+                "type": "function_call", "name": "Read", "call_id": "read-2", "arguments": {},
+            }},
+        ]
+        write_jsonl(self.path, events)
+        threads = [self.helper.Thread(id, "task", source, str(self.root), self.start, self.start + 60, False, "", str(self.path)) for id, source in [("root", ""), ("child", json.dumps({"subagent": {"thread_spawn": {"parent_thread_id": "root"}}}))]]
+        adapter = self.helper.CodexSource(self.root, self.helper.iter_session_events)
+        with mock.patch.object(self.helper, "SESSION_SOURCE", adapter), mock.patch.object(self.helper, "load_stats_cache", return_value={}), mock.patch.object(self.helper, "save_stats_cache"), mock.patch.object(self.helper, "known_skill_names", return_value=set()):
+            entries, coverage = self.helper.collect_session_stats(threads)
+            summary = self.helper.aggregate_session_stats(entries)
+        self.assertEqual(coverage["included"], 2)
+        self.assertEqual(coverage["low_signal_excluded"], 0)
+        self.assertTrue(all(e["low_signal_narrative"] for e in entries))
+        self.assertEqual(summary["totals"]["tool_calls"], 4)
+        self.assertEqual(summary["lineage"]["child_records"], 1)
+        self.assertNotEqual(self.helper.stats_cache_key(threads[0]), self.helper.stats_cache_key(threads[0], None, self.start + 100))
 
 
 if __name__ == "__main__":

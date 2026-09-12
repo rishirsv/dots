@@ -27,15 +27,20 @@ sessions to explain what the numbers mean:
 python3 scripts/self_improve.py stats
 ```
 
-`stats` derives per-session facts and caches them by schema version, session id,
-and transcript mtime, so repeat runs only touch new sessions. It excludes
-sessions with fewer than two user messages or under a minute of elapsed time,
-and excludes transcripts whose opening turns are themselves a usage report or
-self-improve pass — otherwise the report profiles the reporting. It reports every
-exclusion and cap in its coverage block. With no `--days` or `--limit`, it lists
-the whole retained window; use those flags only when the user explicitly asks
-for a narrower insights report. Carry the coverage numbers into the report; a
-silent cap reads as full coverage.
+`stats` caches derivations by schema, session, transcript mtime, and effective
+time bounds. Closed sessions wholly inside successive windows reuse their cache;
+sessions crossing a moving boundary are recomputed. It scans the full selected
+window by default. `--limit` and `--max-new` impose explicit caps; carry eligible,
+analyzed, included, skipped, malformed, and interrupted counts into the report.
+A completed scan does not imply complete telemetry or an unbiased profile.
+
+Sessions with fewer than two user messages or under a minute of elapsed time
+are flagged as weak narrative evidence. They remain in workload totals when
+they contain recorded tools or token samples, including delegated children.
+Empty low-signal sessions and transcripts whose opening turns are a usage
+report or self-improve pass are excluded and counted separately. With no
+`--days`, the requested bounds cover retained history through the current clock.
+Use `--days` only for the narrower window the user requested.
 
 Read these fields the way `stats` defines them:
 
@@ -54,6 +59,26 @@ Read these fields the way `stats` defines them:
 - **Testing time** can show how long recorded tests and builds took, which ones
   repeated, and whether failures were followed by edits and another test. Use
   these as clues, then read the conversation before explaining why they happened.
+- **Tool counts** separate raw outer calls, orchestration wrappers, and recorded
+  command/MCP operations. `tool_calls` excludes `exec` wrappers and includes
+  distinct structured operations. The helper never executes or parses wrapper
+  JavaScript to guess children. Without a recorded parent link, child attribution
+  remains unknown. Structured status/exit codes outrank error-like text;
+  `inferred_tool_failures` and `unknown_tool_outcomes` identify heuristic or
+  missing evidence. Other completed-item kinds are not operation-normalized.
+- **Tokens** are nondecreasing cumulative deltas inside the requested bounds.
+  Intervals crossing a boundary, counter resets, missing fields, and records
+  without samples are disclosed. Missing cache/reasoning fields are not zero.
+  Cached input is included in input; reasoning is included in output. Do not
+  add them twice or convert recorded traffic into money without billing evidence.
+- **Lineage** identifies declared parent/child records and parents outside the
+  included set. Children exclude events timestamped before their creation;
+  unknown forks, retries, or recaptured inherited events remain undeduplicated.
+  Record totals are not a count of independent user tasks. Inspect the parent
+  cluster before attributing workload or generalizing a pattern.
+- **Time bounds** apply to stamped events, not just session discovery. Unstamped
+  events are counted as unavailable and excluded from bounded measurements.
+  Test-call durations can overlap; their sum is not elapsed wall time.
 - **Unmeasurable** lines name exactly these capability gaps. Repeat them in the
   report's coverage block rather than reporting a zero as a finding.
 
@@ -103,7 +128,7 @@ Close with an honest coverage block:
 ## Output
 
 Return markdown by default. When the user wants a shareable page, hand the
-finished report to `$html` and save the artifact under `.agents/outputs/`. Do
+finished report to `$html` and save the artifact under `tmp/`. Do
 not embed an HTML template in this skill.
 
 ```md

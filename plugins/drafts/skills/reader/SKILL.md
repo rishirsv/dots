@@ -1,6 +1,6 @@
 ---
 name: reader
-description: Review copy as an intended reader encountering it for the first time, with no access to the writer's unstated context. Identify confusing language, missing setup, assumed knowledge, broken expectations, trust-eroding or off-putting moments, and points where the reader may stop. Use for cold reads, fresh-eyes reviews, first-time-reader perspectives, reader-journey checks, or feedback on what feels confusing, missing, alienating, or hard to follow.
+description: "Read prose as its intended audience and report confusion, missing setup, and lost trust. Use for cold reads or first-time-reader feedback; use dev-edit for structural editing."
 ---
 
 # Reader

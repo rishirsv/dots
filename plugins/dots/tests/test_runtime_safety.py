@@ -409,7 +409,7 @@ class SelfImproveScopeTests(unittest.TestCase):
                 "id", "title", "", tmp, 0, 1, False, "", str(transcript)
             )
             current_key = self_improve.stats_cache_key(thread)
-            stale_key = current_key.replace("v5:", "v4:", 1)
+            stale_key = current_key.replace(f"v{self_improve.STATS_SCHEMA}:", "v4:", 1)
             derived = {
                 "malformed": None,
                 "self_referential": False,

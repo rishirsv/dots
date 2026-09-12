@@ -1,6 +1,6 @@
 ---
 name: ai-check
-description: Scan or clean prose for AI-generated residue, including unsupported connective tissue, epistemic inflation, over-completed arguments, performed voice, formulaic structure, empty figurative language, stock phrasing, corporate abstraction, hedging, and false enthusiasm. Use for AI-smell cleanup, humanizing model-assisted prose, source-faithful drafting validation, writing polish, or pre-publication checks; enforce silently when composed into drafting or line editing.
+description: "Remove AI residue while preserving source meaning and voice. Use for AI-smell diagnosis or cleanup; apply silently when Draft or Line Edit calls it."
 ---
 
 # AI Check
