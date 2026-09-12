@@ -33,12 +33,11 @@ workflow. It routes into focused skills as its phases require.
 | Forward architecture for a new or changed boundary | `$architect` |
 | Structural audit or refactor candidates in existing code | `$architecture-review` |
 | Completed code change before merge | `$code-quality-review` |
-| Create or improve visible product UI | `$design` |
-| Independent UI critique or ship assessment | `$design-review` |
 | Resolve one uncertain choice through a throwaway build | `$prototype` |
 | Explain how code or a subsystem works | `$how` |
 | Investigate why code or a decision exists | `$why` |
 | Write or revise durable repository documentation | `$docs-writer` |
+| Design, build, refine, or audit a product interface | `$interfaces` |
 | Create a self-contained HTML artifact | `$html` |
 | Coordinate useful parallel or delegated work | `$orchestrate` |
 | Publish finished work as a pull request | `$pr` |

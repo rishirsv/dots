@@ -52,7 +52,7 @@ one unusual task.
    responsible module, or verification seam settled before implementation.
    Use Architect for the design phases only, then return here for implementation,
    proof, review, and completion.
-   Apply `$design` when visible product UI needs its full workflow, then return
+   Apply `$interfaces` when visible product UI needs design guidance, then return
    here.
 5. **Implement.** Build the complete authorized change in checkable units.
    Verify each meaningful unit before depending on it. A bounded unit with
