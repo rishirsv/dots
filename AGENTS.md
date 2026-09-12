@@ -27,7 +27,7 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
   apply scoped syncs such as `--zsh` or `--vscode`.
 - Skill creation and mechanical validation belong to the active environment's
   default skill creator. Dots-specific quality guidance lives at
-  `plugins/dots/references/skill-practices.md`.
+  `plugins/dots/skills/skill-standards/references/standards.md`.
 
 ## Validation
 

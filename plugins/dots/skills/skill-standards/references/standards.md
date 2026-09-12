@@ -1,4 +1,4 @@
-# Skill Practices
+# Skill Standards
 
 This is the shared Dots quality standard for agent skills. `skill-standards`
 uses it when creating, updating, or reviewing skill source. Authoring mechanics
@@ -19,8 +19,10 @@ The two parts below have different force:
   file. Only a higher-authority constraint, such as host validity, repository
   instructions, or an explicit user decision, can override them.
 
-Apply only the sections relevant to the skill. This reference is not a fixed
-template, checklist, or scoring system.
+Apply these standards to the skill being authored or reviewed, including the
+instructions its future users will load. Encode task-specific decisions in that
+skill; do not copy this reference wholesale. Apply only relevant sections.
+This reference is not a fixed template, checklist, or scoring system.
 
 ## Guidelines
 
@@ -29,23 +31,39 @@ template, checklist, or scoring system.
 - **Treat metadata as a context pointer.** Its wording must say what sits behind
   it and which distinct requests should load it. The target cannot repair a
   weak pointer because the target is still out of context.
-- **Front-load the job.** Use words people naturally type when they want the
-  capability.
+- **Keep discovery brief and specific.** Name the actual job and its trigger
+  using words people naturally type. Remove adjacent-topic catchalls and
+  repeated capabilities; long descriptions compete for context and may be
+  shortened before selection.
 - **Name the nearest boundary when needed.** Add an exclusion only when it
   prevents likely misrouting.
 - **Check discovery changes.** Compare a clear trigger with a near miss and a
   neighboring skill when the description changes.
 - **Follow the host invocation policy.** Let the default skill creator govern
   invocation settings; preserve existing user choices.
-- **Spend the right load.** Automatic discovery spends context on every turn.
-  Explicit-only invocation spends the user's attention because they must
-  remember the skill. Make that trade deliberately instead of treating either
-  mode as free.
 - **Collapse synonyms.** Give each distinct trigger branch one strong phrase
   instead of listing every way to say the same thing.
 
+### Load only what the task needs
+
+Keep shared purpose, essential constraints, and route selection in `SKILL.md`.
+For multiple substantial modes, link each supporting reference at the condition
+that needs it. A simple skill can stay self-contained. Check the ordinary path
+for unconditional reading of unrelated modes, domain manuals, or repository
+maps; replace that preload with a concrete read-when condition.
+
 ### Write instructions that change behavior
 
+- **Leave room for judgment.** Specify the outcome, relevant context, and
+  decision criteria. Prescribe an exact sequence only when order protects a
+  concrete dependency, permission boundary, or fragile operation. Avoid
+  recipes that merely rehearse work the target model already handles.
+- **Specify output needs.** When tone, length, or format affects usefulness,
+  describe the audience and required result. Avoid imposing elaborate headings
+  or recurring phrases on every response.
+- **Make delegation conditional.** When parallel work benefits the recurring
+  job, state which independent work can be delegated and who integrates it.
+  Respect the host's available agents and authorization; keep simple work local.
 - **Treat prose as part of the mechanism.** Agent-facing text is both
   instruction and interface. A sentence earns its place when it changes an
   action, decision, boundary, or useful understanding.
@@ -159,22 +177,22 @@ template, checklist, or scoring system.
 
 ### Load the method for the artifact
 
-The summaries below are pointers, not substitutes for the full guidance. Read
-each matching reference when creating, updating, statically reviewing, or
-designing an evaluation for that kind of skill:
+The summaries below route to domain methods. Read a reference when its method
+can affect the requested creation, update, review, or evaluation design; a
+metadata-only edit does not need the whole domain workflow:
 
-- **[Research and synthesis](../skills/skill-standards/references/research-synthesis.md).**
+- **[Research and synthesis](research-synthesis.md).**
   Use for investigation, source comparison, evidence synthesis, research
   briefs, and recommendations.
-- **[Reports and presentations](../skills/skill-standards/references/reports-presentations.md).**
+- **[Reports and presentations](reports-presentations.md).**
   Use for reports, decks, briefings, memos, and other reader-facing artifacts.
-- **[Spreadsheet analysis](../skills/skill-standards/references/spreadsheet-analysis.md).**
+- **[Spreadsheet analysis](spreadsheet-analysis.md).**
   Use for spreadsheet creation, editing, cleaning, analysis, transformation,
   and audit.
-- **[Financial modelling](../skills/skill-standards/references/financial-modelling.md).**
+- **[Financial modelling](financial-modelling.md).**
   Use when the workbook is a financial model whose formulas, assumptions,
   scenarios, schedules, and controls carry domain meaning.
-- **[Template execution](../skills/skill-standards/references/template-execution.md).**
+- **[Template execution](template-execution.md).**
   Use in addition to the artifact-specific reference when the skill fills,
   refreshes, converts, or edits a supplied template.
 
@@ -245,3 +263,11 @@ designing an evaluation for that kind of skill:
   an authorized assumption.
 - **Inspect the actual deliverable.** Check content and non-visible structure.
   Render and inspect visual artifacts when layout affects correctness.
+
+## Source guidance
+
+These authoring criteria incorporate OpenAI’s
+[Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)
+and [model guidance](https://developers.openai.com/api/docs/guides/latest-model),
+reviewed September 12, 2026. Recheck model-specific assumptions when retargeting
+a skill; these sources are rationale, not mandatory reading on every run.

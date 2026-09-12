@@ -6,14 +6,16 @@ description: "Creates, updates, or statically reviews agent skill source against
 # Skill Standards
 
 Apply the Dots-specific judgment and editorial standards in
-[skill-practices.md](../../references/skill-practices.md).
+[standards.md](references/standards.md).
 
 For creation or updates, use the environment's default `skill-creator` for
 authoring mechanics, resource structure, validation, and forward testing.
 Dots adds preservation of accepted wording, voice, examples, and mental models;
-compare the changed source against those before finishing.
+compare the changed source against those before finishing. Check that the
+resulting skill applies the relevant authoring criteria in `standards.md`,
+including what future runs load, decide, delegate, return, and count as done.
 
-For static review, read [reviewing.md](references/reviewing.md). Return an
+For static review, read [skill-review.md](references/skill-review.md). Return an
 evidence-backed diagnosis. Review-only requests leave source unchanged; when
 the user also requests fixes, complete the update and its relevant checks.
 

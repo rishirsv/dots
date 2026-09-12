@@ -51,5 +51,5 @@ uncertainty in the authoring note.
 
 Return to [source-distillation.md](source-distillation.md) when the session has
 paired inputs and outputs, multiple exemplars, or conflicting source roles.
-Return to [skill-practices.md](../../../references/skill-practices.md) to settle
+Return to [standards.md](standards.md) to settle
 discovery, runtime placement, and completion before editing.

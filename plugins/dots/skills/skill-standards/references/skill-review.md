@@ -16,7 +16,7 @@ Take the scope and decision from the user's request.
 
 Reconstruct the recurring job, nearest boundary, inputs, common path,
 meaningful branches, output, completion evidence, authorization, and stop
-behavior. Use the relevant guidance in `skill-practices.md`; inspect supporting
+behavior. Use the relevant guidance in `standards.md`; inspect supporting
 domain references only when their method can affect the diagnosis.
 
 ## 2. Look for supported defects
