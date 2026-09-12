@@ -16,13 +16,19 @@ as an editing standard. `$pr` still owns these publishing artifacts.
    repository's naming convention or name the branch after the result. Ask only
    when the change scope or branch starting point is unclear.
 
-3. Commit and push the requested changes.
+3. Fetch the remote and check the branch against the PR's current base. Resolve
+   conflicts before publishing. Rebase when required by repository policy or
+   when base changes affect this work; rerun affected checks afterward. Avoid
+   rewriting shared branches without coordination. If a previously pushed
+   branch is rebased, push with `--force-with-lease`.
 
-4. Update the branch's existing pull request to describe the latest changes, or
+4. Commit and push the requested changes.
+
+5. Update the branch's existing pull request to describe the latest changes, or
    open one if none exists. Make it ready for review; never create or leave a
    draft.
 
-5. Confirm that the pull request contains the pushed commit. Report its URL,
+6. Confirm that the pull request contains the pushed commit. Report its URL,
    automated checks, and anything that remains unverified. Do not merge it.
 
 ## Title
