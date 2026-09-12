@@ -1,8 +1,11 @@
-# CLI consultations
+# CLI advisor runs
 
 Run in the task's repository with a saved brief on stdin. Honor the user's model
 and effort; otherwise use the configured model at medium effort. Use the
 noninteractive permission flags below within the host's allowed permissions.
+State whether the run is implementation, review, or consultation in the brief.
+For implementation, assign the model ownership of edits, required checks,
+corrections, and the final handoff; do not ask it only for advice or a patch.
 
 ## Models and effort
 
@@ -28,7 +31,7 @@ or unsupported effort levels.
 ```sh
 cd /absolute/path/to/repo
 claude -p --model fable --effort medium --dangerously-skip-permissions \
-  < /absolute/path/to/brief.md > /absolute/path/to/advice.md
+  < /absolute/path/to/brief.md > /absolute/path/to/result.md
 ```
 
 The bypass flag grants broader access than workspace write. For explicitly
@@ -42,7 +45,7 @@ only. This restricts tools; it is not an OS sandbox.
 codex exec -C /absolute/path/to/repo -m gpt-6-astra \
   -c 'model_reasoning_effort="medium"' -c 'approval_policy="never"' \
   --sandbox workspace-write \
-  -o /absolute/path/to/advice.md < /absolute/path/to/brief.md
+  -o /absolute/path/to/result.md < /absolute/path/to/brief.md
 ```
 
 Use `--sandbox read-only` for explicitly read-only reviews. For unrestricted
@@ -63,6 +66,10 @@ catalog or model picker, and select a supported effort. Its ID and effort range
 are not established by the current configuration; ask for the ID if local
 lookup cannot resolve it.
 
-Wait for completion and read the saved advice. Check the diff if writes were
-allowed. For follow-ups, include the previous advice and new evidence in the
-next brief or resume the same CLI session.
+Wait for completion and read the saved result. Check the diff and validation
+evidence if writes were allowed. During implementation, do not duplicate or
+take over the assigned work. If the scoped diff or required checks are missing
+without a stated blocker, resume the same session or send a correction brief;
+ownership changes only when the user reassigns it. For other follow-ups, include
+the previous result and new evidence in the next brief or resume the same CLI
+session.

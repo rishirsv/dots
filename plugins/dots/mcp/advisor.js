@@ -99,7 +99,7 @@ try {
         local: flags.local, controlToken: randomBytes(24).toString('hex') };
       await atomicJson(join(dir, 'run.json'), run);
       await atomicJson(join(dir, 'runtime.json'), { status: 'starting' });
-      await writeFile(join(dir, 'prompt.txt'), `Use the Dots Advisor plugin for consultation ${id}. First call consultation with runId "${id}" to read the brief and repository context. Follow the brief, using only this runId for repository and terminal tools. When finished and all commands have completed, call finish with the full advice, findings, validation, and any changes made. Do not just leave the advice in this chat.\n`);
+      await writeFile(join(dir, 'prompt.txt'), `Use the Dots Advisor plugin for consultation ${id}. First call consultation with runId "${id}" to read the brief and repository context. Follow the brief's mode and ownership, using only this runId for repository and terminal tools. When the requested work is complete and all commands have completed, call finish with the full result: advice or findings for non-writing modes, or an implementation handoff with changes, validation, and limitations for implementation mode. Do not leave the result only in this chat.\n`);
       const log = await open(join(dir, 'service.log'), 'a', 0o600);
       const child = fork(fileURLToPath(import.meta.url), ['serve', dir], { detached: true, stdio: ['ignore', log.fd, log.fd, 'ipc'] });
       const started = new Promise((done, reject) => {

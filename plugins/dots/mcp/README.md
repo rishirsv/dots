@@ -1,7 +1,8 @@
 # Dots Advisor
 
-ChatGPT does the reasoning; a temporary local service gives it repository,
-file, and terminal access through Codex App Server. No second model runs locally.
+ChatGPT does the requested consultation, review, or implementation; a temporary
+local service gives it repository, file, and terminal access through Codex App
+Server. No second model runs locally.
 
 ## One-time setup
 
@@ -19,7 +20,7 @@ associate it with your ChatGPT workspace, and supply a runtime key with tunnel
 access. Store the key outside the repository. `--key-ref` accepts a file path or
 `env:VARIABLE`; configuration stores the reference, never the key.
 
-Start a consultation, then register **Dots Advisor** in ChatGPT Plugins using
+Start an advisor run, then register **Dots Advisor** in ChatGPT Plugins using
 **Tunnel**, that same tunnel ID, and **No Auth** for the MCP endpoint. Refresh
 its tools after updating this server. Save its ChatGPT page URL with:
 
@@ -32,7 +33,20 @@ The tunnel identity survives shutdown and restart; registration is one-time.
 ## Consult from Codex
 
 Write the advisor's brief to a file, including the user's constraints, relevant
-context, initial assessment, and what to inspect or change. Then run:
+context, initial assessment, mode, owner, and completion conditions. Use one of
+these modes:
+
+- **Implementation:** ChatGPT owns edits, checks, corrections, and handoff.
+- **Review:** ChatGPT inspects existing work without changes.
+- **Consultation:** ChatGPT advises; the caller may implement afterward.
+
+An implementation brief should say this explicitly:
+
+> Mode: implementation. You own the repository changes, required checks,
+> corrections, and final handoff. Use the repository file and terminal tools.
+> Do not return only advice or a proposed patch.
+
+Then run:
 
 ```sh
 node advisor.js start --repo /absolute/repository --brief /absolute/brief.md
@@ -43,20 +57,26 @@ node advisor.js result
 
 `start` returns the consultation ID, generated prompt path, and result path.
 It waits for both Codex and the tunnel to be ready before returning. Use
-`--access read-only` for a read-only review; the default is `workspace-write`.
-File helpers stay in the selected repository; commands use Codex's sandbox,
-which can read beyond that repository and has network access enabled.
+Use `workspace-write` for implementation and `--access read-only` for review.
+Consultations should normally be read-only unless their requested deliverable
+needs repository writes. The CLI default remains `workspace-write`. File helpers
+stay in the selected repository; commands use Codex's sandbox, which can read
+beyond that repository and has network access enabled.
 
 Set up the chat using the controls below, then send the generated prompt. ChatGPT
 reads the brief with `consultation` and saves its full response with `finish`.
-Read the saved advice and inspect the repository diff before continuing locally.
-Browser actions use the host's computer-use tools; there is no separate browser
-automation library or unofficial ChatGPT API in this package.
+Read the saved result and inspect the repository diff. In consultation mode,
+continue locally as needed. In implementation mode, do not duplicate or take
+over the advisor's work. If the scoped diff or validation is missing without a
+stated blocker, send a correction in the same chat with a new consultation run;
+ownership changes only when the user reassigns it. Browser actions use the
+host's computer-use tools; there is no separate browser automation library or
+unofficial ChatGPT API in this package.
 
 `wait` is bounded and may return an active status: repeat it until complete,
-stopped, or interrupted. `result` prints the durable final advice. Explicit IDs
+stopped, or interrupted. `result` prints the durable final result. Explicit IDs
 work for `status`, `wait`, `result`, and `stop`; omission means the latest run.
-For a follow-up, start a new consultation with the previous advice in the brief
+For a follow-up, start a new consultation with the previous result in the brief
 and send its new prompt in the same ChatGPT chat.
 
 ## ChatGPT controls
@@ -96,8 +116,10 @@ the exact run ID, so an old chat cannot act on a later consultation.
 - `exec`: supply an argv array and a unique key; returns a job ID immediately.
   Repeating the same key and inputs in the live run returns the same job.
 - `terminal`: poll, send stdin, or terminate that job. Output is bounded.
-- `finish`: save the advice after all jobs exit. Identical retries succeed;
-  different replacement advice is rejected.
+- `finish`: save the final result after all jobs exit. Its `advice` field is the
+  compatibility envelope for consultation advice, review findings, or an
+  implementation handoff. Identical retries succeed; a different replacement
+  result is rejected.
 
 Completed consultations stop after a one-minute grace period. Unfinished ones
 stop after one idle hour; active work prevents idle shutdown. The maximum
@@ -105,7 +127,7 @@ lifetime is 23 hours. `node advisor.js stop` stops earlier. Nothing starts at
 login. The service owns its Codex and tunnel children, including crash cleanup.
 A crashed consultation cannot resume or replay commands; start a new one.
 
-State and advice remain under `~/.local/state/dots-advisor/` (or
+State and results remain under `~/.local/state/dots-advisor/` (or
 `DOTS_ADVISOR_STATE_DIR`). Service and tunnel logs live in each run directory.
 `final.json` is the authoritative completion record even if the service exits
 before returning its acknowledgement.

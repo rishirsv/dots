@@ -93,7 +93,7 @@ export async function serve({
       "",
       run.brief,
       "",
-      "When your analysis is complete, call finish with this runId and your final advice.",
+      "When the requested work is complete, call finish with this runId and your final result. For implementation mode, make the requested repository changes and run the required checks before finishing.",
     ].join("\n"));
 
     tool(server, "list_directory", {

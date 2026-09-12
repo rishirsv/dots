@@ -9,12 +9,12 @@ import { createServer } from 'node:net';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 const exec = promisify(execFile);
 
-test('CLI consultation returns durable advice, reuses live start, and stops', async () => {
+test('CLI implementation run can edit, validate, return a durable handoff, reuse, and stop', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'dots-advisor-cli-'));
   const repo = join(dir, 'repo');
   await mkdir(repo);
   await writeFile(join(repo, 'message.txt'), 'hello from the repo');
-  await writeFile(join(dir, 'brief.md'), 'Read message.txt, run printf, and return advice.');
+  await writeFile(join(dir, 'brief.md'), 'Mode: implementation. Update message.txt, run printf as validation, and return an implementation handoff.');
   const probe = createServer();
   await new Promise(resolve => probe.listen(0, '127.0.0.1', resolve));
   const port = probe.address().port;
@@ -34,15 +34,18 @@ test('CLI consultation returns durable advice, reuses live start, and stops', as
       assert.ok(!result.isError, result.content[0].text);
       return result.content[0].text;
     };
-    assert.match(await call('consultation'), /Read message.txt/);
-    assert.equal(JSON.parse(await call('read_file', { path: 'message.txt' })).text, 'hello from the repo');
+    assert.match(await call('consultation'), /Mode: implementation/);
+    const original = JSON.parse(await call('read_file', { path: 'message.txt' }));
+    assert.equal(original.text, 'hello from the repo');
+    await call('write_file', { path: 'message.txt', text: 'implemented by advisor', expectedSha256: original.sha256 });
+    assert.equal(await readFile(join(repo, 'message.txt'), 'utf8'), 'implemented by advisor');
     const job = JSON.parse(await call('exec', { key: 'proof', command: ['/usr/bin/printf', 'terminal verified'] }));
     const result = JSON.parse(await call('terminal', { id: job.id, waitMs: 1000 }));
     assert.equal(result.stdout, 'terminal verified');
-    await call('finish', { advice: 'Read the repository file and verified terminal execution.' });
+    await call('finish', { advice: 'Updated message.txt and verified terminal execution.' });
     const final = await cli('wait', started.runId, '--timeout', '2');
     assert.equal(final.status, 'complete');
-    assert.match(final.advice, /verified terminal/);
+    assert.match(final.advice, /Updated message.txt/);
     assert.equal(JSON.parse(await readFile(started.resultFile, 'utf8')).advice, final.advice);
     await client.close(); client = null;
     const stopped = await cli('stop', started.runId, '--timeout', '5');
