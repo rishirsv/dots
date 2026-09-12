@@ -1,0 +1,43 @@
+{
+  "title": "Prompt quality",
+  "subtitle": "Comparison workspace",
+  "preview": true,
+  "blind": true,
+  "reviewer": "Preview reviewer",
+  "disclosure": "Synthetic component fixtures, not actual model runs. A/B labels are randomized once per task. Use these examples to inspect comparison, focused reading, notes, source context, and unavailable-output states. Preview feedback is separate from real reviews.",
+  "tasks": [
+    {
+      "id": "planning",
+      "title": "Plan a small feature",
+      "request": "Turn the project notes into a prompt for a coding assistant. Ask it to inspect the existing app, propose the smallest useful plan, and wait for approval before editing.",
+      "context": [{"name": "project-notes.md", "text": "# Project notes\n\nAdd saved views to a small project tracker. Users should save a filter combination and return to it later. Reuse existing persistence and UI conventions. Keep saved views personal, not shared. No account redesign or notifications. We want a plan first, not implementation."}],
+      "questions": ["Does the prompt preserve the approval boundary?", "Does it introduce work the request did not call for?"],
+      "outputs": [
+        {"identity": "Concise prompt · mock", "run_id": "mock-concise", "text": "# Objective\n\nInspect the project tracker and propose the smallest implementation plan for personal saved views. Do not edit files.\n\n# Requirements\n\n- Let users save a filter combination and return to it later.\n- Reuse existing persistence, state, and interface patterns.\n- Keep views personal. Do not add sharing, account changes, or notifications.\n\n# Output\n\nDescribe the proposed behavior and files to change, explain the existing patterns you would reuse, and flag any material unknowns. Stop after the plan and wait for explicit approval."},
+        {"identity": "Detailed prompt · mock", "run_id": "mock-detailed", "text": "# Role and objective\n\nAct as a senior product engineer. Design personal saved views for the project tracker, starting with a read-only review of the app.\n\n# Investigation\n\nInspect filtering behavior, persistence, state ownership, and reusable controls. Identify the smallest coherent change and verify that it fits the repository’s conventions.\n\n# Proposed plan\n\nExplain how users will save and reopen a view. Identify the affected files and any new files, with a short reason for each. Include relevant uncertainties and a proportionate verification approach.\n\nKeep the scope to personal views. Do not redesign accounts or add notifications or team sharing.\n\n# Approval boundary\n\nDo not edit source, install dependencies, or run migrations. Present the plan and wait for approval before implementing."}
+      ]
+    },
+    {
+      "id": "review",
+      "title": "Tighten a review prompt",
+      "request": "Rewrite the notes as a shorter, complete prompt. Keep the review read-only and return a JSON object with a findings array. Each finding needs severity, file, line, issue, and recommendation.",
+      "context": [{"name": "review-notes.md", "text": "Audit current uncommitted changes for concrete correctness problems. Do not modify files. Prioritize by impact and verify assumptions. Report only actionable issues introduced by the changes. Avoid speculative refactors and generic best practices. No findings means an empty findings array."}],
+      "questions": ["Are all required fields preserved?", "Is the empty-result behavior unambiguous?"],
+      "outputs": [
+        {"identity": "Concise prompt · mock", "run_id": "mock-concise", "text": "Review the current uncommitted changes without modifying files. Report only verified, actionable correctness issues introduced by these changes; avoid speculative refactors.\n\nReturn one JSON object with a `findings` array, ordered by impact. Each finding contains `severity`, `file`, `line`, `issue`, and `recommendation`. If there are no findings, return `{\"findings\":[]}`. Do not add Markdown fences or other text."},
+        {"identity": "Detailed prompt · mock", "run_id": "mock-detailed", "text": "Review the uncommitted changes for correctness. Keep the review **read-only** and verify assumptions before reporting an issue.\n\nReturn prioritized findings as JSON. Each finding should identify the problem, location, severity, and suggested correction. Do not include speculative refactors or general advice."}
+      ]
+    },
+    {
+      "id": "missing",
+      "title": "Unavailable-output state",
+      "request": "Write a concise prompt asking an assistant to summarize an incident report without inventing a cause.",
+      "context": [],
+      "questions": [],
+      "outputs": [
+        {"identity": "Concise prompt · mock", "run_id": "mock-concise", "text": "Summarize the supplied incident report. Separate confirmed facts from hypotheses, preserve the timeline, and identify unresolved questions. Do not invent a root cause. Return a concise summary with the incident’s impact and current status."},
+        {"identity": "Detailed prompt · mock", "run_id": "mock-detailed", "status": "unavailable", "text": ""}
+      ]
+    }
+  ]
+}
