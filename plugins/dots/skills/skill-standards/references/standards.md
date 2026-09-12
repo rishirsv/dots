@@ -44,6 +44,15 @@ This reference is not a fixed template, checklist, or scoring system.
 - **Collapse synonyms.** Give each distinct trigger branch one strong phrase
   instead of listing every way to say the same thing.
 
+For a pull-request publishing skill:
+
+- **Before:** “Publish a pull request. Use for code changes, Git, or GitHub work.”
+- **After:** “Publish finished changes as a pull request. Use when the user asks
+  to open or update a PR for review.”
+
+The narrower trigger avoids loading the publishing workflow for ordinary code
+edits or Git questions.
+
 ### Load only what the task needs
 
 Keep shared purpose, essential constraints, and route selection in `SKILL.md`.
@@ -51,6 +60,18 @@ For multiple substantial modes, link each supporting reference at the condition
 that needs it. A simple skill can stay self-contained. Check the ordinary path
 for unconditional reading of unrelated modes, domain manuals, or repository
 maps; replace that preload with a concrete read-when condition.
+
+For a skill that authors and reviews other skills:
+
+- **Before:** “Before every task, read the review, session-capture, and template
+  execution references.”
+- **After:** “Read the review reference for a source audit, session capture when
+  turning a completed task into a skill, and template execution when the skill
+  operates on a supplied template.”
+
+A description edit can proceed without loading those unrelated methods. These
+examples adapt the principles in the linked OpenAI sources; they are not
+required wording for generated skills.
 
 ### Write instructions that change behavior
 
