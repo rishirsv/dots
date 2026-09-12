@@ -77,6 +77,8 @@ def validate_manifest(root: Path, errors: list[str]) -> None:
 
 def validate_markdown_links(root: Path, errors: list[str]) -> None:
     for path in sorted(root.rglob("*.md")):
+        if "node_modules" in path.relative_to(root).parts:
+            continue
         text = path.read_text(encoding="utf-8")
         for match in MARKDOWN_LINK.finditer(text):
             target = match.group(1).strip().strip("<>")

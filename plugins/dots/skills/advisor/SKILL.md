@@ -1,44 +1,44 @@
 ---
 name: advisor
-description: "Consult a stronger reviewer who sees your full conversation transcript."
+description: "Consult ChatGPT web or a named CLI model for advice grounded in the current repository."
 ---
 
 # Advisor
 
-Call `advisor()` without parameters. The call automatically forwards the entire
-conversation history: the task, every tool call and result, and the reasoning so
-far.
+Use ChatGPT **6 Pro** by default, following the on-demand
+[Advisor workflow](../../mcp/README.md). For a requested CLI provider or model,
+such as Fable, follow [CLI.md](../../references/CLI.md) instead.
 
-Before calling `advisor()`, write one sentence stating what the task asks and
-your initial read. The advisor already receives the transcript; this sentence
-frames what it should respond to.
+Before launching, state the task, your initial read, model, effort, and access.
+Honor the user's choices. Otherwise recommend workspace write and medium
+effort; use read-only access for an explicitly read-only review. If access is
+ambiguous, choose workspace write. State the actual permission boundary when
+bypass flags grant broader access.
 
-Call the advisor before substantive work: before writing, editing, committing
-to an interpretation, or building on an assumption. If orientation is needed
-first, such as finding files, fetching a source, or inspecting current state,
-complete that orientation and then call the advisor. Orientation is not
-substantive work.
+Give the advisor a saved brief with relevant conversation context, constraints,
+evidence, and the question to resolve. Consultations do not automatically inherit
+this conversation. Configure the actual repository and let the advisor inspect
+it directly; never assume or tell it that it cannot access the repo.
 
-Also call the advisor:
+For questions needing no local access, send the brief directly to ChatGPT;
+skip the service and plugin. For repository consultations, start the service,
+then use an existing chat
+configured with the requested model and Dots Advisor, or set one up through the
+[ChatGPT controls](../../mcp/README.md#chatgpt-controls). Prefer available native
+app tools to find, read, and continue the chat; use the in-app browser for model
+selection and plugin attachment when those controls are not exposed natively.
+Native reads can lag behind a successful send. If the latest exchange is
+missing, verify it in the browser before retrying; do not send a duplicate.
+For repository work, send the generated prompt, wait for the saved final advice,
+and inspect changes before continuing. A chat response alone is not completion.
+The service shuts down after completion or its timeout; nothing starts at login.
 
-- when the task appears complete, before declaring completion;
-- when errors recur, the approach stops converging, or results do not fit; and
-- before changing approaches.
+Consult before substantive work, after any necessary orientation, and before
+declaring completion. Save the deliverable before the completion consultation.
+Consult again when errors recur, progress stalls, or before changing approaches.
+Short reactive work does not need repeated calls.
 
-Before the completion call, make the deliverable durable by writing the file,
-saving the result, or committing the change as appropriate. The call takes time,
-so preserve the result first in case the session ends during consultation.
-
-For work longer than a few steps, call once before committing to an approach and
-once before declaring completion. Short reactive work whose next action is
-dictated by tool output does not require repeated calls; the first call usually
-provides the most value.
-
-Give the advice serious weight. Adapt when an advised step fails empirically or
-primary-source evidence contradicts a specific claim. A passing self-test alone
-does not refute advice about a condition the test does not check.
-
-When retrieved evidence points one way and the advisor points another, do not
-switch silently. Call `advisor()` again and frame the conflict, for example: “I
-found X, you suggest Y; which constraint breaks the tie?” Reconcile the evidence
-before committing to either branch.
+Give the advice serious weight. A passing self-test does not refute a concern
+it never checks. When evidence conflicts with advice, return to the same advisor:
+“I found X, you suggest Y; which constraint breaks the tie?” Reconcile the
+conflict before proceeding.

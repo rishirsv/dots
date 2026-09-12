@@ -1,7 +1,7 @@
 {
   "name": "dots",
-  "version": "0.2.174",
-  "description": "Opinionated development workflows and reusable skills for planning, building, reviewing, documenting, and shipping software.",
+  "version": "0.2.175",
+  "description": "Focused workflows for planning, building, reviewing, and shipping software.",
   "author": {
     "name": "Rishi"
   },
@@ -12,21 +12,21 @@
     "skills"
   ],
   "skills": "./skills/",
-  "apps": "./.app.json",
   "interface": {
     "displayName": "Dots",
-    "shortDescription": "Opinionated development workflows and reusable skills.",
-    "longDescription": "Opinionated development workflows and reusable skills for planning, building, reviewing, documenting, and shipping software.",
+    "shortDescription": "Plan, build, review, and ship.",
+    "longDescription": "Focused skills and agent workflows for software development. Turn a request into a clear plan, implement the change, review the result, and ship it.",
     "developerName": "Rishi",
     "category": "Productivity",
     "capabilities": [
       "Read",
       "Write"
     ],
-    "defaultPrompt": "Use $index to choose and run the right Dots workflow for this request.",
+    "defaultPrompt": "Use Dots to choose the smallest workflow for this task and carry it through.",
     "brandColor": "#FF4B0A",
     "composerIcon": "./assets/icon.png",
     "logo": "./assets/logo.png",
     "screenshots": []
-  }
+  },
+  "apps": "./.app.json"
 }
