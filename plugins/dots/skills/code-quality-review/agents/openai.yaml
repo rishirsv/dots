@@ -4,7 +4,7 @@ interface:
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
   brand_color: "#36C5A7"
-  default_prompt: "Use $code-quality-review to report findings for this completed change; address them only if I explicitly ask."
+  default_prompt: "Use $code-quality-review to review this completed change and address supported in-scope findings."
 
 policy:
   allow_implicit_invocation: false

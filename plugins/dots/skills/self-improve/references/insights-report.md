@@ -128,8 +128,8 @@ Close with an honest coverage block:
 ## Output
 
 Return markdown by default. When the user wants a shareable page, hand the
-finished report to `$html` and save the artifact under `tmp/`. Do
-not embed an HTML template in this skill.
+finished report to `$html` and use its output-location guidance. Do not embed
+an HTML template in this skill.
 
 ```md
 # Usage Insights

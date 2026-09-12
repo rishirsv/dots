@@ -1,14 +1,13 @@
 ---
 name: code-quality-review
-description: "Review completed code changes before merging for correctness, readability, simplicity, and maintainability. Returns findings by default; repairs retained in-scope findings when invoked by an authorized implementation workflow, otherwise only when the user explicitly asks."
+description: "Review completed code changes before merging for correctness, readability, simplicity, and maintainability. Reviews and repairs supported in-scope findings by default; reports without edits when the user requests review only."
 ---
 
 # Code Quality Review
 
 Review a completed change against its intended behavior and repository
-constraints. Report findings by default. Repair retained in-scope findings when
-this review is a required step inside an authorized implementation workflow;
-otherwise repair only when the user explicitly asks.
+constraints. Repair supported in-scope findings by default after review. When
+the user requests review only, report findings without editing files.
 
 ## Fix the review target
 
@@ -57,11 +56,9 @@ it and follows **Review the assigned change** directly.
    and combine related findings without weakening the finding contract. Resolve
    material disagreement only when needed; do not repeat each reviewer's
    investigation. The reviewer owns verification of its findings.
-7. For a standalone review, report the synthesized result and stop unless the
-   user asked to address findings. When this review is a required step inside
-   an authorized implementation workflow, pass only retained findings whose
-   repair stays within that workflow's original scope to the repair path below.
-   Report any finding that needs new authority or expands that scope.
+7. Pass retained in-scope findings to the repair path below by default. If the
+   user requested review only, report the synthesized result and stop. Report
+   any finding that needs new authority or expands the original task scope.
 
 When independent review is not warranted, perform the complete review inline.
 If it was warranted but no fresh reviewer is available, label the result
@@ -182,7 +179,7 @@ discussion. Then inspect current checks and unresolved threads. The coordinating
 agent posts findings only when the user explicitly asks; otherwise report them
 locally.
 
-## Report, then optionally repair
+## Report and repair
 
 Present findings first, ordered by severity. Use one entry per issue in this
 form:
@@ -205,12 +202,10 @@ to fill the result. After the findings, add a brief overall assessment and
 mention any material test gaps or residual risks. Omit rejected candidates,
 reviewer process, clean-area summaries, and praise.
 
-If the user explicitly asked to address findings, or this review is a required
-step inside an authorized implementation workflow, the coordinating agent
-repairs the complete retained set sequentially after synthesis. In the latter
-case, repair only findings that stay within the workflow's original scope. Do
-not repair a finding that requires new authority or expands the original task;
-report it unresolved.
+Unless the user requested review only, the coordinating agent repairs the
+complete retained in-scope set sequentially after synthesis, without pausing
+for confirmation. Do not repair a finding that requires new authority or
+expands the original task; report it unresolved.
 Run affected checks, inspect the final diff, and report repairs, unresolved
 findings, proof, and remaining risk. Do not start another review after ordinary
 repairs. Start a new review only when the user asks or the repairs materially
