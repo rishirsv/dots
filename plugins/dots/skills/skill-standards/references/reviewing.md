@@ -1,7 +1,9 @@
 # Reviewing a skill
 
-Diagnose the skill from source and existing evidence. Keep the source unchanged;
-new behavioral trials require a separate, explicitly authorized workflow.
+Diagnose the skill from source and existing evidence. A review-only request
+leaves source unchanged and reports behavioral uncertainty. When the request
+also authorizes fixes, carry supported corrections through the default
+`skill-creator` workflow, including its criteria for behavioral trials.
 
 ## 1. Set the review contract
 
@@ -14,8 +16,8 @@ Take the scope and decision from the user's request.
 
 Reconstruct the recurring job, nearest boundary, inputs, common path,
 meaningful branches, output, completion evidence, authorization, and stop
-behavior. Apply every relevant part of `skill-practices.md`; omit irrelevant
-parts instead of manufacturing findings for them.
+behavior. Use the relevant guidance in `skill-practices.md`; inspect supporting
+domain references only when their method can affect the diagnosis.
 
 ## 2. Look for supported defects
 
@@ -68,5 +70,5 @@ finding, and keep the finished receipt immutable. Recheck relevant hashes
 before consuming it later.
 
 When a claim needs fresh behavioral evidence, state the limitation and the
-smallest useful forward test. Change source only after the user requests an
-update.
+smallest useful forward test. Apply supported fixes when the current request
+already authorizes an update; do not add another approval gate.

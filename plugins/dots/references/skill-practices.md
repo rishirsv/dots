@@ -31,13 +31,12 @@ template, checklist, or scoring system.
   weak pointer because the target is still out of context.
 - **Front-load the job.** Use words people naturally type when they want the
   capability.
-- **Name the nearest boundary.** Say what the skill owns and which nearby job it
-  does not own.
-- **Test three requests.** Check one clear trigger, the closest near miss, and
-  one request that belongs to a neighboring skill.
-- **Choose invocation deliberately.** Automatic discovery is useful when an
-  ordinary request or another skill must reach the capability. Explicit-only
-  invocation is useful when the user should choose the workflow deliberately.
+- **Name the nearest boundary when needed.** Add an exclusion only when it
+  prevents likely misrouting.
+- **Check discovery changes.** Compare a clear trigger with a near miss and a
+  neighboring skill when the description changes.
+- **Follow the host invocation policy.** Let the default skill creator govern
+  invocation settings; preserve existing user choices.
 - **Spend the right load.** Automatic discovery spends context on every turn.
   Explicit-only invocation spends the user's attention because they must
   remember the skill. Make that trade deliberately instead of treating either
@@ -92,9 +91,10 @@ template, checklist, or scoring system.
 - **Use a behavioral no-op test.** Ask what the agent would do differently
   because a sentence exists. Delete it only when the answer is nothing and the
   skill loses no useful explanation, emphasis, voice, or navigation.
-- **Test uncertainty about the default.** Whether an instruction is a no-op
-  depends on how the agent behaves without it. When that is uncertain and the
-  distinction matters, run the skill instead of deciding from prose alone.
+- **Account for the target model.** A workaround for an older model may now
+  constrain useful judgment. Preserve operational invariants; treat uncertain
+  behavioral benefits as hypotheses. Use a focused trial only when it would
+  materially change the decision and the active workflow permits it.
 - **Delete whole no-ops.** Do not trim an unnecessary sentence into a shorter
   but more abstract version.
 - **Preserve the method while pruning.** Keep the actions, artifacts, decision
@@ -112,8 +112,8 @@ template, checklist, or scoring system.
 
 ### Define what done means
 
-- **End steps with evidence.** A step is done when its result can be observed,
-  not when the agent says it acted.
+- **Define the finished result.** Specify the deliverable and necessary checks
+  without turning every routine action into a separate gate.
 - **Make completion clear and demanding.** The agent must be able to tell done
   from not-done, and the condition should require all important work. “Every
   changed caller is accounted for” drives more useful work than “review the
@@ -125,6 +125,12 @@ template, checklist, or scoring system.
   required field.
 - **Name useful failure behavior.** Say whether the skill asks, makes an
   assumption, preserves partial work, reports a positive-null result, or stops.
+- **Keep authorization concrete.** Continue work already authorized by the
+  request and session. Ask only for missing decisions that materially affect
+  the result or actions outside that scope; prepare independent work first.
+- **Bound verification.** Keep required checks and checks for meaningful risks.
+  After they pass, broaden or repeat them only for a new change, failure, or
+  unresolved concern.
 
 ### Ground important decisions in evidence
 
@@ -216,8 +222,9 @@ designing an evaluation for that kind of skill:
 
 ### Prove the result honestly
 
-- **Give every ordered step a completion criterion.** Creating a file, calling
-  a tool, or describing intended work is not completion by itself.
+- **Verify the completion contract.** Creating a file or calling a tool alone
+  does not prove the requested result. Do not stop at a first draft when the
+  user has authorized the remaining work.
 - **Do not present structural validation as behavioral proof.** Syntax, file
   existence, and schema checks prove structure only.
 - **Test meaningful failures when they matter.** Run valid and failing inputs

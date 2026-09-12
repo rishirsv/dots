@@ -14,7 +14,8 @@ Dots adds preservation of accepted wording, voice, examples, and mental models;
 compare the changed source against those before finishing.
 
 For static review, read [reviewing.md](references/reviewing.md). Return an
-evidence-backed diagnosis without changing source or running new trials.
+evidence-backed diagnosis. Review-only requests leave source unchanged; when
+the user also requests fixes, complete the update and its relevant checks.
 
 When examples, transcripts, accepted outputs, source packs, or user corrections
 must become reusable behavior, read
