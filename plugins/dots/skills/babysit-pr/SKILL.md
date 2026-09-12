@@ -28,20 +28,40 @@ original goal fixed, and merge only when the user asks.
 
 ## Watch
 
-1. Remember the latest commit, check states, and review discussion IDs. On each
-   pass, request only this compact state and read full logs or comments only
-   when something changed.
-2. Use a native wait or monitoring tool when available. Otherwise wait about
-   one minute while checks are running and a few minutes when only review is
-   pending. Reset the shorter wait after any change. Report changes, not
-   unchanged snapshots.
-3. If a new commit appears, discard older check results and take a fresh
-   snapshot. Re-check every unresolved discussion against the latest code and
-   act only when it still applies.
-4. If the repository offers automated review, request it once after the latest
-   commit is pushed and stable, using the repository's exact command such as
-   `@codex review`. Request another review only when the user and repository
-   rules allow it.
+Use scheduled checks every five minutes while CI or review is pending. Prefer
+the host's native scheduler attached to the current task; reuse an existing
+monitor for the same pull request. Do not keep the main agent in a polling loop.
+
+When the scheduler supports choosing a model, use Luna with low reasoning for
+monitoring. Otherwise use the native heartbeat with its supported settings;
+do not add a subagent merely to relay unchanged status. For a short request to
+wait for one CI run, use a native check-completion wait without a subagent or
+recurring schedule.
+
+Give the monitor the repository, pull request, original goal, latest commit,
+last observed check states and review discussion IDs, and the task to notify.
+Keep its work read-only:
+
+- Fetch compact check, review, merge, and open/closed state. Read full logs or
+  comment bodies only when something changes; retain the last observed state
+  between runs.
+- Report failed checks, new actionable feedback, conflicts, readiness to merge,
+  or a merged/closed pull request. Stay silent while state is unchanged or
+  non-actionable. Do not repeatedly notify about an already reported issue.
+- When a new commit appears, discard older check results. Identify unresolved
+  discussions for the main agent to recheck against current code.
+- Wake the main agent only for action or completion. The main agent owns
+  interpretation, repairs, tests, commits, pushes, and review replies; it does
+  not poll the monitor. After a fix, resume from the new latest commit.
+
+Use the host's scheduling and task-notification tools only as supported. If
+persistent scheduling is unavailable, state that limit and use a bounded native
+wait for the current checks; do not claim future monitoring is active.
+
+If the repository offers automated review, request it once after the latest
+commit is pushed and stable, using the repository's exact command such as
+`@codex review`. Request another review only when the user and repository
+rules allow it.
 
 ## Handle Changes
 
@@ -67,3 +87,6 @@ required reviews are satisfied, no unresolved discussion still requires work,
 and no merge conflict or required branch update remains. Also stop and report
 clearly if the pull request is merged, closed, or blocked on a decision only the
 user can make.
+
+Cancel the recurring monitor when these stop conditions are met or the user
+cancels babysitting. Report readiness once; do not merge without authorization.
