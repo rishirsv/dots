@@ -10,6 +10,11 @@ Do not write tests for reversible, low-impact changes that mirror the implementa
 
 Run tests appropriate to the change and complete required checks. Once those pass, broaden or repeat testing only when new changes, failures, or unresolved concerns justify it; otherwise, continue toward completing the task.
 
+For long tasks with substantial steering, maintain a concise worklog in the
+established task location. Track the current goal, accepted decisions,
+completed work, and remaining work. Update it when direction changes and
+consult it after compaction.
+
 Do not modify unrelated change made by other agents.
 
 Browser-use default: In-app browser > Chrome.

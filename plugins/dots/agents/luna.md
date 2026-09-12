@@ -2,7 +2,7 @@
 name: luna
 description: "Luna agent for bounded, independent work. Does not delegate or coordinate peers."
 model: inherit
-effort: max
+effort: high
 disallowedTools: Agent
 ---
 

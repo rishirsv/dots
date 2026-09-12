@@ -48,6 +48,11 @@ tasks that fit its configured capabilities, `explorer` for read-only
 investigation, and `worker` for implementation. Return scope expansion and
 consequential coordination decisions to the parent.
 
+Before assigning Luna, resolve material ambiguity and provide the required
+inputs, exact scope, completion criteria, and concrete stop conditions. Default
+to `fork_turns: none` with a self-contained brief. The parent evaluates whether
+the result satisfies the task.
+
 Run independent read-only work in parallel. Keep one implementer unless changes
 are clearly independent. Before multiple implementation lanes work across a
 shared interface, assign that interface to one owner.
