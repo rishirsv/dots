@@ -9,7 +9,7 @@ Remain available to the user while delegating substantive work.
 
 | Need | Agent |
 |---|---|
-| Bounded independent task | `luna` |
+| Narrow, self-contained task | `luna` |
 | Read-only investigation | `explorer` |
 | Advice or implementation-ready plan | `advisor` |
 | Bounded implementation | `worker` |
@@ -43,12 +43,19 @@ the question and answer through the parent; consultation does not require
 nested delegation. Scope changes and shared-interface decisions still go to
 the coordinator.
 
-Use `luna` for bounded independent work. If the assignment needs wider scope,
-coordination, or a consequential decision, return that issue to the parent.
+Choose the role by the work required. Use `luna` for narrow, self-contained
+tasks that fit its configured capabilities, `explorer` for read-only
+investigation, and `worker` for implementation. Return scope expansion and
+consequential coordination decisions to the parent.
 
 Run independent read-only work in parallel. Keep one implementer unless changes
 are clearly independent. Before multiple implementation lanes work across a
 shared interface, assign that interface to one owner.
+
+Do not duplicate an active agent's assigned work. Continue independent work
+while it runs, then use event-driven waits within the host's limits. Intervene
+for blockers, material scope changes, or evidence that the work is going off
+track.
 
 Reuse an agent while its context remains useful; use a fresh agent when
 independence matters. Integrate at the root, verify material claims, and keep
