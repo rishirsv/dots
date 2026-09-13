@@ -30,9 +30,18 @@ identity. When creating or redesigning, commit to a coherent point of view.
   rule or revision details until they help someone verify, compare, or correct
   the result. Keep risk, coverage, and approval information visible when it
   changes the user's decision or next action.
+- Judge repeated rows as a collection at the real viewport, not as one component
+  in isolation. Account for every recurring control, label, divider, and line of
+  copy: a small excess repeated across the visible list can dominate the screen.
+  When a row has optional supporting content, put one clearly named disclosure
+  control in the row and expand the content in place; do not spend a permanent
+  subrow on the disclosure alone. A disclosure still adds a control and a
+  decision, so include it only when the hidden content is useful in that view.
 - Show warnings where the relevant condition occurs. State the consequence and
   a useful next step; present non-blocking context as quieter supporting detail
-  instead of a persistent warning.
+  instead of a persistent warning. Let the current controls communicate routine
+  workflow state; add narration only when it changes what the user can do or
+  explains how to recover.
 
 ## Workflow
 
@@ -107,6 +116,8 @@ problems without requiring a separate audit report. For an accepted visual targe
 use [design QA](references/design-qa.md). Default to one correction cycle—inspect,
 fix, and inspect again—or the user's requested iteration limit. Report material
 remaining issues at the limit; do not treat the limit as proof of readiness.
+Before calling a refined workflow polished or complete, inspect that exact
+workflow at a representative viewport and exercise the interaction changed.
 
 ## Communication
 
