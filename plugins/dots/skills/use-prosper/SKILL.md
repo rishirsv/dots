@@ -15,6 +15,13 @@ coverage, or calculations that the connector does not provide.
 Start from the question and preserve any established date, account, category,
 or trip scope. Resolve relative dates to exact dates.
 
+For monthly trends or comparisons without an established date range, default to
+the last 12 completed calendar months. Preserve an explicitly requested period.
+When statements are uploaded after month end, incomplete current-month activity
+is expected; do not label it a historical data gap without evidence of missing
+records for a completed period. If the requested period includes the current
+month, identify it as partial where that affects the comparison.
+
 - Use `summarize_cash_flow` for canonical totals, comparisons, category totals,
   and trends. Do not rebuild aggregates from transaction pages.
 - Use `search_transactions` for transaction-level evidence and exact mutation
@@ -106,6 +113,12 @@ review is opened or explicitly refreshed. They do not rewrite existing
 transactions or a review's manual choices retroactively.
 
 ## Accounts and balances
+
+Before summing manually supplied balances, establish whether each amount is an
+aggregate balance or a component already included in another amount. Count each
+balance once: use the aggregate or its components, not both. Do not infer a
+separate liability from an aggregate account total; use the user's explanation
+or source evidence to resolve its composition before calculating the position.
 
 For account creation, reuse any name and account kind the user already supplied
 instead of asking them to choose again. `institutionName` is required, so ask
