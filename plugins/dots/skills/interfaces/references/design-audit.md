@@ -41,6 +41,14 @@ rather than guessed pixels or behavior. Group symptoms by cause into one
 primary rubric category. Distinguish defects from opportunities and observed
 effects from hypotheses about users. Preserve strengths a correction could damage.
 
+Trace visible content to the user's task. Check whether labels only restate the
+surrounding context, whether the same output appears in several places, and
+whether provenance or internal metadata occupies the primary view without
+helping a decision. Also check that progressive disclosure does not hide risk,
+coverage, approval status, or another detail needed to act with confidence.
+Treat a warning as useful only when its placement, consequence, and next step
+fit the condition it describes.
+
 ## Result
 
 Lead with the overall assessment and highest-impact changes. Each finding gives

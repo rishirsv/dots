@@ -24,6 +24,15 @@ identity. When creating or redesigning, commit to a coherent point of view.
 - Use a restrained vocabulary of recurring type, color, radius, border, and
   depth values. Add an exception only when it expresses a distinct role or
   solves a visible problem.
+- Organize the first view around the user's immediate task. Remove labels that
+  merely restate visible context and avoid repeating the same fact, status, or
+  result in multiple regions. Defer provenance, original inputs, and internal
+  rule or revision details until they help someone verify, compare, or correct
+  the result. Keep risk, coverage, and approval information visible when it
+  changes the user's decision or next action.
+- Show warnings where the relevant condition occurs. State the consequence and
+  a useful next step; present non-blocking context as quieter supporting detail
+  instead of a persistent warning.
 
 ## Workflow
 
