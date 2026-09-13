@@ -3,10 +3,12 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
+import { createRequire } from "node:module";
 
-import { Client, StreamableHTTPClientTransport } from "@modelcontextprotocol/client";
+const require = createRequire(new URL("../mcp/package.json", import.meta.url));
+const { Client, StreamableHTTPClientTransport } = require("@modelcontextprotocol/client");
 
-import { serve } from "./server.js";
+import { serve } from "../mcp/server.js";
 
 test("advisor tools enforce the run and finalization lifecycle", async (context) => {
   const fixture = await createFixture();

@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 
-import { Workspace } from "./workspace.js";
+import { Workspace } from "../mcp/workspace.js";
 
 async function fixture(context, access = "workspace-write") {
   const repo = await mkdtemp(join(tmpdir(), "dots-workspace-"));

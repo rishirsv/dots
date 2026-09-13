@@ -6,7 +6,7 @@ description: "Consult or delegate repository work to ChatGPT web or a named CLI 
 # Advisor
 
 Use ChatGPT **6 Pro** by default, following the on-demand
-[Advisor workflow](../../mcp/README.md). For a requested CLI provider or model,
+[Advisor workflow](../../mcp/AGENTS.md). For a requested CLI provider or model,
 such as Fable, follow [CLI.md](../../references/CLI.md) instead.
 
 ## Choose ownership
@@ -48,7 +48,7 @@ For questions needing no local access, send the brief directly to ChatGPT;
 skip the service and plugin. For repository work, start the service,
 then use an existing chat
 configured with the requested model and Dots Advisor, or set one up through the
-[ChatGPT controls](../../mcp/README.md#chatgpt-controls). Prefer available native
+[ChatGPT controls](../../mcp/AGENTS.md#chatgpt-controls). Prefer available native
 app tools to find, read, and continue the chat; use the in-app browser for model
 selection and plugin attachment when those controls are not exposed natively.
 Native reads can lag behind a successful send. If the latest exchange is

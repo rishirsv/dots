@@ -16,6 +16,12 @@ icons, labels, values, and actions, including rows with missing optional content
 Tune optical alignment after structural alignment. Use spacing tokens for repeated
 relationships while allowing composition-specific exceptions with a clear purpose.
 
+Use a few strong alignment axes within each region; several unrelated left,
+center, and right edges make scanning harder. When whitespace carries the
+grouping, keep gaps within a group visibly smaller than gaps around it. Start
+with enough space to expose the groups, then tighten deliberately when the task
+benefits from density.
+
 ## Adapt The Composition
 
 Choose breakpoints where content stops working, not only from device labels.
@@ -26,6 +32,12 @@ Prefer intrinsic sizing, flexible tracks, and bounded reading widths over fixed
 geometry. Account for long labels, empty regions, additional rows, translated
 content, and enlarged text. Keep controls reachable when browser chrome, a virtual
 keyboard, safe areas, or sticky regions reduce the available space.
+
+Do not scale every property by the same ratio. Large display type, media, and
+generous padding often need to contract faster than body text, controls, and
+touch targets. Keep elements near the size their content needs while space is
+available; let flexible regions absorb change and introduce compression only
+when a real constraint requires it.
 
 Dense tables and canvases may need intentional scrolling or alternate views.
 Keep essential context and controls available, and distinguish that behavior from

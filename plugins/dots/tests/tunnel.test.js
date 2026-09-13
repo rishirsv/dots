@@ -16,7 +16,7 @@ const server = http.createServer((req,res) => res.end('ready'));
 server.listen(0,'127.0.0.1',()=>fs.writeFileSync(process.argv[process.argv.indexOf('--health.url-file')+1], 'http://127.0.0.1:'+server.address().port));
 process.on('SIGTERM',()=>server.close(()=>process.exit(0)));
 `, { mode: 0o755 });
-  await writeFile(join(dir, 'service.mjs'), `import { startTunnel } from ${JSON.stringify(new URL('./tunnel.js', import.meta.url).href)};
+  await writeFile(join(dir, 'service.mjs'), `import { startTunnel } from ${JSON.stringify(new URL('../mcp/tunnel.js', import.meta.url).href)};
 await startTunnel({tunnelId:'test',keyRef:'env:TEST'}, ${JSON.stringify(dir)}, 1234, ()=>{});
 process.send({ready:true});
 `);
@@ -41,7 +41,7 @@ process.send({ready:true});
   }
 });
 
-import { startTunnel } from './tunnel.js';
+import { startTunnel } from '../mcp/tunnel.js';
 
 test('missing tunnel executable reports its startup error', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'dots-tunnel-missing-'));

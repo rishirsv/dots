@@ -40,11 +40,22 @@ track between lines. Wider measures generally need more leading. Inspect light
 text on dark surfaces before adjusting weight or spacing. Avoid universal
 corrections based only on the theme.
 
+Align sustained text to the starting edge for its writing direction. Reserve
+centering for short, independent blocks whose changing line starts remain easy
+to scan. In tables, align comparable numbers by their right edge or decimal;
+when different text sizes share a row, align their baselines rather than their
+bounding boxes.
+
 Use stable role sizes for compact interfaces. Fluid display sizing can support
 expansive layouts when its minimum and maximum preserve hierarchy. Tune tracking
 to size and letterforms; small uppercase labels and large headlines have different
 needs. Use paragraph spacing or indentation deliberately rather than doubling
 both without a reason.
+
+Treat links according to context. Links embedded in prose need a persistent cue
+that survives color-vision differences; navigation and other interaction-dense
+regions can use weight, contrast, position, and state instead of making every
+link compete with the primary action.
 
 ## Handle Wrapping And Overflow
 

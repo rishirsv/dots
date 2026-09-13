@@ -6,8 +6,12 @@ import { mkdtemp, mkdir, writeFile, rm, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createServer } from 'node:net';
-import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
+import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
+const require = createRequire(new URL('../mcp/package.json', import.meta.url));
+const { Client, StreamableHTTPClientTransport } = require('@modelcontextprotocol/client');
 const exec = promisify(execFile);
+const mcpDir = fileURLToPath(new URL('../mcp', import.meta.url));
 
 test('CLI implementation run can edit, validate, return a durable handoff, reuse, and stop', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'dots-advisor-cli-'));
@@ -20,7 +24,7 @@ test('CLI implementation run can edit, validate, return a durable handoff, reuse
   const port = probe.address().port;
   await new Promise(resolve => probe.close(resolve));
   const env = { ...process.env, DOTS_ADVISOR_STATE_DIR: join(dir, 'state'), COMPLETION_GRACE_MS: '500', MAX_LIFETIME_MS: '20000' };
-  const cli = async (...args) => JSON.parse((await exec(process.execPath, ['advisor.js', ...args], { cwd: import.meta.dirname, env, timeout: 15000 })).stdout);
+  const cli = async (...args) => JSON.parse((await exec(process.execPath, ['advisor.js', ...args], { cwd: mcpDir, env, timeout: 15000 })).stdout);
   const args = ['start', '--local', '--repo', repo, '--brief', join(dir, 'brief.md'), '--port', String(port)];
   let started;
   let client;
@@ -64,7 +68,7 @@ test('CLI reports an immediate service startup failure without waiting for timeo
   await writeFile(brief, 'Startup failure probe');
   try {
     await assert.rejects(exec(process.execPath, ['advisor.js', 'start', '--local', '--repo', dir, '--brief', brief], {
-      cwd: import.meta.dirname,
+      cwd: mcpDir,
       env: { ...process.env, DOTS_ADVISOR_STATE_DIR: join(dir, 'state'), MAX_LIFETIME_MS: 'invalid' },
       timeout: 5000,
     }), error => !error.killed && /Invalid maximum lifetime/.test(error.stderr));

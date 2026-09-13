@@ -14,6 +14,24 @@ idea, expression, or experience.
 When refining an established product, express that judgment through its existing
 identity. When creating or redesigning, commit to a coherent point of view.
 
+## Visual Principles
+
+- Choose one major and one minor spacing unit for vertical rhythm, and align
+  everything to those units by default.
+- Establish the hierarchy before decorating it. Decide what is primary,
+  supporting, and incidental; when the focal element is weak, quiet competing
+  elements before making the focal element larger or louder.
+- Use a restrained vocabulary of recurring type, color, radius, border, and
+  depth values. Add an exception only when it expresses a distinct role or
+  solves a visible problem.
+- Make relationships apparent through proximity and alignment before adding
+  containers, borders, or shadows. Use those stronger cues when spacing alone
+  would leave the grouping ambiguous.
+- Let content and task determine width and density. Empty space does not need
+  to be filled, and information should not be compressed merely to fit a frame.
+- Make the hierarchy legible without color, then use color to reinforce meaning,
+  state, and identity rather than carrying the structure by itself.
+
 ## Workflow
 
 For new interfaces and substantial redesigns, start with grounding below. For a
