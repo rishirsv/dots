@@ -19,11 +19,6 @@ white can look muddy or disabled on a colored background and can vary over
 imagery. Select a surface-aware foreground that has the intended prominence and
 still passes contrast checks in every state.
 
-Treat surface shifts, borders, and shadows as one depth language. Keep the
-implied light direction consistent, reserve stronger separation for higher or
-more important layers, and prefer spacing or a subtle surface change when a
-border would add clutter.
-
 For text over imagery, test the full range of expected crops and user-provided
 content. Reposition the text or focal crop when possible; otherwise control the
 local background with a scrim, gradient, or image treatment rather than relying

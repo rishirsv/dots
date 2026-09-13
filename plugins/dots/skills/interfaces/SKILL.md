@@ -24,13 +24,6 @@ identity. When creating or redesigning, commit to a coherent point of view.
 - Use a restrained vocabulary of recurring type, color, radius, border, and
   depth values. Add an exception only when it expresses a distinct role or
   solves a visible problem.
-- Make relationships apparent through proximity and alignment before adding
-  containers, borders, or shadows. Use those stronger cues when spacing alone
-  would leave the grouping ambiguous.
-- Let content and task determine width and density. Empty space does not need
-  to be filled, and information should not be compressed merely to fit a frame.
-- Make the hierarchy legible without color, then use color to reinforce meaning,
-  state, and identity rather than carrying the structure by itself.
 
 ## Workflow
 

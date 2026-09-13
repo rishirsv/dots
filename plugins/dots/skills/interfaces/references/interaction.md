@@ -15,13 +15,10 @@ Use familiar platform controls unless another treatment improves the actual task
 
 Match control type to the choice: navigation changes location, buttons perform
 actions, selections change values. Give controls persistent, meaningful labels
-and distinguish primary, secondary, and destructive actions through their role.
-Do not depend on hover, color, or an unexplained icon for essential meaning.
-
-Give each decision region one visually dominant action by default. Style other
-actions according to their priority instead of giving every available action
-equal weight. Use labels that state the action and its object when context alone
-would not make the outcome clear.
+and give each decision region one visually dominant action by default. Style
+secondary and destructive actions according to their role. State the action and
+its object when context alone would not make the outcome clear. Do not depend on
+hover, color, or an unexplained icon for essential meaning.
 
 Support keyboard and touch alongside pointer interaction. Preserve visible focus,
 logical traversal, and alternatives to essential gestures. For overlays, define
@@ -40,11 +37,6 @@ path; use multiple columns only for short, strongly related values when the
 reading order remains unmistakable. Let field width suggest the expected amount
 of input without constraining valid values.
 
-Show a small set of mutually exclusive choices directly when comparison matters.
-Use searchable autocomplete for a long or unfamiliar set, a stepper for a bounded
-quantity adjusted incrementally, and a select menu when compact presentation is
-more useful than seeing the options together.
-
 Use confirmation or undo according to the consequence of an action, rather than
 adding a confirmation to every change. Make consequences clear before commitment.
 
@@ -59,11 +51,6 @@ Distinguish first use, no results, and unavailable data: each needs a different
 next action. Explain disabled actions when their cause is not apparent. Optimistic
 updates need a credible failure and recovery path; do not present an unconfirmed
 outcome as final when correctness matters.
-
-Use progressive disclosure to defer secondary choices and advanced detail, not
-to hide the main action, current status, or information required for the next
-decision. In empty states, remove controls that cannot yet do anything and make
-the first useful action clear.
 
 ## Exercise The Experience
 

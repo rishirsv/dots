@@ -17,10 +17,7 @@ Tune optical alignment after structural alignment. Use spacing tokens for repeat
 relationships while allowing composition-specific exceptions with a clear purpose.
 
 Use a few strong alignment axes within each region; several unrelated left,
-center, and right edges make scanning harder. When whitespace carries the
-grouping, keep gaps within a group visibly smaller than gaps around it. Start
-with enough space to expose the groups, then tighten deliberately when the task
-benefits from density.
+center, and right edges make scanning harder.
 
 ## Adapt The Composition
 
