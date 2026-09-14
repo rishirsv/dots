@@ -9,7 +9,7 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--status|--capture] [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--claude|--vscode|--ghostty|--wispr-logitech|--starship|--zsh ...]
+Usage: scripts/sync-configs.sh [--status|--capture] [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--claude|--vscode|--ghostty|--tinycast|--wispr-logitech|--starship|--zsh ...]
 
 Installs repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
@@ -28,7 +28,7 @@ EOF
 add_target() {
   local target="$1"
   if [[ "$target" == "all" ]]; then
-    TARGETS=(codex codex-personal claude vscode ghostty wispr-logitech starship zsh)
+    TARGETS=(codex codex-personal claude vscode ghostty tinycast wispr-logitech starship zsh)
     return
   fi
   TARGETS+=("$target")
@@ -73,6 +73,9 @@ while (( $# )); do
       ;;
     --ghostty)
       add_target ghostty
+      ;;
+    --tinycast)
+      add_target tinycast
       ;;
     --wispr-logitech)
       add_target wispr-logitech
@@ -297,6 +300,16 @@ sync_ghostty() {
   install_file "$ROOT/configs/ghostty/config.ghostty" "$HOME/.config/ghostty/config.ghostty"
 }
 
+sync_tinycast() {
+  local helper_args=("$MODE" --config "$ROOT/configs/tinycast/settings.json")
+  if (( DRY_RUN )); then
+    helper_args+=(--dry-run)
+  fi
+  if ! python3 "$ROOT/scripts/sync-tinycast-config.py" "${helper_args[@]}"; then
+    STATUS=1
+  fi
+}
+
 sync_wispr_logitech() {
   local repair_args=()
   if [[ "$MODE" == "status" ]]; then
@@ -325,6 +338,7 @@ for target in "${TARGETS[@]}"; do
     claude) sync_claude ;;
     vscode) sync_vscode ;;
     ghostty) sync_ghostty ;;
+    tinycast) sync_tinycast ;;
     wispr-logitech) sync_wispr_logitech ;;
     starship) sync_starship ;;
     zsh) sync_zsh ;;

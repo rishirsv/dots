@@ -1,0 +1,52 @@
+{
+  "defaults": {
+    "calendarEnabled": true,
+    "calendarMenuBarDisplay": 0,
+    "clipboardTextSearchEnabled": true,
+    "compactMode": true,
+    "extensionsEnabled": true,
+    "fileSearchEnabled": true,
+    "fileSearchScopes": [
+      "~/Documents",
+      "~/Downloads",
+      "~/Code"
+    ],
+    "hotkey.app.com.google.Chrome": "{\"combo\":{\"_0\":{\"carbonModifiers\":6912,\"carbonKeyCode\":11}}}",
+    "hotkey.app.com.microsoft.VSCode": "{\"combo\":{\"_0\":{\"carbonModifiers\":6912,\"carbonKeyCode\":8}}}",
+    "hotkey.app.com.mitchellh.ghostty": "{\"combo\":{\"_0\":{\"carbonModifiers\":6912,\"carbonKeyCode\":17}}}",
+    "hotkey.command:ai-chat": "{\"combo\":{\"_0\":{\"carbonKeyCode\":50,\"carbonModifiers\":6912}}}",
+    "hotkey.command:clipboard-history": "{\"combo\":{\"_0\":{\"carbonModifiers\":2560,\"carbonKeyCode\":9}}}",
+    "hotkey.command:rewrite": "{\"combo\":{\"_0\":{\"carbonModifiers\":6912,\"carbonKeyCode\":15}}}",
+    "hotkey.command:search-emoji": "{\"combo\":{\"_0\":{\"carbonModifiers\":4352,\"carbonKeyCode\":49}}}",
+    "hotkey.command:summarize": "{\"combo\":{\"_0\":{\"carbonModifiers\":6912,\"carbonKeyCode\":1}}}",
+    "hotkey.extensionCommand.extension:coffee/caffeinateToggle": "{\"combo\":{\"_0\":{\"carbonModifiers\":6912,\"carbonKeyCode\":40}}}",
+    "hotkey.togglePalette": "{\"combo\":{\"_0\":{\"carbonModifiers\":256,\"carbonKeyCode\":49}}}",
+    "hotkey.windowCommand.left-half": "{\"combo\":{\"_0\":{\"carbonKeyCode\":123,\"carbonModifiers\":2048}}}",
+    "hotkey.windowCommand.right-half": "{\"combo\":{\"_0\":{\"carbonKeyCode\":124,\"carbonModifiers\":2048}}}",
+    "hyperKeyIncludesShift": true,
+    "hyperKeyPhysicalKey": "capsLock",
+    "interfaceSize": "larger",
+    "navigationEnabled": true,
+    "paletteTransparency": 100,
+    "popToRootTimeout": 90,
+    "quickActionsEnabled": true,
+    "quicklinksEnabled": true,
+    "showFavoritesInCompactMode": true,
+    "showInMenuBar": false,
+    "windowManagementEnabled": true
+  },
+  "boundAppBundleIDs": [
+    "com.mitchellh.ghostty",
+    "com.microsoft.VSCode",
+    "com.google.Chrome"
+  ],
+  "extensions": {
+    "allowed": [
+      "coffee"
+    ],
+    "boundCommands": [
+      "extension:coffee/caffeinateToggle"
+    ]
+  },
+  "quicklinks": []
+}

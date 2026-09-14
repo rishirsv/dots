@@ -46,6 +46,8 @@ Preview a specific target before applying it:
 ```sh
 scripts/sync-configs.sh --dry-run --claude
 scripts/sync-configs.sh --claude
+scripts/sync-configs.sh --dry-run --tinycast
+scripts/sync-configs.sh --tinycast
 ```
 
 Run `scripts/sync-configs.sh --help` for available targets. Use `--all` only
@@ -69,5 +71,10 @@ after reviewing every source under `configs/`.
 - ChatGPT's startup surface is app runtime state, not a documented Codex config
   key; Dots does not write it.
 - Keep secrets and machine-local shell overrides in `~/.zshrc.local`.
+- Tinycast sync manages portable preferences, hotkeys, the Coffee-only extension
+  allowlist, and an empty quicklink set. It never copies clipboard contents,
+  launcher learning, AI conversations, extension credentials, or macOS privacy
+  grants into the repository. Install Coffee in Tinycast before syncing on a
+  new Mac.
 
 Run `scripts/sync-plugins.sh --help` for host-specific plugin updates.
