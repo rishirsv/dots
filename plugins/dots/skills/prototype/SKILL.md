@@ -13,7 +13,7 @@ to merge.
 
 State the question before building. Name the alternatives and what observation
 would distinguish them. If there is no consequential choice, return to Feature
-Development or `$interfaces`; a demonstration without a decision is not a
+Development or `$interface-design`; a demonstration without a decision is not a
 prototype.
 
 Use a prototype instead of asking the user for a fact that can be observed by

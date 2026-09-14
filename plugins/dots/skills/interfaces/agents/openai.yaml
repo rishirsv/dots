@@ -1,6 +1,0 @@
-interface:
-  display_name: "Interfaces"
-  short_description: "Design, refine, and review distinctive interfaces"
-  default_prompt: "Use $interfaces to design, refine, or review this interface."
-policy:
-  allow_implicit_invocation: true
