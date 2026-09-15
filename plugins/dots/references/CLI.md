@@ -35,9 +35,8 @@ claude -p --model fable --effort medium --dangerously-skip-permissions \
 ```
 
 The bypass flag grants broader access than workspace write. For explicitly
-read-only reviews, add `--tools 'Read,Glob,Grep' --strict-mcp-config
---mcp-config '{"mcpServers":{}}'` and instruct the advisor to inspect and report
-only. This restricts tools; it is not an OS sandbox.
+read-only reviews, add `--tools 'Read,Glob,Grep'` and instruct the advisor to
+inspect and report only. This restricts tools; it is not an OS sandbox.
 
 ## Codex
 

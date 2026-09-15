@@ -1,6 +1,6 @@
 {
   "name": "dots",
-  "version": "0.2.187",
+  "version": "0.2.188",
   "description": "Focused workflows for planning, building, reviewing, and shipping software.",
   "author": {
     "name": "Rishi"
@@ -27,6 +27,5 @@
     "composerIcon": "./assets/icon.png",
     "logo": "./assets/logo.png",
     "screenshots": []
-  },
-  "apps": "./.app.json"
+  }
 }

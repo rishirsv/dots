@@ -1,19 +1,19 @@
 ---
 name: advisor
-description: "Consult or delegate repository work to ChatGPT web or a named CLI model. Use for grounded advice and review, and when the user asks that model to implement, build, fix, or change code through its repository tools."
+description: "Consult or delegate repository work to a named command-line model. Use for grounded advice and review, and when the user asks that model to implement, build, fix, or change code through its repository tools."
 ---
 
 # Advisor
 
-Use ChatGPT **6 Pro** by default, following the on-demand
-[Advisor workflow](../../mcp/AGENTS.md). For a requested CLI provider or model,
-such as Fable, follow [CLI.md](../../references/CLI.md) instead.
+Run the advisor through its command-line provider. Read and follow
+[CLI.md](../../references/CLI.md) for the current models, effort levels,
+permissions, and commands.
 
 ## Choose ownership
 
 Select and state one mode before launching:
 
-- **Implementation:** the user asks ChatGPT or the named model to implement,
+- **Implementation:** the user asks the named model to implement,
   build, fix, or change something. The advisor owns the repository edits,
   required checks, corrections, and final handoff.
 - **Review:** the user asks the advisor to inspect existing work without making
@@ -44,23 +44,13 @@ For implementation, include this directive near the start of the brief:
 > corrections, and final handoff. Use the repository file and terminal tools.
 > Do not return only advice or a proposed patch.
 
-For questions needing no local access, send the brief directly to ChatGPT;
-skip the service and plugin. For repository work, start the service,
-then use an existing chat
-configured with the requested model and Dots Advisor, or set one up through the
-[ChatGPT controls](../../mcp/AGENTS.md#chatgpt-controls). Prefer available native
-app tools to find, read, and continue the chat; use the in-app browser for model
-selection and plugin attachment when those controls are not exposed natively.
-Native reads can lag behind a successful send. If the latest exchange is
-missing, verify it in the browser before retrying; do not send a duplicate.
-For repository work, send the generated prompt and wait for the saved final
-result. A chat response alone is not completion. In implementation mode, do not
-make substantive local edits while the advisor owns the task. Inspect the
-result, repository diff, and validation evidence. If the requested changes are
-absent, or checks are omitted without a stated blocker, treat the run as
-incomplete and send a correction through the same advisor chat. Do not take over
-unless the user reassigns ownership. The service shuts down after completion or
-its timeout; nothing starts at login.
+Run the selected command from the task repository with the saved brief as input
+and save its final response to a result file. Wait for the command to finish. In
+implementation mode, do not make substantive local edits while the advisor owns
+the task. Inspect the result, repository diff, and validation evidence. If the
+requested changes are absent, or checks are omitted without a stated blocker,
+treat the run as incomplete and resume the same CLI session or send a correction
+brief. Do not take over unless the user reassigns ownership.
 
 In consultation mode, consult before substantive local work after any necessary
 orientation, and consult again before completion when the workflow calls for a
