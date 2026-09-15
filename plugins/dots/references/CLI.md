@@ -1,11 +1,12 @@
 # CLI advisor runs
 
-Run in the task's repository with a saved brief on stdin. Honor the user's model
-and effort; otherwise use the configured model at medium effort. Use the
-noninteractive permission flags below within the host's allowed permissions.
-State whether the run is implementation, review, or consultation in the brief.
-For implementation, assign the model ownership of edits, required checks,
-corrections, and the final handoff; do not ask it only for advice or a patch.
+Run in the task's repository. Honor the user's model and effort; otherwise use
+the configured model at medium effort. Pass a self-contained prompt as the final
+CLI argument. Use a temporary `.txt` file on stdin when the prompt is long or
+multiline. State whether the run is implementation, review, or consultation in
+the prompt. For implementation, assign the model ownership of edits, required
+checks, corrections, and the final handoff; do not ask it only for advice or a
+patch.
 
 ## Models and effort
 
@@ -26,12 +27,12 @@ or unsupported effort levels.
 
 ## Claude
 
-“Have Fable review this” uses:
+“Have Fable implement this” uses:
 
 ```sh
 cd /absolute/path/to/repo
 claude -p --model fable --effort medium --dangerously-skip-permissions \
-  < /absolute/path/to/brief.md > /absolute/path/to/result.md
+  "Implement the requested change, run the required checks, and summarize the result."
 ```
 
 The bypass flag grants broader access than workspace write. For explicitly
@@ -44,7 +45,7 @@ inspect and report only. This restricts tools; it is not an OS sandbox.
 codex exec -C /absolute/path/to/repo -m gpt-6-astra \
   -c 'model_reasoning_effort="medium"' -c 'approval_policy="never"' \
   --sandbox workspace-write \
-  -o /absolute/path/to/result.md < /absolute/path/to/brief.md
+  "Implement the requested change, run the required checks, and summarize the result."
 ```
 
 Use `--sandbox read-only` for explicitly read-only reviews. For unrestricted
@@ -65,10 +66,35 @@ catalog or model picker, and select a supported effort. Its ID and effort range
 are not established by the current configuration; ask for the ID if local
 lookup cannot resolve it.
 
-Wait for completion and read the saved result. Check the diff and validation
-evidence if writes were allowed. During implementation, do not duplicate or
-take over the assigned work. If the scoped diff or required checks are missing
-without a stated blocker, resume the same session or send a correction brief;
-ownership changes only when the user reassigns it. For other follow-ups, include
-the previous result and new evidence in the next brief or resume the same CLI
-session.
+## Optional files
+
+For a long or reusable prompt, replace the final quoted argument with stdin:
+
+```sh
+claude -p --model fable --effort medium --dangerously-skip-permissions \
+  < /tmp/advisor-prompt.txt
+
+codex exec -C /absolute/path/to/repo -m gpt-6-astra \
+  -c 'model_reasoning_effort="medium"' -c 'approval_policy="never"' \
+  --sandbox workspace-write - < /tmp/advisor-prompt.txt
+```
+
+Claude prints its response to stdout; redirect it to a file when needed. Codex
+also prints its final response and accepts `-o /tmp/advisor-result.txt` when a
+separate result file is useful.
+
+## Follow up
+
+Wait for completion and read the result. Check the diff and validation evidence
+if writes were allowed. During implementation, do not duplicate or take over
+the assigned work. If the scoped diff or required checks are missing without a
+stated blocker, resume the same session with a focused prompt:
+
+```sh
+claude -p --continue "Run the missing checks and fix any failures."
+codex exec resume --last "Run the missing checks and fix any failures."
+```
+
+Use an explicit session ID instead of the most recent session when concurrent
+runs could make the target ambiguous. Ownership changes only when the user
+reassigns it.
