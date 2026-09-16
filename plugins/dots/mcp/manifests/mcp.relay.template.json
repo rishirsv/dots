@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "portal": {
+      "url": "https://YOUR-OWNED-HOST/mcp",
+      "authorization": "OAuth provider configuration required; do not insert credentials into this template"
+    }
+  }
+}

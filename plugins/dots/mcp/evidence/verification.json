@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "build": {
+    "command": "node scripts/build.mjs",
+    "exitCode": 0,
+    "log": "build.log"
+  },
+  "nodeTests": {
+    "command": "node --test --test-concurrency=1 dist/tests/unit/*.test.js dist/tests/integration/*.test.js dist/tests/chaos/*.test.js",
+    "exitCode": 0,
+    "tests": 60,
+    "passed": 54,
+    "failed": 0,
+    "skipped": 6,
+    "log": "node-tests.tap"
+  },
+  "documentTests": {
+    "command": "python3 tests/python/document_fidelity.py",
+    "exitCode": 0,
+    "tests": 15,
+    "passed": 15,
+    "failed": 0,
+    "durationSeconds": 66.297,
+    "log": "document-tests.log",
+    "boundary": "Direct fixture transformations, not a contained broker/host route"
+  },
+  "dependencyCheck": {
+    "command": "node scripts/dependency-check.mjs",
+    "exitCode": 2,
+    "meaning": "Blocked; required modules and reviewed lock unavailable",
+    "log": "dependencies.json"
+  },
+  "releaseGate": {
+    "command": "node scripts/release-check.mjs --release",
+    "exitCode": 2,
+    "meaning": "Intentionally blocked: mandatory implementation and qualification incomplete",
+    "log": "release-gate.log"
+  },
+  "handbook": {
+    "path": "docs/Portal-Test-Procedures.docx",
+    "pagesRendered": 15,
+    "pagesVisuallyInspected": 15,
+    "layoutResult": "No observed clipping, overlap, broken table or command wrapping defect",
+    "notSoftwareQualification": true
+  },
+  "qualification": "Engineering source handoff only. See build-status.json and docs/OPEN-GAPS.md."
+}

@@ -1,0 +1,32 @@
+{
+  "name": "portal",
+  "display_name": "Portal",
+  "description": "Use permission-scoped files, documents, skills and durable jobs on an explicitly authorized Mac. No second model.",
+  "version": "0.1.0",
+  "mcp": {
+    "url": "https://YOUR-OWNED-HOST/mcp"
+  },
+  "skills": [
+    {
+      "name": "portal",
+      "path": "skills/portal/SKILL.md"
+    },
+    {
+      "name": "portal-code",
+      "path": "skills/portal-code/SKILL.md"
+    },
+    {
+      "name": "portal-documents",
+      "path": "skills/portal-documents/SKILL.md"
+    },
+    {
+      "name": "portal-files",
+      "path": "skills/portal-files/SKILL.md"
+    },
+    {
+      "name": "portal-terminal",
+      "path": "skills/portal-terminal/SKILL.md"
+    }
+  ],
+  "provisioningRequired": true
+}

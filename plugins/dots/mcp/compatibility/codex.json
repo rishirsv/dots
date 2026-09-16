@@ -1,0 +1,8 @@
+{
+  "qualified": false,
+  "selectedNativeBinary": null,
+  "reason": "No Codex binary or target macOS runtime was available in the build environment.",
+  "requiredAction": "portal executor qualify --binary /absolute/path/to/native/codex",
+  "fallbackExecutor": null,
+  "inferenceAllowed": false
+}

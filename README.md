@@ -16,6 +16,7 @@ syncing it.
 - `.claude-plugin/marketplace.json`: Claude marketplace source.
 - `configs/`: portable machine configuration.
 - `scripts/`: sync and validation entrypoints.
+- `plugins/dots/mcp/`: optional Portal local MCP and per-user agent.
 - `AGENTS.md`: repository instructions for agents.
 
 Keep secrets, authentication state, sessions, caches, generated local output,

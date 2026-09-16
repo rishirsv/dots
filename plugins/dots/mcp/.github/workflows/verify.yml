@@ -1,0 +1,23 @@
+name: Portal verification
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  core:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version-file: .node-version}
+      - name: Require reviewed dependency lock
+        run: test -f package-lock.json || { echo 'Connected bootstrap and transitive lock review are required before CI qualification.'; exit 2; }
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: npm test
+      - run: npm run generate
+      - run: node scripts/release-check.mjs
+      - name: Document fixture transformations
+        run: |
+          python3 -m venv /tmp/portal-parser
+          /tmp/portal-parser/bin/pip install -r deploy/test-requirements.txt
+          /tmp/portal-parser/bin/python tests/python/document_fidelity.py
+  # Physical Apple Silicon and connected-host jobs are operator-run acceptance gates,
+  # not represented as passed by this Linux CI job.

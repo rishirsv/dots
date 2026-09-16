@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "product": "Portal",
+  "version": "0.1.0",
+  "recordedAt": "2026-09-15T04:02:02.140585+00:00",
+  "implementationComplete": false,
+  "remoteReleaseQualified": false,
+  "deployed": false,
+  "hostAccepted": false,
+  "platformQualification": {
+    "linuxCoreFixture": true,
+    "appleSiliconAgent": false,
+    "codexExecutor": false,
+    "containedDocuments": false,
+    "officialMcpSdk": false,
+    "quickjsRuntime": false,
+    "postgresRelay": false,
+    "auth0Provider": false
+  },
+  "node": {
+    "tests": 60,
+    "passed": 54,
+    "failed": 0,
+    "skipped": 6,
+    "log": "evidence/node-tests.tap"
+  },
+  "python": {
+    "tests": 15,
+    "passed": 15,
+    "failed": 0,
+    "status": "passed",
+    "scope": "Direct document and image transformation fixtures, not OS-contained broker route",
+    "log": "evidence/document-tests.log"
+  },
+  "stress": {
+    "coreOperations": 10000,
+    "duplicateSubmissions": 2500,
+    "spoolProducedBytes": 1073741824,
+    "spoolRetainedBytes": 4194304,
+    "full72HourSoak": false
+  },
+  "catalogue": {
+    "frontDoorTools": 17,
+    "capabilityEntries": 57,
+    "publicSkills": 5,
+    "publicResources": 22
+  },
+  "blockersDocument": "docs/OPEN-GAPS.md",
+  "thirdPartyTypeCheck": "Not exercised; installed external modules unavailable. Offline build uses explicit ambient declarations.",
+  "transitiveDependencyLock": "Not supplied; package download network unavailable"
+}

@@ -1,0 +1,8 @@
+import { spawnSync } from 'node:child_process';
+import { Registry } from '../../../core/src/registry.js';
+import { s, check } from '../../../protocol/src/index.js';
+export function addProcesses(r: Registry) {
+    r.add({ id: 'processes.list', description: 'Explicitly granted same-user process inventory; command names only, never full arguments or environment.', input: s.object({}), family: 'processes', effect: 'read', handler: c => { const p = spawnSync('/bin/ps', ['-axo', 'pid=,uid=,lstart=,comm='], { encoding: 'utf8', maxBuffer: 1048576, timeout: 3000, env: { PATH: '/usr/bin:/bin', LANG: 'C' } }); check(p.status === 0, 'CAPABILITY_UNAVAILABLE', 'System inventory unavailable'); const protectedPids = new Set([process.pid, ...c.store.all('SELECT pid FROM jobs').map(x => x.pid)]); const processes = p.stdout.split('\n').flatMap(line => { const m = /^\s*(\d+)\s+(\d+)\s+(.{24})\s+(.+)$/.exec(line); if (!m || Number(m[2]) !== process.getuid?.() || protectedPids.has(Number(m[1])))
+            return []; return [{ pid: Number(m[1]), uid: Number(m[2]), startIdentity: m[3], commandName: m[4].split('/').pop() }]; }); return { processes, scope: 'same-user', fullArgumentsIncluded: false }; } });
+    r.add({ id: 'processes.signal', description: 'Unrelated-process signalling remains unavailable until exact OS process identity control is qualified. Use jobs.cancel for Portal-owned jobs.', input: s.object({ pid: s.int(1), startIdentity: s.string(100), uid: s.int(), signal: s.enum('SIGTERM', 'SIGINT') }), family: 'processes', effect: 'control', approval: true, availability: () => ({ available: false, reason: 'Atomic unrelated-process identity/signalling is not qualified' }), handler: () => { throw new Error('Unavailable'); } });
+}

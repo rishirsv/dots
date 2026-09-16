@@ -44,6 +44,31 @@ Use only the command for the host installed on the Mac. Codex sync also
 refreshes the second profile at `~/.codex-personal` when that directory exists.
 Claude sessions that were already open require `/reload-plugins` or a restart.
 
+## Install the Portal MCP
+
+Portal is an optional local MCP included in the Dots plugin. It exposes only
+resources explicitly granted to the local Portal agent; installation creates no
+grants.
+
+From the checkout, use Node 22.16.0 (the package requires Node 22.16 through
+22.x), then build and install the per-user release:
+
+```sh
+cd plugins/dots/mcp
+npm ci --ignore-scripts
+npm run build
+node bin/portal.mjs install
+export PATH="$HOME/.local/bin:$PATH"
+portal start
+codex mcp add portal -- "$HOME/.local/bin/portal" mcp --stdio
+```
+
+If `portal` is already registered, inspect it with `codex mcp get portal` and
+update the command to the installed launcher above. Run `portal doctor` before
+granting a disposable fixture directory. Do not grant a home directory,
+Portal state, or credential directory. Add `--start-at-login` to the install
+command only after reviewing the generated LaunchAgent behavior.
+
 ## Restore machine configuration
 
 Choose the targets needed on this Mac. Run `scripts/sync-configs.sh --help` to
