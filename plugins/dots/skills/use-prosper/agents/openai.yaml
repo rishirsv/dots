@@ -1,6 +1,0 @@
-interface:
-  display_name: "Use Prosper"
-  short_description: "Read and update the Prosper Finance ledger"
-  default_prompt: "Use $use-prosper to answer this Prosper Finance request."
-policy:
-  allow_implicit_invocation: true
