@@ -6,7 +6,7 @@ description: "Consult or delegate repository work to a named command-line model.
 # Advisor
 
 Run the advisor through its command-line provider. Read and follow
-[CLI.md](../../references/CLI.md) for the current models, effort levels,
+[CLI.md](references/CLI.md) for the current models, effort levels,
 permissions, and commands.
 
 ## Set ownership and access
