@@ -1,0 +1,15 @@
+# Disposable loopback-only database. Never use these fixture credentials in production.
+services:
+  postgres:
+    image: postgres:17.5-bookworm
+    environment:
+      POSTGRES_DB: portal_test
+      POSTGRES_USER: portal_test
+      POSTGRES_PASSWORD: portal-fixture-password
+    ports: ["127.0.0.1:55432:5432"]
+    tmpfs: ["/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portal_test -d portal_test"]
+      interval: 2s
+      timeout: 2s
+      retries: 30

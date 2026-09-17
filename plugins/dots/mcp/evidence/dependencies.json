@@ -1,0 +1,36 @@
+{
+  "node": "v22.16.0",
+  "lockfilePresent": true,
+  "dependencies": [
+    {
+      "name": "@modelcontextprotocol/sdk",
+      "requestedVersion": "1.30.0",
+      "installed": true
+    },
+    {
+      "name": "quickjs-emscripten",
+      "requestedVersion": "0.31.0",
+      "installed": true
+    },
+    {
+      "name": "pg",
+      "requestedVersion": "8.16.3",
+      "installed": true
+    },
+    {
+      "name": "ws",
+      "requestedVersion": "8.21.3",
+      "installed": true
+    },
+    {
+      "name": "jose",
+      "requestedVersion": "6.1.0",
+      "installed": true
+    },
+    {
+      "name": "zod",
+      "requestedVersion": "3.25.76",
+      "installed": true
+    }
+  ]
+}
