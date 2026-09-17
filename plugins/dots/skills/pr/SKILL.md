@@ -18,9 +18,13 @@ as an editing standard. `$pr` still owns these publishing artifacts.
 
 3. Fetch the remote and check the branch against the PR's current base. Resolve
    conflicts before publishing. Rebase when required by repository policy or
-   when base changes affect this work; rerun affected checks afterward. Avoid
-   rewriting shared branches without coordination. If a previously pushed
-   branch is rebased, push with `--force-with-lease`.
+   when base changes affect this work. Reuse the completed task's checks and
+   visual evidence. After rebasing or splitting the work, inspect changes to
+   code, dependencies and build configuration; rerun only checks whose evidence
+   no longer covers the delivered PR. A clean application of the patch alone
+   does not establish equivalence, and publication alone does not require a new
+   verification pass. Avoid rewriting shared branches without coordination.
+   If a previously pushed branch is rebased, push with `--force-with-lease`.
 
 4. Commit and push the requested changes.
 
