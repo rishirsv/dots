@@ -1,10 +1,10 @@
 {
   "mcpServers": {
     "portal": {
-      "command": "portal",
-      "args": ["mcp", "--stdio"],
+      "command": "./mcp/scripts/plugin-launcher.sh",
+      "args": [],
       "cwd": ".",
-      "enabled": true,
+      "enabled": false,
       "env_vars": ["HOME", "PATH"],
       "startup_timeout_sec": 10,
       "tool_timeout_sec": 3600

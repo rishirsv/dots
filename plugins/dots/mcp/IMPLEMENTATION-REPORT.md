@@ -21,7 +21,7 @@ Additional real source modules implement isolated QuickJS code workers, exact-ve
 | Check | Recorded result | Boundary |
 |---|---|---|
 | Native helper + project TypeScript | Build exit 0 | Linux x64 / Node 22.16.0 / TS 5.8.3. Offline ambient declarations are not real external SDK type validation. |
-| Node tests | 54 passed; 6 skipped; 0 failed | 20 unit, 28 local integration, 6 real crash cases. Skips are E01-E06: JOSE, QuickJS, MCP SDK and full relay. |
+| Node tests | 59 passed; 1 skipped; 0 failed | The PostgreSQL relay exercise is skipped without its isolated database environment. |
 | Python document/image fixtures | 15 passed | Actual DOCX/XLSX/PDF/image transforms and negative archives. Direct parser process only; not the OS-contained broker/host route. |
 | Core stress | 10,000 invocations, including 2,500 duplicate submissions | 8.88-second local broker workload, not a 72-hour or remote reliability test. |
 | Output stress | 1 GiB produced; 4 MiB retained with explicit omitted offsets | Actual bounded spool, not an actual Codex command or cancellation proof. |
@@ -46,7 +46,7 @@ Separate environment blockers include a native compatible Codex binary, dependen
 
 ## Packaging and supply chain
 
-The archive contains source, native helper source, compiled JavaScript, fixtures, tests, generated manifests, deployment files and this report. It contains no `node_modules`, prebuilt native executable, Python environment, font files, user credentials or fake transitive lockfile. Exact top-level dependency versions are declared. Package networking was unavailable, so a reviewed `package-lock.json` and real third-party type check remain required. CI/Docker/release gates refuse release qualification without those inputs.
+The repository contains source, native helper source, fixtures, tests, generated manifests, deployment files and this report. Generated JavaScript, `node_modules`, prebuilt native executables, Python environments, font files and user credentials are not committed. Exact top-level dependencies and a complete `package-lock.json` are checked in. A clean install, SDK typecheck and dependency resolution check passed with Node 22.16.0; the per-user installer copies the locally built runtime and locked dependencies into its content-addressed release. CI and Docker require the lockfile.
 
 `UPSTREAM.md` records actual uploaded-file digests. The supplied Commander archive contains public manifests/docs, not the local server or proprietary relay. No Commander source/asset was copied and no Commander production infrastructure is used. The new source is private and unlicensed for public distribution; dependency notices remain attached to their respective packages when installed.
 

@@ -88,10 +88,14 @@ node bin/portal.mjs install
 export PATH="$HOME/.local/bin:$PATH"
 portal start
 portal doctor
-codex mcp add portal -- "$HOME/.local/bin/portal" mcp --stdio
 # Only on the target Mac, using the actual native executable rather than an npm wrapper:
 portal executor qualify --binary /absolute/path/to/native/codex
 ```
+
+The Dots plugin ships its Portal MCP definition disabled so installing Dots
+does not start a missing or unbuilt executable. Once `portal doctor` succeeds,
+enable `plugins."dots".mcp_servers.portal` in Codex configuration. The bundled
+launcher delegates to the installed `~/.local/bin/portal` release.
 
 The LaunchAgent plist is written for the next login; installation does not itself bootstrap it into the current launchd session. Start explicitly as above, or bootstrap the inspected plist with launchctl. Terminal remains unavailable until every required live sandbox/PTY/teardown probe passes. Add the `terminal` family explicitly when creating a command-enabled grant. See `docs/INSTALLATION.md`.
 

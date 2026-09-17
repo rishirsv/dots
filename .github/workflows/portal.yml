@@ -1,0 +1,47 @@
+name: Portal verification
+
+on:
+  push:
+    paths:
+      - "plugins/dots/mcp/**"
+      - ".github/workflows/portal.yml"
+  pull_request:
+    paths:
+      - "plugins/dots/mcp/**"
+      - ".github/workflows/portal.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: plugins/dots/mcp
+
+jobs:
+  core:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: plugins/dots/mcp/.node-version
+          cache: npm
+          cache-dependency-path: plugins/dots/mcp/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: plugins/dots/mcp/deploy/test-requirements.txt
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: npx tsc -p tsconfig.sdk.json
+      - run: npm test
+      - run: npm run generate
+      - run: node scripts/release-check.mjs
+      - run: node scripts/verify-contents.mjs
+      - name: Document fixture transformations
+        run: |
+          python -m venv /tmp/portal-parser
+          /tmp/portal-parser/bin/pip install -r deploy/test-requirements.txt
+          /tmp/portal-parser/bin/python tests/python/document_fidelity.py

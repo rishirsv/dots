@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "product": "Portal",
   "version": "0.1.0",
-  "recordedAt": "2026-09-15T04:02:02.140585+00:00",
+  "recordedAt": "2026-09-16T04:43:13.000000+00:00",
   "implementationComplete": false,
   "remoteReleaseQualified": false,
   "deployed": false,
@@ -12,17 +12,18 @@
     "appleSiliconAgent": false,
     "codexExecutor": false,
     "containedDocuments": false,
-    "officialMcpSdk": false,
-    "quickjsRuntime": false,
+    "officialMcpSdk": true,
+    "quickjsRuntime": true,
     "postgresRelay": false,
     "auth0Provider": false
   },
   "node": {
     "tests": 60,
-    "passed": 54,
+    "passed": 59,
     "failed": 0,
-    "skipped": 6,
-    "log": "evidence/node-tests.tap"
+    "skipped": 1,
+    "historicalLog": "evidence/node-tests.tap",
+    "currentVerification": "Clean locked-dependency run on 2026-09-16; the repository CI reproduces this suite"
   },
   "python": {
     "tests": 15,
@@ -46,6 +47,6 @@
     "publicResources": 22
   },
   "blockersDocument": "docs/OPEN-GAPS.md",
-  "thirdPartyTypeCheck": "Not exercised; installed external modules unavailable. Offline build uses explicit ambient declarations.",
-  "transitiveDependencyLock": "Not supplied; package download network unavailable"
+  "thirdPartyTypeCheck": "Passed with the installed locked dependencies using tsconfig.sdk.json.",
+  "transitiveDependencyLock": "package-lock.json supplied; npm ci installed 122 packages with zero audit findings on the verification run"
 }

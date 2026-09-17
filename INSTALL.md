@@ -60,14 +60,21 @@ npm run build
 node bin/portal.mjs install
 export PATH="$HOME/.local/bin:$PATH"
 portal start
-codex mcp add portal -- "$HOME/.local/bin/portal" mcp --stdio
 ```
 
-If `portal` is already registered, inspect it with `codex mcp get portal` and
-update the command to the installed launcher above. Run `portal doctor` before
-granting a disposable fixture directory. Do not grant a home directory,
-Portal state, or credential directory. Add `--start-at-login` to the install
-command only after reviewing the generated LaunchAgent behavior.
+The Dots plugin includes Portal's MCP definition disabled by default so a fresh
+plugin install never tries to launch an unbuilt server. After the launcher is
+installed and `portal doctor` succeeds, enable the bundled server in Codex:
+
+```toml
+[plugins."dots".mcp_servers.portal]
+enabled = true
+```
+
+Run `portal doctor` before granting a disposable fixture directory. Do not
+grant a home directory, Portal state, or credential directory. Add
+`--start-at-login` to the install command only after reviewing the generated
+LaunchAgent behavior.
 
 ## Restore machine configuration
 
