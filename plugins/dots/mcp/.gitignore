@@ -6,6 +6,7 @@ dist/
 !deploy/.env.example
 *.sqlite*
 .evidence-local/
+/tmp/
 .DS_Store
 **/__pycache__/
 *.pyc

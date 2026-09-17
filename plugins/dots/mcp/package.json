@@ -26,7 +26,7 @@
     "test:documents": "python3 tests/python/document_fidelity.py",
     "test:spool": "node dist/tests/soak/spool-stress.js",
     "check:dependencies": "node scripts/dependency-check.mjs",
-    "check:release": "node scripts/release-check.mjs --release",
+    "check:release": "node scripts/release-check.mjs",
     "test:oidc": "node --test dist/tests/unit/test-issuer.test.js dist/tests/integration/oauth.test.js"
   },
   "dependencies": {

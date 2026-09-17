@@ -44,7 +44,7 @@ catch (e) {
     process.exitCode = 1;
 }
 finally {
-    const output = path.resolve(process.env.PORTAL_MAC_EVIDENCE ?? 'evidence/macos.json');
+    const output = path.resolve(process.env.PORTAL_MAC_EVIDENCE ?? 'tmp/macos.json');
     fs.mkdirSync(path.dirname(output), { recursive: true });
     fs.writeFileSync(output, JSON.stringify(report, null, 2));
     console.log(JSON.stringify({ status: report.status, evidence: output, fixture: dir }, null, 2));

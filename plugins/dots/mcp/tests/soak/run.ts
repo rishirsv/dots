@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fixture, data } from '../support/fixture.js';
 import { sha } from '../../packages/protocol/src/index.js';
 const args = process.argv.slice(2), arg = (name: string, fallback: string) => { const i = args.indexOf('--' + name); return i < 0 ? fallback : args[i + 1]; };
-const operations = Number(arg('operations', '10000')), seconds = Number(arg('seconds', '0')), output = path.resolve(arg('output', 'evidence/soak-core.json'));
+const operations = Number(arg('operations', '10000')), seconds = Number(arg('seconds', '0')), output = path.resolve(arg('output', 'tmp/soak-core.json'));
 if (!Number.isInteger(operations) || operations < 1 || operations > 100000000 || !Number.isFinite(seconds) || seconds < 0 || seconds > 259200)
     throw new Error('Bound operations and duration; max 72 hours');
 const f = await fixture(), start = performance.now(), baseline = process.memoryUsage().rss, samples: any[] = [];
