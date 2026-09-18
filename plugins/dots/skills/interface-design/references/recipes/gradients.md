@@ -33,6 +33,9 @@ background: linear-gradient(in oklch longer hue, #3b82f6, #ec4899);
 
 **Banding shows up on large areas.** A gradient spanning a hero with little contrast between its stops steps visibly on 8-bit displays. Widen the contrast, shrink the area, or overlay a subtle noise texture.
 
+For a textured treatment, read [noise](noise.md); compare it with the plain
+gradient before keeping the extra layer.
+
 For text over the gradient, measure the worst region using the [contrast recipe](contrast.md).
 
 Verify the midpoint, gamut mapping, and fallback in the actual browser.

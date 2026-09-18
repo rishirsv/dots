@@ -68,8 +68,14 @@ explains how to recover.
 ## Exercise The Experience
 
 Follow the main path and relevant errors, retries, cancellation, dismissal, and
-back navigation. Check rapid repeated input and supported input methods. Verify
-that labels, visible state, focus, and underlying behavior agree. In prototypes,
+back navigation. For reversible state changes, exercise both directions and
+check dependent status, counts, and action eligibility. For example, reopening
+a required checklist item must revoke readiness if readiness requires every
+item to be complete. Check rapid repeated input and supported input methods.
+After a rerender, keep focus on the equivalent control or move it to a useful
+enabled destination; attempting to focus a disabled or removed trigger does not
+restore keyboard continuity. Verify that labels, visible state, focus, and
+underlying behavior agree. In prototypes,
 make local simulations explicit without building unrequested services. Use the
 active audit or QA workflow for findings and iterations.
 

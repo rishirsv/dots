@@ -30,6 +30,8 @@ themes. Do not rely on color alone to communicate essential information.
 
 For measured contrast checks, read [contrast](recipes/contrast.md).
 For creating or extending theme tokens, read [color tokens](recipes/color-tokens.md).
+For page themes or exposed backgrounds during overscroll, read
+[document canvas](recipes/document-canvas.md).
 For gradient interpolation, read [gradients](recipes/gradients.md).
 
 For a theme switch that unintentionally animates the whole page, use the scoped

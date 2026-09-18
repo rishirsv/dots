@@ -2,6 +2,11 @@
 
 When geometric centering looks off, align optically instead.
 
+Squint at the control or temporarily blur the glyph in the inspector to see
+where its visual weight sits. Compare the original and adjusted glyph at its
+actual display size, then remove the diagnostic blur. Correct the glyph without
+moving the control's hit area or changing the alignment of neighboring controls.
+
 ### Buttons with text + icon
 
 Where an icon makes symmetric padding look unbalanced, use slightly less on the icon side. A starting point:
@@ -30,15 +35,18 @@ Where an icon makes symmetric padding look unbalanced, use slightly less on the 
 
 ### Play button triangles
 
-Play icons are triangular and their geometric center is not their visual center. Shift slightly right:
+Play icons are triangular and their geometric center is not their visual center.
+A small rightward shift is a useful starting point for a right-pointing triangle.
+Check the actual path and viewBox: an icon may already include that correction,
+and neither its direction nor the amount should be applied to every glyph.
 
 ```css
-/* Good: optically centered */
+/* Candidate correction: compare with the unshifted glyph */
 .play-button svg {
   transform: translateX(2px); /* physical correction to the glyph itself */
 }
 
-/* Bad: geometrically centered but looks off */
+/* Baseline: may already be optically balanced by the icon author */
 .play-button svg {
   /* no adjustment */
 }

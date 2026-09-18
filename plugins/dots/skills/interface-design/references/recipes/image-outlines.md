@@ -41,3 +41,8 @@ img {
 ```
 
 **Why outline instead of border?** `outline` never affects layout, adding no width or height at any offset, and `outline-offset: -1px` draws the ring just inside the image edge so it hugs the corner radius.
+
+Compare pale, dark, and mixed-edge images with the outline enabled and disabled
+in each supported theme. The edge should clarify the image's shape without
+reading as a separate frame. Check the actual crop and corner shape; a correct
+color token alone does not establish that the treatment helps.

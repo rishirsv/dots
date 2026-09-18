@@ -11,6 +11,13 @@ controls should respond promptly; expressive sequences can take more time when
 attention to the sequence is part of the experience. Consider repetition: an
 entrance that delights once can obstruct a frequently used task.
 
+Default to immediate hover and selection feedback for repeatedly traversed rows,
+menus, and tabs. Frequent keyboard actions deserve the same responsiveness.
+Animate when continuity explains a meaningful change, not merely because the
+control has a hover state. Sweep across neighboring items and repeat the action:
+highlights should track intent rather than trail it. Tooltip discovery has its
+own [group timing](recipes/tooltip-group.md).
+
 Keep unsolicited movement selective. Animate the relationship that matters rather
 than giving every section the same entrance. Preserve immediate access to content
 and controls; do not add artificial waiting to make an operation seem substantial.
@@ -35,7 +42,7 @@ on another; independent timers can drift or fire after the user leaves.
 ## Choose Timing And Physics
 
 Choose timing by distance, element size, urgency, and frequency of use. Roughly
-100–150ms for small feedback and 200–350ms for compact transitions can be useful
+100–150ms for small animated feedback and 200–350ms for compact transitions can be useful
 starting points, not acceptance thresholds. Larger choreography may need longer;
 exits should clear the way promptly without becoming abrupt.
 

@@ -11,7 +11,11 @@ existing stack and design system for product changes. Include the controls and
 states needed to experience the requested task. For requested component hardening
 or a concrete content failure needing a reproducer, use [component stress](component-stress.md).
 
-Inspect the rendered result and exercise its main path. For original work, use
+Inspect the rendered result and exercise its main path. Use the
+[interaction checks](interaction.md#exercise-the-experience) for state changes
+and focus continuity, and [layout checks](layout.md#inspect-in-context) at widths
+around responsive transitions, not only desktop and phone endpoints.
+For original work, use
 applicable [audit criteria](rubrics/design-audit.md) to identify material
 problems without requiring a separate audit report. For an accepted visual target,
 use [design QA](design-qa.md). Default to one correction cycle—inspect,

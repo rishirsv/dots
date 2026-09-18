@@ -36,7 +36,9 @@ Keep an outline or border fallback where a control boundary must remain visible 
 
 ### Usage with hover transition
 
-Apply the variable and add `transition-[box-shadow]` for a smooth hover:
+For a card whose lift benefits from a transition, apply the variable and add
+`transition-[box-shadow]`. Keep frequently traversed rows and menu highlights
+instant; use [motion guidance](../motion.md#give-motion-a-job) to choose.
 
 ```css
 .card {
