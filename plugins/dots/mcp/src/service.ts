@@ -208,6 +208,7 @@ export async function cancelActiveTurns(config: AppConfig): Promise<{
 
 export async function negotiateDrain(
   controlAction: (action: "drain" | "resume") => Promise<Record<string, unknown>>,
+  { requireIdle = true }: { requireIdle?: boolean } = {},
 ): Promise<DrainLease> {
   let drained = false;
   let drainAttempted = false;
@@ -220,7 +221,7 @@ export async function negotiateDrain(
     if (!Number.isInteger(activeHttp) || !Number.isInteger(activeBrowser) || health.accepting_turns !== false) {
       throw new Error("daemon did not acknowledge the drain contract");
     }
-    if ((activeHttp as number) > 0 || (activeBrowser as number) > 0) {
+    if (requireIdle && ((activeHttp as number) > 0 || (activeBrowser as number) > 0)) {
       throw new Error(`daemon has ${activeHttp} active HTTP turn(s) and ${activeBrowser} active browser turn(s)`);
     }
     return { release: async () => { if (drained) { await controlAction("resume"); drained = false; } } };
@@ -242,9 +243,12 @@ export async function negotiateDrain(
   }
 }
 
-async function acquireDrain(config: AppConfig): Promise<DrainLease> {
+export async function acquireServiceDrain(
+  config: AppConfig,
+  options: { requireIdle?: boolean } = {},
+): Promise<DrainLease> {
   if (!getServiceStatus().loaded) return { release: async () => {} };
-  return negotiateDrain(action => control(config, action));
+  return negotiateDrain(action => control(config, action), options);
 }
 
 async function releaseDrainAfterFailure(lease: DrainLease, failure: unknown): Promise<never> {
@@ -259,14 +263,14 @@ async function releaseDrainAfterFailure(lease: DrainLease, failure: unknown): Pr
 }
 
 export async function assertServiceIdle(config: AppConfig): Promise<void> {
-  const lease = await acquireDrain(config);
+  const lease = await acquireServiceDrain(config);
   await lease.release();
 }
 
 export async function restartService(config: AppConfig): Promise<ServiceStatus> {
   assertMacOs();
   if (!getServiceStatus().loaded) return startService();
-  const lease = await acquireDrain(config);
+  const lease = await acquireServiceDrain(config);
   try {
     runChecked("launchctl", ["bootout", serviceTarget()]);
     await waitForServiceUnloaded();
@@ -290,7 +294,7 @@ export function removeLegacyRuntimeArtifacts(config: AppConfig): void {
 export async function stopService(config: AppConfig): Promise<ServiceStatus> {
   assertMacOs();
   if (getServiceStatus().loaded) {
-    const lease = await acquireDrain(config);
+    const lease = await acquireServiceDrain(config);
     try {
       runChecked("launchctl", ["bootout", serviceTarget()]);
       await waitForServiceUnloaded();
@@ -304,7 +308,7 @@ export async function stopService(config: AppConfig): Promise<ServiceStatus> {
 export async function uninstallService(config: AppConfig): Promise<ServiceStatus> {
   assertMacOs();
   if (getServiceStatus().loaded) {
-    const lease = await acquireDrain(config);
+    const lease = await acquireServiceDrain(config);
     try {
       runChecked("launchctl", ["bootout", serviceTarget()]);
       await waitForServiceUnloaded();

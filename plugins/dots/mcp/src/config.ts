@@ -10,22 +10,8 @@ export type RuntimeMode = "full";
 export type BrowserHostMode = "managed-chrome";
 export type SubagentProtocol = "compatibility-v1" | "native";
 
-/**
- * ChatGPT caches a connector's public MCP contract by connector identity. The direct turn-token
- * contract therefore has a new identity instead of mutating the retired connector in place.
- */
+/** ChatGPT connector identity owned by the Portal configuration contract. */
 export const CHATGPT_CONNECTOR_NAME = "Portal";
-export const LEGACY_CHATGPT_CONNECTOR_NAMES = ["Codex Native", "Codex Native2", "Codex Zero Risk"] as const;
-
-export function isLegacyChatGptConnectorName(value: string): boolean {
-  return (LEGACY_CHATGPT_CONNECTOR_NAMES as readonly string[]).includes(value);
-}
-
-export function legacyChatGptConnectorMigrationMessage(legacyName: string): string {
-  return `Legacy ChatGPT connector ${JSON.stringify(legacyName)} was found, but this release requires`
-    + ` a connector named ${JSON.stringify(CHATGPT_CONNECTOR_NAME)}. Create it against the same tunnel`
-    + " with Authentication set to None and Allow all actions enabled.";
-}
 
 export interface TunnelConfig {
   binaryPath: string;
@@ -145,7 +131,7 @@ export function preserveUtf8Bom(text: string, original: string): string {
   return original.startsWith("\uFEFF") ? `\uFEFF${stripUtf8Bom(text)}` : stripUtf8Bom(text);
 }
 
-export function defaultConfig(_mode: RuntimeMode = "full"): AppConfig {
+export function defaultConfig(): AppConfig {
   const home = getConfigDir();
   return {
     version: 3,

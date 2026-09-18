@@ -36,7 +36,7 @@ let adapterStarted = false;
 let adapterAborted = false;
 let browserAborted = false;
 chatGptTurnSessions.clear();
-const config = { ...defaultConfig("full"), port: 0, subagentProtocol: "native" as const };
+const config = { ...defaultConfig(), port: 0, subagentProtocol: "native" as const };
 config.runtimeCommand = [resolve(process.execPath), resolve("src/cli.ts")];
 const server = startServer(config, {
   fetchUpstream: async request => {

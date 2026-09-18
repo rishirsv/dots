@@ -4,6 +4,8 @@ import type { AdapterEvent, CodexParsedRequest } from "../types";
 export interface IncomingMeta {
   headers: Headers;
   abortSignal?: AbortSignal;
+  /** Correlates the request with content-free Portal lifecycle evidence. */
+  httpTurnId?: number;
 }
 
 export interface ProviderAdapter {

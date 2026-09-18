@@ -4,11 +4,13 @@ import { createServer } from "node:net";
 import { join } from "node:path";
 import type { AppConfig, RuntimeMode, SubagentProtocol } from "./config";
 import {
+  CHATGPT_CONNECTOR_NAME,
   currentRuntimeCommand,
   defaultBrokerEndpoint,
   defaultConfig,
   getConfigPath,
   loadConfigForSetup,
+  providerConfig,
   saveConfig,
 } from "./config";
 import {
@@ -18,11 +20,14 @@ import {
   storedBrowserLoginCapabilities,
 } from "./browser-login";
 import {
+  deactivateCodexIntegration,
   installCodexIntegration,
+  inspectCodexIntegration,
   preflightCodexIntegration,
   readCodexSubagentProtocol,
 } from "./codex-integration";
 import {
+  acquireServiceDrain,
   assertServiceIdle,
   getServiceStatus,
   installService,
@@ -33,6 +38,8 @@ import {
 import { connectTunnel, createTunnelConfig, installRuntimeKey, installRuntimeKeyBytes, installTunnelClient, managedRuntimeKeyPath, stopTunnel, waitForTunnelReady } from "./tunnel";
 import { getTunnelServiceStatus, installTunnelService, restartTunnelService, stopTunnelService, tunnelServiceDefinitionMatches, uninstallTunnelService } from "./tunnel-service";
 import { VERSION } from "./version";
+import { ChatGptWebAdapterError } from "./adapters/chatgpt-web/adapter-error";
+import { ChatGptBrowserWorker } from "./adapters/chatgpt-web/browser-worker";
 
 export interface SetupOptions {
   mode: RuntimeMode;
@@ -55,7 +62,7 @@ export interface SetupResult {
   loginCreated: boolean;
   serviceLoaded: boolean;
   tunnelReady: boolean | null;
-  codexRestartRequired: true;
+  codexRestartRequired: boolean;
   connectorSetupRequired: boolean;
 }
 
@@ -113,6 +120,7 @@ export function setupProxyIsReady(
     && health.status === "ok"
     && health.mode === config.mode
     && health.version === config.releaseVersion
+    && health.broker_ready === true
     && health.accepting_turns === true;
 }
 
@@ -148,10 +156,10 @@ function baseConfig(
   options: SetupOptions,
 ): AppConfig {
   if (options.mode !== "full") throw new Error("Portal supports only full automatic mode");
-  const config = existing ? structuredClone(existing) : defaultConfig("full");
+  const config = existing ? structuredClone(existing) : defaultConfig();
   config.mode = "full";
-  config.appName = "Portal";
-  config.automaticAppName = "Portal";
+  config.appName = CHATGPT_CONNECTOR_NAME;
+  config.automaticAppName = CHATGPT_CONNECTOR_NAME;
   if (options.subagentProtocol) config.subagentProtocol = options.subagentProtocol;
   config.releaseVersion = VERSION;
   config.runtimeCommand = currentRuntimeCommand();
@@ -369,10 +377,38 @@ export async function setup(options: SetupOptions): Promise<SetupResult> {
     if (!status.ok) throw new Error(`Tunnel runtime did not become healthy and ready: ${status.detail}`);
     tunnelReady = true;
   }
+  let connectorSetupRequired = false;
+  const browser = ChatGptBrowserWorker.forProvider(providerConfig(config));
+  try {
+    await browser.verifyConnector();
+  } catch (error) {
+    if (error instanceof ChatGptWebAdapterError && error.code === "connector_not_found") {
+      connectorSetupRequired = true;
+    } else {
+      throw error;
+    }
+  } finally {
+    await browser.close();
+  }
+
   removeLegacyRuntimeArtifacts(config);
-  installCodexIntegration(config, {
-    replaceExistingRoute: options.replaceCodexRoute,
-  });
+  let codexRestartRequired = false;
+  const routeDrain = beforeService.loaded
+    ? await acquireServiceDrain(config)
+    : undefined;
+  try {
+    if (connectorSetupRequired) {
+      const codex = inspectCodexIntegration();
+      if (codex.active) codexRestartRequired = deactivateCodexIntegration().changed;
+    } else {
+      installCodexIntegration(config, {
+        replaceExistingRoute: options.replaceCodexRoute,
+      });
+      codexRestartRequired = true;
+    }
+  } finally {
+    await routeDrain?.release();
+  }
 
   return {
     mode: config.mode,
@@ -380,7 +416,7 @@ export async function setup(options: SetupOptions): Promise<SetupResult> {
     loginCreated,
     serviceLoaded: getServiceStatus().loaded,
     tunnelReady,
-    codexRestartRequired: true,
-    connectorSetupRequired: config.mode === "full",
+    codexRestartRequired,
+    connectorSetupRequired,
   };
 }

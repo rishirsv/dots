@@ -22,7 +22,7 @@ describe("Portal model route", () => {
   });
 
   test("routes Pro to the authoritative browser Pro effort", () => {
-    const config = defaultConfig("full");
+    const config = defaultConfig();
     config.proAvailable = true;
     const parsed = request("chatgpt-web/pro");
     const route = routeChatGptWebRequest(parsed, config);

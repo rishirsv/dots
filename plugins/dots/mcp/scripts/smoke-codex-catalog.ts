@@ -30,7 +30,7 @@ const root = join(tmpdir(), `codex-chatgpt-web-codex-smoke-${process.pid}-${Date
 process.env.CODEX_HOME = join(root, "codex");
 process.env.CODEX_CHATGPT_WEB_HOME = join(root, "app");
 mkdirSync(process.env.CODEX_HOME, { recursive: true });
-const config = defaultConfig("full");
+const config = defaultConfig();
 config.proAvailable = true;
 config.subagentProtocol = "compatibility-v1";
 const catalogPath = join(root, "augmented-models.json");

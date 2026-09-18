@@ -3,7 +3,7 @@ import { defaultConfig } from "../src/config";
 import { responseRequest } from "../src/server";
 
 test("rejects encrypted cross-backend delegation before constructing the browser adapter", async () => {
-  const config = defaultConfig("full");
+  const config = defaultConfig();
   config.proAvailable = true;
   let adapterConstructions = 0;
   const response = await responseRequest(new Request("http://127.0.0.1:17841/v1/responses", {

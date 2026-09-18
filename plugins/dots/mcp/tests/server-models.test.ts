@@ -14,7 +14,7 @@ test("proxies native models and appends only ChatGPT Web Pro", async () => {
   const request = new Request("http://127.0.0.1:17841/v1/models?client_version=1.2.3", {
     headers: { authorization: "Bearer codex-oauth-token", "if-none-match": "native-etag" },
   });
-  const config = defaultConfig("full");
+  const config = defaultConfig();
   config.subagentProtocol = "native";
   config.proAvailable = true;
   let upstream: Request | undefined;

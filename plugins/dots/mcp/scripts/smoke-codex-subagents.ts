@@ -24,7 +24,7 @@ if (bundled.status !== 0) {
 }
 
 const sourceCatalog = JSON.parse(bundled.stdout) as { models?: unknown[] };
-const catalogConfig = defaultConfig("full");
+const catalogConfig = defaultConfig();
 catalogConfig.solAvailable = true;
 catalogConfig.proAvailable = true;
 catalogConfig.subagentProtocol = protocol === "v1" ? "compatibility-v1" : "native";

@@ -1,8 +1,7 @@
-import { expect, test } from "bun:test";
-import { mkdtempSync, rmSync } from "node:fs";
+import { afterAll, afterEach, beforeAll, expect, test } from "bun:test";
+import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { createConnection } from "node:net";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { isAbsolute, join, relative, resolve } from "node:path";
 import { chatGptWebTraceId } from "../src/adapters/chatgpt-web";
 import { runStructuredCompactionOnce } from "../src/adapters/chatgpt-web/compaction-handoff";
 import { ChatGptTextFeed, ChatGptTraceFeed, chatGptTurnSessions } from "../src/adapters/chatgpt-web/turn-execution";
@@ -11,10 +10,95 @@ import { defaultBrokerEndpoint, defaultConfig as createDefaultConfig, providerCo
 import { parseRequest } from "../src/responses/parser";
 import { compactRequest, HttpTurnCounter, responseRequest, routeChatGptWebRequest, startServer } from "../src/server";
 
-function defaultConfig(_mode: "browser-only" | "full") {
-  const config = createDefaultConfig("full");
+const isolatedEnvironmentKeys = [
+  "PORTAL_HOME",
+  "CODEX_HOME",
+  "CODEX_CHATGPT_WEB_HOME",
+  "PORTAL_LAUNCHER",
+  "CODEX_CHATGPT_WEB_LAUNCHER",
+  "PORTAL_BUN",
+  "CODEX_CHATGPT_WEB_BUN",
+  "CODEX_WEB_GPT_BUN",
+] as const;
+
+interface ServerLifecycleFixture {
+  root: string;
+  portalHome: string;
+  codexHome: string;
+  previousEnvironment: Map<string, string | undefined>;
+}
+
+let lifecycleFixture: ServerLifecycleFixture | undefined;
+
+beforeAll(() => {
+  // Keep the fixture root short enough for Unix-domain socket limits as well as isolated from
+  // the user's real home. The explicit /tmp prefix is safe because mkdtemp creates a unique dir.
+  const root = mkdtempSync(join("/tmp", `portal-${process.pid}-`));
+  const portalHome = join(root, "portal");
+  const codexHome = join(root, "codex");
+  mkdirSync(portalHome, { recursive: true });
+  mkdirSync(codexHome, { recursive: true });
+  const previousEnvironment = new Map(
+    isolatedEnvironmentKeys.map(key => [key, process.env[key]] as const),
+  );
+  process.env.PORTAL_HOME = portalHome;
+  process.env.CODEX_CHATGPT_WEB_HOME = portalHome;
+  process.env.CODEX_HOME = codexHome;
+  for (const key of isolatedEnvironmentKeys.slice(3)) delete process.env[key];
+  lifecycleFixture = { root, portalHome, codexHome, previousEnvironment };
+});
+
+afterEach(async () => {
+  // Every server in this suite owns the fixture broker endpoint. Closing it after each test makes
+  // a forgotten default endpoint or a leaked broker listener fail in the test that leaked it.
+  await closeTurnBrokers();
+});
+
+afterAll(async () => {
+  const fixture = lifecycleFixture;
+  if (!fixture) return;
+  let closeError: unknown;
+  try {
+    await closeTurnBrokers();
+  } catch (error) {
+    closeError = error;
+  } finally {
+    for (const key of isolatedEnvironmentKeys) {
+      const value = fixture.previousEnvironment.get(key);
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+    rmSync(fixture.root, { recursive: true, force: true });
+    lifecycleFixture = undefined;
+  }
+  if (closeError) throw closeError;
+});
+
+function pathIsInside(path: string, root: string): boolean {
+  const child = relative(resolve(root), resolve(path));
+  return child === "" || (!child.startsWith("..") && !isAbsolute(child));
+}
+
+function defaultConfig() {
+  const fixture = lifecycleFixture;
+  if (!fixture) throw new Error("server-lifecycle isolated fixture was not initialized");
+  const config = createDefaultConfig();
+  config.port = 0;
+  config.chromeExecutablePath = join(fixture.portalHome, "missing-test-chrome");
   config.proAvailable = true;
+  const brokerIsolated = process.platform === "win32"
+    ? config.brokerSocketPath === defaultBrokerEndpoint(fixture.portalHome, "win32")
+    : pathIsInside(config.brokerSocketPath, fixture.portalHome)
+      && config.brokerSocketPath.startsWith(`${fixture.portalHome}/`);
+  if (!pathIsInside(config.storageStatePath, fixture.portalHome) || !brokerIsolated) {
+    throw new Error(`server-lifecycle fixture escaped its isolated Portal home: ${config.brokerSocketPath}`);
+  }
   return config;
+}
+
+function fixtureRoot(): string {
+  if (!lifecycleFixture) throw new Error("server-lifecycle isolated fixture was not initialized");
+  return lifecycleFixture.root;
 }
 
 async function waitForTurnCount(turns: HttpTurnCounter, expected: number): Promise<void> {
@@ -22,6 +106,23 @@ async function waitForTurnCount(turns: HttpTurnCounter, expected: number): Promi
   while (turns.count() !== expected && Date.now() < deadline) await Bun.sleep(5);
   expect(turns.count()).toBe(expected);
 }
+
+test("server lifecycle tests are confined to the isolated Portal fixture", () => {
+  const fixture = lifecycleFixture;
+  if (!fixture) throw new Error("server-lifecycle isolated fixture was not initialized");
+  const config = defaultConfig();
+  expect(process.env.PORTAL_HOME).toBe(fixture.portalHome);
+  expect(process.env.CODEX_CHATGPT_WEB_HOME).toBe(fixture.portalHome);
+  expect(process.env.CODEX_HOME).toBe(fixture.codexHome);
+  expect(config.port).toBe(0);
+  expect(pathIsInside(config.storageStatePath, fixture.portalHome)).toBeTrue();
+  expect(config.brokerSocketPath).toBe(
+    process.platform === "win32"
+      ? defaultBrokerEndpoint(fixture.portalHome, "win32")
+      : `${fixture.portalHome}/runtime/turn-broker.sock`,
+  );
+  expect(config.chromeExecutablePath).toBe(join(fixture.portalHome, "missing-test-chrome"));
+});
 
 test("HTTP turn tracking follows the response stream instead of Bun's global request count", async () => {
   const turns = new HttpTurnCounter();
@@ -210,7 +311,7 @@ test("HTTP turn tracking releases a stream requested by an already disconnected 
 });
 
 test("a real HTTP peer disconnect releases a streaming turn", async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   let source!: ReadableStreamDefaultController<Uint8Array>;
   let sourceCancelled = false;
   let markSourceReady!: () => void;
@@ -340,7 +441,7 @@ test("native Codex interrupt remains authoritative when it arrives before HTTP i
 });
 
 test("native passthrough response and compaction requests expose their exact interrupt identity", async () => {
-  const config = defaultConfig("browser-only");
+  const config = defaultConfig();
   const responseIdentity = { threadId: "thread_native_response", turnId: "turn_native_response" };
   let boundResponseIdentity: typeof responseIdentity | undefined;
   const response = await responseRequest(new Request("http://127.0.0.1/v1/responses", {
@@ -382,7 +483,7 @@ test("native passthrough response and compaction requests expose their exact int
 });
 
 test("authenticated Interrupt hook endpoint releases the exact routed Web turn", async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   const threadId = "thread_interrupt_hook";
   const turnId = "turn_interrupt_hook";
   let adapterAborted = false;
@@ -464,7 +565,7 @@ test("authenticated Interrupt hook endpoint releases the exact routed Web turn",
 });
 
 test("authenticated Interrupt hook endpoint also releases the exact native compaction request", async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   const threadId = "thread_interrupt_compact";
   const turnId = "turn_interrupt_compact";
   let adapterAborted = false;
@@ -523,7 +624,7 @@ test("authenticated Interrupt hook endpoint also releases the exact native compa
 });
 
 test("Interrupt acknowledges after exact browser cancellation starts without waiting for helper teardown", async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   const threadId = "thread_interrupt_slow_cleanup";
   const turnId = "turn_interrupt_slow_cleanup";
   let resolvePhysical!: () => void;
@@ -588,7 +689,7 @@ test("Interrupt acknowledges after exact browser cancellation starts without wai
 });
 
 test("Interrupt retires a logically complete browser turn whose helper is still physically stuck", async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   const threadId = "thread_interrupt_logical_complete";
   const turnId = "turn_interrupt_logical_complete";
   let resolvePhysical!: () => void;
@@ -631,7 +732,7 @@ test("Interrupt retires a logically complete browser turn whose helper is still 
 });
 
 test("Interrupt cancels a detached structured compaction by exact native turn identity", async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   const threadId = "thread_interrupt_structured";
   const turnId = "turn_interrupt_structured";
   let aborted = false;
@@ -674,7 +775,7 @@ test("Interrupt cancels a detached structured compaction by exact native turn id
 });
 
 test("authenticated lifecycle control cancels orphaned browser turns", async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   const server = startServer(config);
   let cancelled = 0;
   chatGptTurnSessions.clear();
@@ -717,7 +818,7 @@ test("authenticated lifecycle control cancels orphaned browser turns", async () 
 
 for (const reason of [undefined, "browser_surface_bootstrap_timeout", "helper_heartbeat_expired"] as const)
 test(`targeted cancellation preserves peer turns and its cause: ${reason ?? "user close"}`, async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   const server = startServer(config);
   chatGptTurnSessions.clear();
   let rejectTarget!: (error: Error) => void;
@@ -781,7 +882,7 @@ test(`targeted cancellation preserves peer turns and its cause: ${reason ?? "use
 });
 
 test("authenticated targeted cancellation aborts a shared structured compaction owner", async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   const server = startServer(config);
   const handoffTraceId = "a1b2c3d4e5f6";
   const traceId = `${handoffTraceId}_fallback`;
@@ -821,7 +922,7 @@ test("authenticated targeted cancellation aborts a shared structured compaction 
 });
 
 test("authenticated cancel-all aborts fresh structured compaction work", async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   const server = startServer(config);
   const key = `structured-all-${Date.now()}-${Math.random()}`;
   let aborted = false;
@@ -847,7 +948,7 @@ test("authenticated cancel-all aborts fresh structured compaction work", async (
       status: "ok",
       cancelled_compaction_runs: 1,
     });
-    await expect(run).rejects.toThrow("Active turn cancelled by launcher");
+    await expect(run).rejects.toThrow("Active turn cancelled by Portal lifecycle control");
     expect(aborted).toBeTrue();
   } finally {
     await server.stop(true);
@@ -855,7 +956,7 @@ test("authenticated cancel-all aborts fresh structured compaction work", async (
 });
 
 test("a Codex retry after tab cancellation receives terminal HTTP 400 without a new browser", async () => {
-  const config = defaultConfig("browser-only");
+  const config = defaultConfig();
   const turnId = "turn_cancelled_replay";
   const body = {
     model: "chatgpt-web/pro",
@@ -916,7 +1017,7 @@ test("a Codex retry after tab cancellation receives terminal HTTP 400 without a 
 });
 
 test("a restart recovery turn without a new user instruction fails terminally instead of replaying the stopped prompt", async () => {
-  const config = defaultConfig("browser-only");
+  const config = defaultConfig();
   const previousTurnId = "turn_before_codex_restart";
   const recoveryTurnId = "turn_after_codex_restart";
   const body = {
@@ -966,7 +1067,7 @@ test("a restart recovery turn without a new user instruction fails terminally in
 });
 
 test.each(["alpha/search", "images/generations"])("authenticated lifecycle control aborts active %s before acknowledging cancellation", async path => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   let upstreamAbortObserved = false;
   const server = startServer(config, {
     fetchUpstream: request => new Promise<Response>((_resolve, reject) => {
@@ -1017,10 +1118,9 @@ test.each(["alpha/search", "images/generations"])("authenticated lifecycle contr
 });
 
 test("a full-mode runtime exposes its broker endpoint before any turn registers", async () => {
-  const root = mkdtempSync(join(tmpdir(), "cgw-serve-"));
   // The endpoint is a Unix socket on POSIX and a named pipe on Windows, so liveness is proven by
   // the broker answering its own protocol, never by a path existing.
-  const config = { ...defaultConfig("full"), port: 0, brokerSocketPath: defaultBrokerEndpoint(root) };
+  const config = defaultConfig();
   const server = startServer(config);
   try {
     const deadline = Date.now() + 5_000;
@@ -1042,13 +1142,12 @@ test("a full-mode runtime exposes its broker endpoint before any turn registers"
   } finally {
     await server.stop(true);
     await closeTurnBrokers();
-    rmSync(root, { recursive: true, force: true });
   }
 });
 
 test("lifecycle drain and cancellation include browser turns owned by the external DEV driver", async () => {
-  const root = mkdtempSync(join(tmpdir(), "cgw-dev-lifecycle-"));
-  const config = { ...defaultConfig("full"), port: 0, brokerSocketPath: defaultBrokerEndpoint(root) };
+  const root = fixtureRoot();
+  const config = defaultConfig();
   await TurnBroker.forSocket(config.brokerSocketPath).listen();
   const server = startServer(config);
   const endpoint = `http://127.0.0.1:${server.port}`;
@@ -1082,12 +1181,11 @@ test("lifecycle drain and cancellation include browser turns owned by the extern
   } finally {
     await server.stop(true);
     await closeTurnBrokers();
-    rmSync(root, { recursive: true, force: true });
   }
 });
 
 test("a drained runtime rejects new model-catalog work before shutdown", async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   const server = startServer(config);
   const endpoint = `http://127.0.0.1:${server.port}`;
   const authorization = { authorization: `Bearer ${config.controlToken}` };
@@ -1118,7 +1216,7 @@ test("a drained runtime rejects new model-catalog work before shutdown", async (
 });
 
 test("health proves that Codex received a successful augmented model catalog", async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   const server = startServer(config, {
     fetchUpstream: async () => Response.json({
       models: [{
@@ -1131,9 +1229,19 @@ test("health proves that Codex received a successful augmented model catalog", a
       }],
     }),
   });
-  const endpoint = `http://127.0.0.1:${server.port}`;
+    const endpoint = `http://127.0.0.1:${server.port}`;
   try {
-    expect(await (await fetch(`${endpoint}/healthz`)).json()).toMatchObject({
+    const deadline = Date.now() + 1_000;
+    let initialHealth: Record<string, unknown> = {};
+    while (Date.now() < deadline) {
+      initialHealth = await (await fetch(`${endpoint}/healthz`)).json() as Record<string, unknown>;
+      if (initialHealth.broker_ready === true) break;
+      await Bun.sleep(5);
+    }
+    expect(initialHealth).toMatchObject({
+      status: "ok",
+      broker_ready: true,
+      accepting_turns: true,
       successful_model_catalog_requests: 0,
       last_successful_model_catalog_request_at: null,
     });
@@ -1152,7 +1260,7 @@ test("health proves that Codex received a successful augmented model catalog", a
 });
 
 test("server exposes authenticated standalone Web Search on the routed v1 base URL", async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   let upstreamRequest: Request | undefined;
   const server = startServer(config, {
     fetchUpstream: async request => {
@@ -1182,7 +1290,7 @@ test("server exposes authenticated standalone Web Search on the routed v1 base U
 });
 
 test("standalone native image generation and edits preserve their upstream protocol", async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   const requests: Request[] = [];
   const reply = '{ "created": 1778832973, "data": [{ "b64_json": "native-image-bytes" }] }';
   const denied = '{ "error": { "code": "rate_limit_exceeded", "message": "Image allowance reached" } }';
@@ -1255,7 +1363,7 @@ test("standalone native image generation and edits preserve their upstream proto
 });
 
 test("authenticated shutdown requires a verified idle drain", async () => {
-  const config = { ...defaultConfig("browser-only"), port: 0 };
+  const config = defaultConfig();
   const server = startServer(config);
   const endpoint = `http://127.0.0.1:${server.port}`;
   const authorization = { authorization: `Bearer ${config.controlToken}` };
@@ -1309,7 +1417,7 @@ test("authenticated shutdown requires a verified idle drain", async () => {
 
 test("model catalog health distinguishes no request, transport failure, upstream denial, and recovery without secrets", async () => {
   let outcome: "transport" | "denied" | "invalid" | "ready" = "transport";
-  const server = startServer({ ...defaultConfig("browser-only"), port: 0 }, {
+  const server = startServer(defaultConfig(), {
     fetchUpstream: async () => {
       if (outcome === "transport") throw Object.assign(new Error("private proxy credentials and host"), { code: "UnsupportedProxyProtocol" });
       if (outcome === "denied") return new Response("private upstream account detail", { status: 403 });

@@ -61,7 +61,7 @@ describe("tunnel launchd ownership", () => {
     mkdirSync(join(root, "secrets"), { recursive: true });
     writeFileSync(binary, "binary");
     writeFileSync(key, "secret");
-    const config = defaultConfig("full");
+    const config = defaultConfig();
     config.tunnel = createTunnelConfig({
       binaryPath: binary,
       runtimeKeyFile: key,
@@ -86,7 +86,7 @@ describe("tunnel launchd ownership", () => {
     const runtime = join(root, "bin", "codex-chatgpt-web");
     mkdirSync(join(root, "bin"), { recursive: true });
     writeFileSync(runtime, "runtime");
-    const before = defaultConfig("full");
+    const before = defaultConfig();
     before.mode = "full";
     before.releaseVersion = "0.1.3";
     before.runtimeCommand = [runtime];
@@ -105,7 +105,7 @@ describe("tunnel launchd ownership", () => {
     const key = join(root, "secrets", "runtime.key");
     mkdirSync(join(root, "secrets"), { recursive: true });
     writeFileSync(key, "secret");
-    const config = defaultConfig("full");
+    const config = defaultConfig();
     config.tunnel = createTunnelConfig({
       binaryPath: process.execPath,
       runtimeKeyFile: key,
@@ -115,7 +115,7 @@ describe("tunnel launchd ownership", () => {
     expect(existingFullSetupCredentials(config)).toEqual({ tunnelId: true, runtimeKey: true });
     rmSync(key);
     expect(existingFullSetupCredentials(config)).toEqual({ tunnelId: true, runtimeKey: false });
-    expect(existingFullSetupCredentials(defaultConfig("full"))).toEqual({ tunnelId: false, runtimeKey: false });
+    expect(existingFullSetupCredentials(defaultConfig())).toEqual({ tunnelId: false, runtimeKey: false });
   });
 
   test("passes the Windows MCP runtime directly to tunnel-client without cmd.exe", () => {
@@ -125,7 +125,7 @@ describe("tunnel launchd ownership", () => {
     const runtime = join(root, "Program Files", "runtime", "bun.exe");
     mkdirSync(join(root, "Program Files", "runtime"), { recursive: true });
     writeFileSync(runtime, "runtime");
-    const config = defaultConfig("full");
+    const config = defaultConfig();
     config.runtimeCommand = [runtime, join(root, "Program Files", "app", "cli.js")];
     config.brokerSocketPath = "\\\\.\\pipe\\codex-chatgpt-web-test";
 

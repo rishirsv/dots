@@ -349,25 +349,46 @@ export function tunnelConnectLaunchError(output: string): string | undefined {
   ].join("; "));
 }
 
-export function parseTunnelStatus(output: string, alias: string, exitStatus = 0): TunnelRuntimeStatus {
+export function parseTunnelStatus(
+  output: string,
+  alias: string,
+  exitStatus = 0,
+  expectedTunnelId?: string,
+): TunnelRuntimeStatus {
   if (exitStatus !== 0) {
     return { ok: false, processRunning: false, healthy: false, ready: false, detail: safeTunnelDetail(output) };
   }
   try {
     const parsed = JSON.parse(output) as Record<string, unknown>;
     if (!Array.isArray(parsed.entries)) throw new Error("local inventory has no entries array");
-    const matches = parsed.entries.filter(entry => entry?.alias === alias);
+    const entries = parsed.entries.filter(
+      (entry): entry is Record<string, unknown> => Boolean(entry && typeof entry === "object" && !Array.isArray(entry)),
+    );
+    const matches = entries.filter(entry => entry.alias === alias);
     if (matches.length > 1) throw new Error("local inventory contains duplicate aliases");
-    const state = matches.length === 0 ? "stopped" : matches[0].runtime_state;
-    if (!["stopped", "starting", "healthy", "ready"].includes(state)) {
+    const rawState = matches.length === 0 ? "stopped" : matches[0]!.runtime_state;
+    if (typeof rawState !== "string" || !["stopped", "starting", "healthy", "ready"].includes(rawState)) {
       throw new Error("local inventory has an unsupported runtime state");
     }
+    const state = rawState;
     // tunnel-client 0.0.12 derives these states from the live process and local healthz/readyz
     // probes. It does not need the optional remote control-plane lookup made by `status`.
     const processRunning = state !== "stopped";
     const healthy = state === "healthy" || state === "ready";
     const ready = state === "ready";
-    const ok = processRunning && healthy && ready;
+    const selectedEntry = matches[0];
+    const selectedTunnelMismatch = expectedTunnelId !== undefined
+      && selectedEntry !== undefined
+      && selectedEntry.tunnel_id !== expectedTunnelId;
+    const competingAliases = expectedTunnelId
+      ? entries.filter(entry => (
+        entry.alias !== alias
+        && entry.tunnel_id === expectedTunnelId
+        && entry.runtime_state === "ready"
+        && typeof entry.alias === "string"
+      )).map(entry => entry.alias as string)
+      : [];
+    const ok = processRunning && healthy && ready && !selectedTunnelMismatch && competingAliases.length === 0;
     const detail = ok
       ? "process_running=true healthy=true ready=true"
       : safeTunnelDetail([
@@ -376,6 +397,10 @@ export function parseTunnelStatus(output: string, alias: string, exitStatus = 0)
         `ready=${ready}`,
         `state=${state}`,
         ...(matches.length === 0 ? ["local_inventory=absent"] : []),
+        ...(selectedTunnelMismatch ? ["selected_alias_tunnel_id_mismatch=true"] : []),
+        ...(competingAliases.length > 0
+          ? [`same_tunnel_ready_under_other_alias=${competingAliases.sort().join(",")}; Portal requires alias=${alias}`]
+          : []),
       ].join("; "));
     return { ok, processRunning, healthy, ready, state, detail };
   } catch (error) {
@@ -393,7 +418,12 @@ export function tunnelStatus(config: AppConfig): TunnelRuntimeStatus {
     ["runtimes", "cleanup", "--json"],
     { timeout: 10_000 },
   );
-  return parseTunnelStatus(tunnelCommandOutput(result), settings.alias, result.status);
+  return parseTunnelStatus(
+    tunnelCommandOutput(result),
+    settings.alias,
+    result.status,
+    settings.tunnelId,
+  );
 }
 
 export async function waitForTunnelReady(

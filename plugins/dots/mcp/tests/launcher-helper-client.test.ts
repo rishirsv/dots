@@ -305,7 +305,7 @@ test("an abort dispatched during run submission cannot overtake the run frame", 
   const messages: string[] = [];
   let released = false;
   const client = new LauncherBrowserHelperClient({
-    appName: "Codex Native",
+    appName: "Portal",
     browserHost: "launcher",
     browserHostDescriptorPath: "/durable/launcher.json",
     storageStatePath: "/durable/unused-state.json",
@@ -351,7 +351,7 @@ test("an abort dispatched during run submission cannot overtake the run frame", 
 
 test("structured helper errors preserve the ChatGPT adapter failure contract", async () => {
   const client = new LauncherBrowserHelperClient({
-    appName: "Codex Native",
+    appName: "Portal",
     browserHost: "launcher",
     browserHostDescriptorPath: "/durable/launcher.json",
     storageStatePath: "/durable/unused-state.json",

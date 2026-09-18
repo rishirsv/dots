@@ -25,7 +25,7 @@ export type ChatGptWebAdapterEffort = "low" | "medium" | "high" | "xhigh" | "max
 export const CHATGPT_WEB_INSTANT_CONTEXT_WINDOW = 41_000;
 export const CHATGPT_WEB_INSTANT_AUTO_COMPACT_TOKEN_LIMIT = 32_000;
 /**
- * Zero Risk keeps one visible ChatGPT conversation across sequential Codex turns. Its fixed route
+ * Portal manual mode keeps one visible ChatGPT conversation across sequential Codex turns. Its fixed route
  * therefore uses the requested three-turn compaction interval without enabling Bigger Context's
  * automatic multipart transport; the user still pastes exactly one incremental prompt per turn.
  */
@@ -50,7 +50,7 @@ export const CHATGPT_WEB_PRO_STANDARD_CONTEXT_WINDOW =
 export const CHATGPT_WEB_PRO_MODEL_CONTEXT_WINDOW =
   CHATGPT_WEB_PRO_MODEL_MESSAGE_TOKEN_LIMIT + CHATGPT_WEB_PLATFORM_RESERVE_TOKENS + 1;
 /**
- * Zero Risk Pro keeps the same three-turn manual conversation budget as the default profile, but
+ * Portal manual Pro keeps the same three-turn manual conversation budget as the default profile, but
  * sizes each turn from the measured ChatGPT Pro boundary. The launcher cannot verify that the user
  * actually selected Pro, so this profile is exposed only through an explicit user setting.
  */
@@ -103,7 +103,7 @@ export function resolveChatGptWebContextLimits(
 ): ChatGptWebContextLimits {
   if (isChatGptWebZeroRiskBackendModel(backendModel)) {
     if (capabilities.experimentalBiggerContext) {
-      throw new Error("Zero Risk does not support Bigger Context");
+      throw new Error("Portal manual mode does not support Bigger Context");
     }
     if (backendModel === CHATGPT_WEB_ZERO_RISK_PRO_BACKEND_MODEL) {
       return contextLimits(

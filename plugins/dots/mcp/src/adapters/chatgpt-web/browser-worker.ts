@@ -9,9 +9,6 @@ import {
   defaultChromeExecutable,
   expandUserPath,
   getConfigDir,
-  isLegacyChatGptConnectorName,
-  legacyChatGptConnectorMigrationMessage,
-  LEGACY_CHATGPT_CONNECTOR_NAMES,
 } from "../../config";
 import { estimateTokens } from "../../lib/token-estimate";
 import { CHATGPT_STOPPED_THINKING_LABELS } from "./ui-labels";
@@ -95,6 +92,11 @@ import type {
   ChatGptExternalTurnProgressSnapshot,
   ChatGptTurnProgressReader,
 } from "./turn-progress";
+import {
+  chatGptExecutionErrorCode,
+  emitChatGptExecutionEvidence,
+  type ChatGptExecutionContext,
+} from "./turn-execution";
 
 export { MAX_CHATGPT_BROWSER_TABS } from "./concurrency";
 
@@ -125,10 +127,10 @@ export const CHATGPT_COMPLETION_ACTION_GRACE_MS = 60_000;
 export const CHATGPT_COMPLETION_SETTLE_MS = 2_000;
 export const CHATGPT_TOOL_CONFIRMATION_TIMEOUT_MS = 60_000;
 export const MAX_CHATGPT_CONNECTOR_TRIGGER_ATTEMPTS = 3;
-const CHATGPT_CONNECTOR_MENTION_QUERY = "@codex";
+const CHATGPT_CONNECTOR_MENTION_QUERY = `@${CHATGPT_CONNECTOR_NAME}`;
 const CHATGPT_CONNECTOR_ACTION_TIMEOUT_MS = 10_000;
-const CHATGPT_SMOKE_TEXT = "Reply with exactly: CODEX WEB GPT READY";
-const CHATGPT_SMOKE_EXPECTED = "CODEX WEB GPT READY";
+const CHATGPT_SMOKE_TEXT = "Reply with exactly: PORTAL WEB GPT READY";
+const CHATGPT_SMOKE_EXPECTED = "PORTAL WEB GPT READY";
 /**
  * ChatGPT applies composer state asynchronously, and a fast host can reach the next step before the
  * editor has taken the previous one. This is headroom for that, not a readiness check.
@@ -794,7 +796,7 @@ export async function throwIfChatGptSessionFailureAlert(page: Page): Promise<voi
   }
   if (!await chatGptSubscriptionFailureAlert(page).isVisible().catch(() => false)) return;
   throw new ChatGptWebAdapterError(
-    "ChatGPT could not load the account subscription. Reload ChatGPT inside the launcher and retry; sign out only if the error persists.",
+    "ChatGPT could not load the account subscription. Reload the managed Chrome window and retry; sign out only if the error persists.",
     { status: 503, errorType: "server_error", code: "chatgpt_subscription_unavailable", retryable: true },
   );
 }
@@ -819,14 +821,13 @@ export async function throwIfChatGptTerminalErrorAlert(scope: ChatGptTextScope):
 
 export async function resolveChatGptToolConfirmation(
   page: Page,
-  appName: string,
   autoApprove: boolean,
   signal?: AbortSignal,
   timeoutMs = CHATGPT_TOOL_CONFIRMATION_TIMEOUT_MS,
   onVisible?: () => Promise<void>,
 ): Promise<boolean> {
   const dialog = page.locator('[role="dialog"], [data-testid="tool-approval-card"]')
-    .filter({ hasText: `Allow ChatGPT to use ${appName}?` })
+    .filter({ hasText: `Allow ChatGPT to use ${CHATGPT_CONNECTOR_NAME}?` })
     .last();
   if (!await dialog.isVisible().catch(() => false)) return false;
   await onVisible?.();
@@ -1174,12 +1175,14 @@ function withBrowserTurnAbort<T>(promise: Promise<T>, signal?: AbortSignal): Pro
 
 export interface BrowserTurn {
   traceId: string;
+  /** HTTP lifecycle identity when this physical browser run belongs to a Responses request. */
+  httpTurnId?: number;
   modelId: string;
   reasoning?: string;
   capabilities: ChatGptWebCapabilities;
   prepare: () => Promise<CompiledChatGptWebPrompt & { release: () => void }>;
   prepareResume?: () => Promise<CompiledChatGptWebPrompt & { release: () => void }>;
-  /** Select the Codex Native connector without advertising the ordinary turn tool environment. */
+  /** Select the Portal connector without advertising the ordinary turn tool environment. */
   nativeConnector?: boolean;
   retainConversation?: boolean;
   requireRetainedConversation?: boolean;
@@ -1973,7 +1976,13 @@ class ChatGptBrowserDiagnostics {
 
 export function resolveBrowserConfig(provider: CodexProviderConfig): ResolvedBrowserConfig {
   const configured = provider.chatgptWeb ?? {};
-  const appName = configured.appName?.trim() || CHATGPT_CONNECTOR_NAME;
+  const configuredAppName = configured.appName?.trim();
+  if (configuredAppName !== undefined && configuredAppName !== CHATGPT_CONNECTOR_NAME) {
+    throw new Error(
+      `Portal requires connector ${JSON.stringify(CHATGPT_CONNECTOR_NAME)}; configured connector was ${JSON.stringify(configuredAppName)}`,
+    );
+  }
+  const appName = CHATGPT_CONNECTOR_NAME;
   const browserHost = configured.browserHost ?? "managed-chrome";
   const browserHostDescriptorPath = configured.browserHostDescriptorPath?.trim();
   const browserHelperScriptPath = configured.browserHelperScriptPath?.trim();
@@ -1996,9 +2005,6 @@ export function resolveBrowserConfig(provider: CodexProviderConfig): ResolvedBro
   if (turnTimeoutMs !== undefined
     && (!Number.isFinite(turnTimeoutMs) || turnTimeoutMs <= 0)) {
     throw new Error("ChatGPT Web turnTimeoutMs must be a positive finite number");
-  }
-  if (isLegacyChatGptConnectorName(appName)) {
-    throw new Error(legacyChatGptConnectorMigrationMessage(appName));
   }
   return {
     appName,
@@ -2122,6 +2128,11 @@ export class ChatGptBrowserWorker {
   private launcherHelper?: LauncherBrowserHelperClient;
   private maintenanceTail: Promise<void> = Promise.resolve();
   private readonly activeRuns = new Map<string, Promise<string>>();
+  private readonly activeExecutionContexts = new Map<string, {
+    context: ChatGptExecutionContext;
+    signal?: AbortSignal;
+    httpTurnId?: number;
+  }>();
 
   private constructor(private readonly config: ResolvedBrowserConfig) {}
 
@@ -2190,10 +2201,16 @@ export class ChatGptBrowserWorker {
     if (useHelper) {
       this.launcherHelper ??= new LauncherBrowserHelperClient(this.config);
     }
+    this.activeExecutionContexts?.set(turn.traceId, {
+      context: turn.externalProgress ? "bound" : "direct",
+      ...(turn.abortSignal ? { signal: turn.abortSignal } : {}),
+      ...(turn.httpTurnId !== undefined ? { httpTurnId: turn.httpTurnId } : {}),
+    });
     const run = Promise.resolve().then(() => useHelper ? this.launcherHelper!.run(turn) : this.runExclusive(turn));
     this.activeRuns.set(turn.traceId, run);
     void run.finally(() => {
       if (this.activeRuns.get(turn.traceId) === run) this.activeRuns.delete(turn.traceId);
+      this.activeExecutionContexts?.delete(turn.traceId);
     }).catch(() => {});
     return run;
   }
@@ -2262,6 +2279,18 @@ export class ChatGptBrowserWorker {
     const startedAt = performance.now();
     const suspendedAtStart = suspensionClock.suspendedMs();
     console.info(`[chatgpt-web] browser turn ${traceId} stage=${stage} started`);
+    const executionContext = this.activeExecutionContexts?.get(traceId);
+    emitChatGptExecutionEvidence({
+      stage: "dispatch",
+      outcome: "started",
+      context: executionContext?.context ?? "direct",
+      trace_id: traceId,
+      ...(executionContext?.httpTurnId !== undefined ? { http_turn_id: executionContext.httpTurnId } : {}),
+      started: true,
+      elapsed_ms: 0,
+      execution_proven: false,
+      retry_guidance: "unknown",
+    });
     const controller = new AbortController();
     let timer: ReturnType<typeof setTimeout> | undefined;
     let stageTimedOut = false;
@@ -2299,6 +2328,20 @@ export class ChatGptBrowserWorker {
         }
       }
       console.error(`[chatgpt-web] browser turn ${traceId} stage=${stage} failed durationMs=${Math.round(performance.now() - startedAt)}: ${surfacedError instanceof Error ? surfacedError.message : String(surfacedError)}`);
+      const cancelled = executionContext?.signal?.aborted
+        || chatGptExecutionErrorCode(surfacedError) === "client_cancelled";
+      emitChatGptExecutionEvidence({
+        stage: cancelled ? "cancellation" : "unknown",
+        outcome: cancelled ? "cancelled" : "unknown",
+        context: executionContext?.context ?? "direct",
+        trace_id: traceId,
+        ...(executionContext?.httpTurnId !== undefined ? { http_turn_id: executionContext.httpTurnId } : {}),
+        started: true,
+        elapsed_ms: Math.round(performance.now() - startedAt),
+        error_code: chatGptExecutionErrorCode(surfacedError, stageTimedOut ? "browser_stage_timeout" : "unknown"),
+        execution_proven: false,
+        retry_guidance: "do_not_retry",
+      });
       throw surfacedError;
     } finally {
       if (timer) clearTimeout(timer);
@@ -2986,20 +3029,25 @@ export class ChatGptBrowserWorker {
   private selectedConnectorControl(composer: Locator): Locator {
     return composer
       .locator('[data-id^="plugin:"][data-keyword]')
-      .filter({ hasText: this.config.appName, visible: true });
+      .filter({ hasText: CHATGPT_CONNECTOR_NAME, visible: true });
   }
 
   private async connectorIsSelected(composer: Locator, abortSignal?: AbortSignal): Promise<boolean> {
-    const selected = this.selectedConnectorControl(composer);
+    const selected = composer.locator('[data-id^="plugin:"][data-keyword]').filter({ visible: true });
     const keywords = await withBrowserTurnAbort(
       withChatGptBrowserObservationTimeout(selected.evaluateAll(elements => (
         elements.map(element => element.getAttribute("data-keyword"))
       ))),
       abortSignal,
     );
-    const exactMatches = keywords.filter(keyword => keyword === this.config.appName).length;
+    const exactMatches = keywords.filter(keyword => keyword === CHATGPT_CONNECTOR_NAME).length;
     if (exactMatches > 1) {
-      throw new Error(`ChatGPT composer exposed duplicate ${JSON.stringify(this.config.appName)} connector selections`);
+      throw new Error(`ChatGPT composer exposed duplicate ${JSON.stringify(CHATGPT_CONNECTOR_NAME)} connector selections`);
+    }
+    if (keywords.some(keyword => keyword !== CHATGPT_CONNECTOR_NAME)) {
+      throw new Error(
+        `ChatGPT composer exposed an ambiguous connector selection; expected exactly one ${JSON.stringify(CHATGPT_CONNECTOR_NAME)} pill`,
+      );
     }
     return exactMatches === 1;
   }
@@ -3032,11 +3080,7 @@ export class ChatGptBrowserWorker {
     if (titles.length === 0) {
       return `ChatGPT connector menu did not open after ${triggerAttempts} complete mention trigger attempt(s)`;
     }
-    if (this.config.appName === CHATGPT_CONNECTOR_NAME && !titles.includes(CHATGPT_CONNECTOR_NAME)) {
-      const legacyName = LEGACY_CHATGPT_CONNECTOR_NAMES.find(name => titles.includes(name));
-      if (legacyName) return legacyChatGptConnectorMigrationMessage(legacyName);
-    }
-    return `ChatGPT connector menu opened but exposed no row named ${JSON.stringify(this.config.appName)}`
+    return `ChatGPT connector menu opened but exposed no row named ${JSON.stringify(CHATGPT_CONNECTOR_NAME)}`
       + ` after ${triggerAttempts} complete mention trigger attempt(s)`
       + `; create a connector with that exact name before retrying`;
   }
@@ -3091,7 +3135,7 @@ export class ChatGptBrowserWorker {
     let composer: Locator;
     const menuRows = page.locator('.__menu-item[tabindex="0"]');
     const appResult = menuRows.filter({
-      has: page.getByText(this.config.appName, { exact: true }),
+      has: page.getByText(CHATGPT_CONNECTOR_NAME, { exact: true }),
     });
     await ensureChatGptPersonalizedConnectorAccess(
       page,
@@ -3186,22 +3230,14 @@ export class ChatGptBrowserWorker {
         } catch (error) {
           if (!(error instanceof Error) || error.name !== "TimeoutError") throw error;
           const visibleRows = await this.connectorMentionRowTitles(menuRows, abortSignal);
-          const knownIdentityMismatch = this.config.appName === CHATGPT_CONNECTOR_NAME
-            && LEGACY_CHATGPT_CONNECTOR_NAMES.some(name => visibleRows.includes(name));
-          if (knownIdentityMismatch) {
-            await capture("connector-menu-missing");
-            throw chatGptConnectorUnavailableError(
-              await this.connectorMentionFailure(menuRows, attemptBudget.triggerAttempts, abortSignal),
-            );
-          }
           if (
             catalogRefreshAvailable
             && visibleRows.length > 0
-            && !visibleRows.includes(this.config.appName)
+            && !visibleRows.includes(CHATGPT_CONNECTOR_NAME)
             && attemptBudget.triggerAttempts < MAX_CHATGPT_CONNECTOR_TRIGGER_ATTEMPTS
           ) {
             throw new ChatGptConnectorCatalogStaleError(
-              this.config.appName,
+              CHATGPT_CONNECTOR_NAME,
               attemptBudget.triggerAttempts,
             );
           }
@@ -3219,7 +3255,7 @@ export class ChatGptBrowserWorker {
       );
       if (exactResultCount !== 1) {
         throw chatGptConnectorUnavailableError(
-          `ChatGPT connector menu did not expose one exact ${JSON.stringify(this.config.appName)} row`
+          `ChatGPT connector menu did not expose one exact ${JSON.stringify(CHATGPT_CONNECTOR_NAME)} row`
           + ` after ${attemptBudget.triggerAttempts} complete mention trigger attempt(s)`,
         );
       }
@@ -3245,7 +3281,7 @@ export class ChatGptBrowserWorker {
         }
       }
       if (!await rowHighlighted()) {
-        throw new Error(`ChatGPT connector menu could not highlight ${JSON.stringify(this.config.appName)}`);
+        throw new Error(`ChatGPT connector menu could not highlight ${JSON.stringify(CHATGPT_CONNECTOR_NAME)}`);
       }
       await composer.press("Enter", {
         signal: abortSignal,
@@ -3263,7 +3299,7 @@ export class ChatGptBrowserWorker {
         signal: abortSignal,
       });
       if (!await this.connectorIsSelected(selectedComposer, abortSignal)) {
-        throw new Error(`ChatGPT composer did not select ${JSON.stringify(this.config.appName)} connector`);
+        throw new Error(`ChatGPT composer did not select ${JSON.stringify(CHATGPT_CONNECTOR_NAME)} connector`);
       }
       await capture("connector-selected");
       return selectedComposer;
@@ -4350,6 +4386,7 @@ export class ChatGptBrowserWorker {
     maintenancePage?: Page,
     reuseConversation = false,
   ): Promise<string> {
+    const physicalStartedAt = performance.now();
     if (turn.abortSignal?.aborted) throw new DOMException("ChatGPT web turn aborted", "AbortError");
     if ((turn.externalProgress !== undefined) !== (turn.completionFence !== undefined)) {
       throw new Error("Tool-capable ChatGPT turns require both progress and terminal-fence transports");
@@ -4876,7 +4913,6 @@ export class ChatGptBrowserWorker {
 
         if (mode.localTools && await resolveChatGptToolConfirmation(
           page,
-          this.config.appName,
           this.config.autoApproveToolCalls,
           turn.abortSignal,
           CHATGPT_TOOL_CONFIRMATION_TIMEOUT_MS,
@@ -5024,7 +5060,7 @@ export class ChatGptBrowserWorker {
               }
             }
             if (snapshot.visibleText === "api_tool unavailable") {
-              throw new Error("ChatGPT selected mode rejected the Codex Native MCP tool (api_tool unavailable)");
+              throw new Error("ChatGPT selected mode rejected the Portal MCP tool (api_tool unavailable)");
             }
             const final = (() => {
               try {
@@ -5103,8 +5139,38 @@ export class ChatGptBrowserWorker {
         `[chatgpt-web] browser turn ${turn.traceId} completed`
         + ` (markdownChars=${finalText.length}, domFullScans=${responseDomCache.fullScans ?? 0}, domCacheHits=${responseDomCache.cacheHits ?? 0})`,
       );
+      const executionContext = this.activeExecutionContexts?.get(turn.traceId);
+      emitChatGptExecutionEvidence({
+        stage: "execution_completion",
+        outcome: "completed",
+        context: executionContext?.context ?? (turn.externalProgress ? "bound" : "direct"),
+        trace_id: turn.traceId,
+        ...(executionContext?.httpTurnId !== undefined ? { http_turn_id: executionContext.httpTurnId } : {}),
+        started: true,
+        elapsed_ms: Math.round(performance.now() - physicalStartedAt),
+        execution_proven: true,
+        retry_guidance: "do_not_retry",
+      });
       return finalText;
     } catch (error) {
+      const executionContext = this.activeExecutionContexts?.get(turn.traceId);
+      const handoffAccepted = error instanceof DOMException
+        && error.name === "AbortError"
+        && turn.abortSignal?.reason instanceof ChatGptCompactionHandoffAccepted;
+      const cancelled = !handoffAccepted
+        && (executionContext?.signal?.aborted || chatGptExecutionErrorCode(error) === "client_cancelled");
+      emitChatGptExecutionEvidence({
+        stage: handoffAccepted ? "execution_completion" : cancelled ? "cancellation" : "unknown",
+        outcome: handoffAccepted ? "completed" : cancelled ? "cancelled" : "unknown",
+        context: executionContext?.context ?? (turn.externalProgress ? "bound" : "direct"),
+        trace_id: turn.traceId,
+        ...(executionContext?.httpTurnId !== undefined ? { http_turn_id: executionContext.httpTurnId } : {}),
+        started: true,
+        elapsed_ms: Math.round(performance.now() - physicalStartedAt),
+        error_code: handoffAccepted ? "compaction_handoff_accepted" : chatGptExecutionErrorCode(error),
+        execution_proven: handoffAccepted,
+        retry_guidance: "do_not_retry",
+      });
       if (error instanceof DOMException && error.name === "AbortError"
         && turn.abortSignal?.reason instanceof ChatGptCompactionHandoffAccepted) {
         console.info(`[chatgpt-web] browser turn ${turn.traceId} ended after accepted structured compaction handoff`);

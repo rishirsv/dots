@@ -2,19 +2,60 @@ import { createHash, randomBytes } from "node:crypto";
 import { execFile } from "node:child_process";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import Ajv, { type ValidateFunction } from "ajv";
 import * as z from "zod/v4";
+import { CHATGPT_CONNECTOR_NAME } from "../../config";
 import { namespacedToolName, type CodexTool } from "../../types";
 import { VERSION } from "../../version";
 import type { ChatGptTurnEnvironment } from "./environment";
 import { CODEX_COMPACTION_CONTROL_WIRE_NAME } from "./native-compaction-control";
 import { callTurnBroker, TurnBrokerTimeoutError, type BrokerToolResult } from "./turn-broker";
 import { observeMcpToolCalls } from "./mcp-observation";
+import {
+  chatGptExecutionErrorCode,
+  chatGptExecutionReference,
+  emitChatGptExecutionEvidence,
+} from "./turn-execution";
 
 interface ClaimedTurn {
   bindingId: string;
   activityId: string;
+  traceId: string;
   environment: ChatGptTurnEnvironment & { expiresAt?: number };
 }
+
+type PortalExecutionMode = "direct" | "bound";
+
+interface DirectExecutionContext {
+  mode: "direct";
+}
+
+interface BoundExecutionContext {
+  mode: "bound";
+  claimed: ClaimedTurn;
+}
+
+type PortalExecutionContext = DirectExecutionContext | BoundExecutionContext;
+
+interface DirectExecutionOutcome {
+  exit_code: number | null;
+  stdout: string;
+  stderr: string;
+  started: boolean;
+  code?: "portal_direct_timeout" | "client_cancelled";
+  retryable?: false;
+  message?: string;
+}
+
+type DirectExecutionReporter = (event: {
+  stage: "dispatch" | "execution_completion" | "cancellation" | "unknown";
+  outcome: "accepted" | "started" | "completed" | "failed" | "cancelled" | "unknown";
+  started: boolean | "unknown";
+  elapsed_ms?: number;
+  error_code?: string;
+  retry_guidance: "retry_safe" | "do_not_retry" | "unknown";
+  execution_proven: boolean;
+}) => void;
 
 export type ChatGptMcpContract = "native" | "safe";
 
@@ -38,7 +79,6 @@ const GATEWAY_AGENT_WAIT_TOOL_NAMES = new Set([
 ]);
 
 const turnTokenSchema = z.string().min(20).max(256);
-const STANDALONE_TURN_TOKEN = "standalone-chatgpt-direct";
 const jsonArgumentsSchema = z.record(z.string(), z.unknown()).default({});
 // Match Codex's default wait interval while returning before the MCP invocation deadline.
 export const CHATGPT_WEB_AGENT_WAIT_POLL_MS = 30_000;
@@ -48,14 +88,14 @@ const AGENT_WAIT_TRANSPORT_RULE = `ChatGPT Web transport rule: wait for exactly 
 // letting the tunnel tear down and poison its long-lived stdio transport.
 export const CHATGPT_WEB_MCP_INVOCATION_TIMEOUT_MS = 90_000;
 
-const ZERO_RISK_MCP_INSTRUCTIONS = [
-  "For each pasted Codex Web GPT request, begin with codex_turn_start using the request_id in its request block.",
-  "Use that request_id with the Codex tools needed for the task.",
+const PORTAL_MANUAL_MCP_INSTRUCTIONS = [
+  "For each pasted Portal request, begin with codex_turn_start using the request_id in its request block.",
+  "Use that request_id with the Portal tools needed for the task.",
   "When the task is finished, send the complete answer with codex_turn_complete.",
   "If a tool returns an error, report that error instead of changing the request_id.",
 ].join(" ");
 
-const STANDALONE_EXEC_TOOL = {
+const DIRECT_EXEC_TOOL = {
   wire_name: "exec_command",
   name: "exec_command",
   namespace: null,
@@ -66,56 +106,192 @@ const STANDALONE_EXEC_TOOL = {
     properties: {
       cmd: { type: "string", minLength: 1, maxLength: 1_000_000 },
       workdir: { type: "string", minLength: 1, maxLength: 4096 },
-      timeout_ms: { type: "integer", minimum: 1, maximum: 300_000, default: 30_000 },
+      timeout_ms: {
+        type: "integer",
+        minimum: 1,
+        maximum: CHATGPT_WEB_MCP_INVOCATION_TIMEOUT_MS,
+        default: 30_000,
+      },
     },
     required: ["cmd"],
     additionalProperties: false,
   },
 } as const;
 
-class PortalTurnClaimError extends Error {
-  constructor(cause: unknown) {
-    super("Portal could not bind this call to an active Codex turn", { cause });
-    this.name = "PortalTurnClaimError";
+async function runDirectCommand(
+  input: Record<string, unknown>,
+  signal?: AbortSignal,
+  report?: DirectExecutionReporter,
+): Promise<DirectExecutionOutcome> {
+  assertAdvertisedArguments("exec_command", DIRECT_EXEC_TOOL.parameters, input);
+  const cmd = input.cmd as string;
+  const workdir = input.workdir as string | undefined;
+  const timeout = input.timeout_ms as number;
+  return await new Promise((resolve, reject) => {
+    let started = false;
+    const startedAt = performance.now();
+    try {
+      const child = execFile("/bin/zsh", ["-lc", cmd], {
+        ...(workdir ? { cwd: workdir } : {}),
+        timeout: Math.min(timeout, CHATGPT_WEB_MCP_INVOCATION_TIMEOUT_MS),
+        maxBuffer: 2 * 1024 * 1024,
+        signal,
+      }, (error, stdout, stderr) => {
+        const errorCode = error && (error as NodeJS.ErrnoException & { code?: unknown }).code;
+        if (!error) {
+          report?.({
+            stage: "execution_completion",
+            outcome: "completed",
+            started,
+            elapsed_ms: Math.round(performance.now() - startedAt),
+            execution_proven: true,
+            retry_guidance: "do_not_retry",
+          });
+          resolve({ exit_code: 0, stdout, stderr, started });
+          return;
+        }
+        if (signal?.aborted) {
+          report?.({
+            stage: "cancellation",
+            outcome: "cancelled",
+            started,
+            elapsed_ms: Math.round(performance.now() - startedAt),
+            error_code: "client_cancelled",
+            execution_proven: false,
+            retry_guidance: "do_not_retry",
+          });
+          resolve({
+            exit_code: null,
+            stdout,
+            stderr,
+            started,
+            code: "client_cancelled",
+            retryable: false,
+            message: "The direct command was cancelled. Its side effect status is not retryable.",
+          });
+          return;
+        }
+        if (errorCode === "ETIMEDOUT" || ((error as NodeJS.ErrnoException & { killed?: boolean; signal?: string }).killed
+          && (error as NodeJS.ErrnoException & { signal?: string }).signal === "SIGTERM")) {
+          report?.({
+            stage: "unknown",
+            outcome: "unknown",
+            started,
+            elapsed_ms: Math.round(performance.now() - startedAt),
+            error_code: "portal_direct_timeout",
+            execution_proven: false,
+            retry_guidance: "do_not_retry",
+          });
+          resolve({
+            exit_code: null,
+            stdout,
+            stderr,
+            started,
+            code: "portal_direct_timeout",
+            retryable: false,
+            message: `The direct command did not complete within ${Math.min(timeout, CHATGPT_WEB_MCP_INVOCATION_TIMEOUT_MS)}ms. Its side effect status is not retryable.`,
+          });
+          return;
+        }
+        if (typeof errorCode !== "number") {
+          report?.({
+            stage: "execution_completion",
+            outcome: "failed",
+            started,
+            elapsed_ms: Math.round(performance.now() - startedAt),
+            error_code: chatGptExecutionErrorCode(error),
+            execution_proven: started,
+            retry_guidance: started ? "do_not_retry" : "retry_safe",
+          });
+          reject(error);
+          return;
+        }
+        report?.({
+          stage: "execution_completion",
+          outcome: "failed",
+          started,
+          elapsed_ms: Math.round(performance.now() - startedAt),
+          error_code: `exit_${errorCode}`,
+          execution_proven: true,
+          retry_guidance: "do_not_retry",
+        });
+        resolve({ exit_code: errorCode, stdout, stderr, started });
+      });
+      child.once("spawn", () => {
+        started = true;
+        report?.({
+          stage: "dispatch",
+          outcome: "started",
+          started: true,
+          elapsed_ms: Math.round(performance.now() - startedAt),
+          execution_proven: false,
+          retry_guidance: "unknown",
+        });
+      });
+    } catch (error) {
+      report?.({
+        stage: "execution_completion",
+        outcome: "failed",
+        started,
+        elapsed_ms: Math.round(performance.now() - startedAt),
+        error_code: chatGptExecutionErrorCode(error),
+        execution_proven: started,
+        retry_guidance: started ? "do_not_retry" : "retry_safe",
+      });
+      reject(error);
+    }
+  });
+}
+
+function assertAdvertisedArguments(
+  toolName: string,
+  parameters: unknown,
+  args: Record<string, unknown>,
+): void {
+  const ajv = new Ajv({
+    allErrors: true,
+    strict: false,
+    coerceTypes: false,
+    removeAdditional: false,
+    useDefaults: true,
+    validateFormats: true,
+  });
+  let validate: ValidateFunction;
+  try {
+    validate = ajv.compile(parameters as object | boolean);
+  } catch (cause) {
+    throw new Error(
+      `Codex tool ${toolName} advertises an invalid argument schema: ${cause instanceof Error ? cause.message : String(cause)}`,
+    );
+  }
+  if (validate(args)) return;
+  const detail = ajv.errorsText(validate.errors, { separator: "; " });
+  throw new Error(`Arguments for Codex tool ${toolName} do not satisfy its advertised schema${detail ? `: ${detail}` : ""}`);
+}
+
+/**
+ * Direct commands are still owned by the MCP dispatcher, not a second terminal service. The MCP
+ * request identity is the only retry identity available without a turn token; retaining its
+ * promise keeps a transport retry from starting a second local process, including after an
+ * ambiguous cancellation or timeout.
+ */
+class DirectOperationLedger {
+  private readonly operations = new Map<string, Promise<DirectExecutionOutcome>>();
+
+  run(
+    key: string,
+    operation: () => Promise<DirectExecutionOutcome>,
+  ): Promise<DirectExecutionOutcome> {
+    const existing = this.operations.get(key);
+    if (existing) return existing;
+    const pending = operation();
+    this.operations.set(key, pending);
+    return pending;
   }
 }
 
-async function runStandaloneCommand(
-  input: Record<string, unknown>,
-  signal?: AbortSignal,
-): Promise<{ exit_code: number | null; stdout: string; stderr: string }> {
-  const cmd = input.cmd;
-  const workdir = input.workdir;
-  const timeout = input.timeout_ms ?? 30_000;
-  if (typeof cmd !== "string" || cmd.length === 0 || cmd.length > 1_000_000) {
-    throw new Error("exec_command requires a non-empty cmd string");
-  }
-  if (workdir !== undefined && (typeof workdir !== "string" || workdir.length === 0 || workdir.length > 4096)) {
-    throw new Error("exec_command workdir must be a non-empty path");
-  }
-  if (!Number.isInteger(timeout) || Number(timeout) < 1 || Number(timeout) > 300_000) {
-    throw new Error("exec_command timeout_ms must be an integer from 1 to 300000");
-  }
-  return await new Promise((resolve, reject) => {
-    execFile("/bin/zsh", ["-lc", cmd], {
-      ...(workdir ? { cwd: workdir } : {}),
-      timeout: Number(timeout),
-      maxBuffer: 2 * 1024 * 1024,
-      signal,
-    }, (error, stdout, stderr) => {
-      if (error && typeof (error as NodeJS.ErrnoException & { code?: unknown }).code !== "number") {
-        reject(error);
-        return;
-      }
-      resolve({
-        exit_code: error && typeof (error as { code?: unknown }).code === "number"
-          ? (error as { code: number }).code
-          : 0,
-        stdout,
-        stderr,
-      });
-    });
-  });
+function directOperationKey(extra: McpRequestExtra): string {
+  return JSON.stringify([extra.sessionId ?? "anonymous", String(extra.requestId)]);
 }
 
 function turnReferenceInput(contract: ChatGptMcpContract): Record<string, z.ZodType> {
@@ -124,10 +300,10 @@ function turnReferenceInput(contract: ChatGptMcpContract): Record<string, z.ZodT
     : { turn_token: turnTokenSchema.optional() };
 }
 
-function turnReference(contract: ChatGptMcpContract, input: object): string {
+function turnReference(contract: ChatGptMcpContract, input: object): string | undefined {
   const key = contract === "safe" ? "request_id" : "turn_token";
   const value = (input as Record<string, unknown>)[key];
-  if (contract === "native" && value === undefined) return STANDALONE_TURN_TOKEN;
+  if (contract === "native" && value === undefined) return undefined;
   if (typeof value !== "string") throw new Error(`${key} is required`);
   return value;
 }
@@ -158,10 +334,23 @@ function requestScopeSummary(extra: McpRequestExtra): string {
     ? Object.keys(extra.requestInfo as Record<string, unknown>).sort()
     : [];
   return JSON.stringify({
-    requestId: String(extra.requestId),
+    requestRef: chatGptExecutionReference(`${extra.sessionId ?? "anonymous"}:${String(extra.requestId)}`),
     session: extra.sessionId ? { chars: extra.sessionId.length, hash: scopeHash(extra.sessionId) } : null,
     meta,
     requestInfoKeys,
+  });
+}
+
+type McpExecutionEvidence = Parameters<typeof emitChatGptExecutionEvidence>[0];
+
+function mcpRequestReference(extra: McpRequestExtra): string {
+  return chatGptExecutionReference(`${extra.sessionId ?? "anonymous"}:${String(extra.requestId)}`);
+}
+
+function emitMcpExecutionEvidence(extra: McpRequestExtra, evidence: McpExecutionEvidence): void {
+  emitChatGptExecutionEvidence({
+    ...evidence,
+    mcp_request_ref: mcpRequestReference(extra),
   });
 }
 
@@ -175,7 +364,7 @@ function result(value: Record<string, unknown>, isError = false) {
 
 function afterSafeStart(contract: ChatGptMcpContract, description: string): string {
   return contract === "safe"
-    ? `For a Zero Risk request connected by codex_turn_start. ${description}`
+    ? `For a Portal request connected by codex_turn_start. ${description}`
     : description;
 }
 
@@ -199,7 +388,7 @@ function safeVisibleTools(environment: ChatGptTurnEnvironment, contract: ChatGpt
   return environment.tools.filter(tool => (
     wireName(tool) !== CODEX_COMPACTION_CONTROL_WIRE_NAME
     && !BRIDGE_TOOL_NAMES.has(tool.name)
-    // Zero Risk does not expose model-authored JavaScript. Automatic Full mode keeps the native
+    // Portal manual mode does not expose model-authored JavaScript. Automatic Full mode keeps the native
     // Codex exec surface and applies its transport guard at invocation time below.
     && (tool.namespace !== undefined || tool.name !== "exec")
     && (!tool.namespace || !bridgeNamespaces.has(tool.namespace))
@@ -283,12 +472,18 @@ export function chatGptMcpInvocationTimeout(
   return Math.min(CHATGPT_WEB_MCP_INVOCATION_TIMEOUT_MS, remaining);
 }
 
-function asMcpResult(value: BrokerToolResult) {
+function asMcpResult(value: BrokerToolResult, mode: PortalExecutionMode) {
+  const structuredContent = value.structuredContent !== undefined
+    && value.structuredContent !== null
+    && typeof value.structuredContent === "object"
+    && !Array.isArray(value.structuredContent)
+    ? { ...(value.structuredContent as Record<string, unknown>), mode }
+    : value.structuredContent !== undefined
+      ? { mode, result: value.structuredContent }
+      : { mode };
   return {
     content: value.content as never,
-    ...(value.structuredContent !== undefined && value.structuredContent !== null && typeof value.structuredContent === "object"
-      ? { structuredContent: value.structuredContent as Record<string, unknown> }
-      : {}),
+    structuredContent,
     ...(value.isError ? { isError: true } : {}),
     ...(value._meta !== undefined && value._meta !== null && typeof value._meta === "object"
       ? { _meta: value._meta as Record<string, unknown> }
@@ -515,16 +710,25 @@ export async function runChatGptMcpServer(options: {
   contract?: ChatGptMcpContract;
 }): Promise<void> {
   const contract = options.contract ?? "native";
+  const directOperations = new DirectOperationLedger();
   const server = new McpServer(
-    { name: contract === "safe" ? "codex-safe" : "codex-native", version: VERSION },
-    contract === "safe" ? { instructions: ZERO_RISK_MCP_INSTRUCTIONS } : undefined,
+    { name: CHATGPT_CONNECTOR_NAME, version: VERSION },
+    contract === "safe" ? { instructions: PORTAL_MANUAL_MCP_INSTRUCTIONS } : undefined,
   );
+  const boundContextField = contract === "safe" ? "request_id" : "turn_token";
+  const portalToolsDescription = contract === "safe"
+    ? `Discover the live Portal tool registry. In a bound Portal request, pass the supplied ${boundContextField} unchanged.`
+    : `Discover the live Portal tool registry. In a bound Codex turn, pass the supplied ${boundContextField} unchanged; omit ${boundContextField} only in a direct ChatGPT conversation, which exposes exec_command.`;
+  const portalCallDescription = contract === "safe"
+    ? `Invoke the exact wire_name returned by portal_tools with its declared arguments, or pass input for a freeform tool. In a bound Portal request, pass the supplied ${boundContextField} unchanged.`
+    : `Invoke the exact wire_name returned by portal_tools with its declared arguments, or pass input for a freeform tool. In a bound Codex turn, pass the supplied ${boundContextField} unchanged; omit ${boundContextField} only for direct exec_command.`;
 
   const claimTurn = async (
     toolName: string,
     turnToken: string,
     extra: McpRequestExtra,
   ): Promise<ClaimedTurn> => {
+    const startedAt = performance.now();
     console.error(`[portal-mcp] ${toolName} scope=${requestScopeSummary(extra)}`);
     const activityId = `activity_${randomBytes(18).toString("base64url")}`;
     try {
@@ -536,15 +740,26 @@ export async function runChatGptMcpServer(options: {
       );
       return { ...claimed, activityId };
     } catch (error) {
+      emitMcpExecutionEvidence(extra, {
+        stage: "unknown",
+        outcome: "failed",
+        context: "bound",
+        tool: toolName,
+        started: false,
+        elapsed_ms: Math.round(performance.now() - startedAt),
+        error_code: chatGptExecutionErrorCode(error),
+        execution_proven: false,
+        retry_guidance: "do_not_retry",
+      });
       try {
         await settleTurnActivity(turnToken, activityId);
       } catch (cleanupError) {
-        throw new PortalTurnClaimError(new AggregateError(
+        throw new AggregateError(
           [error, cleanupError],
           "Portal claim failed and its broker activity could not be retired",
-        ));
+        );
       }
-      throw new PortalTurnClaimError(error);
+      throw error;
     }
   };
 
@@ -568,15 +783,41 @@ export async function runChatGptMcpServer(options: {
     );
   };
 
-  const withClaimedTurn = async <T>(
+  const withExecutionContext = async <T>(
     toolName: string,
-    turnToken: string,
+    turnToken: string | undefined,
     extra: McpRequestExtra,
-    action: (claimed: ClaimedTurn) => Promise<T> | T,
+    action: (context: PortalExecutionContext) => Promise<T> | T,
   ): Promise<T> => {
+    // Context selection is intentionally made before any tool lookup or invocation. An omitted
+    // native token is the only direct-execution case; every supplied token must cross the broker.
+    if (turnToken === undefined) {
+      emitMcpExecutionEvidence(extra, {
+        stage: "dispatch",
+        outcome: "accepted",
+        context: "direct",
+        tool: toolName,
+        started: false,
+        elapsed_ms: 0,
+        execution_proven: false,
+        retry_guidance: "unknown",
+      });
+      return await action({ mode: "direct" });
+    }
     const claimed = await claimTurn(toolName, turnToken, extra);
+    emitMcpExecutionEvidence(extra, {
+      stage: "dispatch",
+      outcome: "accepted",
+      context: "bound",
+      trace_id: claimed.traceId,
+      tool: toolName,
+      started: false,
+      elapsed_ms: 0,
+      execution_proven: false,
+      retry_guidance: "unknown",
+    });
     try {
-      return await action(claimed);
+      return await action({ mode: "bound", claimed });
     } finally {
       // The broker's terminal fence treats even a fully local inventory lookup as live MCP work.
       // Settle the lease without the request AbortSignal: cancellation must not strand activity
@@ -589,8 +830,8 @@ export async function runChatGptMcpServer(options: {
     server.registerTool(
       "codex_turn_start",
       {
-        title: "Connect a Codex Zero Risk request",
-        description: "Connect the request_id included in the pasted Codex Web GPT request so its Codex tools can be used.",
+        title: "Connect a Portal request",
+        description: "Connect the request_id included in the pasted Portal request so its Portal tools can be used.",
         inputSchema: {
           request_id: turnTokenSchema,
         },
@@ -617,18 +858,41 @@ export async function runChatGptMcpServer(options: {
     tool: CodexTool,
     payload: { arguments?: Record<string, unknown>; input?: string },
     signal?: AbortSignal,
+    traceId?: string,
+    requestRef?: string,
   ) => {
     const timeoutMs = chatGptMcpInvocationTimeout(bound);
+    const startedAt = performance.now();
+    const callId = `call_${randomBytes(24).toString("base64url")}`;
     try {
       const response = await callTurnBroker<BrokerToolResult>(options.brokerSocketPath, {
         method: "invoke",
         bindingId,
+        callId,
         wireName: wireName(tool),
         freeform: tool.freeform === true,
         ...(tool.freeform ? { input: payload.input ?? "" } : { arguments: payload.arguments ?? {} }),
       }, timeoutMs, signal);
-      return asMcpResult(response);
+      return asMcpResult(response, "bound");
     } catch (error) {
+      const errorCode = error instanceof TurnBrokerTimeoutError
+        ? "codex_tool_timeout"
+        : chatGptExecutionErrorCode(error);
+      const cancelled = errorCode === "client_cancelled";
+      emitChatGptExecutionEvidence({
+        stage: cancelled ? "cancellation" : error instanceof TurnBrokerTimeoutError ? "unknown" : "execution_completion",
+        outcome: cancelled ? "cancelled" : error instanceof TurnBrokerTimeoutError ? "unknown" : "failed",
+        context: "bound",
+        ...(traceId ? { trace_id: traceId } : {}),
+        ...(requestRef ? { mcp_request_ref: requestRef } : {}),
+        call_ref: chatGptExecutionReference(callId),
+        tool: wireName(tool),
+        started: "unknown",
+        elapsed_ms: Math.round(performance.now() - startedAt),
+        error_code: errorCode,
+        execution_proven: false,
+        retry_guidance: "do_not_retry",
+      });
       // A cancelled/timed-out MCP request no longer has a consumer for the native result. Revoke
       // the whole turn capability so the broker drops the pending invocation and every later call
       // from that abandoned ChatGPT response fails explicitly against its retired binding.
@@ -649,9 +913,11 @@ export async function runChatGptMcpServer(options: {
           `[portal-mcp] ${toolName} did not complete within ${timeoutMs}ms; retired its turn binding`,
         );
         return result({
+          mode: "bound",
           code: "codex_tool_timeout",
           tool: toolName,
           timeout_ms: timeoutMs,
+          started: "unknown",
           retryable: false,
           message: `Codex tool ${toolName} did not complete before the MCP transport deadline. The current turn binding was retired; do not retry it in this ChatGPT response.`,
         }, true);
@@ -664,7 +930,7 @@ export async function runChatGptMcpServer(options: {
     "portal_tools",
     {
       title: "Discover tools available to Portal",
-      description: "Discover Portal tools. Omit turn_token in a direct ChatGPT conversation to receive unrestricted local exec_command access; Codex bridge turns pass their supplied token to discover the live Codex registry.",
+      description: portalToolsDescription,
       inputSchema: {
         ...turnReferenceInput(contract),
         query: z.string().max(500).optional(),
@@ -675,88 +941,91 @@ export async function runChatGptMcpServer(options: {
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     },
     async (input, extra) => {
-      try {
-        return await withClaimedTurn(
-          "portal_tools",
-          turnReference(contract, input),
-          extra,
-          async claimed => {
-        const { query, offset, limit, include_schema } = input;
-        const bound = claimed.environment;
-        const needle = query?.trim().toLowerCase();
-        const directMatches = safeVisibleTools(bound, contract).filter(tool => !needle || [
-          wireName(tool),
-          tool.name,
-          tool.namespace ?? "",
-          tool.description,
-        ].join("\n").toLowerCase().includes(needle));
-        const directPage = directMatches.slice(offset, offset + limit).map(tool => ({
-          wire_name: wireName(tool),
-          name: tool.name,
-          namespace: tool.namespace ?? null,
-          description: browserToolDescription(tool),
-          kind: tool.freeform ? "freeform" : tool.toolSearch ? "tool_search" : "function",
-          ...(include_schema ? { parameters: browserToolParameters(tool) } : {}),
-        }));
-        let nestedTotal = 0;
-        let nestedPage: Array<Record<string, unknown>> = [];
-        const gateway = execGateway(bound);
-        if (gateway) {
-          const excludedGatewayNames = bound.tools.map(wireName);
-          const nestedOffset = Math.max(0, offset - directMatches.length);
-          const nestedLimit = Math.max(0, limit - directPage.length);
-          const response = await invoke(claimed.bindingId, bound, gateway, {
-            input: gatewayToolCatalogProgram({
-              query,
-              offset: nestedOffset,
-              limit: nestedLimit,
-              // A gateway-discovered entry may supplement the outer registry, but it must never
-              // duplicate or reopen an outer tool that this contract deliberately hid (including
-              // our own MCP namespace in Zero Risk).
-              excludedNames: excludedGatewayNames,
-            }),
-          }, extra.signal);
-          const catalog = gatewayToolCatalogPage(response, new Set(excludedGatewayNames));
-          nestedTotal = catalog.total;
-          nestedPage = catalog.tools.map(tool => ({
-            wire_name: tool.name,
+      return await withExecutionContext(
+        "portal_tools",
+        turnReference(contract, input),
+        extra,
+        async context => {
+          const { query, offset, limit, include_schema } = input;
+          const needle = query?.trim().toLowerCase();
+          if (context.mode === "direct") {
+            const matches = !needle || [
+              DIRECT_EXEC_TOOL.wire_name,
+              DIRECT_EXEC_TOOL.description,
+            ].join("\n").toLowerCase().includes(needle);
+            const available = matches ? [{
+              ...DIRECT_EXEC_TOOL,
+              ...(include_schema ? {} : { parameters: undefined }),
+            }] : [];
+            const tools = available.slice(offset, offset + limit);
+            return result({
+              tools,
+              total: available.length,
+              next_offset: offset + tools.length < available.length ? offset + tools.length : null,
+              mode: context.mode,
+            });
+          }
+
+          const bound = context.claimed.environment;
+          const directMatches = safeVisibleTools(bound, contract).filter(tool => !needle || [
+            wireName(tool),
+            tool.name,
+            tool.namespace ?? "",
+            tool.description,
+          ].join("\n").toLowerCase().includes(needle));
+          const directPage = directMatches.slice(offset, offset + limit).map(tool => ({
+            wire_name: wireName(tool),
             name: tool.name,
-            namespace: null,
-            description: gatewayToolDescription(tool),
-            kind: "gateway",
-            ...(include_schema ? {
-              parameters: {
-                type: "object",
-                additionalProperties: true,
-                description: "Pass the exact structured arguments declared in this tool's description. For a declared freeform tool, use portal_call.input instead.",
-              },
-            } : {}),
+            namespace: tool.namespace ?? null,
+            description: browserToolDescription(tool),
+            kind: tool.freeform ? "freeform" : tool.toolSearch ? "tool_search" : "function",
+            ...(include_schema ? { parameters: browserToolParameters(tool) } : {}),
           }));
-        }
-        const page = [...directPage, ...nestedPage];
-        const total = directMatches.length + nestedTotal;
-        return result({
-          tools: page,
-          total,
-          next_offset: offset + page.length < total ? offset + page.length : null,
-        });
-          },
-        );
-      } catch (error) {
-        if (!(error instanceof PortalTurnClaimError)) throw error;
-        const needle = input.query?.trim().toLowerCase();
-        const matches = !needle || [
-          STANDALONE_EXEC_TOOL.wire_name,
-          STANDALONE_EXEC_TOOL.description,
-        ].join("\n").toLowerCase().includes(needle);
-        const tools = matches && input.offset === 0
-          ? [{
-            ...STANDALONE_EXEC_TOOL,
-            ...(input.include_schema === false ? { parameters: undefined } : {}),
-          }]
-          : [];
-        return result({ tools, total: matches ? 1 : 0, next_offset: null, mode: "standalone" });
-      }
+          let nestedTotal = 0;
+          let nestedPage: Array<Record<string, unknown>> = [];
+          const gateway = execGateway(bound);
+          if (gateway) {
+            const excludedGatewayNames = bound.tools.map(wireName);
+            const nestedOffset = Math.max(0, offset - directMatches.length);
+            const nestedLimit = Math.max(0, limit - directPage.length);
+            const response = await invoke(context.claimed.bindingId, bound, gateway, {
+              input: gatewayToolCatalogProgram({
+                query,
+                offset: nestedOffset,
+                limit: nestedLimit,
+                // A gateway-discovered entry may supplement the outer registry, but it must never
+                // duplicate or reopen an outer tool that this contract deliberately hid (including
+                // our own MCP namespace in the Portal manual contract).
+                excludedNames: excludedGatewayNames,
+              }),
+            }, extra.signal, context.claimed.traceId, mcpRequestReference(extra));
+            const catalog = gatewayToolCatalogPage(response, new Set(excludedGatewayNames));
+            nestedTotal = catalog.total;
+            nestedPage = catalog.tools.map(tool => ({
+              wire_name: tool.name,
+              name: tool.name,
+              namespace: null,
+              description: gatewayToolDescription(tool),
+              kind: "gateway",
+              ...(include_schema ? {
+                parameters: {
+                  type: "object",
+                  additionalProperties: true,
+                  description: "Pass the exact structured arguments declared in this tool's description. For a declared freeform tool, use portal_call.input instead.",
+                },
+              } : {}),
+            }));
+          }
+          const page = [...directPage, ...nestedPage];
+          const total = directMatches.length + nestedTotal;
+          return result({
+            tools: page,
+            total,
+            next_offset: offset + page.length < total ? offset + page.length : null,
+            mode: context.mode,
+          });
+        },
+      );
     },
   );
 
@@ -764,7 +1033,7 @@ export async function runChatGptMcpServer(options: {
     "portal_call",
     {
       title: "Call any tool from the current Codex harness",
-      description: "Invoke an exact wire_name returned by portal_tools. Omit turn_token in a direct ChatGPT conversation; Codex bridge turns pass their supplied token.",
+      description: portalCallDescription,
       inputSchema: {
         ...turnReferenceInput(contract),
         wire_name: z.string().min(1).max(1_000),
@@ -777,6 +1046,9 @@ export async function runChatGptMcpServer(options: {
       const { wire_name, arguments: args, input } = toolInput;
       const requestId = turnReference(contract, toolInput);
       if (contract === "native" && wire_name === CODEX_COMPACTION_CONTROL_WIRE_NAME) {
+        if (requestId === undefined) {
+          throw new Error("Compaction control handoff requires a bound turn_token");
+        }
         if (input !== undefined) {
           throw new Error("Compaction control handoff does not accept freeform input");
         }
@@ -794,11 +1066,41 @@ export async function runChatGptMcpServer(options: {
           handoffId,
           summary,
         }, 5_000, extra.signal);
-        return result({ submitted: true });
+        return result({ submitted: true, mode: "bound" });
       }
-      try {
-        return await withClaimedTurn("portal_call", requestId, extra, async claimed => {
-        const bound = claimed.environment;
+      return await withExecutionContext("portal_call", requestId, extra, async context => {
+        if (context.mode === "direct") {
+          if (wire_name !== DIRECT_EXEC_TOOL.wire_name || input !== undefined) {
+            throw new Error(`Direct Portal tool is not available: ${wire_name}`);
+          }
+          const invocationArguments = args ?? {};
+          try {
+            assertAdvertisedArguments(DIRECT_EXEC_TOOL.wire_name, DIRECT_EXEC_TOOL.parameters, invocationArguments);
+          } catch (error) {
+            emitMcpExecutionEvidence(extra, {
+              stage: "execution_completion",
+              outcome: "failed",
+              context: "direct",
+              tool: DIRECT_EXEC_TOOL.wire_name,
+              started: false,
+              error_code: "invalid_arguments",
+              execution_proven: false,
+              retry_guidance: "retry_safe",
+            });
+            throw error;
+          }
+          const outcome = await directOperations.run(
+            directOperationKey(extra),
+            () => runDirectCommand(invocationArguments, extra.signal, event => emitMcpExecutionEvidence(extra, {
+              ...event,
+              context: "direct",
+              tool: DIRECT_EXEC_TOOL.wire_name,
+            })),
+          );
+          return result({ ...outcome, mode: context.mode }, outcome.code !== undefined);
+        }
+
+        const bound = context.claimed.environment;
         const tool = safeVisibleTools(bound, contract)
           .find(candidate => wireName(candidate) === wire_name);
         if (!tool) {
@@ -815,31 +1117,33 @@ export async function runChatGptMcpServer(options: {
           }
           const invocationArguments = args ?? {};
           assertGatewayToolArguments(wire_name, invocationArguments);
-          return invoke(claimed.bindingId, bound, gateway, {
+          return invoke(context.claimed.bindingId, bound, gateway, {
             input: execGatewayProgram(wire_name, input !== undefined, {
               ...(input !== undefined ? { input } : { arguments: invocationArguments }),
             }, bound.tools.map(wireName)),
-          }, extra.signal);
+          }, extra.signal, context.claimed.traceId, mcpRequestReference(extra));
         }
         if (tool.freeform) {
           if (input === undefined) throw new Error(`Freeform Codex tool ${wire_name} requires input`);
           if (args && Object.keys(args).length > 0) throw new Error(`Freeform Codex tool ${wire_name} does not accept arguments`);
-          return invoke(claimed.bindingId, bound, tool, {
+          return invoke(context.claimed.bindingId, bound, tool, {
             input: tool === execGateway(bound) ? transportBoundRawExecProgram(input, wireName(tool)) : input,
-          }, extra.signal);
+          }, extra.signal, context.claimed.traceId, mcpRequestReference(extra));
         }
         if (input !== undefined) throw new Error(`Function Codex tool ${wire_name} does not accept freeform input`);
         const invocationArguments = args ?? {};
+        assertAdvertisedArguments(wire_name, tool.parameters, invocationArguments);
         assertBrowserToolArguments(tool, invocationArguments);
-        return invoke(claimed.bindingId, bound, tool, { arguments: invocationArguments }, extra.signal);
+        return invoke(
+          context.claimed.bindingId,
+          bound,
+          tool,
+          { arguments: invocationArguments },
+          extra.signal,
+          context.claimed.traceId,
+          mcpRequestReference(extra),
+        );
         });
-      } catch (error) {
-        if (!(error instanceof PortalTurnClaimError)) throw error;
-        if (wire_name !== STANDALONE_EXEC_TOOL.wire_name || input !== undefined) {
-          throw new Error(`Standalone Portal tool is not available: ${wire_name}`);
-        }
-        return result(await runStandaloneCommand(args ?? {}, extra.signal));
-      }
     },
   );
 

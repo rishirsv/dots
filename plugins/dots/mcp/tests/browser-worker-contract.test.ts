@@ -9,7 +9,7 @@ import { ensureChatGptPersonalizedConnectorAccess, chatGptUnavailableProDetail }
 import { chatGptStoppedThinkingError } from "../src/adapters/chatgpt-web/adapter-error";
 import { CHATGPT_STOPPED_THINKING_LABELS } from "../src/adapters/chatgpt-web/ui-labels";
 import { CHATGPT_WEB_MODEL_ID } from "../src/adapters/chatgpt-web/model";
-import { CHATGPT_CONNECTOR_NAME, defaultChromeExecutable, legacyChatGptConnectorMigrationMessage } from "../src/config";
+import { CHATGPT_CONNECTOR_NAME, defaultChromeExecutable } from "../src/config";
 import { parseChatGptEffortSliderState } from "../src/chatgpt-session";
 import { ChatGptExternalTurnProgress, chatGptExternalToolCallsAreInFlight } from "../src/adapters/chatgpt-web/turn-progress";
 import type { CodexProviderConfig } from "../src/types";
@@ -183,7 +183,7 @@ test("response caching rechecks CSS visibility without requiring a DOM mutation"
   });
   try {
     for (const target of ["answer", "copy"]) {
-      const window = createWindow('<article id="old"><button data-testid="copy-turn-action-button">Copy</button></article><article id="turn"><div class="markdown" id="answer">CODEX WEB GPT READY</div><button id="copy" data-testid="copy-turn-action-button">Copy</button></article>');
+      const window = createWindow('<article id="old"><button data-testid="copy-turn-action-button">Copy</button></article><article id="turn"><div class="markdown" id="answer">PORTAL WEB GPT READY</div><button id="copy" data-testid="copy-turn-action-button">Copy</button></article>');
       let visible = false;
       const context = createContext({
         document: window.document, HTMLElement: window.HTMLElement, Element: window.Element, Node: window.Node,
@@ -208,14 +208,14 @@ test("response caching rechecks CSS visibility without requiring a DOM mutation"
       const first = await worker.responseDomSnapshot(locator, cache);
       expect(evaluationErrors).toEqual([]);
       expect(first.completionActionVisible).toBeFalse();
-      expect(first.visibleText).toBe(target === "answer" ? "" : "CODEX WEB GPT READY");
+      expect(first.visibleText).toBe(target === "answer" ? "" : "PORTAL WEB GPT READY");
       await worker.responseDomSnapshot(locator, cache);
       expect(cache.fullScans).toBe(1);
       expect(cache.cacheHits).toBe(1);
       // A stylesheet/animation changes computed opacity; no subtree mutation occurs.
       visible = true;
       expect(await worker.responseDomSnapshot(locator, cache)).toMatchObject({
-        visibleText: "CODEX WEB GPT READY", completionActionVisible: true,
+        visibleText: "PORTAL WEB GPT READY", completionActionVisible: true,
       });
       expect(cache.fullScans).toBe(2);
       await worker.responseDomSnapshot(locator, cache);
@@ -300,30 +300,27 @@ test("browser configuration rejects the retired connector identity before openin
   expect(() => resolveBrowserConfig({
     adapter: "chatgpt-web",
     baseUrl: "browser://chatgpt",
-    chatgptWeb: { appName: "Codex Native" },
-  })).toThrow(/requires a connector named "Portal".*Allow all actions/s);
+    chatgptWeb: { appName: "Other connector" },
+  })).toThrow('Portal requires connector "Portal"; configured connector was "Other connector"');
 });
 
-test("connector verification reports a legacy-only ChatGPT menu as a migration error", async () => {
+test("connector verification reports a menu that does not expose Portal", async () => {
   const connectorMentionFailure = (ChatGptBrowserWorker.prototype as unknown as {
     connectorMentionFailure(menuRows: unknown, triggerAttempts: number): Promise<string>;
   }).connectorMentionFailure;
   const message = await connectorMentionFailure.call({
     config: { appName: CHATGPT_CONNECTOR_NAME },
-    connectorMentionRowTitles: async () => ["Codex Native", "Another connector"],
+    connectorMentionRowTitles: async () => ["Other connector", "Another connector"],
   }, {}, 4);
 
-  expect(message).toContain('Legacy ChatGPT connector "Codex Native" was found');
-  expect(message).toContain('connector named "Portal"');
-  expect(message).toContain("Authentication set to None");
-  expect(message).toContain("Allow all actions enabled");
+  expect(message).toContain('no row named "Portal"');
+  expect(message).not.toContain("Other connector");
   expect(message).not.toContain("Another connector");
 
   const mixedMessage = await connectorMentionFailure.call({
     config: { appName: CHATGPT_CONNECTOR_NAME },
-    connectorMentionRowTitles: async () => ["Codex Native", "Portal", "Private chat title"],
+    connectorMentionRowTitles: async () => ["Portal", "Private chat title"],
   }, {}, 4);
-  expect(mixedMessage).not.toContain("Legacy ChatGPT connector");
   expect(mixedMessage).toContain('no row named "Portal"');
   expect(mixedMessage).not.toContain("Private chat title");
 });
@@ -1249,7 +1246,7 @@ test("connector selection re-resolves the active composer after ChatGPT replaces
       expect(selector).toBe('[data-id^="plugin:"][data-keyword]');
       return {
         filter: (options: { hasText: string; visible: boolean }) => {
-          expect(options).toEqual({ hasText: "Codex Native2", visible: true });
+          expect(options).toEqual({ hasText: "Portal", visible: true });
           return selectedConnector;
         },
       };
@@ -1271,7 +1268,7 @@ test("connector selection re-resolves the active composer after ChatGPT replaces
   const page = {
     getByRole: personalizedTemporaryChatRole,
     getByText: (text: string, options: { exact: boolean }) => {
-      expect(text).toBe("Codex Native2");
+      expect(text).toBe("Portal");
       expect(options).toEqual({ exact: true });
       return { exactConnectorLabel: true };
     },
@@ -1294,7 +1291,7 @@ test("connector selection re-resolves the active composer after ChatGPT replaces
 
   let activeComposerCalls = 0;
   const resolved = await selectConnector.call({
-    config: { appName: "Codex Native2" },
+    config: { appName: "Portal" },
     connectorIsSelected: async () => connectorSelected,
     selectedConnectorControl: () => selectedConnector,
     activeComposer: async () => {
@@ -1309,11 +1306,51 @@ test("connector selection re-resolves the active composer after ChatGPT replaces
     ["fill", ""],
     ["fill", ""],
     ["focus"],
-    ["pressSequentially", "@codex"],
+    ["pressSequentially", "@Portal"],
     ["waitForResult"],
     ["press"],
     ["waitForSelectedConnector"],
   ]);
+});
+
+test("connector pill proof requires exactly one canonical Portal selection", async () => {
+  const connectorIsSelected = (ChatGptBrowserWorker.prototype as unknown as {
+    connectorIsSelected(composer: unknown): Promise<boolean>;
+  }).connectorIsSelected;
+  const composerFor = (keywords: Array<string | null>) => ({
+    locator: (selector: string) => {
+      expect(selector).toBe('[data-id^="plugin:"][data-keyword]');
+      return {
+        filter: (options: { visible: boolean }) => {
+          expect(options).toEqual({ visible: true });
+          return { evaluateAll: async () => keywords };
+        },
+      };
+    },
+  });
+
+  await expect(connectorIsSelected.call({}, composerFor([]))).resolves.toBeFalse();
+  await expect(connectorIsSelected.call({}, composerFor(["Portal"]))).resolves.toBeTrue();
+  await expect(connectorIsSelected.call({}, composerFor(["Portal", "Portal"])))
+    .rejects.toThrow('duplicate "Portal" connector selections');
+  await expect(connectorIsSelected.call({}, composerFor(["Portal", "Other connector"])))
+    .rejects.toThrow("ambiguous connector selection");
+});
+
+test("an ambiguous Portal selection never inserts the prompt", async () => {
+  const attach = (ChatGptBrowserWorker.prototype as unknown as {
+    attachPrompt: (...args: unknown[]) => Promise<void>;
+  }).attachPrompt;
+  let insertions = 0;
+  const duplicate = new Error('duplicate "Portal" connector selections');
+  const worker = {
+    selectConnector: async () => { throw duplicate; },
+    insertPromptText: async () => { insertions += 1; },
+  };
+
+  await expect(attach.call(worker, {}, "must not be inserted", true))
+    .rejects.toBe(duplicate);
+  expect(insertions).toBe(0);
 });
 
 test("connector selection moves highlight to the exact hidden-viewport row before Enter", async () => {
@@ -1353,7 +1390,7 @@ test("connector selection moves highlight to the exact hidden-viewport row befor
   }).selectConnector;
 
   await expect(selectConnector.call({
-    config: { appName: "Codex Native2 DEV" },
+    config: { appName: "Portal" },
     connectorIsSelected: async () => selected,
     selectedConnectorControl: () => selectedConnector,
     activeComposer: async () => selected ? selectedComposer : initialComposer,
@@ -1377,7 +1414,7 @@ test("repeated connector verification reuses its selected pill before clearing t
   }).selectConnector;
 
   await expect(selectConnector.call({
-    config: { appName: "Codex Native2 DEV" },
+    config: { appName: "Portal" },
     activeComposer: async () => selectedComposer,
     connectorIsSelected: async () => true,
   }, page, async checkpoint => { checkpoints.push(checkpoint); })).resolves.toBe(selectedComposer);
@@ -1415,7 +1452,7 @@ test("connector selection retriggers the complete mention after a fresh-page hyd
     fill: async () => { calls.push("clear"); },
     focus: async (_options?: { signal?: AbortSignal }) => { calls.push("focus"); },
     pressSequentially: async (value: string) => {
-      expect(value).toBe("@codex");
+      expect(value).toBe("@Portal");
       calls.push("type");
     },
     press: async (key: string) => {
@@ -1437,7 +1474,7 @@ test("connector selection retriggers the complete mention after a fresh-page hyd
 
   let activeComposerCalls = 0;
   await selectConnector.call({
-    config: { appName: "Codex Native2" },
+    config: { appName: "Portal" },
     connectorIsSelected: async () => selected,
     connectorMentionRowTitles: async () => [],
     selectedConnectorControl: () => selectedConnector,
@@ -1479,7 +1516,7 @@ test("connector verification preserves the host-refreshed catalog evidence", asy
     getAttribute: async (name: string) => name === "data-highlighted" ? "" : null,
   };
   const visibleRows = {
-    allInnerTexts: async () => catalogFresh ? ["Codex Native2"] : ["Another connector"],
+    allInnerTexts: async () => catalogFresh ? ["Portal"] : ["Another connector"],
   };
   const menuRows = {
     filter: (options: { has?: unknown; visible?: boolean }) => options.visible ? visibleRows : appResult,
@@ -1526,7 +1563,7 @@ test("connector verification preserves the host-refreshed catalog evidence", asy
   };
   let prepared = 0;
   const fixture = {
-    config: { appName: "Codex Native2", browserDiagnosticsPath: diagnosticsRoot },
+    config: { appName: "Portal", browserDiagnosticsPath: diagnosticsRoot },
     ensurePage: async () => page,
     prepareTemporaryChatSurface: async () => {
       prepared += 1;
@@ -1544,7 +1581,7 @@ test("connector verification preserves the host-refreshed catalog evidence", asy
   Date.now = () => now;
   try {
     await expect(prototype.verifyConnectorExclusive.call(fixture)).rejects.toThrow(
-      'connector menu opened but exposed no row named "Codex Native2"',
+      'connector menu opened but exposed no row named "Portal"',
     );
     expect(prepared).toBe(1);
     expect(calls.filter(call => call === "reload")).toEqual([]);
@@ -1586,7 +1623,7 @@ for (const captureScreenshots of [false, true]) test(`connector failure persists
 
   try {
     await expect(verifyConnectorExclusive.call({
-      config: { appName: "Codex Native2", browserDiagnosticsPath: diagnosticsRoot },
+      config: { appName: "Portal", browserDiagnosticsPath: diagnosticsRoot },
       ensurePage: async () => page,
       prepareTemporaryChatSurface: async (_page: unknown, capture: (checkpoint: string) => Promise<void>) => {
         await capture("composer-ready");
@@ -1641,7 +1678,7 @@ test("successful connector verification clears the proven selection before relea
 
   try {
     const result = await verifyConnectorExclusive.call({
-      config: { appName: "Codex Native2 DEV", browserDiagnosticsPath: diagnosticsRoot },
+      config: { appName: "Portal", browserDiagnosticsPath: diagnosticsRoot },
       ensurePage: async () => page,
       prepareTemporaryChatSurface: async (_page: unknown, capture: (checkpoint: string) => Promise<void>) => {
         calls.push("prepare");
@@ -1654,7 +1691,7 @@ test("successful connector verification clears the proven selection before relea
       clearChatGptComposerState: async () => { calls.push("clear"); },
     }, "verify_success_contract");
 
-    expect(result).toBe("Codex Native2 DEV");
+    expect(result).toBe("Portal");
     expect(calls).toEqual(["prepare", "select", "clear"]);
     const [traceDirectory] = readdirSync(diagnosticsRoot);
     const checkpoints = readdirSync(join(diagnosticsRoot, traceDirectory!))
@@ -1674,7 +1711,7 @@ test("successful connector verification clears the proven selection before relea
   }
 });
 
-test("connector catalog refresh stays fail-closed for absent, legacy, and exact menu evidence", async () => {
+test("connector catalog refresh stays fail-closed for absent, stale, and exact menu evidence", async () => {
   const prototype = ChatGptBrowserWorker.prototype as unknown as {
     clearChatGptComposerState(page: unknown): Promise<void>;
     selectConnector(page: unknown, capture?: unknown, refresh?: boolean): Promise<unknown>;
@@ -1714,9 +1751,7 @@ test("connector catalog refresh stays fail-closed for absent, legacy, and exact 
         connectorMentionFailure: async (_rows: unknown, attempts: number) => (
           visibleRows.length === 0
             ? `menu absent after ${attempts}`
-            : visibleRows.includes("Codex Native")
-              ? legacyChatGptConnectorMigrationMessage("Codex Native")
-              : `exact row was not visible after ${attempts}`
+            : `exact row was not visible after ${attempts}`
         ),
       }, page, undefined, true);
     } finally {
@@ -1736,7 +1771,7 @@ test("connector catalog refresh stays fail-closed for absent, legacy, and exact 
     retryable: false,
   });
   expect(missingMenuError.message).toContain(`after ${MAX_CHATGPT_CONNECTOR_TRIGGER_ATTEMPTS}`);
-  await expect(run(["Codex Native"])).rejects.toThrow("Legacy ChatGPT connector");
+  await expect(run(["Other connector"])).rejects.toMatchObject({ name: "ChatGptConnectorCatalogStaleError" });
   await expect(run([CHATGPT_CONNECTOR_NAME])).rejects.toThrow("exact row was not visible");
 });
 
@@ -1820,7 +1855,7 @@ test("tool-capable prompts use the shared Playwright connector selection before 
 
   let activeComposerCalls = 0;
   await attachPrompt.call({
-    config: { appName: "Codex Native2" },
+    config: { appName: "Portal" },
     selectConnector,
     insertPromptText,
     connectorIsSelected: async () => selected,
@@ -1836,7 +1871,7 @@ test("tool-capable prompts use the shared Playwright connector selection before 
     ["fill", ""],
     ["fill", ""],
     ["focus"],
-    ["type", "@codex"],
+    ["type", "@Portal"],
     ["connectorMenu"],
     ["selectConnector"],
     ["selectedConnector"],
@@ -1901,7 +1936,7 @@ test("an aborted connector proof clears its mention before the preflight release
   };
 
   const selection = prototype.selectConnector.call({
-    config: { appName: "Codex Native2" },
+    config: { appName: "Portal" },
     activeComposer: async (_page: unknown, _timeout: number, signal?: AbortSignal) => {
       expect(signal).toBeDefined();
       return composer;
@@ -2007,7 +2042,7 @@ test("an aborted real connector selection clears the typed mention before return
   };
 
   const selection = prototype.selectConnector.call({
-    config: { appName: "Codex Native2" },
+    config: { appName: "Portal" },
     activeComposer: async () => composer,
     connectorIsSelected: async () => false,
     clearChatGptComposerState: prototype.clearChatGptComposerState,
@@ -2024,7 +2059,7 @@ test("an aborted real connector selection clears the typed mention before return
 });
 
 test("connector cleanup uses native editor deletion when contenteditable fill would retain the mention", async () => {
-  let composerText = "@codex";
+  let composerText = "@Portal";
   let selectedAll = false;
   let fillCalls = 0;
   const pressed: string[] = [];
@@ -2331,13 +2366,13 @@ function thinkSlashFixture() {
 
 test("Think slash toggles only when needed, preserves connectors, and normal Luna clears it", async () => {
   const { state, composerForm } = thinkSlashFixture();
-  state.connectors = ["Codex Native2"];
+  state.connectors = ["Portal"];
   const checkpoints: string[] = [];
 
   await setChatGptThinkMode(composerForm as never, true, async checkpoint => { checkpoints.push(checkpoint); });
   expect(state.pressed).toBeTrue();
   expect(state.commands).toEqual(["/think"]);
-  expect(state.connectors).toEqual(["Codex Native2"]);
+  expect(state.connectors).toEqual(["Portal"]);
   await setChatGptThinkMode(composerForm as never, true);
   expect(state.commands).toEqual(["/think"]);
   await setChatGptThinkMode(composerForm as never, false, async checkpoint => { checkpoints.push(checkpoint); });
@@ -2371,14 +2406,14 @@ test("Think attachment runs after fresh connector selection and rechecks retaine
     const submitted: boolean[] = [];
     const worker = {
       activeComposer: async () => ui.composer,
-      selectConnector: async () => { connectorSelections += 1; ui.state.connectors = ["Codex Native2"]; return ui.composer; },
+      selectConnector: async () => { connectorSelections += 1; ui.state.connectors = ["Portal"]; return ui.composer; },
       insertPromptText: async () => { submitted.push(ui.state.pressed); },
       assertPromptAttached: async () => {}, clearChatGptComposerState: async () => { ui.state.draft = ""; ui.state.connectors = []; },
     };
     await attach.call(worker, ui.page, "requested task", localTools, undefined, undefined, false, undefined, retained, true);
     expect(submitted).toEqual([true]);
     expect(connectorSelections).toBe(localTools && !retained ? 1 : 0);
-    if (localTools && !retained) expect(ui.state.connectors).toEqual(["Codex Native2"]);
+    if (localTools && !retained) expect(ui.state.connectors).toEqual(["Portal"]);
     if (retained) {
       ui.state.pressed = false;
       await attach.call(worker, ui.page, "follow-up task", localTools, undefined, undefined, false, undefined, retained, true);
@@ -2395,7 +2430,7 @@ test("Think attachment rolls back a lost connector and never inserts the prompt"
   let insertions = 0;
   let cleanup = 0;
   const worker = {
-    selectConnector: async () => { ui.state.connectors = ["Codex Native2"]; return ui.composer; },
+    selectConnector: async () => { ui.state.connectors = ["Portal"]; return ui.composer; },
     insertPromptText: async () => { insertions += 1; },
     clearChatGptComposerState: async () => { cleanup += 1; ui.state.draft = ""; ui.state.connectors = []; },
   };
@@ -2863,7 +2898,7 @@ function toolConfirmationPage(options: {
   };
   const dialog = {
     filter: ({ hasText }: { hasText: string }) => {
-      expect(hasText).toBe("Allow ChatGPT to use Codex Native?");
+      expect(hasText).toBe("Allow ChatGPT to use Portal?");
       return dialog;
     },
     last: () => dialog,
@@ -2899,35 +2934,35 @@ function toolConfirmationPage(options: {
 test("manual ChatGPT connector approval pauses and resumes the same browser turn", async () => {
   const fixture = toolConfirmationPage({ disappearAfterReads: 3 });
 
-  expect(await resolveChatGptToolConfirmation(fixture.page, "Codex Native", false, undefined, 100)).toBeTrue();
+  expect(await resolveChatGptToolConfirmation(fixture.page, false, undefined, 100)).toBeTrue();
   expect(fixture.pressed).toEqual([]);
 });
 
 test("an unanswered ChatGPT connector approval is denied instead of aborting the turn", async () => {
   const fixture = toolConfirmationPage();
 
-  expect(await resolveChatGptToolConfirmation(fixture.page, "Codex Native", false, undefined, 2)).toBeTrue();
+  expect(await resolveChatGptToolConfirmation(fixture.page, false, undefined, 2)).toBeTrue();
   expect(fixture.pressed).toEqual(["Deny:Enter"]);
 });
 
 test("explicit connector auto-approval still selects Allow once", async () => {
   const fixture = toolConfirmationPage();
 
-  expect(await resolveChatGptToolConfirmation(fixture.page, "Codex Native", true)).toBeTrue();
+  expect(await resolveChatGptToolConfirmation(fixture.page, true)).toBeTrue();
   expect(fixture.pressed).toEqual(["Allow once:Enter"]);
 });
 
 test("connector auto-approval accepts the current shortened Allow action", async () => {
   const fixture = toolConfirmationPage({ allowLabel: "Allow" });
 
-  expect(await resolveChatGptToolConfirmation(fixture.page, "Codex Native", true)).toBeTrue();
+  expect(await resolveChatGptToolConfirmation(fixture.page, true)).toBeTrue();
   expect(fixture.pressed).toEqual(["Allow:Enter"]);
 });
 
 test("auto-approval recognizes the observed non-dialog approval card", async () => {
   const fixture = toolConfirmationPage({ surface: "card" });
 
-  expect(await resolveChatGptToolConfirmation(fixture.page, "Codex Native", true)).toBeTrue();
+  expect(await resolveChatGptToolConfirmation(fixture.page, true)).toBeTrue();
   expect(fixture.pressed).toEqual(["Allow once:Enter"]);
 });
 

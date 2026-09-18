@@ -42,11 +42,10 @@ function inputContentParts(blocks: unknown[] | string | undefined): string | Cod
         // NEVER inline the (often base64 data-URL) image_url as text: that explodes the token count.
         parts.push({ type: "image", imageUrl: b.image_url, ...(b.detail ? { detail: normalizeImageDetail(b.detail) } : {}) });
       } else {
-        parts.push({ type: "text", text: `[image: ${b.file_id ?? "?"}]` }); // file_id ref → no inline data
+        throw new Error("Portal's browser route does not resolve Responses input_image file_id references; provide image_url content instead");
       }
     } else if (block.type === "input_file") {
-      const ref = (block as { file_id?: string; filename?: string }).file_id ?? (block as { filename?: string }).filename ?? "?";
-      parts.push({ type: "text", text: `[file: ${ref}]` });
+      throw new Error("Portal's browser route does not support Responses input_file content; provide the file contents through the originating Codex context instead");
     }
   }
   // Collapse to a plain string only for a single TEXT part; images must stay structured.

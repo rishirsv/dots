@@ -21,7 +21,7 @@ function source(): Record<string, unknown> {
 
 describe("Portal model catalog", () => {
   test("preserves native models and appends only ChatGPT Web Pro", () => {
-    const config = defaultConfig("full");
+    const config = defaultConfig();
     config.proAvailable = true;
     const models = augmentNativeModelCatalog(source(), config).models as Array<Record<string, unknown>>;
     expect(models.map(model => model.slug)).toEqual(["gpt-5.6-sol", "chatgpt-web/pro"]);
@@ -34,7 +34,7 @@ describe("Portal model catalog", () => {
   });
 
   test("preserves native passthrough without advertising a broken Pro route", () => {
-    const config = defaultConfig("full");
+    const config = defaultConfig();
     config.proAvailable = false;
     const models = augmentNativeModelCatalog(source(), config).models as Array<Record<string, unknown>>;
     expect(models.map(model => model.slug)).toEqual(["gpt-5.6-sol"]);

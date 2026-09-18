@@ -1474,8 +1474,8 @@ describe("ChatGPT outer-native harness v4", () => {
     expect(compiled.text).not.toContain(imageUrl);
     expect(compiled.text).toContain('"attachment_ref":"codex-input-image-1"');
     expect(compiled.text).toContain('"version":3');
-    expect(compiled.text).toContain("use the attached Codex Native tools directly according to their declared descriptions and schemas");
-    expect(compiled.text).toContain("Use actual Codex Native results as evidence");
+    expect(compiled.text).toContain("Portal exposes two local-tool operations: call portal_tools to discover the live Codex tool registry, then call portal_call with an exact returned wire_name");
+    expect(compiled.text).toContain("Treat the portal_tools result as authoritative");
     expect(compiled.text).toContain("Write the user-facing final answer only after the last required tool result has settled");
     expect(compiled.text.match(/turn_123456789012345678901234/g)).toHaveLength(1);
     expect(compiled.text).not.toContain("codex_bind_turn");
@@ -1551,7 +1551,7 @@ describe("ChatGPT outer-native harness v4", () => {
     ];
 
     const compiled = compileChatGptWebPrompt(request, browserOnlyCapabilities);
-    expect(compiled.text).toContain("ChatGPT Web Pro with no Codex Native bridge to the user's local computer");
+    expect(compiled.text).toContain("ChatGPT Web Pro with no Portal bridge to the user's local computer");
     expect(compiled.text).toContain("web search, browsing, research");
     expect(compiled.text).toContain("prepared workspace evidence");
     expect(compiled.text).toContain('"system":["system-rule","repo-rule"]');
@@ -1559,7 +1559,6 @@ describe("ChatGPT outer-native harness v4", () => {
     expect(compiled.images).toHaveLength(1);
     expect(compiled.text).not.toContain("codex_bind_turn");
     expect(compiled.text).not.toContain("turn_token");
-    expect(compiled.text).not.toContain("Use the attached Codex Native plugin");
     expect(() => compileChatGptWebPrompt(request, browserOnlyCapabilities, "turn_forbidden")).toThrow("must not receive");
 
     expect(chatGptReadOnlyContextWarning(request, browserOnlyCapabilities)).toContain("complete accumulated task context");
@@ -2476,8 +2475,8 @@ describe("ChatGPT outer-native harness v4", () => {
       expect(turn.capabilities.localToolsEnabled).toBe(true);
       const prepared = await turn.prepare();
       try {
-        expect(prepared.text).toContain("For local work required by the task, use the attached Codex Native tools directly");
-        expect(prepared.text).not.toContain("with no Codex Native bridge");
+        expect(prepared.text).toContain("Portal exposes two local-tool operations: call portal_tools to discover the live Codex tool registry, then call portal_call with an exact returned wire_name");
+        expect(prepared.text).not.toContain("with no Portal bridge");
         const token = prepared.text.match(/turn_token (turn_[A-Za-z0-9_-]+)/)?.[1];
         if (!token) throw new Error("turn token missing from compiled Pro prompt");
         const claimed = await callTurnBroker<{ bindingId: string }>(socketPath, { method: "claim", token });

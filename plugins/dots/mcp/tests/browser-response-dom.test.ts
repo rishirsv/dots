@@ -73,21 +73,21 @@ test("captured DIL smoke response reaches Markdown delivery and stable completio
     smokeHtml,
     smokeHtml.replaceAll("fv0XaG_", "changed_"),
     smokeHtml.replace('<p class="w6asjq_TextBase _85PZeG_Text">', '<p class="markdown">'),
-    '<section id="turn"><div class="markdown"><p>CODEX WEB GPT READY</p></div><button data-testid="copy-turn-action-button"></button></section>',
+    '<section id="turn"><div class="markdown"><p>PORTAL WEB GPT READY</p></div><button data-testid="copy-turn-action-button"></button></section>',
   ]) {
     const response = await snapshot(html);
-    expect(response.visibleText).toBe("CODEX WEB GPT READY");
+    expect(response.visibleText).toBe("PORTAL WEB GPT READY");
     expect(response.completionActionVisible).toBeTrue();
     const buffer = new ChatGptMarkdownBuffer();
     buffer.observe(response.markdownSegments, 0);
-    expect(buffer.finish().markdown).toBe("CODEX WEB GPT READY");
+    expect(buffer.finish().markdown).toBe("PORTAL WEB GPT READY");
     const tracker = new ChatGptCompletionTracker();
     const state = { ...response, running: false, currentText: response.visibleText, currentHtml: response.fullHtml };
     expect(tracker.update({ ...state, running: true }, 0)).toBeFalse();
     expect(tracker.update(state, 1)).toBeFalse();
     expect(tracker.update(state, 1 + CHATGPT_COMPLETION_SETTLE_MS)).toBeTrue();
     expect(response.traceBlocks.map(({ kind, text }) => ({ kind, text }))).toEqual([
-      { kind: "answer", text: "CODEX WEB GPT READY" },
+      { kind: "answer", text: "PORTAL WEB GPT READY" },
     ]);
   }
 });
@@ -105,6 +105,6 @@ test("DIL response extraction preserves ownership, commentary and completion bou
     expect(response.completionActionVisible).toBeFalse();
   }
   const noCopy = await snapshot(smokeHtml.replace('data-testid="copy-turn-action-button"', 'data-testid="other-action"'));
-  expect(noCopy.visibleText).toBe("CODEX WEB GPT READY");
+  expect(noCopy.visibleText).toBe("PORTAL WEB GPT READY");
   expect(noCopy.completionActionVisible).toBeFalse();
 });

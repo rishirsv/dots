@@ -28,7 +28,15 @@ bun run portal -- start --tunnel-id ID --runtime-key-file /absolute/path/to/key
 ```
 
 The first start guides ChatGPT sign-in and connector setup. Once healthy,
-Codex exposes **ChatGPT Web — Pro** in its model picker.
+Codex exposes **ChatGPT Web — Pro** in its model picker. The automated Codex
+route is deliberately Pro-only; Portal does not implement a second model picker
+or natural-language model router.
+
+For a task started in Codex, keep all follow-ups in Codex. The managed Chrome
+tab is Portal's execution surface and is not a synchronized place to steer the
+Codex task. For a conversation started directly in ChatGPT with `@Portal`, keep
+the follow-ups in that ChatGPT conversation and use ChatGPT's own model/effort
+controls there.
 
 ```sh
 bun run portal -- status
@@ -47,6 +55,14 @@ bun run typecheck
 bun run test:core
 bun run build:all
 ```
+
+`bun run smoke` is an ordinary isolated release smoke: it relocates the runtime,
+checks the daemon, and exercises direct MCP access against a disposable home.
+It reports that the authenticated browser-to-Portal-to-Codex round trip was not
+run; use the explicit authenticated setup/verification flow when that canary is
+needed. The `smoke:codex`, `smoke:cancel`, `smoke:interrupt`, and
+`smoke:subagents` commands are local Codex protocol canaries with their own
+fixtures, not proof of an authenticated browser round trip.
 
 See [SPEC.md](SPEC.md) for the product contract and [UPSTREAM.md](UPSTREAM.md)
 for source provenance.

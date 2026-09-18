@@ -34,8 +34,19 @@ async function proxyCheck(config: AppConfig): Promise<DoctorCheck> {
     const response = await fetch(`http://${config.host}:${config.port}/healthz`, { signal: controller.signal });
     if (!response.ok) return { id: "proxy", status: "error", message: `Responses proxy returned HTTP ${response.status}` };
     const body = await response.json() as Record<string, unknown>;
-    if (body.service !== "portal" || body.status !== "ok") {
+    if (body.service !== "portal") {
       return { id: "proxy", status: "error", message: "The configured port belongs to another service" };
+    }
+    if (body.broker_ready !== true) {
+      return {
+        id: "proxy",
+        status: "error",
+        message: "Responses proxy is running but its bound-turn broker is unavailable",
+        ...(typeof body.broker_error === "string" ? { detail: body.broker_error } : {}),
+      };
+    }
+    if (body.status !== "ok") {
+      return { id: "proxy", status: "error", message: "Responses proxy is not healthy" };
     }
     if (body.mode !== config.mode) {
       return { id: "proxy", status: "error", message: `Daemon is running in ${String(body.mode)} mode; config requires ${config.mode}` };
@@ -47,7 +58,7 @@ async function proxyCheck(config: AppConfig): Promise<DoctorCheck> {
       return {
         id: "proxy",
         status: "error",
-        message: "Responses proxy is still drained and is not accepting Codex turns",
+        message: "Responses proxy is drained and is not accepting Codex turns",
       };
     }
     return { id: "proxy", status: "ok", message: `Responses proxy is healthy on 127.0.0.1:${config.port}` };
@@ -82,7 +93,7 @@ export async function runDoctor(): Promise<DoctorReport> {
   } else if (!secureFile(loginVerificationMarkerPath(config.storageStatePath))) {
     checks.push({ id: "login", status: "error", message: "ChatGPT login verification marker is readable by other users" });
   } else {
-    checks.push({ id: "login", status: "ok", message: "ChatGPT login state has authenticated browser evidence" });
+    checks.push({ id: "login", status: "ok", message: "ChatGPT login state has previously verified authenticated browser evidence" });
   }
 
   const codex = inspectCodexIntegration();
@@ -90,8 +101,10 @@ export async function runDoctor(): Promise<DoctorReport> {
     checks.push({ id: "codex", status: "error", message: "Codex model route is not installed" });
   } else if (codex.errors.length > 0) {
     checks.push({ id: "codex", status: "error", message: "Codex integration is inconsistent", detail: codex.errors.join("; ") });
+  } else if (!codex.active) {
+    checks.push({ id: "codex", status: "error", message: "Portal's Codex route is installed but inactive; run `portal start`" });
   } else {
-    checks.push({ id: "codex", status: "ok", message: "Codex native model route is installed" });
+    checks.push({ id: "codex", status: "ok", message: "Portal's Codex route is installed and active" });
   }
 
   const service = getServiceStatus();

@@ -42,7 +42,15 @@ uninstall` removes the integration while preserving login data unless the user
 explicitly requests its deletion.
 
 In Codex, the authenticated account's model catalog gains one routed model:
-**ChatGPT Web — Pro**. Portal never silently substitutes another model.
+**ChatGPT Web — Pro**. Portal never silently substitutes another model. The
+automated bridge does not mirror ChatGPT's model picker; users who want another
+ChatGPT Web mode use a direct ChatGPT conversation and its native controls.
+
+Conversation ownership is explicit. A Codex-originated task remains a Codex
+conversation: all follow-ups and corrections are entered in Codex, while the
+managed Chrome tab is only an execution surface. A direct ChatGPT conversation
+that invokes `@Portal` remains a ChatGPT conversation. Portal does not synchronize
+user-authored turns between those two surfaces.
 
 ## Product Context
 
@@ -78,7 +86,9 @@ Portal has five internal owners in one package:
 
 ChatGPT sees two stable connector operations: `portal_tools` for discovery and
 `portal_call` for invocation. Adding a Codex tool must not require a Portal
-release or connector schema refresh.
+release or connector schema refresh. An omitted turn token means an explicit
+direct ChatGPT call; a supplied turn token must remain bound to the originating
+Codex turn and may never fall back to direct local execution.
 
 The runtime keeps only transient state necessary for an active logical turn.
 A logical turn may span multiple Responses requests while Codex executes tools,
@@ -107,7 +117,7 @@ mutations after restart.
   replay database.
 - Redaction, privacy dashboards, document-fidelity policy, or content filters.
 - Hosted relay accounts, OAuth, device pairing, Postgres, or multi-device use.
-- Browser-only, manual, Zero Risk, Bigger Context, Luna checkpoint, alternate
+- Browser-only, Portal manual, Bigger Context, Luna checkpoint, alternate
   ChatGPT-model, dashboard, activity, or configurable transport modes.
 
 ## Completion Criteria

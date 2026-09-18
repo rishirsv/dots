@@ -19,7 +19,7 @@ if (bundled.status !== 0) {
   throw new Error(`Could not read bundled Codex models: ${bundled.error?.message || bundled.stderr}`);
 }
 
-const config = defaultConfig("full");
+const config = defaultConfig();
 config.proAvailable = true;
 const catalog = augmentNativeModelCatalog(JSON.parse(bundled.stdout), config);
 const root = join(tmpdir(), `codex-chatgpt-web-cancel-${process.pid}-${Date.now()}`);

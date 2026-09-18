@@ -22,7 +22,7 @@ test("login captures state directly in a headed Keychain-aware context", async (
   const previousLog = process.env.CODEX_LOGIN_ARG_LOG;
   process.env.CODEX_LOGIN_ARG_LOG = argsLog;
   try {
-    const config = defaultConfig("full");
+    const config = defaultConfig();
     config.chromeExecutablePath = executable;
     config.storageStatePath = join(root, "browser", "storage-state.json");
     await loginToChatGpt(config, { timeoutMs: 100 }).catch(() => {});
@@ -61,7 +61,7 @@ test("passkey login authenticates in normal Chrome before isolated offline pipe 
   process.env.CODEX_LOGIN_ARG_LOG = argsLog;
   process.env.CODEX_LOGIN_PID_LOG = pidLog;
   try {
-    const config = defaultConfig("full");
+    const config = defaultConfig();
     config.chromeExecutablePath = executable;
     config.storageStatePath = join(root, "transfer", "storage-state.json");
     let continueLogin!: () => void;
@@ -129,7 +129,7 @@ test("passkey storage capture excludes identity-provider and partitioned state",
 test("a storage-state file is not trusted without a verification marker", () => {
   const root = mkdtempSync(join(tmpdir(), "codex-chatgpt-web-login-state-"));
   try {
-    const config = defaultConfig("full");
+    const config = defaultConfig();
     config.storageStatePath = join(root, "storage-state.json");
     writeFileSync(config.storageStatePath, "{}\n", { mode: 0o600 });
     expect(browserLoginStateExists(config)).toBe(false);

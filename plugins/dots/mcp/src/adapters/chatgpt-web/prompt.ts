@@ -36,9 +36,9 @@ export interface CompileChatGptWebPromptOptions {
   experimentalSkillAttachments?: boolean;
   experimentalMultipartParts?: ChatGptWebMultipartPartCount;
   /**
-   * Manual Zero Risk transport keeps ChatGPT model/effort selection and prompt submission under the
+   * Portal manual transport keeps ChatGPT model/effort selection and prompt submission under the
    * user's control. The browser bridge may open the owned tab and copy this prompt, but it never
-   * reads or mutates ChatGPT's DOM. Completion is accepted only through the bound Zero Risk MCP tools.
+   * reads or mutates ChatGPT's DOM. Completion is accepted only through the bound Portal MCP tools.
    */
   manualControl?: true;
 }
@@ -434,20 +434,20 @@ export function compileChatGptWebPrompt(
   const manualControl = options?.manualControl === true;
   const attachSkills = options?.experimentalSkillAttachments === true;
   if (attachSkills && (manualControl || isChatGptWebZeroRiskBackendModel(parsed.modelId))) {
-    throw new Error("Skills as files is unavailable in Zero Risk mode");
+    throw new Error("Skills as files is unavailable in Portal manual mode");
   }
   const mode = manualControl
-    ? { localTools: true, effort: "low" as const, displayLabel: "Zero Risk" as const }
+    ? { localTools: true, effort: "low" as const, displayLabel: "Portal manual" as const }
     : resolveChatGptWebModelMode(parsed.modelId, parsed.options.reasoning, capabilities);
   const captureLunaCheckpoint = options?.captureLunaCheckpoint === true;
   const multipartParts = options?.experimentalMultipartParts;
   const multipartEnabled = multipartParts !== undefined;
   if (manualControl) {
     if (!capabilities.localToolsEnabled) {
-      throw new Error("ChatGPT Zero Risk requires the Full Codex harness");
+      throw new Error("Portal manual mode requires the Full Codex harness");
     }
     if (captureLunaCheckpoint || multipartEnabled) {
-      throw new Error("ChatGPT Zero Risk does not support rolling or multipart browser transport");
+      throw new Error("Portal manual mode does not support rolling or multipart browser transport");
     }
   }
   if (multipartParts !== undefined && multipartParts !== 2 && multipartParts !== CHATGPT_BIGGER_CONTEXT_PARTS) {
@@ -464,13 +464,16 @@ export function compileChatGptWebPrompt(
   }
   if (mode.localTools && !turnToken) {
     throw new Error(manualControl
-      ? "ChatGPT Zero Risk requires a broker request id"
+      ? "Portal manual mode requires a broker request id"
       : "Tool-capable ChatGPT web mode requires a broker turn token");
   }
   if (!mode.localTools && turnToken !== undefined) {
     throw new Error("A read-only ChatGPT Web effort must not receive a local-tool capability token");
   }
   const system = parsed.context.systemPrompt ?? [];
+  const boundContextField = manualControl ? "request_id" : "turn_token";
+  const boundContextInstruction = `This bound Portal context is mandatory: pass the supplied ${boundContextField} unchanged to every portal_tools and portal_call operation, including continuations after tool results. Never omit, replace, or regenerate it; if a Portal operation fails, report that failure and do not retry without the same bound context.`;
+  const boundContextResume = `This bound Portal context is mandatory: pass ${boundContextField} ${turnToken} unchanged to every portal_tools and portal_call operation, including continuations after tool results. Never omit, replace, or regenerate it; if a Portal operation fails, report that failure and do not retry without the same bound context.`;
   const sharedContract = [
     "Act as the model backend for the Codex task encoded below.",
     multipartEnabled
@@ -505,16 +508,17 @@ export function compileChatGptWebPrompt(
       ]
     : mode.localTools
     ? [
-      "For local work required by the task, use the attached Codex Native tools directly according to their declared descriptions and schemas.",
-      "Call a Codex Native tool only when the latest active request requires a local effect or fresh local evidence that is not already present in the supplied context; otherwise answer the request directly without a tool call.",
-      "Use actual Codex Native results as evidence for local observations and effects.",
-      "A Codex Native MCP tool result may require context compaction. If it does, follow the compaction instructions in that result exactly.",
+      "Portal exposes two local-tool operations: call portal_tools to discover the live Codex tool registry, then call portal_call with an exact returned wire_name.",
+      "Use portal_tools only when the latest active request requires a local effect or fresh local evidence that is not already present in the supplied context; otherwise answer the request directly without a tool call.",
+      "Treat the portal_tools result as authoritative: pass structured arguments matching the returned parameters, or pass input only for a returned freeform tool. Do not invent tool names or schemas.",
+      boundContextInstruction,
+      "A Portal tool result may require context compaction. If it does, follow the compaction instructions in that result exactly.",
       "After a deterministic tool failure, update the working hypothesis from that result and inspect the relevant repository or environment before choosing a different next action; do not repeat the same call unless its inputs or observable state changed.",
       "Continue using the available tools until the requested work is complete and verified.",
       "Write the user-facing final answer only after the last required tool result has settled. Do not call another tool after beginning that final answer.",
     ]
     : [
-      `This is ChatGPT Web ${mode.displayLabel} with no Codex Native bridge to the user's local computer attached to this response. This restriction applies only to local Codex files, commands, processes, and computer mutations.`,
+      `This is ChatGPT Web ${mode.displayLabel} with no Portal bridge to the user's local computer attached to this response. This restriction applies only to local Codex files, commands, processes, and computer mutations.`,
       "Use any ChatGPT-native capabilities available in this chat—including web search, browsing, research, and other first-party tools—whenever they help complete the request. The missing local-computer bridge says nothing about whether those ChatGPT capabilities are available.",
       "The task history below already contains everything Codex collected from the user's local workspace. Treat prior local tool results as authoritative snapshots of that earlier work.",
       "Do not claim a new local inspection, command, edit, or verification unless it actually appears in the task history. If the latest request requires fresh local-computer access or a local mutation, state only that exact limitation instead of inventing success.",
@@ -554,9 +558,9 @@ export function compileChatGptWebPrompt(
     : [];
   const manualControlContract = manualControl
     ? [
-      "<codex_zero_risk_request_json>",
+      "<portal_request_json>",
       JSON.stringify({ request_id: turnToken }),
-      "</codex_zero_risk_request_json>",
+      "</portal_request_json>",
     ]
     : [];
   const transportResume = parsed._compactionRequest
@@ -574,13 +578,13 @@ export function compileChatGptWebPrompt(
     : manualControl
     ? [
       "<codex_transport_resume>",
-      "The task context is complete. Execute the latest active user request now.",
+      `The task context is complete. ${boundContextInstruction} Execute the latest active user request now.`,
       "</codex_transport_resume>",
     ]
     : mode.localTools
     ? [
       "<codex_transport_resume>",
-      `The task context is complete. Pass turn_token ${turnToken} unchanged to every Codex Native call in this response, including continuations after tool results; do not expose it in the answer. Execute the latest active user request now.`,
+      `The task context is complete. ${boundContextResume} Execute the latest active user request now.`,
       "</codex_transport_resume>",
     ]
     : [

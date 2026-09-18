@@ -17,6 +17,20 @@ describe("service drain lifecycle", () => {
     expect(acceptingTurns).toBe(true);
   });
 
+
+  test("can hold admission closed while active work is cancelled by the operation owner", async () => {
+    const actions: string[] = [];
+    const lease = await negotiateDrain(async action => {
+      actions.push(action);
+      return action === "drain"
+        ? { accepting_turns: false, active_http_turns: 2, active_browser_turns: 1 }
+        : { accepting_turns: true, active_http_turns: 0, active_browser_turns: 0 };
+    }, { requireIdle: false });
+    expect(actions).toEqual(["drain"]);
+    await lease.release();
+    expect(actions).toEqual(["drain", "resume"]);
+  });
+
   test("releases a verified idle drain", async () => {
     const actions: string[] = [];
     const lease = await negotiateDrain(async action => {

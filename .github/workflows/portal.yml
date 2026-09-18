@@ -38,17 +38,5 @@ jobs:
           bun-version: 1.4.0
       - name: Install runtime dependencies
         run: bun install --frozen-lockfile --ignore-scripts
-      - name: Install launcher dependencies
-        run: bun install --cwd launcher --frozen-lockfile
-      - name: Typecheck runtime
-        run: bun run typecheck
-      - name: Test runtime
-        run: bun run test:core
-      - name: Typecheck launcher
-        run: bun run launcher:typecheck
-      - name: Test launcher
-        run: bun run launcher:test
-      - name: Build launcher
-        run: bun run launcher:build
-      - name: Build runtime bundle
-        run: bun run build
+      - name: Verify Portal
+        run: bun run verify

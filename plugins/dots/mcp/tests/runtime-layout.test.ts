@@ -86,7 +86,7 @@ test("user-home expansion accepts native Unix and Windows separators", () => {
 });
 
 test("default setup uses the fixed production connector identities", () => {
-  const config = defaultConfig("full");
+  const config = defaultConfig();
   expect(config.appName).toBe(CHATGPT_CONNECTOR_NAME);
   expect(config.automaticAppName).toBe(CHATGPT_CONNECTOR_NAME);
   expect(config.subagentProtocol).toBe("compatibility-v1");
@@ -111,7 +111,7 @@ test("legacy temp-path wrapper and vendor are removed only after runtime ownersh
   writeFileSync(wrapper, "#!/bin/sh\n");
   writeFileSync(vendorFile, "{}\n");
 
-  const config = defaultConfig("full");
+  const config = defaultConfig();
   config.runtimeCommand = [wrapper];
   expect(() => removeLegacyRuntimeArtifacts(config)).toThrow("still references");
   expect(existsSync(wrapper)).toBe(true);

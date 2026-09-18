@@ -17,7 +17,7 @@ import { formatDoctorReport, runDoctor } from "./doctor";
 import { runChatGptMcpMain } from "./adapters/chatgpt-web/mcp-main";
 import { runCommand } from "./process";
 import { startServer } from "./server";
-import { assertServiceIdle, cancelActiveTurns, getServiceStatus, installService, interruptActiveTurn, restartService, startService, stopService, uninstallService } from "./service";
+import { acquireServiceDrain, assertServiceIdle, cancelActiveTurns, getServiceStatus, installService, interruptActiveTurn, restartService, startService, stopService, uninstallService } from "./service";
 import { existingFullSetupCredentials, preflightSetup, setup, type SetupOptions } from "./setup";
 import { installRuntimeKeyBytes, managedRuntimeKeyPath, stopTunnel, tunnelStatus, waitForTunnelReady } from "./tunnel";
 import { getTunnelServiceStatus, restartTunnelService, startTunnelService, stopTunnelService, uninstallTunnelService } from "./tunnel-service";
@@ -32,7 +32,7 @@ Usage:
   portal login
   portal status [--json]
   portal stop
-  portal uninstall [--yes] [--keep-data]
+  portal uninstall [--yes] [--purge-data]
 
 Start options:
   --port NUMBER                Loopback Responses port (default: 17841)
@@ -152,13 +152,16 @@ async function setupCommand(args: string[]): Promise<void> {
   }
 
   const result = await setup(options);
-  stdout.write("Portal is running in full automatic mode.\n");
+  stdout.write(result.connectorSetupRequired ? "Portal local runtime is running; connector setup is still required.\n" : "Portal is running and its Codex route is ready.\n");
   stdout.write(`Config: ${result.configPath}\n`);
   if (result.connectorSetupRequired) {
     stdout.write(`One account-level step remains: attach the tunnel to the ChatGPT connector named "Portal" and choose Allow all actions.\n`);
     stdout.write("Open: https://chatgpt.com/#settings/Plugins\n");
+    stdout.write("Then run `portal start` again so Portal can verify the connector before installing the Codex route.\n");
   }
-  stdout.write("Restart the Codex app once so its native model catalog refreshes through the installed route.\n");
+  if (result.codexRestartRequired) {
+    stdout.write("Restart the Codex app once so its native model catalog refreshes through the installed route.\n");
+  }
 }
 
 async function doctorCommand(args: string[]): Promise<void> {
@@ -309,7 +312,7 @@ async function openCommand(args: string[]): Promise<void> {
 
 async function uninstallCommand(args: string[]): Promise<void> {
   const yes = takeFlag(args, "--yes");
-  const keepData = takeFlag(args, "--keep-data");
+  const purgeData = takeFlag(args, "--purge-data");
   assertNoArgs(args);
   if (!yes && !await confirm("Restore Codex config, stop services, and remove this installation?")) {
     throw new Error("Uninstall cancelled");
@@ -318,29 +321,63 @@ async function uninstallCommand(args: string[]): Promise<void> {
   if (!config && process.platform === "darwin" && getServiceStatus().installed) {
     throw new Error("Service exists but configuration is missing; refusing an unverifiable uninstall");
   }
-  if (config && process.platform === "darwin") await assertServiceIdle(config);
-  if (config?.mode === "full") {
-    if (process.platform === "darwin") await uninstallTunnelService();
-    stopTunnel(config);
+  let drain: Awaited<ReturnType<typeof acquireServiceDrain>> | undefined;
+  try {
+    if (config && process.platform === "darwin" && getServiceStatus().loaded) {
+      drain = await acquireServiceDrain(config, { requireIdle: false });
+      await cancelActiveTurns(config);
+    }
+    // Route restoration is independent of daemon reachability and should happen before removing
+    // the local services so Codex is never intentionally left pointed at a disappearing endpoint.
+    uninstallCodexIntegration();
+    if (config?.mode === "full") {
+      if (process.platform === "darwin") await uninstallTunnelService();
+      stopTunnel(config);
+    }
+    if (config && process.platform === "darwin") await uninstallService(config);
+  } catch (error) {
+    if (drain && getServiceStatus().loaded) {
+      try { await drain.release(); } catch (resumeError) {
+        throw new AggregateError([error, resumeError], "Portal uninstall failed and the daemon could not resume");
+      }
+    }
+    throw error;
   }
-  if (config && process.platform === "darwin") await uninstallService(config);
-  uninstallCodexIntegration();
-  if (!keepData) rmSync(getConfigDir(), { recursive: true, force: true });
-  stdout.write(keepData ? "Uninstalled; private application data was preserved.\n" : "Uninstalled and removed private application data.\n");
+  if (purgeData) rmSync(getConfigDir(), { recursive: true, force: true });
+  stdout.write(purgeData
+    ? "Uninstalled and removed private application data.\n"
+    : "Uninstalled; private application data was preserved. Use --purge-data to remove it.\n");
 }
 
 async function stopCommand(args: string[]): Promise<void> {
   assertNoArgs(args);
   const config = loadConfig();
-  await cancelActiveTurns(config);
-  if (process.platform === "darwin") {
-    const tunnelService = getTunnelServiceStatus();
-    if (tunnelService.loaded) await stopTunnelService();
-    const service = getServiceStatus();
-    if (service.loaded) await stopService(config);
+  let drain: Awaited<ReturnType<typeof acquireServiceDrain>> | undefined;
+  try {
+    if (process.platform === "darwin" && getServiceStatus().loaded) {
+      drain = await acquireServiceDrain(config, { requireIdle: false });
+      await cancelActiveTurns(config);
+    } else {
+      // A manually run daemon has no launchd owner. Best-effort cancellation is useful when it is
+      // reachable, but route restoration below must not depend on that process still being alive.
+      try { await cancelActiveTurns(config); } catch {}
+    }
+    deactivateCodexIntegration();
+    if (process.platform === "darwin") {
+      const tunnelService = getTunnelServiceStatus();
+      if (tunnelService.loaded) await stopTunnelService();
+      const service = getServiceStatus();
+      if (service.loaded) await stopService(config);
+    }
+    stopTunnel(config);
+  } catch (error) {
+    if (drain && getServiceStatus().loaded) {
+      try { await drain.release(); } catch (resumeError) {
+        throw new AggregateError([error, resumeError], "Portal stop failed and the daemon could not resume");
+      }
+    }
+    throw error;
   }
-  stopTunnel(config);
-  deactivateCodexIntegration();
   stdout.write("Portal stopped and the previous Codex route was restored.\n");
 }
 

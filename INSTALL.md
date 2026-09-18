@@ -44,37 +44,45 @@ Use only the command for the host installed on the Mac. Codex sync also
 refreshes the second profile at `~/.codex-personal` when that directory exists.
 Claude sessions that were already open require `/reload-plugins` or a restart.
 
-## Install the Portal MCP
+## Install Portal
 
-Portal is an optional local MCP included in the Dots plugin. It exposes only
-resources explicitly granted to the local Portal agent; installation creates no
-grants.
+Portal is an optional local bridge included in the Dots repository. It keeps a
+Codex task as the authoritative conversation while ChatGPT Web Pro performs the
+model turn and the originating Codex task executes its tools.
 
-From the checkout, use Node 22.16.0 (the package requires Node 22.16 through
-22.x), then build and install the per-user release:
+From the checkout, install the package's pinned Bun version (currently 1.4.0),
+build the relocatable runtime, and install it for the current user:
 
 ```sh
 cd plugins/dots/mcp
-npm ci --ignore-scripts
-npm run build
-node bin/portal.mjs install
+bun install --frozen-lockfile --ignore-scripts
+bun run build
+./scripts/install.sh
 export PATH="$HOME/.local/bin:$PATH"
-portal start
 ```
 
-The Dots plugin includes Portal's MCP definition disabled by default so a fresh
-plugin install never tries to launch an unbuilt server. After the launcher is
-installed and `portal doctor` succeeds, enable the bundled server in Codex:
+Start Portal with an OpenAI tunnel id and a Tunnels Read+Use runtime key:
 
-```toml
-[plugins."dots".mcp_servers.portal]
-enabled = true
+```sh
+portal start --tunnel-id ID --runtime-key-file /absolute/path/to/key
+portal status
 ```
 
-Run `portal doctor` before granting a disposable fixture directory. Do not
-grant a home directory, Portal state, or credential directory. Add
-`--start-at-login` to the install command only after reviewing the generated
-LaunchAgent behavior.
+The first start opens the dedicated Chrome login flow when needed and prints the
+one remaining account-level connector step when ChatGPT has not yet been
+connected to the tunnel. Create/select the connector with the exact name
+**Portal** and allow the actions required by this local bridge. Portal installs
+its reversible Codex route only after its local runtime and tunnel are ready.
+
+Use `portal login` to refresh ChatGPT authentication, `portal stop` to restore
+the previous Codex route and stop Portal, and `portal uninstall` to remove the
+integration while preserving private login/application data. Pass
+`--purge-data` only when that private data should also be deleted.
+
+For a Codex-originated task, enter follow-ups in Codex. The Chrome window Portal
+opens is an execution surface, not a second synchronized task editor. A direct
+ChatGPT conversation that invokes `@Portal` is a separate workflow; continue
+that conversation in ChatGPT.
 
 ## Restore machine configuration
 

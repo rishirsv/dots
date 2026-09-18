@@ -19,6 +19,8 @@ describe("Portal CLI", () => {
     expect(output).not.toContain("dev ");
     expect(output).not.toContain("launcher");
     expect(output).not.toContain("browser-host-descriptor");
+    expect(output).toContain("portal uninstall [--yes] [--purge-data]");
+    expect(output).not.toContain("--keep-data");
   });
 
   test("uses Portal branding and keeps internal commands out of public help", () => {

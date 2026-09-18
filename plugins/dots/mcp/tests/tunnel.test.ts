@@ -78,6 +78,32 @@ describe("tunnel status boundary", () => {
     expect(tunnelConnectLaunchError("not json")).toBe("tunnel-client returned non-JSON connect output");
   });
 
+  test("a competing local alias for the same tunnel never satisfies Portal readiness", () => {
+    const tunnelId = "tunnel_0123456789abcdef0123456789abcdef";
+    const result = parseTunnelStatus(JSON.stringify({ entries: [
+      { alias: "portal", tunnel_id: tunnelId, runtime_state: "stopped" },
+      { alias: "legacy-portal", tunnel_id: tunnelId, runtime_state: "ready" },
+    ] }), "portal", 0, tunnelId);
+    expect(result).toMatchObject({
+      ok: false, processRunning: false, healthy: false, ready: false, state: "stopped",
+    });
+    expect(result.detail).toContain("same_tunnel_ready_under_other_alias=legacy-portal");
+    expect(result.detail).toContain("Portal requires alias=portal");
+    expect(result.detail).not.toContain(tunnelId);
+  });
+
+  test("a ready Portal alias for a different tunnel never satisfies readiness", () => {
+    const result = parseTunnelStatus(JSON.stringify({ entries: [
+      { alias: "portal", tunnel_id: "tunnel_wrong", runtime_state: "ready" },
+    ] }), "portal", 0, "tunnel_expected");
+    expect(result).toMatchObject({
+      ok: false, processRunning: true, healthy: true, ready: true, state: "ready",
+    });
+    expect(result.detail).toContain("selected_alias_tunnel_id_mismatch=true");
+    expect(result.detail).not.toContain("tunnel_wrong");
+    expect(result.detail).not.toContain("tunnel_expected");
+  });
+
   test("missing, ambiguous, or malformed local inventory cannot report ready", () => {
     const ready = { alias: "ours", runtime_state: "ready" };
     for (const output of ["invalid JSON", "{}", JSON.stringify({ entries: [ready, ready] }),

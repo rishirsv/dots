@@ -48,6 +48,11 @@ import { namespacedToolName, type AdapterEvent, type CodexParsedRequest } from "
 import type { CodexProviderConfig } from "./types";
 import type { ProviderAdapter } from "./adapters/base";
 import { VERSION } from "./version";
+import {
+  chatGptExecutionErrorCode,
+  emitChatGptExecutionEvidence,
+  type ChatGptExecutionEvidenceWriter,
+} from "./adapters/chatgpt-web/turn-execution";
 
 type HttpTrackedEndpoint = "models" | "responses" | "compact" | "search" | "unspecified" | NativeImageEndpoint;
 
@@ -140,7 +145,10 @@ export class HttpTurnCounter {
     }
   }
 
-  constructor(private readonly reportStreamFailure: HttpStreamFailureReporter = reportHttpStreamFailure) {}
+  constructor(
+    private readonly reportStreamFailure: HttpStreamFailureReporter = reportHttpStreamFailure,
+    private readonly reportExecution: ChatGptExecutionEvidenceWriter = emitChatGptExecutionEvidence,
+  ) {}
 
   count(): number {
     return this.active.size;
@@ -185,12 +193,14 @@ export class HttpTurnCounter {
     run: (
       signal: AbortSignal,
       bindIdentity: (identity: NativeCodexTurnIdentity) => void,
+      httpTurnId: number,
     ) => Promise<Response>,
     clientSignal?: AbortSignal,
     platform: NodeJS.Platform = process.platform,
     endpoint: HttpTrackedEndpoint = "unspecified",
   ): Promise<Response> {
     const id = this.nextId++;
+    const startedAt = performance.now();
     const abort = new AbortController();
     let finish!: () => void;
     const done = new Promise<void>(resolve => { finish = resolve; });
@@ -201,10 +211,30 @@ export class HttpTurnCounter {
       identity?: NativeCodexTurnIdentity;
     } = { abort, done, finish };
     this.active.set(id, tracked);
+    const reportLifecycle = (
+      stage: "receipt" | "dispatch" | "reply_delivery" | "cancellation" | "unknown",
+      outcome: "accepted" | "started" | "delivered" | "cancelled" | "unknown",
+      error?: unknown,
+    ): void => {
+      emitChatGptExecutionEvidence({
+        stage,
+        outcome,
+        http_turn_id: id,
+        started: stage === "receipt" ? false : true,
+        elapsed_ms: Math.round(performance.now() - startedAt),
+        ...(error !== undefined ? { error_code: chatGptExecutionErrorCode(error) } : {}),
+        execution_proven: false,
+        retry_guidance: stage === "cancellation" || stage === "unknown" ? "do_not_retry" : "unknown",
+      }, this.reportExecution);
+    };
+    reportLifecycle("receipt", "accepted");
     let released = false;
     let clientAbortListener: (() => void) | undefined;
     let streamAbortListener: (() => void) | undefined;
-    const release = () => {
+    const release = (
+      terminal: "delivered" | "cancelled" | "unknown" = abort.signal.aborted ? "cancelled" : "unknown",
+      error?: unknown,
+    ) => {
       if (released) return;
       released = true;
       this.active.delete(id);
@@ -213,6 +243,9 @@ export class HttpTurnCounter {
         clientAbortListener = undefined;
       }
       if (streamAbortListener) abort.signal.removeEventListener("abort", streamAbortListener);
+      if (terminal === "delivered" && !abort.signal.aborted) reportLifecycle("reply_delivery", "delivered");
+      else if (terminal === "cancelled" || abort.signal.aborted) reportLifecycle("cancellation", "cancelled", error ?? abort.signal.reason);
+      else reportLifecycle("unknown", "unknown", error);
       finish();
     };
     clientAbortListener = () => abort.abort(clientSignal?.reason);
@@ -220,6 +253,7 @@ export class HttpTurnCounter {
     else clientSignal?.addEventListener("abort", clientAbortListener, { once: true });
 
     try {
+      reportLifecycle("dispatch", "started");
       const response = await run(abort.signal, identity => {
         if (!identity.threadId.trim() || !identity.turnId.trim()) {
           throw new Error("Native Codex turn identity must contain a threadId and turnId");
@@ -231,14 +265,14 @@ export class HttpTurnCounter {
         tracked.identity = identity;
         const interruptedReason = this.interrupted.get(this.identityKey(identity));
         if (interruptedReason !== undefined && !abort.signal.aborted) abort.abort(interruptedReason);
-      });
+      }, id);
       if (!response.body) {
-        release();
+        release("delivered");
         return response;
       }
       if (abort.signal.aborted) {
         await response.body.cancel(abort.signal.reason).catch(() => {});
-        release();
+        release("cancelled", abort.signal.reason);
         return new Response(null, { status: 499, statusText: "Client Closed Request" });
       }
 
@@ -251,7 +285,9 @@ export class HttpTurnCounter {
         let chunks = 0;
         let bytes = 0;
         streamAbortListener = () => {
-          void reader.cancel(abort.signal.reason).catch(() => {}).finally(release);
+          void reader.cancel(abort.signal.reason).catch(() => {}).finally(() => {
+            release("cancelled", abort.signal.reason);
+          });
         };
         abort.signal.addEventListener("abort", streamAbortListener, { once: true });
         const body = new ReadableStream<Uint8Array>({
@@ -259,7 +295,7 @@ export class HttpTurnCounter {
             try {
               const chunk = await reader.read();
               if (chunk.done) {
-                release();
+                release("delivered");
                 controller.close();
                 return;
               }
@@ -278,7 +314,7 @@ export class HttpTurnCounter {
                   bytes,
                 ));
               }
-              release();
+              release("unknown", error);
               controller.error(error);
             }
           },
@@ -286,7 +322,7 @@ export class HttpTurnCounter {
             try {
               await reader.cancel(reason);
             } finally {
-              release();
+              release("cancelled", reason);
             }
           },
         });
@@ -305,11 +341,14 @@ export class HttpTurnCounter {
       const reader = lifecycleBody.getReader();
       let chunks = 0;
       let bytes = 0;
+      let lifecycleError: unknown;
       streamAbortListener = () => {
         void Promise.allSettled([
           reader.cancel(abort.signal.reason),
           clientBody.cancel(abort.signal.reason),
-        ]).finally(release);
+        ]).finally(() => {
+          release("cancelled", abort.signal.reason);
+        });
       };
       abort.signal.addEventListener("abort", streamAbortListener, { once: true });
       void (async () => {
@@ -322,6 +361,7 @@ export class HttpTurnCounter {
             // Consume eagerly so the lifecycle branch never backpressures the client branch.
           }
         } catch (error) {
+          lifecycleError = error;
           if (!abort.signal.aborted) {
             emitHttpStreamFailure(this.reportStreamFailure, streamFailureEvidence(
               error,
@@ -335,7 +375,7 @@ export class HttpTurnCounter {
           }
           // Stream failure is delivered to the client branch; lifecycle cleanup stays best-effort.
         } finally {
-          release();
+          release(lifecycleError === undefined ? "delivered" : "unknown", lifecycleError);
         }
       })();
       return new Response(clientBody, {
@@ -344,7 +384,7 @@ export class HttpTurnCounter {
         headers: response.headers,
       });
     } catch (error) {
-      release();
+      release("unknown", error);
       throw error;
     }
   }
@@ -359,6 +399,8 @@ export interface ResponseRequestOptions {
   onAdapterEvent?: (event: AdapterEvent) => void;
   /** Bind the physical HTTP stream to the exact native Codex turn that owns it. */
   onTurnIdentity?: (identity: NativeCodexTurnIdentity) => void;
+  /** Correlate the request with content-free Portal lifecycle evidence. */
+  httpTurnId?: number;
 }
 
 export function routeChatGptWebRequest(parsed: CodexParsedRequest, config: AppConfig): ChatGptWebModelRoute {
@@ -602,7 +644,11 @@ export async function responseRequest(
   else req.signal.addEventListener("abort", () => abort.abort(), { once: true });
   const run = async () => {
     try {
-      await adapter.runTurn!(parsed, { headers: req.headers, abortSignal: abort.signal }, event => {
+      await adapter.runTurn!(parsed, {
+        headers: req.headers,
+        abortSignal: abort.signal,
+        ...(options.httpTurnId !== undefined ? { httpTurnId: options.httpTurnId } : {}),
+      }, event => {
         options.onAdapterEvent?.(event);
         queue.push(event);
       });
@@ -663,7 +709,7 @@ export async function compactRequest(
   req: Request,
   config: AppConfig,
   adapterFactory: ChatGptWebAdapterFactory = createChatGptWebAdapter,
-  options: Pick<ResponseRequestOptions, "onTurnIdentity"> = {},
+  options: Pick<ResponseRequestOptions, "onTurnIdentity" | "httpTurnId"> = {},
 ): Promise<Response> {
   const nativeRequest = req.clone();
   let raw: Record<string, unknown>;
@@ -775,11 +821,16 @@ export function startServer(
 ): ReturnType<typeof Bun.serve> {
   const startedAt = Date.now();
   const turnBroker = TurnBroker.forSocket(config.brokerSocketPath);
-  void turnBroker.listen().catch(error => {
-    console.error(
-      `[chatgpt-web] turn broker endpoint is unavailable: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  });
+  let brokerReady = false;
+  let brokerFailure: string | null = null;
+  void turnBroker.listen().then(
+    () => { brokerReady = true; brokerFailure = null; },
+    error => {
+      brokerReady = false;
+      brokerFailure = error instanceof Error ? error.message : String(error);
+      console.error(`[portal] turn broker endpoint is unavailable: ${brokerFailure}`);
+    },
+  );
   let draining = false;
   let shutdownPromise: Promise<void> | undefined;
   let successfulModelCatalogRequests = 0;
@@ -807,14 +858,16 @@ export function startServer(
       const url = new URL(req.url);
       if (req.method === "GET" && url.pathname === "/healthz") {
         return Response.json({
-          status: "ok",
+          status: brokerReady ? "ok" : "error",
           service: "portal",
           version: VERSION,
           mode: config.mode,
           pid: process.pid,
           port: config.port,
           uptime: (Date.now() - startedAt) / 1_000,
-          accepting_turns: !draining,
+          accepting_turns: !draining && brokerReady,
+          broker_ready: brokerReady,
+          ...(brokerFailure ? { broker_error: brokerFailure } : {}),
           successful_model_catalog_requests: successfulModelCatalogRequests,
           last_successful_model_catalog_request_at: lastSuccessfulModelCatalogRequestAt,
           model_catalog_requests: modelCatalogRequests,
@@ -825,8 +878,13 @@ export function startServer(
       if (req.method === "POST" && (url.pathname === "/admin/drain" || url.pathname === "/admin/resume")) {
         if (!controlAuthorized(req)) return new Response("Unauthorized", { status: 401 });
         draining = url.pathname === "/admin/drain";
-        turnBroker?.setExternalOwnersAccepted(!draining);
-        return Response.json({ status: "ok", accepting_turns: !draining, ...activity() });
+        turnBroker.setExternalOwnersAccepted(!draining && brokerReady);
+        return Response.json({
+          status: brokerReady ? "ok" : "error",
+          accepting_turns: !draining && brokerReady,
+          broker_ready: brokerReady,
+          ...activity(),
+        });
       }
       if (req.method === "POST" && url.pathname === "/admin/cancel-turn") {
         if (!controlAuthorized(req)) return new Response("Unauthorized", { status: 401 });
@@ -926,7 +984,7 @@ export function startServer(
       }
       if (req.method === "POST" && url.pathname === "/admin/cancel-turns") {
         if (!controlAuthorized(req)) return new Response("Unauthorized", { status: 401 });
-        const reason = new Error("Active turn cancelled by launcher");
+        const reason = new Error("Active turn cancelled by Portal lifecycle control");
         // Abort shared compaction owners before clearing their retained source sessions. The
         // owner signal is the only cancellation boundary for a fresh fallback not in the session
         // registry.
@@ -1019,11 +1077,11 @@ export function startServer(
       if (req.method === "POST" && url.pathname === "/v1/responses") {
         if (draining) return formatErrorResponse(503, "server_error", "Portal is draining for a requested service operation");
         return httpTurns.track(
-          (signal, bindIdentity) => responseRequest(
+          (signal, bindIdentity, httpTurnId) => responseRequest(
             new Request(req, { signal }),
             config,
             dependencies.adapterFactory,
-            { onTurnIdentity: bindIdentity },
+            { onTurnIdentity: bindIdentity, httpTurnId },
           ),
           req.signal,
           process.platform,
@@ -1033,11 +1091,11 @@ export function startServer(
       if (req.method === "POST" && url.pathname === "/v1/responses/compact") {
         if (draining) return formatErrorResponse(503, "server_error", "Portal is draining for a requested service operation");
         return httpTurns.track(
-          (signal, bindIdentity) => compactRequest(
+          (signal, bindIdentity, httpTurnId) => compactRequest(
             new Request(req, { signal }),
             config,
             dependencies.adapterFactory,
-            { onTurnIdentity: bindIdentity },
+            { onTurnIdentity: bindIdentity, httpTurnId },
           ),
           req.signal,
           process.platform,

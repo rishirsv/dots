@@ -12,11 +12,13 @@ test("setup accepts only a matching daemon that is ready for new Codex turns", (
     status: "ok",
     mode: "full",
     version: "0.2.0",
+    broker_ready: true,
     accepting_turns: true,
   };
 
   expect(setupProxyIsReady(ready, config)).toBe(true);
   expect(setupProxyIsReady({ ...ready, accepting_turns: false }, config)).toBe(false);
+  expect(setupProxyIsReady({ ...ready, broker_ready: false }, config)).toBe(false);
   expect(setupProxyIsReady({ ...ready, status: "degraded" }, config)).toBe(false);
   expect(setupProxyIsReady({ ...ready, version: "0.1.16" }, config)).toBe(false);
 });

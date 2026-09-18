@@ -30,9 +30,17 @@ test("MCP observations separate pre-handler validation and returned tool errors 
     expect(accepted.isError).toBeFalse();
     expect(refused.content).toEqual(accepted.content);
     expect(invoked).toBe(2);
-    expect(events.map(event => event.event)).toEqual(Array(3).fill(["call_received", "reply_sent"]).flat());
-    expect(events.filter(event => event.event === "reply_sent").map(event => event.is_error)).toEqual([true, true, false]);
-    expect(events.map(event => event.call)).toEqual([1, 1, 2, 2, 3, 3]);
+    const transportEvents = events.filter(event => event.event !== "execution_evidence");
+    const evidenceEvents = events.filter(event => event.event === "execution_evidence");
+    expect(transportEvents.map(event => event.event)).toEqual(Array(3).fill(["call_received", "reply_sent"]).flat());
+    expect(transportEvents.filter(event => event.event === "reply_sent").map(event => event.is_error)).toEqual([true, true, false]);
+    expect(transportEvents.map(event => event.call)).toEqual([1, 1, 2, 2, 3, 3]);
+    expect(evidenceEvents.map(event => event.stage)).toEqual([
+      "receipt", "reply_delivery",
+      "receipt", "reply_delivery",
+      "receipt", "reply_delivery",
+    ]);
+    expect(evidenceEvents.every(event => event.execution_proven === false)).toBeTrue();
     expect(JSON.stringify(events)).not.toContain(secret);
     expect(JSON.stringify(events)).not.toContain("private_key");
     expect(JSON.stringify(events)).not.toContain("content");
@@ -60,13 +68,19 @@ test("MCP observation failures, arbitrary IDs and unknown names never alter tran
   transport.onmessage?.({ jsonrpc: "2.0", id: secret, method: "tools/call", params: { name: secret } });
   expect(received).toBe(1);
   await expect(transport.send({ jsonrpc: "2.0", id: secret, result: {} })).rejects.toBe(originalError);
-  expect(events.at(-1)).toMatchObject({ event: "reply_send_failed", tool: "unknown" });
+  expect(events.filter(event => event.event === "reply_send_failed").at(-1)).toMatchObject({
+    event: "reply_send_failed",
+    tool: "unknown",
+  });
   expect(JSON.stringify(events)).not.toContain(secret);
   expect(JSON.stringify(events)).not.toContain(originalError.message);
   const duplicate = { jsonrpc: "2.0" as const, id: 7, method: "tools/call", params: { name: "codex_exec" } };
   transport.onmessage?.(duplicate);
   transport.onmessage?.(duplicate);
-  expect(events.at(-1)).toMatchObject({ event: "uncorrelated_call", reason: "duplicate_id" });
+  expect(events.filter(event => event.event === "uncorrelated_call").at(-1)).toMatchObject({
+    event: "uncorrelated_call",
+    reason: "duplicate_id",
+  });
   const count = events.length;
   await expect(transport.send({ jsonrpc: "2.0", id: 7, result: {} })).rejects.toBe(originalError);
   expect(events).toHaveLength(count);

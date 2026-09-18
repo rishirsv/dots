@@ -17,6 +17,29 @@ const parse = (text: unknown) => parseRequest({
   text,
 });
 
+
+test("browser parsing rejects unresolved file references instead of inventing placeholder content", () => {
+  expect(() => parseRequest({
+    model: CHATGPT_WEB_MODEL_ID,
+    stream: true,
+    input: [{
+      type: "message",
+      role: "user",
+      content: [{ type: "input_file", file_id: "file_123", filename: "evidence.txt" }],
+    }],
+  })).toThrow("does not support Responses input_file content");
+
+  expect(() => parseRequest({
+    model: CHATGPT_WEB_MODEL_ID,
+    stream: true,
+    input: [{
+      type: "message",
+      role: "user",
+      content: [{ type: "input_image", file_id: "file_image_123" }],
+    }],
+  })).toThrow("does not resolve Responses input_image file_id references");
+});
+
 test("verbosity and JSON-schema controls survive parser-to-prompt transport", () => {
   const schema = { type: "object", properties: { answer: { type: "string" } }, required: ["answer"], additionalProperties: false };
   const parsed = parse({ verbosity: "high", format: { type: "json_schema", name: "result", strict: true, schema } });

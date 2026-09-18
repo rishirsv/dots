@@ -1,7 +1,9 @@
-import { cpSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
-import { defaultBrokerEndpoint } from "../src/config";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { CHATGPT_CONNECTOR_NAME, defaultBrokerEndpoint } from "../src/config";
 import { VERSION } from "../src/version";
 
 const sourceBundle = resolve(process.argv[2] ?? "dist/runtime");
@@ -55,8 +57,8 @@ const config = {
   host: "127.0.0.1",
   port,
   contextWindow: 256_000,
-  appName: "Portal",
-  automaticAppName: "Portal",
+  appName: CHATGPT_CONNECTOR_NAME,
+  automaticAppName: CHATGPT_CONNECTOR_NAME,
   browserHost: "managed-chrome",
   chromeExecutablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
   storageStatePath: join(appHome, "browser", "storage-state.json"),
@@ -81,6 +83,65 @@ writeFileSync(join(appHome, "config.json"), `${JSON.stringify(config, null, 2)}\
 writeFileSync(config.storageStatePath, "{}\n", { mode: 0o600 });
 
 const env = { ...process.env, PORTAL_HOME: appHome, CODEX_HOME: codexHome };
+async function runDirectMcpSmoke(): Promise<void> {
+  const marker = join(root, "direct-access-marker");
+  const refusedMarker = join(root, "bound-access-marker");
+  const brokerSocket = join(root, "unused-broker.sock");
+  const transport = new StdioClientTransport({
+    command: runtimeExecutable,
+    args: [entrypoint, "mcp", "--broker-socket", brokerSocket],
+    cwd: root,
+    env: Object.fromEntries(
+      Object.entries(env).filter((entry): entry is [string, string] => typeof entry[1] === "string"),
+    ),
+    stderr: "pipe",
+  });
+  const client = new Client({ name: "portal-release-direct-smoke", version: VERSION });
+  try {
+    await client.connect(transport);
+    const listed = await client.listTools();
+    if (listed.tools.map(tool => tool.name).sort().join(",") !== "portal_call,portal_tools") {
+      throw new Error(`relocated MCP direct smoke exposed an unexpected tool contract: ${JSON.stringify(listed.tools.map(tool => tool.name))}`);
+    }
+    const inventory = await client.callTool({ name: "portal_tools", arguments: {} });
+    const inventoryValue = inventory.structuredContent as { mode?: unknown; tools?: Array<{ wire_name?: unknown }> } | undefined;
+    if (inventory.isError || inventoryValue?.mode !== "direct" || inventoryValue.tools?.[0]?.wire_name !== "exec_command") {
+      throw new Error(`relocated MCP direct smoke did not select direct execution: ${JSON.stringify(inventory.structuredContent)}`);
+    }
+    const executed = await client.callTool({
+      name: "portal_call",
+      arguments: {
+        wire_name: "exec_command",
+        arguments: { cmd: `printf DIRECT_ACCESS_SMOKE > ${JSON.stringify(marker)}` },
+      },
+    });
+    if (executed.isError || (executed.structuredContent as { mode?: unknown } | undefined)?.mode !== "direct"
+      || !readFileSync(marker, "utf8").includes("DIRECT_ACCESS_SMOKE")) {
+      throw new Error(`relocated MCP direct smoke did not complete its isolated command: ${JSON.stringify(executed.structuredContent)}`);
+    }
+    const bound = await client.callTool({
+      name: "portal_call",
+      arguments: {
+        turn_token: "invalid-release-smoke-turn-token",
+        wire_name: "exec_command",
+        arguments: { cmd: `printf BOUND_ACCESS_SMOKE > ${JSON.stringify(refusedMarker)}` },
+      },
+    });
+    if (!bound.isError) throw new Error("relocated MCP smoke accepted an invalid bound token");
+    if (existsSync(refusedMarker)) throw new Error("relocated MCP smoke broadened an invalid bound token into direct execution");
+    process.stdout.write("PORTAL_DIRECT_ACCESS_SMOKE_OK\n");
+    process.stdout.write("PORTAL_AUTHENTICATED_BROWSER_ROUNDTRIP_NOT_RUN\n");
+  } finally {
+    await client.close().catch(() => {});
+  }
+}
+
+try {
+  await runDirectMcpSmoke();
+} catch (error) {
+  rmSync(root, { recursive: true, force: true });
+  throw error;
+}
 const child = Bun.spawn([...runtimeCommand, "serve"], { env, stdout: "pipe", stderr: "pipe" });
 let stoppedGracefully = false;
 try {

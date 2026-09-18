@@ -11,6 +11,79 @@ import {
 import { MAX_CHATGPT_BROWSER_TABS } from "./concurrency";
 import type { ChatGptExternalTurnProgress } from "./turn-progress";
 
+export type ChatGptExecutionContext = "direct" | "bound";
+export type ChatGptExecutionStage =
+  | "receipt"
+  | "dispatch"
+  | "execution_completion"
+  | "reply_delivery"
+  | "cancellation"
+  | "unknown";
+export type ChatGptExecutionOutcome =
+  | "accepted"
+  | "started"
+  | "completed"
+  | "failed"
+  | "delivered"
+  | "cancelled"
+  | "unknown";
+export type ChatGptRetryGuidance = "retry_safe" | "do_not_retry" | "unknown";
+
+/**
+ * Content-free lifecycle evidence shared by the HTTP, browser, MCP, and broker owners.
+ *
+ * References are deliberately short hashes rather than request bodies, command text, results,
+ * credentials, or execution capabilities. `execution_proven` is explicit because a reply or
+ * heartbeat only proves transport progress, never that the requested side effect completed.
+ */
+export interface ChatGptExecutionEvidence {
+  event: "execution_evidence";
+  stage: ChatGptExecutionStage;
+  outcome: ChatGptExecutionOutcome;
+  context?: ChatGptExecutionContext;
+  trace_id?: string;
+  http_turn_id?: number;
+  mcp_request_ref?: string;
+  call_ref?: string;
+  tool?: string;
+  started?: boolean | "unknown";
+  elapsed_ms?: number;
+  error_code?: string;
+  retry_guidance?: ChatGptRetryGuidance;
+  execution_proven?: boolean;
+}
+
+export type ChatGptExecutionEvidenceWriter = (event: ChatGptExecutionEvidence) => void;
+
+export function chatGptExecutionReference(value: string | number): string {
+  return createHash("sha256").update(String(value)).digest("hex").slice(0, 12);
+}
+
+export function chatGptExecutionErrorCode(error: unknown, fallback = "unknown"): string {
+  const candidate = error !== null && typeof error === "object"
+    ? (error as { code?: unknown }).code
+    : undefined;
+  if (typeof candidate === "string" && /^[A-Za-z0-9_.:-]{1,96}$/.test(candidate)) return candidate;
+  if (error instanceof DOMException && error.name === "AbortError") return "client_cancelled";
+  return fallback;
+}
+
+const defaultExecutionEvidenceWriter: ChatGptExecutionEvidenceWriter = event => {
+  console.info(`[portal] execution_evidence ${JSON.stringify(event)}`);
+};
+
+/** Diagnostics are a side channel: a failing logger can never affect execution ownership. */
+export function emitChatGptExecutionEvidence(
+  evidence: Omit<ChatGptExecutionEvidence, "event">,
+  write: ChatGptExecutionEvidenceWriter = defaultExecutionEvidenceWriter,
+): void {
+  try {
+    write({ event: "execution_evidence", ...evidence });
+  } catch {
+    // Preserve the execution result and lifecycle settlement when an observability sink fails.
+  }
+}
+
 function awaitWithAbort<T>(promise: Promise<T>, signal?: AbortSignal): Promise<T> {
   if (!signal) return promise;
   if (signal.aborted) {
@@ -151,7 +224,7 @@ interface ChatGptTurnRuntimeBase {
   /** Idempotently retire the turn-bound MCP capability after browser and observer settlement. */
   retireCapability?: () => void | Promise<void>;
   submission?: { phase: "prepared" | "send_activated" | "accepted" };
-  /** Present only when the visible ChatGPT tab is driven manually through the Codex Zero Risk MCP contract. */
+  /** Present only when the visible ChatGPT tab is driven manually through the Portal MCP contract. */
   manualControl?: { surfaceNonce: string };
   cancel: (reason?: Error) => void;
 }
