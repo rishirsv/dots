@@ -38,6 +38,7 @@ const GATEWAY_AGENT_WAIT_TOOL_NAMES = new Set([
 ]);
 
 const turnTokenSchema = z.string().min(20).max(256);
+const STANDALONE_TURN_TOKEN = "standalone-chatgpt-direct";
 const jsonArgumentsSchema = z.record(z.string(), z.unknown()).default({});
 // Match Codex's default wait interval while returning before the MCP invocation deadline.
 export const CHATGPT_WEB_AGENT_WAIT_POLL_MS = 30_000;
@@ -117,15 +118,16 @@ async function runStandaloneCommand(
   });
 }
 
-function turnReferenceInput(contract: ChatGptMcpContract): Record<string, z.ZodString> {
+function turnReferenceInput(contract: ChatGptMcpContract): Record<string, z.ZodType> {
   return contract === "safe"
     ? { request_id: turnTokenSchema }
-    : { turn_token: turnTokenSchema };
+    : { turn_token: turnTokenSchema.optional() };
 }
 
 function turnReference(contract: ChatGptMcpContract, input: object): string {
   const key = contract === "safe" ? "request_id" : "turn_token";
   const value = (input as Record<string, unknown>)[key];
+  if (contract === "native" && value === undefined) return STANDALONE_TURN_TOKEN;
   if (typeof value !== "string") throw new Error(`${key} is required`);
   return value;
 }
@@ -662,7 +664,7 @@ export async function runChatGptMcpServer(options: {
     "portal_tools",
     {
       title: "Discover tools available to Portal",
-      description: "Search the exact tool registry supplied to the current Codex turn, including MCP and app tools.",
+      description: "Discover Portal tools. Omit turn_token in a direct ChatGPT conversation to receive unrestricted local exec_command access; Codex bridge turns pass their supplied token to discover the live Codex registry.",
       inputSchema: {
         ...turnReferenceInput(contract),
         query: z.string().max(500).optional(),
@@ -762,7 +764,7 @@ export async function runChatGptMcpServer(options: {
     "portal_call",
     {
       title: "Call any tool from the current Codex harness",
-      description: "Invoke an exact wire_name returned by portal_tools. The originating Codex runtime performs the call and UI lifecycle.",
+      description: "Invoke an exact wire_name returned by portal_tools. Omit turn_token in a direct ChatGPT conversation; Codex bridge turns pass their supplied token.",
       inputSchema: {
         ...turnReferenceInput(contract),
         wire_name: z.string().min(1).max(1_000),

@@ -37,6 +37,8 @@ describe("Portal dynamic tool bridge", () => {
       await client.connect(transport);
       const listed = await client.listTools();
       expect(listed.tools.map(tool => tool.name).sort()).toEqual(["portal_call", "portal_tools"]);
+      expect(listed.tools.find(tool => tool.name === "portal_tools")?.inputSchema.required ?? []).not.toContain("turn_token");
+      expect(listed.tools.find(tool => tool.name === "portal_call")?.inputSchema.required ?? []).not.toContain("turn_token");
 
       const inventory = await client.callTool({
         name: "portal_tools",
@@ -79,7 +81,7 @@ describe("Portal dynamic tool bridge", () => {
       await client.connect(transport);
       const inventory = await client.callTool({
         name: "portal_tools",
-        arguments: { turn_token: "standalone-chatgpt-token", include_schema: true },
+        arguments: { include_schema: true },
       });
       expect(inventory).toMatchObject({
         structuredContent: {
@@ -91,7 +93,6 @@ describe("Portal dynamic tool bridge", () => {
       const executed = await client.callTool({
         name: "portal_call",
         arguments: {
-          turn_token: "standalone-chatgpt-token",
           wire_name: "exec_command",
           arguments: { cmd: "printf 'Hello, world!'" },
         },
