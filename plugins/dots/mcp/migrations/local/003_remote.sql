@@ -1,2 +1,0 @@
-CREATE TABLE remote_inbox(id TEXT PRIMARY KEY,request_hash TEXT NOT NULL,request TEXT NOT NULL,state TEXT NOT NULL,local_operation_id TEXT,result TEXT,deadline INTEGER NOT NULL,created_at INTEGER NOT NULL);
-CREATE TABLE relay_result_outbox(id TEXT PRIMARY KEY,remote_operation_id TEXT NOT NULL,payload TEXT NOT NULL,digest TEXT NOT NULL,acknowledged INTEGER NOT NULL DEFAULT 0,created_at INTEGER NOT NULL);

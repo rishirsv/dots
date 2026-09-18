@@ -1,78 +1,57 @@
 # Portal
 
-Portal is the local MCP server behind the Dots `portal` integration. It gives
-an MCP client access only to folders and capability families that the owner
-explicitly grants. The local agent owns durable state, approvals, jobs, and
-operation receipts; the MCP process connects to that agent over a Unix socket.
+Portal runs ChatGPT Web Pro as a Codex model while keeping the originating
+Codex task's complete tool set. It is a local Responses API bridge built from
+the browser, tunnel, and streaming implementation in
+[`miuuyy/codex-chatgpt-web`](https://github.com/miuuyy/codex-chatgpt-web).
 
-Portal does not contain a model client. Installing it creates no filesystem
-grants.
+Portal is deliberately small: Codex executes tools, ChatGPT performs the model
+turn, and Portal translates between them. It does not provide its own file,
+terminal, document, permission, account, or relay platform.
 
-## Build and install
+## Requirements
 
-Portal requires Node 22.16 or newer within Node 22, plus a C compiler with Node
-headers available.
+- Bun 1.4.0.
+- Codex installed and configured.
+- A ChatGPT account with access to Pro.
+- An OpenAI tunnel id and Tunnels Read+Use runtime key for tool-enabled turns.
 
-```sh
-npm ci --ignore-scripts
-npm run build
-npm test
-node bin/portal.mjs install
-export PATH="$HOME/.local/bin:$PATH"
-portal start
-portal doctor
-```
+Portal's CLI automates an authenticated ChatGPT browser session. ChatGPT
+sign-in is required because Pro runs through the user's web subscription, not
+an API key. Electron and a separate Portal web interface are not required.
 
-Add `--start-at-login` to the install command to write a per-user macOS
-LaunchAgent. The Dots plugin starts `~/.local/bin/portal mcp --stdio`; its MCP
-entry remains disabled until Portal is installed and healthy.
-
-## Grant a workspace
-
-Start with a disposable directory. Replace the IDs in the second block with
-the values returned by `portal status` and `open_workspace`.
+## Run from source
 
 ```sh
-mkdir -p /tmp/portal-fixture
-printf 'Hello Portal\n' > /tmp/portal-fixture/hello.txt
-portal grant add --root /tmp/portal-fixture --alias fixture --access write
-portal status
+bun install --frozen-lockfile
+bun run portal -- start --tunnel-id ID --runtime-key-file /absolute/path/to/key
 ```
+
+The first start guides ChatGPT sign-in and connector setup. Once healthy,
+Codex exposes **ChatGPT Web — Pro** in its model picker.
 
 ```sh
-portal call open_workspace --json \
-  '{"deviceId":"DEVICE_ID","rootAlias":"fixture","access":"write","idempotencyKey":"open-fixture-001"}'
-portal call read_file --json \
-  '{"workspaceId":"WORKSPACE_ID","path":"hello.txt","startLine":1,"maxLines":20}'
+bun run portal -- status
+bun run portal -- login
+bun run portal -- stop
+bun run portal -- uninstall
 ```
 
-Do not grant a home directory, credential directory, or agent state directory.
-Add the `terminal` family explicitly when a grant needs command execution.
+The package also exposes the `portal` executable when installed or linked as a
+Bun package.
 
-## Contributor commands
+## Develop
 
 ```sh
-npm run verify
-npm run check:dependencies
-npm run check:release
-npx tsc -p tsconfig.sdk.json
+bun run typecheck
+bun run test:core
+bun run build:all
 ```
 
-`npm run verify` builds Portal, runs the automated suite, and regenerates MCP
-metadata. `npm run check:release` confirms that regeneration is deterministic,
-the generated manifest digests match, and the dependency lock exists.
+See [SPEC.md](SPEC.md) for the product contract and [UPSTREAM.md](UPSTREAM.md)
+for source provenance.
 
-Generated JavaScript, native binaries, installed dependencies, and local test
-output are ignored. Run `npm run build` before using the CLI from a checkout.
+## License
 
-## Source map
-
-- `apps/`: local agent, CLI, MCP transport, relay, and owner dashboard.
-- `packages/`: protocol, storage, capability, skill, and adapter modules.
-- `native/`: descriptor-relative filesystem and macOS helpers.
-- `skills/`: MCP-facing Portal skills.
-- `manifests/`: generated tool, capability, skill, and client metadata.
-- `tests/`: unit, integration, chaos, macOS, document, and soak checks.
-- `deploy/`: relay and parser deployment assets.
-
-Use `portal help` for the complete CLI command list.
+Portal includes modified source from `codex-chatgpt-web` under the MIT License.
+See [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

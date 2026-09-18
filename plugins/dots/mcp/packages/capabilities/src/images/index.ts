@@ -1,9 +1,0 @@
-import { Registry } from '../../../core/src/registry.js';
-import { s, check } from '../../../protocol/src/index.js';
-import { parseDocument, parserAvailability } from '../documents/parser.js';
-import { getArtifact, putArtifact } from '../artifacts/index.js';
-import fs from 'node:fs';
-export function addImages(r: Registry) { for (const mode of ['inspect', 'view'])
-    r.add({ id: 'images.' + mode, description: mode === 'view' ? 'Return actual bounded image bytes and a rendition artifact; animated images use the first frame.' : 'Inspect authorized PNG/JPEG/WebP/GIF dimensions and source identity.', family: 'images', effect: 'read', input: s.object({ path: s.path(), artifactId: s.key(), expectedSha256: s.sha(), maxEdge: s.int(64, 2048), crop: s.object({ x: s.int(0, 100000), y: s.int(0, 100000), width: s.int(1, 100000), height: s.int(1, 100000) }) }, []), dependencies: ['python-parser', 'os-parser-containment'], availability: parserAvailability, handler: async (c, a) => { check(!!a.path !== !!a.artifactId, 'INVALID_ARGUMENT', 'Choose path OR artifactId'); const source = a.path ? c.fs.read(a.path) : (() => { const art = getArtifact(c, a.artifactId); return { bytes: fs.readFileSync(art.path), sha256: art.sha256 }; })(); if (a.expectedSha256)
-            check(source.sha256 === a.expectedSha256, 'SOURCE_CHANGED', 'Image source changed'); const parsed = await parseDocument('image', { ...a, mode }, [source.bytes], c.signal); if (mode === 'inspect')
-            return { ...parsed.result, sha256: source.sha256 }; check(parsed.output && parsed.output.length <= 4 * 1024 * 1024, 'LIMIT_EXCEEDED', 'Display image exceeds 4 MiB'); return { ...parsed.result, sourceSha256: source.sha256, artifact: putArtifact(c.store, c.workspace.id, c.actor.accountId, parsed.output, 'image/jpeg'), image: { mimeType: 'image/jpeg', data: parsed.output.toString('base64') } }; } }); }

@@ -4,44 +4,51 @@ on:
   push:
     paths:
       - "plugins/dots/mcp/**"
+      - "plugins/dots/.codex-plugin/plugin.json"
+      - "plugins/dots/.claude-plugin/plugin.json"
+      - "plugins/dots/plugin.json"
       - ".github/workflows/portal.yml"
   pull_request:
     paths:
       - "plugins/dots/mcp/**"
+      - "plugins/dots/.codex-plugin/plugin.json"
+      - "plugins/dots/.claude-plugin/plugin.json"
+      - "plugins/dots/plugin.json"
       - ".github/workflows/portal.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: portal-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 defaults:
   run:
     working-directory: plugins/dots/mcp
 
 jobs:
-  core:
+  verify:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: plugins/dots/mcp/.node-version
-          cache: npm
-          cache-dependency-path: plugins/dots/mcp/package-lock.json
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: pip
-          cache-dependency-path: plugins/dots/mcp/deploy/test-requirements.txt
-      - run: npm ci --ignore-scripts
-      - run: npm run build
-      - run: npx tsc -p tsconfig.sdk.json
-      - run: npm test
-      - run: npm run generate
-      - run: node scripts/release-check.mjs
-      - run: node scripts/verify-contents.mjs
-      - name: Document fixture transformations
-        run: |
-          python -m venv /tmp/portal-parser
-          /tmp/portal-parser/bin/pip install -r deploy/test-requirements.txt
-          /tmp/portal-parser/bin/python tests/python/document_fidelity.py
+          bun-version: 1.4.0
+      - name: Install runtime dependencies
+        run: bun install --frozen-lockfile --ignore-scripts
+      - name: Install launcher dependencies
+        run: bun install --cwd launcher --frozen-lockfile
+      - name: Typecheck runtime
+        run: bun run typecheck
+      - name: Test runtime
+        run: bun run test:core
+      - name: Typecheck launcher
+        run: bun run launcher:typecheck
+      - name: Test launcher
+        run: bun run launcher:test
+      - name: Build launcher
+        run: bun run launcher:build
+      - name: Build runtime bundle
+        run: bun run build

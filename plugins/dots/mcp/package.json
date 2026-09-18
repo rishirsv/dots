@@ -1,47 +1,91 @@
 {
-  "name": "portal-mcp",
-  "version": "0.1.0",
+  "name": "@rishirsv/portal",
+  "version": "5.0.8",
   "private": true,
+  "description": "Run ChatGPT Web Pro as a Codex model with the current task's complete tool set.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rishirsv/dots.git",
+    "directory": "plugins/dots/mcp"
+  },
+  "homepage": "https://github.com/rishirsv/dots/tree/main/plugins/dots/mcp#readme",
+  "bugs": {
+    "url": "https://github.com/rishirsv/dots/issues"
+  },
+  "packageManager": "bun@1.4.0",
   "type": "module",
-  "description": "Permission-scoped, durable remote computer capabilities. No inference client.",
-  "engines": {
-    "node": ">=22.16.0 <23"
-  },
   "bin": {
-    "portal": "bin/portal.mjs"
+    "portal": "./bin/portal.mjs"
   },
+  "files": [
+    "bin",
+    "dist",
+    "src",
+    "scripts",
+    "README.md",
+    "SPEC.md",
+    "UPSTREAM.md",
+    "THIRD_PARTY_NOTICES.md",
+    "LICENSE",
+    "LICENSES"
+  ],
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "test": "node --test --test-concurrency=1 dist/tests/unit/*.test.js dist/tests/integration/*.test.js dist/tests/chaos/*.test.js",
-    "test:core": "node --test --test-concurrency=1 dist/tests/unit/*.test.js dist/tests/integration/core.test.js dist/tests/chaos/*.test.js",
-    "test:mac": "node dist/tests/macos/acceptance.js",
-    "test:soak": "node dist/tests/soak/run.js",
-    "test:relay": "node --test dist/tests/integration/relay.test.js",
-    "generate": "node dist/scripts/generate.js",
-    "doctor": "node bin/portal.mjs doctor",
-    "start": "node bin/portal.mjs start",
-    "relay": "node dist/apps/relay/src/main.js",
-    "verify": "npm run build && npm test && npm run generate",
-    "probe:codex": "node dist/scripts/probe-codex.js",
-    "test:documents": "python3 tests/python/document_fidelity.py",
-    "test:spool": "node dist/tests/soak/spool-stress.js",
-    "check:dependencies": "node scripts/dependency-check.mjs",
-    "check:release": "node scripts/release-check.mjs",
-    "test:oidc": "node --test dist/tests/unit/test-issuer.test.js dist/tests/integration/oauth.test.js"
+    "portal": "bun run bin/portal.mjs",
+    "start": "bun run bin/portal.mjs start",
+    "status": "bun run bin/portal.mjs status",
+    "login": "bun run bin/portal.mjs login",
+    "stop": "bun run bin/portal.mjs stop",
+    "uninstall": "bun run bin/portal.mjs uninstall",
+    "dev:chat": "bun run src/cli.ts dev chat",
+    "test": "bun run test:core",
+    "test:core": "bun test ./tests",
+    "audit": "bun audit",
+    "check-version": "bun run scripts/check-version.ts",
+    "typecheck": "bun x --no-install --bun tsc --noEmit",
+    "licenses": "bun run scripts/generate-third-party-notices.ts",
+    "clean": "bun run scripts/clean.ts",
+    "build": "bun run scripts/build-runtime-bundle.ts",
+    "build:all": "bun run build",
+    "smoke": "bun run scripts/smoke-release.ts dist/runtime",
+    "smoke:codex": "bun run scripts/smoke-codex-catalog.ts",
+    "smoke:cancel": "bun run scripts/smoke-codex-cancel.ts",
+    "smoke:interrupt": "bun run scripts/smoke-codex-interrupt.ts",
+    "smoke:subagents": "bun run scripts/smoke-codex-subagents.ts --v1 && bun run scripts/smoke-codex-subagents.ts --v2",
+    "verify": "bun run scripts/verify.ts"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.30.0",
-    "quickjs-emscripten": "0.31.0",
-    "pg": "8.16.3",
-    "ws": "8.21.3",
-    "jose": "6.1.0",
-    "zod": "3.25.76"
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "chromium-bidi": "12.1.0",
+    "fflate": "^0.8.2",
+    "playwright-core": "^1.62.0",
+    "tiktoken": "1.0.22",
+    "turndown": "7.2.0",
+    "turndown-plugin-gfm": "1.0.2",
+    "zod": "4.4.3"
   },
   "devDependencies": {
-    "typescript": "5.8.3",
-    "@types/node": "22.16.0",
-    "@types/pg": "8.15.5",
-    "@types/ws": "8.18.1"
+    "@types/bun": "1.4.0",
+    "@types/turndown": "5.0.5",
+    "typescript": "5.9.3"
   },
-  "license": "UNLICENSED"
+  "engines": {
+    "bun": "1.4.0"
+  },
+  "overrides": {
+    "@hono/node-server": "2.0.12",
+    "fast-uri": "3.1.6",
+    "hono": "4.13.5",
+    "qs": "6.16.0",
+    "zod-to-json-schema": "3.25.1"
+  },
+  "keywords": [
+    "codex",
+    "chatgpt",
+    "responses-api",
+    "mcp",
+    "playwright"
+  ],
+  "license": "MIT"
 }

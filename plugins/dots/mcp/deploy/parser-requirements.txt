@@ -1,6 +1,0 @@
-# Exact direct parser dependencies. Resolve platform wheels and lock their hashes before release.
-lxml==6.1.1
-pypdf==5.9.0
-pypdfium2==5.8.0
-Pillow==11.3.0
-reportlab==4.4.9

@@ -12,8 +12,6 @@
     "skills"
   ],
   "skills": "./skills/",
-  "mcpServers": "./.mcp.json",
-  "apps": "./.app.json",
   "interface": {
     "displayName": "Dots",
     "shortDescription": "Plan, build, review, and ship.",

@@ -1,9 +1,0 @@
-node_modules
-.git
-.env
-.env.*
-!deploy/.env.example
-evidence
-**/__pycache__
-**/build
-dist

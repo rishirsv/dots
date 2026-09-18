@@ -1,13 +1,17 @@
-# Source provenance
+# Upstream provenance
 
-Portal is independently written source. No Desktop Commander server source,
-proprietary relay source, or production endpoint is included or called.
+Portal is based on [`miuuyy/codex-chatgpt-web`](https://github.com/miuuyy/codex-chatgpt-web)
+at commit `e0904bc82001f06e06e7f85f564ce760c92bfd79`.
 
-The original implementation used these read-only inputs:
+That source is licensed under the MIT License. Its copyright notice and license
+terms are preserved in [LICENSE](LICENSE).
 
-- `DOCKYARD-BUILD-SPEC(1).md` — SHA-256 `d2fc3db29d2ff2da2d2216dae4c7ed4307b2376900b82e95cbe0643472a6860c`.
-- `DOCKYARD-BUILD-SPEC(2).md` — byte-identical to the first specification.
-- `remote-desktop-commander-1.0.3.zip` — SHA-256 `f271a705072fb871e1b4a072ac41ef4faa08b4cf77793b6b95b224c3c553aac9`.
+The imported implementation supplied the ChatGPT browser session, Responses
+API translation, OpenAI tunnel integration, native endpoint passthrough,
+compaction behavior and runtime bundling. Portal removes the upstream Electron
+launcher and modifies the product surface to expose one ChatGPT Web Pro route
+and the current Codex task's dynamic tool registry through a smaller `portal`
+lifecycle.
 
-The Commander archive was a public plugin and documentation distribution, not
-a Git checkout. Its Git revision cannot be established from the archive.
+Future upstream updates should be reviewed and imported explicitly. Do not
+replace this pinned revision with an unrecorded copy.
