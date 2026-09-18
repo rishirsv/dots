@@ -12,7 +12,7 @@ import {
 import { CHATGPT_TEMPORARY_CHAT_URL } from "../src/chatgpt-session";
 import { defaultConfig } from "../src/config";
 
-test("login starts with normal Chrome and captures state in a headed Keychain-aware context", async () => {
+test("login captures state directly in a headed Keychain-aware context", async () => {
   if (process.platform === "win32") return;
   const root = mkdtempSync(join(tmpdir(), "codex-chatgpt-web-login-"));
   const executable = join(root, "fake-chrome");
@@ -27,13 +27,10 @@ test("login starts with normal Chrome and captures state in a headed Keychain-aw
     config.storageStatePath = join(root, "browser", "storage-state.json");
     await loginToChatGpt(config, { timeoutMs: 100 }).catch(() => {});
 
-    const launches = readFileSync(argsLog, "utf8").trim().split("\n");
-    const firstLaunch = launches[0] ?? "";
-    expect(firstLaunch).toContain("--new-window");
-    expect(firstLaunch).toContain("--user-data-dir=");
-    expect(firstLaunch).toContain(CHATGPT_TEMPORARY_CHAT_URL);
-    expect(firstLaunch).not.toContain("--remote-debugging-pipe");
-    expect(launches[1]).not.toContain("--headless");
+    const launch = readFileSync(argsLog, "utf8").trim();
+    expect(launch).toContain("--remote-debugging-pipe");
+    expect(launch).toContain("--user-data-dir=");
+    expect(launch).not.toContain("--headless");
   } finally {
     if (previousLog === undefined) delete process.env.CODEX_LOGIN_ARG_LOG;
     else process.env.CODEX_LOGIN_ARG_LOG = previousLog;

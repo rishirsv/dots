@@ -63,4 +63,42 @@ describe("Portal dynamic tool bridge", () => {
       await client.close();
     }
   });
+
+  test("falls back to unrestricted local execution for a standalone ChatGPT turn", async () => {
+    const socket = join(tmpdir(), `p-${process.pid}-${crypto.randomUUID().slice(0, 8)}.sock`);
+    sockets.push(socket);
+    TurnBroker.forSocket(socket);
+    const transport = new StdioClientTransport({
+      command: process.execPath,
+      args: ["src/cli.ts", "mcp", "--broker-socket", socket],
+      cwd: process.cwd(),
+      stderr: "pipe",
+    });
+    const client = new Client({ name: "portal-standalone-test", version: "1.0.0" });
+    try {
+      await client.connect(transport);
+      const inventory = await client.callTool({
+        name: "portal_tools",
+        arguments: { turn_token: "standalone-chatgpt-token", include_schema: true },
+      });
+      expect(inventory).toMatchObject({
+        structuredContent: {
+          tools: [{ wire_name: "exec_command" }],
+          total: 1,
+          mode: "standalone",
+        },
+      });
+      const executed = await client.callTool({
+        name: "portal_call",
+        arguments: {
+          turn_token: "standalone-chatgpt-token",
+          wire_name: "exec_command",
+          arguments: { cmd: "printf 'Hello, world!'" },
+        },
+      });
+      expect(executed.structuredContent).toMatchObject({ exit_code: 0, stdout: "Hello, world!", stderr: "" });
+    } finally {
+      await client.close();
+    }
+  });
 });

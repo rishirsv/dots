@@ -1,4 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
+import { execFile } from "node:child_process";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import * as z from "zod/v4";
@@ -52,6 +53,69 @@ const ZERO_RISK_MCP_INSTRUCTIONS = [
   "When the task is finished, send the complete answer with codex_turn_complete.",
   "If a tool returns an error, report that error instead of changing the request_id.",
 ].join(" ");
+
+const STANDALONE_EXEC_TOOL = {
+  wire_name: "exec_command",
+  name: "exec_command",
+  namespace: null,
+  description: "Run an unrestricted shell command on the local Mac. Use this for files, terminal commands, scripts, network access, and other local actions.",
+  kind: "function",
+  parameters: {
+    type: "object",
+    properties: {
+      cmd: { type: "string", minLength: 1, maxLength: 1_000_000 },
+      workdir: { type: "string", minLength: 1, maxLength: 4096 },
+      timeout_ms: { type: "integer", minimum: 1, maximum: 300_000, default: 30_000 },
+    },
+    required: ["cmd"],
+    additionalProperties: false,
+  },
+} as const;
+
+class PortalTurnClaimError extends Error {
+  constructor(cause: unknown) {
+    super("Portal could not bind this call to an active Codex turn", { cause });
+    this.name = "PortalTurnClaimError";
+  }
+}
+
+async function runStandaloneCommand(
+  input: Record<string, unknown>,
+  signal?: AbortSignal,
+): Promise<{ exit_code: number | null; stdout: string; stderr: string }> {
+  const cmd = input.cmd;
+  const workdir = input.workdir;
+  const timeout = input.timeout_ms ?? 30_000;
+  if (typeof cmd !== "string" || cmd.length === 0 || cmd.length > 1_000_000) {
+    throw new Error("exec_command requires a non-empty cmd string");
+  }
+  if (workdir !== undefined && (typeof workdir !== "string" || workdir.length === 0 || workdir.length > 4096)) {
+    throw new Error("exec_command workdir must be a non-empty path");
+  }
+  if (!Number.isInteger(timeout) || Number(timeout) < 1 || Number(timeout) > 300_000) {
+    throw new Error("exec_command timeout_ms must be an integer from 1 to 300000");
+  }
+  return await new Promise((resolve, reject) => {
+    execFile("/bin/zsh", ["-lc", cmd], {
+      ...(workdir ? { cwd: workdir } : {}),
+      timeout: Number(timeout),
+      maxBuffer: 2 * 1024 * 1024,
+      signal,
+    }, (error, stdout, stderr) => {
+      if (error && typeof (error as NodeJS.ErrnoException & { code?: unknown }).code !== "number") {
+        reject(error);
+        return;
+      }
+      resolve({
+        exit_code: error && typeof (error as { code?: unknown }).code === "number"
+          ? (error as { code: number }).code
+          : 0,
+        stdout,
+        stderr,
+      });
+    });
+  });
+}
 
 function turnReferenceInput(contract: ChatGptMcpContract): Record<string, z.ZodString> {
   return contract === "safe"
@@ -473,12 +537,12 @@ export async function runChatGptMcpServer(options: {
       try {
         await settleTurnActivity(turnToken, activityId);
       } catch (cleanupError) {
-        throw new AggregateError(
+        throw new PortalTurnClaimError(new AggregateError(
           [error, cleanupError],
           "Portal claim failed and its broker activity could not be retired",
-        );
+        ));
       }
-      throw error;
+      throw new PortalTurnClaimError(error);
     }
   };
 
@@ -608,11 +672,13 @@ export async function runChatGptMcpServer(options: {
       },
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     },
-    async (input, extra) => withClaimedTurn(
-      "portal_tools",
-      turnReference(contract, input),
-      extra,
-      async claimed => {
+    async (input, extra) => {
+      try {
+        return await withClaimedTurn(
+          "portal_tools",
+          turnReference(contract, input),
+          extra,
+          async claimed => {
         const { query, offset, limit, include_schema } = input;
         const bound = claimed.environment;
         const needle = query?.trim().toLowerCase();
@@ -672,8 +738,24 @@ export async function runChatGptMcpServer(options: {
           total,
           next_offset: offset + page.length < total ? offset + page.length : null,
         });
-      },
-    ),
+          },
+        );
+      } catch (error) {
+        if (!(error instanceof PortalTurnClaimError)) throw error;
+        const needle = input.query?.trim().toLowerCase();
+        const matches = !needle || [
+          STANDALONE_EXEC_TOOL.wire_name,
+          STANDALONE_EXEC_TOOL.description,
+        ].join("\n").toLowerCase().includes(needle);
+        const tools = matches && input.offset === 0
+          ? [{
+            ...STANDALONE_EXEC_TOOL,
+            ...(input.include_schema === false ? { parameters: undefined } : {}),
+          }]
+          : [];
+        return result({ tools, total: matches ? 1 : 0, next_offset: null, mode: "standalone" });
+      }
+    },
   );
 
   server.registerTool(
@@ -712,7 +794,8 @@ export async function runChatGptMcpServer(options: {
         }, 5_000, extra.signal);
         return result({ submitted: true });
       }
-      return withClaimedTurn("portal_call", requestId, extra, async claimed => {
+      try {
+        return await withClaimedTurn("portal_call", requestId, extra, async claimed => {
         const bound = claimed.environment;
         const tool = safeVisibleTools(bound, contract)
           .find(candidate => wireName(candidate) === wire_name);
@@ -747,7 +830,14 @@ export async function runChatGptMcpServer(options: {
         const invocationArguments = args ?? {};
         assertBrowserToolArguments(tool, invocationArguments);
         return invoke(claimed.bindingId, bound, tool, { arguments: invocationArguments }, extra.signal);
-      });
+        });
+      } catch (error) {
+        if (!(error instanceof PortalTurnClaimError)) throw error;
+        if (wire_name !== STANDALONE_EXEC_TOOL.wire_name || input !== undefined) {
+          throw new Error(`Standalone Portal tool is not available: ${wire_name}`);
+        }
+        return result(await runStandaloneCommand(args ?? {}, extra.signal));
+      }
     },
   );
 
