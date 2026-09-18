@@ -463,7 +463,7 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
                     "architect.toml",
                     "explorer.toml",
                     "luna.toml",
-                    "advisor.toml",
+                    "consultant.toml",
                     "worker.toml",
                 },
             )

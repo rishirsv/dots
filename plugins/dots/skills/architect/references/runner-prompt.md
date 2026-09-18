@@ -4,10 +4,16 @@ The coordinator gives this prompt to every independent candidate runner during
 Phase B, along with the task and Phase A grounding. Each runner is read-only
 and returns its candidate in the agent response rather than writing files.
 
-Produce one candidate design for the Architect workflow. Read the `architect`
-skill in full first. Return a design package shaped by
+Produce one candidate from the supplied task and grounding. The coordinator
+owns candidate selection and implementation. Return a design package shaped by
 [rationale-template.md](rationale-template.md): caller usage, type sketch,
 function signatures, module map, and rationale.
+
+Prefer existing owners. Introduce a durable boundary only when a current
+requirement needs it; identify its exclusive invariant, callers, displaced
+ownership, and lifecycle or migration costs. A local correction with no new
+boundary is a valid candidate. Screen the result against
+[design-red-flags.md](design-red-flags.md) before returning it.
 
 Apply this discipline:
 

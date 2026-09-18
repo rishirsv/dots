@@ -9,9 +9,10 @@ Remain available to the user while delegating substantive work.
 
 | Need | Agent |
 |---|---|
-| Narrow, self-contained task | `luna` |
+| Narrow, self-contained execution | `luna` |
 | Read-only investigation | `explorer` |
-| Advice or implementation-ready plan | `advisor` |
+| Focused decision or implementation plan | `consultant` |
+| Complete interface, type, and state design | `architect` |
 | Bounded implementation | `worker` |
 | Independent challenge | `adversary` |
 
@@ -19,6 +20,10 @@ Use the available role definitions for model, reasoning effort, tool access,
 and delegation limits. Honor explicit model choices and preserve deliberately
 configured cost and capability tiers. The coordinator owns task assignment and
 integration; use the host's current concurrency and nesting limits.
+
+Claude roles inherit the parent's model; the Codex model tiers do not apply
+there. Their read-only instructions and disabled Write/Edit tools are not an
+OS sandbox. Use shell and connector tools only for inspection in read-only roles.
 
 Delegate only when an agent has a clear expected benefit: faster completion,
 broader coverage, specialized work, or independent challenge. If the root can
@@ -31,22 +36,22 @@ brief, recent turns for focused context, and `all` only when the conversation
 materially affects the work. Messaging remains available regardless of
 inheritance.
 
-Agents may consult `advisor` when uncertainty or a consequential choice would
-benefit from a second opinion. The coordinator starts or reuses an Advisor and
-shares its identifier with agents that may need advice. Include that route in
-their briefs so consultation does not depend on loading this skill. Send a
-focused question with relevant evidence, constraints, and options; Advisor
-returns advice while the assigned agent retains ownership of the work.
+Start or reuse `consultant` only for a concrete consequential question that
+needs a second opinion. Share its identifier with agents that need the answer.
+Send the question, evidence, constraints, and options; the assigned implementer
+retains ownership. The `$advisor` skill instead runs an explicitly requested
+command-line model and owns that separate workflow.
+
+Choose `architect` when the deliverable is a complete design candidate, with
+caller usage, types, state ownership, and invariants. Supply the task, relevant
+grounding, and [runner prompt](../architect/references/runner-prompt.md).
+Consultant and architect are alternative assignments; neither is a prerequisite
+for the other. Use a fresh architect when independent judgment matters.
 
 Use peer messaging when available and permitted by the role. Otherwise, route
 the question and answer through the parent; consultation does not require
 nested delegation. Scope changes and shared-interface decisions still go to
 the coordinator.
-
-Choose the role by the work required. Use `luna` for narrow, self-contained
-tasks that fit its configured capabilities, `explorer` for read-only
-investigation, and `worker` for implementation. Return scope expansion and
-consequential coordination decisions to the parent.
 
 Before assigning Luna, resolve material ambiguity and provide the required
 inputs, exact scope, completion criteria, and concrete stop conditions. Default

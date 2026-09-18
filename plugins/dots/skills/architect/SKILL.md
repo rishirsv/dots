@@ -61,7 +61,9 @@ it removes, and its lifecycle, migration, concurrency, and verification costs.
 When an independent candidate would materially improve the decision, give a
 fresh read-only `architect` agent the task, Phase A grounding, and
 [runner prompt](references/runner-prompt.md). Do not create another candidate
-only to satisfy the process.
+only to satisfy the process. The runner loads its candidate references only;
+keep this coordinator workflow in the parent. Use `consultant` instead when
+only a focused decision or implementation plan needs a second opinion.
 
 Screen every candidate against
 [design red flags](references/design-red-flags.md). Reject or revise shallow
@@ -80,7 +82,8 @@ When the request authorizes implementation, proceed with the selected design.
 For a design-only request, return the design package and stop before
 editing product source.
 
-When Feature Development invokes Architect during its design step, return the
+When [Feature Development](../../references/feature-development.md) invokes
+Architect during its design step, return the
 selected design after this phase. Feature Development resumes with
 implementation and owns proof, review, and completion. A direct Architect
 request may continue through the remaining phases when implementation is
