@@ -83,7 +83,28 @@ Timeouts: start 5s, heartbeat interval 10s / timeout 5s, end 15s.
    one for managed-chrome, `setup` accepts `--browser-host`.
 4. [done] `portal serve` starts/stops the host when configured; doctor reports host pid and
    live surface count. Bundle now emits `browser-helper.cjs` (CJS) beside `cli.js`.
-5. [in progress] Tests done (652 pass). LIVE end-to-end canary through Codex still to run.
+5. [done] Tests (652 pass) and a LIVE end-to-end canary through `codex exec`:
+
+```
+turn 1 (fresh)            turn 2 (resumed thread)
+  browser_page              browser_page
+  temporary_chat_preparation  <-- absent
+  effort_selection          effort_selection
+  prompt_attachment         prompt_attachment
+  send                      send
+```
+
+`temporary_chat_preparation` runs only when `reuseConversation` is false, so its
+absence on turn 2 is the proof that the thread kept one ChatGPT conversation.
+Host reported 2 live surfaces (idle + retained).
+
+## Operating notes
+
+- `codex exec resume <id>` does NOT carry the session's model; it falls back to
+  `model` in config.toml and silently leaves Portal. Pass `--model` explicitly
+  when resuming a routed thread, or the second turn never reaches the browser.
+- Launcher turns run in the helper subprocess; their logs appear in the daemon
+  log behind a `[chatgpt-web-helper]` prefix.
 
 ## Risks
 
