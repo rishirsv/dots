@@ -137,6 +137,10 @@ mutations after restart.
   correct turn identity without deadlock or duplicate execution.
 - A transient browser DOM probe stall after an accepted send retries observation
   on the same turn; it never resends the prompt.
+- Connector refresh can rebuild an unsent composer, but only one verified prompt
+  is submitted; the selected Pro effort is rechecked immediately before Send.
+- A size rejection from the exact owned ChatGPT submission is reported as an
+  input-limit error; an unexplained stopped response remains non-retryable.
 - Native models, Search, image generation, and Voice continue to work.
 - Authentication expiry, missing connector, usage exhaustion, UI drift, and
   restart loss are distinct actionable failures with no silent fallback.

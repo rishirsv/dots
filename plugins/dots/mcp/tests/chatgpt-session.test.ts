@@ -213,6 +213,7 @@ test("a transient effort control does not turn a Luna-only account into Sol", as
 
 function reasoningPicker(options: { max?: string; delay?: number; missing?: boolean } = {}) {
   let value = 0;
+  let menuOpen = true;
   const keys: string[] = [];
   const hidden = {
     filter() { return this; }, last() { return this; }, getByText() { return this; },
@@ -240,20 +241,24 @@ function reasoningPicker(options: { max?: string; delay?: number; missing?: bool
     },
   };
   const control = {
-    last() { return this; }, waitFor: async () => {}, isVisible: async () => true,
-    getAttribute: async (name: string) => name === "aria-expanded" ? "true" : null,
+    filter() { return this; }, last() { return this; }, first() { return this; },
+    count: async () => 1, waitFor: async () => {}, isVisible: async () => true,
+    click: async () => { menuOpen = true; },
+    innerText: async () => value === 4 ? "Pro" : "Thinking",
+    getAttribute: async (name: string) => name === "aria-expanded" ? String(menuOpen) : null,
   };
-  const composer = { filter() { return this; }, last() { return this; }, locator: () => ({ locator: () => control }) };
+  const composer = { filter() { return this; }, last() { return this; }, isEditable: async () => true, locator: () => ({ locator: () => control }) };
   const modelRows = { count: async () => 3, first() { return this; }, waitFor: async () => {}, nth: () => { throw new Error("Model rows are not effort choices"); } };
   const menu = { filter() { return this; }, last() { return this; }, isVisible: async () => true, locator: () => modelRows };
   const page = {
+    url: () => "https://chatgpt.com/?temporary-chat=true",
     locator: (selector: string) => {
       if (selector === CHATGPT_COMPOSER_SELECTOR) return composer;
       if (selector === CHATGPT_EFFORT_MENU_SELECTOR) return menu;
       if (selector === CHATGPT_EFFORT_SLIDER_CONTAINER_SELECTOR) return container;
       return hidden;
     },
-    keyboard: { press: async () => {} },
+    keyboard: { press: async (key: string) => { if (key === "Escape") menuOpen = false; } },
   };
   return { page, composer, keys, value: () => value };
 }
@@ -283,7 +288,10 @@ test("Pro selection changes the hidden slider through its visible owner, never t
   const select = (ChatGptBrowserWorker.prototype as unknown as {
     selectModelAndEffort(...args: unknown[]): Promise<unknown>;
   }).selectModelAndEffort;
-  await select.call({ activeComposer: async () => fixture.composer }, fixture.page, "gpt-5.6-sol", "max", { localToolsEnabled: false, solAvailable: true, extraHighAvailable: true, proAvailable: true });
+  await select.call({
+    activeComposer: async () => fixture.composer,
+    assertSelectedEffort: (ChatGptBrowserWorker.prototype as unknown as { assertSelectedEffort(...args: unknown[]): Promise<void> }).assertSelectedEffort,
+  }, fixture.page, "gpt-5.6-sol", "max", { localToolsEnabled: false, solAvailable: true, extraHighAvailable: true, proAvailable: true });
   expect(fixture.keys).toEqual(["ArrowRight", "ArrowRight", "ArrowRight", "ArrowRight"]);
   expect(fixture.value()).toBe(4);
 });
