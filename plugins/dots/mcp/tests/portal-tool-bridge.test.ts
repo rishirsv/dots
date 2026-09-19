@@ -79,6 +79,7 @@ describe("Portal dynamic tool bridge", () => {
       expect(inventory.structuredContent).toMatchObject({
         tools: [{ wire_name: "fixture_tool", kind: "function" }],
         total: 1,
+        invoke_with: "portal_call",
         mode: "bound",
       });
 

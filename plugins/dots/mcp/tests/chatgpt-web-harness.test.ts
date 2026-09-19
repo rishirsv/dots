@@ -1451,6 +1451,38 @@ describe("ChatGPT outer-native harness v4", () => {
     }
   });
 
+  test("an unavailable Temporary Chat surface is terminal before Send and does not retry a revoked binding", async () => {
+    const socketPath = brokerTestEndpoint(`cgw-surface-unavailable-${process.pid}-${Date.now()}`);
+    const provider: CodexProviderConfig = {
+      adapter: "chatgpt-web",
+      baseUrl: `browser://surface-unavailable-${Date.now()}`,
+      chatgptWeb: { brokerSocketPath: socketPath, localToolsEnabled: true, solAvailable: true, extraHighAvailable: true, proAvailable: true },
+    };
+    const worker = ChatGptBrowserWorker.forProvider(provider);
+    const originalRun = worker.run.bind(worker);
+    let browserStarts = 0;
+    (worker as unknown as { run: (turn: BrowserTurn) => Promise<string> }).run = async turn => {
+      browserStarts += 1;
+      await turn.prepare();
+      await turn.onFailure?.();
+      throw new ChatGptWebAdapterError("Temporary Chat composer was unavailable before Send", {
+        status: 503, errorType: "server_error", code: "chatgpt_surface_unavailable", retryable: false,
+      });
+    };
+    try {
+      const request = rawWireRequest(environmentXml);
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        const events: AdapterEvent[] = [];
+        await createChatGptWebAdapter(provider).runTurn!(request, { headers: new Headers() }, event => events.push(event));
+        expect(events.at(-1)).toMatchObject({ type: "error", code: "chatgpt_surface_unavailable", retryable: false });
+      }
+      expect(browserStarts).toBe(1);
+    } finally {
+      (worker as unknown as { run: (turn: BrowserTurn) => Promise<string> }).run = originalRun;
+      await TurnBroker.forSocket(socketPath).close();
+    }
+  });
+
   test("a missing optional Luna checkpoint completes once without repeating the browser turn", async () => {
     const checkpointPath = join(tempRoot, `missing-luna-checkpoint-${Date.now()}.json`);
     const provider: CodexProviderConfig = {

@@ -810,7 +810,10 @@ const chatGptTerminalErrorAlert = (scope: ChatGptTextScope): Locator => scope
 export class ChatGptSubmissionRejectionObserver {
   private page?: Page;
   private readonly requests = new Set<Request>();
-  private checks: Array<Promise<ChatGptWebAdapterError | undefined>> = [];
+  private responses: Response[] = [];
+  private sent = 0;
+  private finished = 0;
+  private networkFailures = 0;
 
   private readonly onRequest = (request: Request): void => {
     if (!this.page || request.method() !== "POST"
@@ -820,35 +823,110 @@ export class ChatGptSubmissionRejectionObserver {
       if (request.frame() !== this.page.mainFrame()) return;
     } catch { return; }
     this.requests.add(request);
+    this.sent += 1;
   };
 
   private readonly onResponse = (response: Response): void => {
-    if (!this.requests.delete(response.request()) || response.status() !== 413
-      || !response.headers()["content-type"]?.includes("application/json")) return;
-    this.checks.push(withChatGptBrowserObservationTimeout(response.json(), 3_000)
-      .then(body => body?.detail?.code === "message_length_exceeds_limit"
-        ? new ChatGptWebAdapterError(
-          "ChatGPT rejected this message because it exceeds the selected mode's input-size limit. Compact the task before retrying.",
-          { status: 400, errorType: "invalid_request_error", code: "context_length_exceeded", retryable: false },
-        ) : undefined)
-      .catch(() => undefined));
+    if (this.requests.has(response.request())) this.responses.push(response);
   };
+
+  private readonly onRequestFinished = (request: Request): void => {
+    if (this.requests.delete(request)) this.finished += 1;
+  };
+
+  private readonly onRequestFailed = (request: Request): void => {
+    if (this.requests.delete(request)) this.networkFailures += 1;
+  };
+
+  /** Only an error envelope is inspected; never retain or log conversation data. */
+  private async terminalCode(response: Response): Promise<string | undefined> {
+    const contentType = response.headers()["content-type"] ?? "";
+    if (!contentType.includes("application/json") && !contentType.includes("text/event-stream")) return;
+    if (response.status() < 400 && !contentType.includes("text/event-stream")) return;
+    const body = await withChatGptBrowserObservationTimeout(response.body(), 3_000).catch(() => undefined);
+    if (!body || body.byteLength > 2_000_000) return;
+    const safeCode = (value: unknown): string | undefined =>
+      typeof value === "string" && /^[a-z][a-z0-9_:-]{0,79}$/i.test(value) ? value : undefined;
+    const codeIn = (value: unknown): string | undefined => {
+      if (!value || typeof value !== "object" || Array.isArray(value)) return;
+      const envelope = value as Record<string, unknown>;
+      const detail = envelope.detail;
+      const error = envelope.error;
+      return safeCode((detail && typeof detail === "object" ? (detail as Record<string, unknown>).code : undefined)
+        ?? (error && typeof error === "object" ? (error as Record<string, unknown>).code : undefined)
+        ?? envelope.code);
+    };
+    const raw = body.toString("utf8");
+    if (contentType.includes("application/json")) {
+      try { return codeIn(JSON.parse(raw)); } catch { return; }
+    }
+    // The SSE stream may contain user text. Parse only explicit error events, and discard the body.
+    for (const event of raw.split(/\r?\n\r?\n/)) {
+      if (!event.split(/\r?\n/).some(line => line.trim() === "event: error")) continue;
+      const data = event.split(/\r?\n/).filter(line => line.startsWith("data:")).map(line => line.slice(5).trim()).join("\n");
+      try { return codeIn(JSON.parse(data)) ?? "upstream_stream_error"; } catch { return "upstream_stream_error"; }
+    }
+  }
 
   begin(page: Page): void {
     this.dispose();
-    this.checks = [];
+    this.responses = [];
+    this.sent = 0;
+    this.finished = 0;
+    this.networkFailures = 0;
     this.page = page;
     page.on("request", this.onRequest);
     page.on("response", this.onResponse);
+    page.on("requestfinished", this.onRequestFinished);
+    page.on("requestfailed", this.onRequestFailed);
   }
 
   async failure(): Promise<ChatGptWebAdapterError | undefined> {
-    return (await Promise.all(this.checks)).find(error => error !== undefined);
+    let rejected: ChatGptWebAdapterError | undefined;
+    for (const response of this.responses) {
+      const status = response.status();
+      const code = await this.terminalCode(response);
+      if (status === 413 && code === "message_length_exceeds_limit") {
+        return new ChatGptWebAdapterError(
+          "ChatGPT rejected this message because it exceeds the selected mode's input-size limit. Compact the task before retrying.",
+          { status: 400, errorType: "invalid_request_error", code: "context_length_exceeded", retryable: false },
+        );
+      }
+      if ((status >= 400 || code) && !rejected) {
+        const rateLimited = status === 429;
+        rejected = new ChatGptWebAdapterError(
+          `ChatGPT's conversation request failed (HTTP ${status}${code ? `, code ${code}` : ""}). The submitted turn was not retried.`,
+          { status: rateLimited ? 429 : 502, errorType: rateLimited ? "rate_limit_error" : "server_error",
+            code: rateLimited ? "rate_limit_exceeded" : "chatgpt_submission_failed", retryable: false },
+        );
+      }
+    }
+    if (rejected) return rejected;
+    if (this.networkFailures) {
+      return new ChatGptWebAdapterError(
+        "ChatGPT's conversation request failed at the network layer. The submitted turn was not retried.",
+        { status: 502, errorType: "server_error", code: "chatgpt_submission_network_failed", retryable: false },
+      );
+    }
+  }
+
+  diagnostic(): { requests: number; finished: number; responses: Array<{ status: number; contentType: string }>; networkFailures: number } {
+    return {
+      requests: this.sent,
+      finished: this.finished,
+      responses: this.responses.map(response => ({
+        status: response.status(),
+        contentType: (response.headers()["content-type"] ?? "").split(";")[0]!.slice(0, 80),
+      })),
+      networkFailures: this.networkFailures,
+    };
   }
 
   dispose(): void {
     this.page?.off("request", this.onRequest);
     this.page?.off("response", this.onResponse);
+    this.page?.off("requestfinished", this.onRequestFinished);
+    this.page?.off("requestfailed", this.onRequestFailed);
     this.page = undefined;
     this.requests.clear();
   }
@@ -2745,6 +2823,7 @@ export class ChatGptBrowserWorker {
   private async prepareTemporaryChatSurface(
     page: Page,
     captureDiagnostic?: (checkpoint: string) => Promise<void>,
+    abortSignal?: AbortSignal,
   ): Promise<Locator> {
     // Launcher verification refreshes its owned page before attaching Playwright so a newly added
     // connector is present in the catalog. Navigating again here destroys that freshly hydrated
@@ -2757,11 +2836,25 @@ export class ChatGptBrowserWorker {
       });
       await captureDiagnostic?.("temporary-chat-navigation-complete");
     }
-    let composer: Locator;
-    try {
-      composer = await this.activeComposer(page);
-    } catch {
-      throw new Error("ChatGPT web login is expired or the Temporary Chat surface is unavailable");
+    let composer: Locator | undefined;
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        composer = await this.activeComposer(page, 30_000, abortSignal);
+        break;
+      } catch (error) {
+        if (abortSignal?.aborted) throw error;
+        await throwIfChatGptSessionFailureAlert(page);
+        if (attempt === 1) {
+          throw new ChatGptWebAdapterError(
+            "ChatGPT Temporary Chat did not load a usable composer after a fresh reload. No message was submitted; retry when ChatGPT is responsive.",
+            { status: 503, errorType: "server_error", code: "chatgpt_surface_unavailable", retryable: false, cause: error },
+          );
+        }
+        await captureDiagnostic?.("temporary-chat-composer-missing");
+        // This is strictly before prompt attachment and Send. Replacing the page cannot replay a turn.
+        await page.reload({ waitUntil: "domcontentloaded", timeout: 60_000 });
+        await captureDiagnostic?.("temporary-chat-reloaded");
+      }
     }
     if (await dismissChatGptTemporaryChatOnboarding(page)) {
       await captureDiagnostic?.("temporary-chat-onboarding-dismissed");
@@ -2771,7 +2864,7 @@ export class ChatGptBrowserWorker {
     await assertAuthenticatedChatGptPage(page);
     await assertTemporaryChatPage(page);
     await captureDiagnostic?.("session-verified");
-    return composer;
+    return composer!;
   }
 
   private async waitForTurnDomMutation(page: Page, timeoutMs = 50): Promise<void> {
@@ -4812,9 +4905,10 @@ export class ChatGptBrowserWorker {
           turn.traceId,
           "temporary_chat_preparation",
           browserStageTimeouts.temporaryChatPreparation,
-          () => this.prepareTemporaryChatSurface(
+          signal => this.prepareTemporaryChatSurface(
             page,
             checkpoint => diagnostics.capture(page, checkpoint),
+            signal,
           ),
         );
       }
@@ -5394,6 +5488,7 @@ export class ChatGptBrowserWorker {
         `[chatgpt-web] browser turn ${turn.traceId} failed:`
         + ` ${redactChatGptUiDiagnostic(error instanceof Error ? error.message : String(error))}`,
       );
+      console.error(`[chatgpt-web] browser turn ${turn.traceId} owned submission=${JSON.stringify(submissionRejection.diagnostic())}`);
       if (diagnosticPage && !diagnosticPage.isClosed()) {
         await diagnostics.capture(diagnosticPage, "turn-failed", error).catch(() => {});
       }

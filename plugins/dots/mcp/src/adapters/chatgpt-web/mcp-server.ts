@@ -741,8 +741,8 @@ export async function runChatGptMcpServer(options: {
   );
   const boundContextField = contract === "safe" ? "request_id" : "turn_token";
   const portalToolsDescription = contract === "safe"
-    ? `Discover the live Portal tool registry. In a bound Portal request, pass the supplied ${boundContextField} unchanged.`
-    : `Discover the live Portal tool registry. In a bound Codex turn, pass the supplied ${boundContextField} unchanged; omit ${boundContextField} only in a direct ChatGPT conversation, which exposes exec_command.`;
+    ? `Discover the live Portal tool registry. This operation never invokes a discovered tool; use portal_call for that. If portal_call is unavailable, report that instead of repeating discovery. In a bound Portal request, pass the supplied ${boundContextField} unchanged.`
+    : `Discover the live Portal tool registry. This operation never invokes a discovered tool; use portal_call for that. If portal_call is unavailable, report that instead of repeating discovery. In a bound Codex turn, pass the supplied ${boundContextField} unchanged; omit ${boundContextField} only in a direct ChatGPT conversation, which exposes exec_command.`;
   const portalCallDescription = contract === "safe"
     ? `Invoke the exact wire_name returned by portal_tools with its declared arguments, or pass input for a freeform tool. In a bound Portal request, pass the supplied ${boundContextField} unchanged.`
     : `Invoke the exact wire_name returned by portal_tools with its declared arguments, or pass input for a freeform tool. In a bound Codex turn, pass the supplied ${boundContextField} unchanged; omit ${boundContextField} only for direct exec_command.`;
@@ -984,13 +984,16 @@ export async function runChatGptMcpServer(options: {
               ...(include_schema ? {} : { parameters: undefined }),
             }] : [];
             const tools = available.slice(offset, offset + limit);
-            return result({
+            const discovery = {
               tools,
               total: available.length,
               next_offset: offset + tools.length < available.length ? offset + tools.length : null,
+              invoke_with: "portal_call",
               operation_prefix: directWorkerEpoch,
               mode: context.mode,
-            });
+            };
+            console.error(`[portal-mcp] portal_tools result=${JSON.stringify({ mode: context.mode, count: tools.length, bytes: JSON.stringify(discovery).length, queryChars: query?.length ?? 0, offset })}`);
+            return result(discovery);
           }
 
           const bound = context.claimed.environment;
@@ -1045,12 +1048,15 @@ export async function runChatGptMcpServer(options: {
           }
           const page = [...directPage, ...nestedPage];
           const total = directMatches.length + nestedTotal;
-          return result({
+          const discovery = {
             tools: page,
             total,
             next_offset: offset + page.length < total ? offset + page.length : null,
+            invoke_with: "portal_call",
             mode: context.mode,
-          });
+          };
+          console.error(`[portal-mcp] portal_tools result=${JSON.stringify({ mode: context.mode, count: page.length, total, bytes: JSON.stringify(discovery).length, queryChars: query?.length ?? 0, offset, includeSchema: include_schema })}`);
+          return result(discovery);
         },
       );
     },

@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createContext, runInContext } from "node:vm";
-import type { Page } from "playwright-core";
+import type { Locator, Page } from "playwright-core";
 import { CHATGPT_BROWSER_OBSERVATION_PROBE_TIMEOUT_MS, CHATGPT_COMPLETION_SETTLE_MS, CHATGPT_EXTERNAL_PROGRESS_CLOCK_SKEW_MS, CHATGPT_EXTERNAL_PROGRESS_STALL_CEILING_MS, ChatGptCompletionTracker, chatGptExternalProgressSuppressesDomHealth, CHATGPT_RESPONSE_DOM_GRACE_MS, MAX_CHATGPT_INTERNAL_OBSERVATION_FAULTS, CHATGPT_COMPOSER_DOCUMENT_END_KEY, CHATGPT_COMPOSER_SELECT_ALL_KEY, ChatGptBrowserObservationTimeoutError, ChatGptBrowserWorker, ChatGptSubmissionRejectionObserver, ChatGptPromptAttachmentIntegrityError, ChatGptTurnDomHealthTracker, ChatGptVisibleTraceTracker, MAX_CHATGPT_BROWSER_PAGE_REBINDS, MAX_CHATGPT_BROWSER_TABS, MAX_CHATGPT_CONNECTOR_TRIGGER_ATTEMPTS, assertChatGptWebInputWithinLimits, assertChatGptWebMultipartInputWithinLimits, browserDiagnosticCheckpoint, chatGptConnectorAttachmentMode, chatGptNewTurnIdentity, chatGptReboundTurnIdentity, chatGptSubmissionEvidence, connectAfterClosingBrowserConnection, dismissChatGptTemporaryChatOnboarding, isChatGptTraceControl, redactChatGptUiDiagnostic, resolveBrowserConfig, resolveChatGptToolConfirmation, resolveChatGptWebMultipartStagingMode, sanitizeChatGptBrowserDiagnosticState, setChatGptThinkMode, stripChatGptTraceControlSuffix, throwIfChatGptRateLimitDialog, throwIfChatGptSessionFailureAlert, throwIfChatGptTerminalErrorAlert, withChatGptBrowserObservationTimeout, CHATGPT_MULTIPART_RESPONSE_DOM_GRACE_MS, browserStageTimeouts, ChatGptSuspensionClock, remainingStageBudgetMs } from "../src/adapters/chatgpt-web/browser-worker";
 import { ensureChatGptPersonalizedConnectorAccess, chatGptUnavailableProDetail } from "../src/adapters/chatgpt-web/browser-worker";
 import { chatGptStoppedThinkingError } from "../src/adapters/chatgpt-web/adapter-error";
@@ -1107,6 +1107,39 @@ test("active composer resolution waits for exactly one visible editor", async ()
   }).activeComposer;
 
   expect(await activeComposer.call({}, page, 500)).toBe(composer);
+});
+
+test("Temporary Chat retries a missing pre-send composer once and fails with a terminal surface error", async () => {
+  const checkpoints: string[] = [];
+  let reloads = 0;
+  let attempts = 0;
+  const locator = {
+    filter() { return this; }, last() { return this; },
+    isVisible: async () => false,
+    count: async () => 1,
+    nth: () => ({ isVisible: async () => true }),
+  };
+  const page = {
+    url: () => "https://chatgpt.com/?temporary-chat=true",
+    reload: async () => { reloads += 1; },
+    locator: () => locator,
+  } as unknown as Page;
+  const composer = {} as Locator;
+  const worker = Object.assign(Object.create(ChatGptBrowserWorker.prototype), {
+    activeComposer: async () => { attempts += 1; if (attempts === 1) throw new Error("unhydrated"); return composer; },
+  }) as { prepareTemporaryChatSurface(page: Page, capture: (checkpoint: string) => Promise<void>): Promise<Locator> };
+  expect(await worker.prepareTemporaryChatSurface(page, async checkpoint => { checkpoints.push(checkpoint); })).toBe(composer);
+  expect({ attempts, reloads }).toEqual({ attempts: 2, reloads: 1 });
+  expect(checkpoints).toContain("temporary-chat-reloaded");
+
+  attempts = 0;
+  const unavailable = Object.assign(Object.create(ChatGptBrowserWorker.prototype), {
+    activeComposer: async () => { attempts += 1; throw new Error("still unavailable"); },
+  }) as typeof worker;
+  await expect(unavailable.prepareTemporaryChatSurface(page, async () => {})).rejects.toMatchObject({
+    code: "chatgpt_surface_unavailable", status: 503, retryable: false,
+  });
+  expect({ attempts, reloads }).toEqual({ attempts: 2, reloads: 2 });
 });
 
 test("prompt verification accepts Lexical NBSP preservation without weakening other mismatches", async () => {
@@ -2618,7 +2651,7 @@ test("only the owned send's explicit size rejection overrides a stopped response
     page.emit("response", {
       request: () => sent, status: () => status,
       headers: () => ({ "content-type": "application/json" }),
-      json: async () => { bodyReads += 1; return { detail: { code } }; },
+      body: async () => { bodyReads += 1; return Buffer.from(JSON.stringify({ detail: { code } })); },
     });
   };
   const earlier = request();
@@ -2634,7 +2667,7 @@ test("only the owned send's explicit size rejection overrides a stopped response
   expect(bodyReads).toBe(0);
   const successful = request(); page.emit("request", successful); respond(successful, 200);
   const unfamiliar = request(); page.emit("request", unfamiliar); respond(unfamiliar, 413, "unknown_error");
-  expect(await observer.failure()).toBeUndefined();
+  expect(await observer.failure()).toMatchObject({ code: "chatgpt_submission_failed", retryable: false });
   const rejected = request(); page.emit("request", rejected); respond(rejected);
   expect(await observer.failure()).toMatchObject({
     status: 400, code: "context_length_exceeded", errorType: "invalid_request_error", retryable: false,
@@ -2645,6 +2678,53 @@ test("only the owned send's explicit size rejection overrides a stopped response
   observer.dispose();
   expect(page.listenerCount("request")).toBe(0);
   expect(page.listenerCount("response")).toBe(0);
+  expect(page.listenerCount("requestfinished")).toBe(0);
+  expect(page.listenerCount("requestfailed")).toBe(0);
+});
+
+test("the owned conversation request distinguishes HTTP, stream, and network failures without leaking content", async () => {
+  const frame = {};
+  const page = Object.assign(new EventEmitter(), { mainFrame: () => frame });
+  const observer = new ChatGptSubmissionRejectionObserver();
+  const request = () => ({ method: () => "POST", url: () => "https://chatgpt.com/backend-api/f/conversation", frame: () => frame });
+  observer.begin(page as unknown as Page);
+  const http = request(); page.emit("request", http);
+  page.emit("response", {
+    request: () => http, status: () => 429,
+    headers: () => ({ "content-type": "application/json" }),
+    body: async () => Buffer.from('{"detail":{"code":"rate_limited","message":"secret message"}}'),
+  });
+  expect(await observer.failure()).toMatchObject({ code: "rate_limit_exceeded", status: 429, retryable: false });
+  expect(observer.diagnostic()).toEqual({ requests: 1, finished: 0, responses: [{ status: 429, contentType: "application/json" }], networkFailures: 0 });
+
+  observer.begin(page as unknown as Page);
+  const stream = request(); page.emit("request", stream);
+  page.emit("response", {
+    request: () => stream, status: () => 200,
+    headers: () => ({ "content-type": "text/event-stream; charset=utf-8" }),
+    body: async () => Buffer.from('event: message\ndata: {"user":"secret answer"}\n\nevent: error\ndata: {"error":{"code":"model_backend_failed","message":"private"}}\n\n'),
+  });
+  const streamFailure = await observer.failure();
+  expect(streamFailure).toMatchObject({ code: "chatgpt_submission_failed", retryable: false });
+  expect(streamFailure?.message).toContain("model_backend_failed");
+  expect(streamFailure?.message).not.toMatch(/secret|private/);
+
+  observer.begin(page as unknown as Page);
+  const failed = request(); page.emit("request", failed); page.emit("requestfailed", failed);
+  expect(await observer.failure()).toMatchObject({ code: "chatgpt_submission_network_failed", retryable: false });
+  expect(observer.diagnostic()).toEqual({ requests: 1, finished: 0, responses: [], networkFailures: 1 });
+
+  observer.begin(page as unknown as Page);
+  const interrupted = request(); page.emit("request", interrupted);
+  page.emit("response", {
+    request: () => interrupted, status: () => 200,
+    headers: () => ({ "content-type": "text/event-stream" }),
+    body: async () => Buffer.from('event: message\ndata: {"answer":"private"}\n\n'),
+  });
+  page.emit("requestfailed", interrupted);
+  expect(await observer.failure()).toMatchObject({ code: "chatgpt_submission_network_failed" });
+  expect(observer.diagnostic()).toMatchObject({ requests: 1, finished: 0, networkFailures: 1 });
+  observer.dispose();
 });
 
 test("effort readback fails before Send if ChatGPT changes the selected mode", async () => {

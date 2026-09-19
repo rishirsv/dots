@@ -1330,6 +1330,7 @@ export function createChatGptWebAdapter(
               const externalProgress = session.runtime.mode === "tools"
                 ? session.runtime.externalProgress
                 : undefined;
+              const browserOutcome = session.browserOutcome.then(outcome => ({ type: "browser" as const, outcome }));
               const armNextTools = () => turnToken
                 ? broker.nextToolBatch(turnToken, toolWaitAbort.signal).then(async requests => {
                   if (!externalProgress) {
@@ -1351,12 +1352,17 @@ export function createChatGptWebAdapter(
                     externalProgress.assertToolBatchActive(revision);
                   }
                   return { type: "tools" as const, requests };
-                }).catch(error => toolWaitAbort.signal.aborted
-                  ? new Promise<never>(() => {})
-                  : Promise.reject(error))
+                }).catch(error => {
+                  if (toolWaitAbort.signal.aborted) return new Promise<never>(() => {});
+                  // Browser failure revokes the capability before its outcome is published so a
+                  // retained failed page cannot execute tools. Let that typed browser outcome win
+                  // over the pending broker wait's expected revocation error.
+                  if (error instanceof Error && (error.message === "Codex turn binding was revoked"
+                    || error.message === "turn token is invalid or expired")) return browserOutcome;
+                  return Promise.reject(error);
+                })
                 : undefined;
               let nextTools = armNextTools();
-              const browserOutcome = session.browserOutcome.then(outcome => ({ type: "browser" as const, outcome }));
               const finishBrowserOutcome = async (completedOutcome: ChatGptBrowserOutcome): Promise<void> => {
                 // Portal manual completion and its owner-only empty-batch signal are resolved by the
                 // same broker transition. Drain once more so the accepted final answer cannot be

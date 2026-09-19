@@ -89,6 +89,8 @@ ChatGPT sees two stable connector operations: `portal_tools` for discovery and
 release or connector schema refresh. An omitted turn token means an explicit
 direct ChatGPT call; a supplied turn token must remain bound to the originating
 Codex turn and may never fall back to direct local execution.
+Discovery identifies `portal_call` as the only invocation operation and tells
+ChatGPT to report its absence instead of repeatedly searching the registry.
 Direct shell commands carry a fresh worker-prefixed operation ID per distinct
 invocation; replaying the same ID returns only that command's result, and reusing
 it with different arguments is rejected. After a worker restart, old IDs fail
@@ -100,6 +102,9 @@ so its opaque token, browser lease, pending calls, and results live until
 completion or cancellation. Stable in-memory call IDs prevent transport retries
 from invoking a tool twice. Portal does not persist operation receipts or replay
 mutations after restart.
+If browser failure revokes the tool capability while the adapter is waiting for
+tool batches, the browser's typed outcome remains authoritative; a resulting
+expected broker-revocation error must not replace it.
 
 ## Required HTTP Behavior
 
@@ -140,7 +145,13 @@ mutations after restart.
 - Connector refresh can rebuild an unsent composer, but only one verified prompt
   is submitted; the selected Pro effort is rechecked immediately before Send.
 - A size rejection from the exact owned ChatGPT submission is reported as an
-  input-limit error; an unexplained stopped response remains non-retryable.
+  input-limit error. Other explicit failures from that request are classified
+  by their HTTP status or structured terminal code without retaining prompt,
+  answer, or tool-result contents; an unexplained stopped response remains
+  non-retryable. A Temporary Chat page that fails to load is not labeled an
+  expired login without separate authentication evidence; before any send, a
+  missing composer gets one bounded reload, then a specific terminal surface
+  error instead of an unknown failure and a revoked-binding retry loop.
 - Native models, Search, image generation, and Voice continue to work.
 - Authentication expiry, missing connector, usage exhaustion, UI drift, and
   restart loss are distinct actionable failures with no silent fallback.
