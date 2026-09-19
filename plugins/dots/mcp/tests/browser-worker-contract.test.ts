@@ -826,7 +826,7 @@ test("submission observation recovery resumes with rebound locators and is stric
       boundedRecoveries += 1;
       return { page: reboundPage, baseline: reboundBaseline };
     },
-  )).rejects.toThrow("submission DOM remained unresponsive after 2 same-page rebinds");
+  )).rejects.toThrow("submission DOM remained unresponsive after 2 recovery attempts");
   expect(boundedRecoveries).toBe(2);
 });
 

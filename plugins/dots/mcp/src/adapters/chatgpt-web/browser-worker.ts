@@ -2892,7 +2892,7 @@ export class ChatGptBrowserWorker {
           recoveryAttempts += 1;
           if (recoveryAttempts > MAX_CHATGPT_BROWSER_PAGE_REBINDS) {
             throw new Error(
-              `ChatGPT accepted the message, but its DOM remained unresponsive after ${MAX_CHATGPT_BROWSER_PAGE_REBINDS} same-page rebinds`,
+              `ChatGPT accepted the message, but its DOM remained unresponsive after ${MAX_CHATGPT_BROWSER_PAGE_REBINDS} recovery attempts`,
               { cause: error },
             );
           }
@@ -3408,7 +3408,7 @@ export class ChatGptBrowserWorker {
         recoveryAttempts += 1;
         if (recoveryAttempts > MAX_CHATGPT_BROWSER_PAGE_REBINDS) {
           throw new Error(
-            `ChatGPT submission DOM remained unresponsive after ${MAX_CHATGPT_BROWSER_PAGE_REBINDS} same-page rebinds`,
+            `ChatGPT submission DOM remained unresponsive after ${MAX_CHATGPT_BROWSER_PAGE_REBINDS} recovery attempts`,
             { cause: error },
           );
         }
@@ -4572,14 +4572,24 @@ export class ChatGptBrowserWorker {
         checkpoint: "submission-page-rebound" | "assistant-page-rebound",
         abortSignal?: AbortSignal,
       ): Promise<ChatGptSubmissionObservationRecovery> => {
-        await rebindLauncherPage(attempt, cause, abortSignal);
+        if (launcherSurfaceId) {
+          await rebindLauncherPage(attempt, cause, abortSignal);
+          await diagnostics.capture(page, checkpoint);
+        } else {
+          if (abortSignal?.aborted) throw new DOMException("ChatGPT web turn aborted", "AbortError");
+          if (page.isClosed()) throw chatGptBrowserTabClosedError();
+          // Managed Chrome owns this page directly. A timed-out read does not imply that its
+          // renderer is dead; retry the observation on the same accepted turn, never the send.
+          console.warn(
+            `[chatgpt-web] browser turn ${turn.traceId} retrying stalled managed-page DOM observation ${attempt}/${MAX_CHATGPT_BROWSER_PAGE_REBINDS}`,
+          );
+        }
         const reboundBaseline: ChatGptSubmissionBaseline = {
           ...baseline,
           userTurns: page.locator(CHATGPT_USER_TURN_SELECTOR),
           responseTurns: page.locator(CHATGPT_ASSISTANT_TURN_SELECTOR),
           domCache: {},
         };
-        await diagnostics.capture(page, checkpoint);
         return { page, baseline: reboundBaseline };
       };
       const recoverSubmissionObservation: ChatGptObservationRecovery = (
@@ -4606,10 +4616,10 @@ export class ChatGptBrowserWorker {
         "assistant-page-rebound",
         abortSignal,
       );
-      // Rebinding the exact leased page is a browser-ownership operation. Read-only
-      // compaction needs it too; acquiring MCP tools is not a prerequisite.
-      const launcherObservationRecovery = launcherSurfaceId !== undefined
-        && this.config.browserHostDescriptorPath !== undefined;
+      // A stalled read after send must not discard an accepted turn. Launcher pages reconnect;
+      // managed pages retry the read without replacing the Temporary Chat document.
+      const turnObservationRecovery = this.config.browserHost === "managed-chrome"
+        || (launcherSurfaceId !== undefined && this.config.browserHostDescriptorPath !== undefined);
       await diagnostics.capture(page, "browser-page-acquired");
       console.info(
         `[chatgpt-web] browser turn ${turn.traceId} opened (transport=${prepared.multipart ? `multipart-${prepared.multipart.parts.length}` : "inline"}, maxMessageChars=${maxMessageChars}, estimatedInputTokens=${estimatedInputTokens}, images=${prepared.images.length}, compactionTrimmedMessages=${prepared.trimmedCompactionMessages ?? 0})`,
@@ -4676,7 +4686,7 @@ export class ChatGptBrowserWorker {
               undefined,
               undefined,
               undefined,
-              launcherObservationRecovery
+              turnObservationRecovery
                 ? async (...args) => {
                   const recovered = await recoverSubmissionObservation(...args);
                   stageBaseline = recovered.baseline;
@@ -4706,7 +4716,7 @@ export class ChatGptBrowserWorker {
                 undefined,
                 CHATGPT_MULTIPART_RESPONSE_DOM_GRACE_MS,
                 undefined,
-                launcherObservationRecovery
+                turnObservationRecovery
                   ? async (...args) => {
                     const recovered = await recoverAssistantObservation(...args);
                     stageBaseline = recovered.baseline;
@@ -4825,7 +4835,7 @@ export class ChatGptBrowserWorker {
           turn.externalProgress,
           turn,
           completionTracker,
-          launcherObservationRecovery
+          turnObservationRecovery
             ? async (...args) => {
               const recovered = await recoverSubmissionObservation(...args);
               submissionBaseline = recovered.baseline;
@@ -4843,7 +4853,7 @@ export class ChatGptBrowserWorker {
         turn.externalProgress,
         CHATGPT_RESPONSE_DOM_GRACE_MS,
         completionTracker,
-        launcherObservationRecovery
+        turnObservationRecovery
           ? async (...args) => {
             const recovered = await recoverAssistantObservation(...args);
             submissionBaseline = recovered.baseline;

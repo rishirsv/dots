@@ -131,6 +131,8 @@ mutations after restart.
 - New tools appear without a Portal or ChatGPT connector schema update.
 - Concurrent tasks, cancellation, retries, and long-running tools preserve
   correct turn identity without deadlock or duplicate execution.
+- A transient browser DOM probe stall after an accepted send retries observation
+  on the same turn; it never resends the prompt.
 - Native models, Search, image generation, and Voice continue to work.
 - Authentication expiry, missing connector, usage exhaustion, UI drift, and
   restart loss are distinct actionable failures with no silent fallback.
