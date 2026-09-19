@@ -1531,14 +1531,18 @@ export class ChatGptTurnDomHealthTracker {
 
     const emptyCompletion = state.responsePresent
       && !state.running
-      && state.currentText.length === 0
-      && state.completionActionVisible;
+      && state.currentText.length === 0;
     if (!emptyCompletion) {
       this.emptyCompletionSince = undefined;
     } else {
       this.emptyCompletionSince ??= now;
-      if (now - this.emptyCompletionSince >= this.emptyCompletionMs) {
-        return "ChatGPT browser turn completed without a final answer";
+      const graceMs = state.completionActionVisible
+        ? this.emptyCompletionMs
+        : this.missingCompletionActionMs;
+      if (now - this.emptyCompletionSince >= graceMs) {
+        return state.completionActionVisible
+          ? "ChatGPT browser turn completed without a final answer"
+          : "ChatGPT stopped generating without a final answer or completed-turn action";
       }
     }
 

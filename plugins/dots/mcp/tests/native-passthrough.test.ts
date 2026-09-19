@@ -1,5 +1,43 @@
 import { expect, spyOn, test } from "bun:test";
+import { gzipSync } from "node:zlib";
 import { forwardNativeCodexRequest } from "../src/native-passthrough";
+
+test("native passthrough does not label decoded upstream bodies as gzip", async () => {
+  const fixtures = [
+    { body: "data: [DONE]\n\n", contentType: "text/event-stream", status: 200, endpoint: "responses" },
+    { body: '{"models":[]}', contentType: "application/json", status: 200, endpoint: "models" },
+    { body: '{"error":"unavailable"}', contentType: "application/json", status: 503, endpoint: "responses" },
+  ] as const;
+  const server = Bun.serve({
+    port: 0,
+    fetch(request) {
+      const index = Number(new URL(request.url).pathname.slice(1));
+      const fixture = fixtures[index]!;
+      return new Response(new Uint8Array(gzipSync(fixture.body)), {
+        status: fixture.status,
+        headers: { "content-type": fixture.contentType, "content-encoding": "gzip" },
+      });
+    },
+  });
+  try {
+    for (const [index, fixture] of fixtures.entries()) {
+      const response = await forwardNativeCodexRequest(
+        fixture.endpoint === "models"
+          ? new Request("http://127.0.0.1:17841/v1/models", {
+            headers: { authorization: "Bearer codex-oauth-token" },
+          })
+          : nativeRequest(),
+        fixture.endpoint,
+        async () => fetch(`http://127.0.0.1:${server.port}/${index}`),
+      );
+      expect(response.status).toBe(fixture.status);
+      expect(response.headers.get("content-encoding")).toBeNull();
+      expect(await response.text()).toBe(fixture.body);
+    }
+  } finally {
+    server.stop(true);
+  }
+});
 
 test("forwards native Codex requests verbatim to the official backend", async () => {
   const originalBody = Bun.zstdCompressSync(Buffer.from('{"model":"gpt-5.6-sol","stream":true}'));
