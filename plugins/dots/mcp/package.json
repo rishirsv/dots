@@ -1,8 +1,8 @@
 {
   "name": "@rishirsv/portal",
-  "version": "5.0.19",
+  "version": "5.0.20",
   "private": true,
-  "description": "Run ChatGPT Web Pro as a Codex model with the current task's complete tool set.",
+  "description": "Run ChatGPT Web thinking levels as Codex models with the current task's complete tool set.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rishirsv/dots.git",

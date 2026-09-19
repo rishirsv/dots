@@ -2,23 +2,23 @@
 
 ## Value Proposition
 
-Portal lets a Codex user run ChatGPT Web Pro as a model while preserving the
-current Codex task's complete native tool set. It replaces a large standalone
+Portal lets a Codex user run ChatGPT Web thinking modes as models while preserving
+the current Codex task's complete native tool set. It replaces a large standalone
 capability broker with a small local bridge.
 
-The target user is a local Codex user with a ChatGPT account that exposes Pro.
+The target user is a local Codex user with a ChatGPT account that exposes GPT-5.6 Sol.
 Today they must choose between Codex's native tool environment and ChatGPT Web
 models, or maintain a separate permissioned Portal runtime. Portal makes the
 combination a single model-picker choice.
 
-**Core actions**: Start and authenticate the bridge, use ChatGPT Web Pro through
-the Responses API, and dynamically invoke every tool exposed by the originating
-Codex turn.
+**Core actions**: Start and authenticate the bridge, choose a verified ChatGPT
+Web mode through the Responses API, and dynamically invoke every tool exposed
+by the originating Codex turn.
 
 ## Why an LLM Integration?
 
 **Conversational win**: The user continues working in Codex and selects
-ChatGPT Web Pro like any other model instead of moving prompts, context, and
+ChatGPT Web thinking modes like any other model instead of moving prompts, context, and
 tool results between applications.
 
 **LLM contribution**: ChatGPT performs the reasoning and decides when to use
@@ -32,7 +32,7 @@ translation, authenticated browser session, tunnel, and per-turn correlation.
 
 `portal start` is the primary entrypoint. It starts the supervised runtime,
 opens ChatGPT login when required, guides one-time connector setup, verifies
-Pro access and a real tool round trip, and installs Codex routing only after the
+Sol access and a real tool round trip, and installs Codex routing only after the
 runtime is healthy.
 
 `portal status` reports a compact readiness line or one actionable recovery
@@ -41,10 +41,15 @@ turns, restores the previous Codex route, and stops the runtime. `portal
 uninstall` removes the integration while preserving login data unless the user
 explicitly requests its deletion.
 
-In Codex, the authenticated account's model catalog gains one routed model:
-**ChatGPT Web — Pro**. Portal never silently substitutes another model. The
-automated bridge does not mirror ChatGPT's model picker; users who want another
-ChatGPT Web mode use a direct ChatGPT conversation and its native controls.
+In Codex, an authenticated Sol account gains separate routed models for
+**ChatGPT Web — Instant, Medium, High**, plus **Extra High** and **Pro** when
+the account probe observes those choices. The non-Pro routes explicitly select
+and verify GPT-5.6 Sol before choosing their fixed thinking level. They fail
+before Send when Sol or the requested level cannot be verified; they never
+silently use the current "Latest" or Pro selection. The existing Pro route
+remains a compatibility alias for the account-selected Pro family, not proof
+of a specific underlying model family. Portal does not add a second model
+picker or natural-language model router.
 
 Conversation ownership is explicit. A Codex-originated task remains a Codex
 conversation: all follow-ups and corrections are entered in Codex, while the
@@ -63,7 +68,8 @@ user-authored turns between those two surfaces.
 - **Transport**: Loopback Responses API plus the reference tunnel required for
   ChatGPT's remote connector to reach the local bridge.
 - **Model routing**: Native OpenAI models and endpoints pass through unchanged;
-  Portal adds only `chatgpt-web/pro` after verifying account availability.
+  Portal adds fixed Web thinking-level routes after verifying account
+  availability. Non-Pro routes bind GPT-5.6 Sol explicitly.
 - **Tool policy**: Allow all actions. Portal forwards the complete tool registry
   supplied by the current Codex turn and makes no permission, grant, effect,
   family, root, or privacy decision.
@@ -127,13 +133,17 @@ expected broker-revocation error must not replace it.
 - Redaction, privacy dashboards, document-fidelity policy, or content filters.
 - Hosted relay accounts, OAuth, device pairing, Postgres, or multi-device use.
 - Browser-only, Portal manual, Bigger Context, Luna checkpoint, alternate
-  ChatGPT-model, dashboard, activity, or configurable transport modes.
+  ChatGPT-model families beyond the verified Sol thinking levels and existing
+  Pro alias, dashboard, activity, or configurable transport modes.
 
 ## Completion Criteria
 
 - Login survives daemon and machine restarts.
-- ChatGPT Web — Pro appears only when the account exposes Pro and the browser
-  actually selects Pro.
+- The non-Pro Web routes appear only when the browser probe verifies Sol;
+  Extra High and Pro require their own observed capabilities. Non-Pro routes
+  select and retain Sol plus the requested thinking level before Send. Oversized
+  multipart staging cannot upgrade a non-Pro turn to Pro. No automated live test
+  consumes a Pro model turn just to validate the lower-level routes.
 - Text, image, compaction, and multi-round tool conversations stream correctly.
 - File, terminal, MCP/app, free-form, and nested subagent tools execute in the
   originating Codex task.

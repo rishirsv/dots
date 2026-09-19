@@ -55,6 +55,7 @@ import {
   CHATGPT_USER_TURN_SELECTOR,
   activateChatGptEffortMenu,
   detectChatGptAccountCapabilities,
+  ensureChatGptSolFamily,
   parseChatGptEffortSliderState,
 } from "../../chatgpt-session";
 import { loginVerificationMarkerPath } from "../../browser-login";
@@ -1142,6 +1143,7 @@ export function resolveChatGptWebMultipartStagingMode(
   capabilities: ChatGptWebCapabilities,
   maxStageMessageTokens: number,
   maxStageChars: number,
+  requestedEffort: ChatGptWebModelMode["effort"],
 ): ChatGptWebModelMode {
   if (modelId === CHATGPT_WEB_LUNA_MODEL_ID || !capabilities.solAvailable) {
     throw new ChatGptWebAdapterError(
@@ -1152,9 +1154,9 @@ export function resolveChatGptWebMultipartStagingMode(
   if (modelId !== CHATGPT_WEB_MODEL_ID) {
     throw new Error(`ChatGPT Bigger Context staging mode is not defined for model: ${modelId}`);
   }
-  const efforts: readonly ChatGptWebModelMode["effort"][] = capabilities.proAvailable
+  const efforts: readonly ChatGptWebModelMode["effort"][] = requestedEffort === "max" && capabilities.proAvailable
     ? ["low", "medium", "max"]
-    : ["low", "medium"];
+    : requestedEffort === "low" ? ["low"] : ["low", "medium"];
   for (const effort of efforts) {
     const mode = resolveChatGptWebModelMode(modelId, effort, capabilities);
     const limits = resolveChatGptWebTransportLimits(modelId, effort, capabilities);
@@ -2684,6 +2686,15 @@ export class ChatGptBrowserWorker {
     } finally {
       waitAbort.abort();
     }
+    if (mode.effort !== "max") {
+      try {
+        await ensureChatGptSolFamily(activation.menu, true);
+      } catch (error) {
+        throw chatGptModelControlUnavailableAdapterError(
+          error instanceof Error ? error.message : String(error),
+        );
+      }
+    }
     let sliderState = parseChatGptEffortSliderState(
       await effortSlider.getAttribute("aria-valuemin"),
       await effortSlider.getAttribute("aria-valuemax"),
@@ -2787,6 +2798,18 @@ export class ChatGptBrowserWorker {
       throw chatGptModelControlUnavailableAdapterError(
         "ChatGPT did not retain the selected effort in its ready composer; the message was not submitted",
       );
+    }
+    if (mode.effort !== "max") {
+      const activation = await activateChatGptEffortMenu(page, control);
+      try {
+        await ensureChatGptSolFamily(activation.menu, false);
+      } catch (error) {
+        throw chatGptModelControlUnavailableAdapterError(
+          error instanceof Error ? error.message : String(error),
+        );
+      } finally {
+        await page.keyboard.press("Escape").catch(() => {});
+      }
     }
   }
 
@@ -4715,6 +4738,7 @@ export class ChatGptBrowserWorker {
           browserCapabilities,
           maxStageMessageTokens!,
           maxStageChars!,
+          requestedMode.effort,
         )
         : requestedMode;
       if (prepared.multipart) {

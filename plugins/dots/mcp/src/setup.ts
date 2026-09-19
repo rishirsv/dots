@@ -335,9 +335,9 @@ export async function setup(options: SetupOptions): Promise<SetupResult> {
   config.solAvailable = solAvailable === true;
   config.extraHighAvailable = config.solAvailable && extraHighAvailable === true;
   config.proAvailable = config.solAvailable && proAvailable === true;
-  if (!config.proAvailable) {
+  if (!config.solAvailable) {
     throw new Error(
-      "ChatGPT Web — Pro is not available in the authenticated account. Run portal login with a ChatGPT Pro account, then retry portal start.",
+      "GPT-5.6 Sol is not available in the authenticated account. Run portal login with an eligible ChatGPT account, then retry portal start.",
     );
   }
   const explicitTunnelChange = Boolean(options.tunnelId || options.runtimeKeyFile || options.runtimeKeyValue);

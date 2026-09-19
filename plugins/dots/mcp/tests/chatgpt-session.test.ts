@@ -7,6 +7,7 @@ import {
   CHATGPT_EFFORT_SLIDER_CONTAINER_SELECTOR,
   activateChatGptEffortMenu,
   detectChatGptAccountCapabilities,
+  ensureChatGptSolFamily,
 } from "../src/chatgpt-session";
 
 test("composer and effort selectors exclude unrelated editable fields and menu buttons", () => {
@@ -211,9 +212,11 @@ test("a transient effort control does not turn a Luna-only account into Sol", as
   expect(visibilityReads).toBe(2);
 });
 
-function reasoningPicker(options: { max?: string; delay?: number; missing?: boolean } = {}) {
+function reasoningPicker(options: { max?: string; latestMax?: string; delay?: number; missing?: boolean; noSol?: boolean } = {}) {
   let value = 0;
   let menuOpen = true;
+  let family = "Latest";
+  let familyMenuOpen = false;
   const keys: string[] = [];
   const hidden = {
     filter() { return this; }, last() { return this; }, getByText() { return this; },
@@ -227,7 +230,7 @@ function reasoningPicker(options: { max?: string; delay?: number; missing?: bool
     isVisible: async () => false, // Live DOM: aria-hidden=true, zero-width semantic span.
     filter: () => { throw new Error("Semantic input must not be visibility-filtered"); },
     waitFor: async ({ state }: { state: string }) => { expect(state).toBe("attached"); },
-    getAttribute: async (name: string) => ({ "aria-valuemin": "0", "aria-valuemax": options.max ?? "4", "aria-valuenow": String(value), "aria-hidden": "true" })[name] ?? null,
+    getAttribute: async (name: string) => ({ "aria-valuemin": "0", "aria-valuemax": family === "Sol" ? options.max ?? "4" : options.latestMax ?? "4", "aria-valuenow": String(value), "aria-hidden": "true" })[name] ?? null,
     locator: () => sliderControl,
   };
   const container = {
@@ -249,7 +252,30 @@ function reasoningPicker(options: { max?: string; delay?: number; missing?: bool
   };
   const composer = { filter() { return this; }, last() { return this; }, isEditable: async () => true, locator: () => ({ locator: () => control }) };
   const modelRows = { count: async () => 3, first() { return this; }, waitFor: async () => {}, nth: () => { throw new Error("Model rows are not effort choices"); } };
-  const menu = { filter() { return this; }, last() { return this; }, isVisible: async () => true, locator: () => modelRows };
+  // The live picker stacks two view panels. The simple view is active by default and
+  // pointer-intercepts the family radios behind it; activating the toggle swaps the advanced view
+  // in and removes the toggle; choosing a family applies it and restores the simple view.
+  const familyToggle = {
+    filter() { return this; },
+    count: async () => familyMenuOpen ? 0 : 1,
+    getAttribute: async () => null,
+    click: async () => { familyMenuOpen = true; },
+  };
+  const solChoice = {
+    filter() { return this; }, count: async () => options.noSol ? 0 : 1,
+    waitFor: async () => { if (options.noSol) throw new Error("Sol model absent"); },
+    getAttribute: async (name: string) => name === "aria-checked" ? String(family === "Sol") : null,
+    click: async () => {
+      if (!familyMenuOpen) throw new Error("the active simple view intercepts pointer events");
+      family = "Sol";
+      familyMenuOpen = false;
+    },
+  };
+  const menu = {
+    filter() { return this; }, last() { return this; }, isVisible: async () => true, locator: () => modelRows,
+    getByRole: (role: string, opts: { name: string }) => role === "menuitem" && opts.name === "Select model"
+      ? familyToggle : solChoice,
+  };
   const page = {
     url: () => "https://chatgpt.com/?temporary-chat=true",
     locator: (selector: string) => {
@@ -260,12 +286,52 @@ function reasoningPicker(options: { max?: string; delay?: number; missing?: bool
     },
     keyboard: { press: async (key: string) => { if (key === "Escape") menuOpen = false; } },
   };
-  return { page, composer, keys, value: () => value };
+  return { page, composer, keys, value: () => value, family: () => family, menu, advancedView: () => familyMenuOpen };
 }
 
 test.each([0, 50])("capabilities wait for the visible container and read its hidden semantic input (delay=%s)", async delay => {
   const fixture = reasoningPicker({ delay });
   await expect(detectChatGptAccountCapabilities(fixture.page as never)).resolves.toEqual({ solAvailable: true, extraHighAvailable: true, proAvailable: true });
+  expect(fixture.family()).toBe("Sol");
+});
+
+test("capability probe reads Sol's range, not the previously selected latest family", async () => {
+  const fixture = reasoningPicker({ max: "2", latestMax: "4" });
+  await expect(detectChatGptAccountCapabilities(fixture.page as never))
+    .resolves.toEqual({ solAvailable: true, extraHighAvailable: false, proAvailable: false });
+  await expect(ensureChatGptSolFamily(fixture.menu as never, false)).resolves.toBeUndefined();
+});
+
+test("Sol family verification fails closed when no Sol choice is rendered", async () => {
+  const fixture = reasoningPicker({ noSol: true });
+  await expect(detectChatGptAccountCapabilities(fixture.page as never))
+    .rejects.toThrow("did not expose a verifiable GPT-5.6 Sol choice");
+});
+
+test("verifying the family reads the radio without disturbing the picker view", async () => {
+  const fixture = reasoningPicker();
+  await detectChatGptAccountCapabilities(fixture.page as never);
+  expect(fixture.family()).toBe("Sol");
+  expect(fixture.advancedView()).toBe(false);
+
+  await expect(ensureChatGptSolFamily(fixture.menu as never, false)).resolves.toBeUndefined();
+  // A pre-Send check must never switch views: the radio it reads is behind the active simple view.
+  expect(fixture.advancedView()).toBe(false);
+});
+
+test("selecting the family switches the picker view and lets it restore itself", async () => {
+  const fixture = reasoningPicker();
+  expect(fixture.family()).toBe("Latest");
+  await expect(ensureChatGptSolFamily(fixture.menu as never, true)).resolves.toBeUndefined();
+  expect(fixture.family()).toBe("Sol");
+  // Choosing a family returns the picker to its simple view; nothing re-clicks the toggle.
+  expect(fixture.advancedView()).toBe(false);
+});
+
+test("a pre-Send check fails closed when the picker drifted back to another family", async () => {
+  const fixture = reasoningPicker();
+  await expect(ensureChatGptSolFamily(fixture.menu as never, false))
+    .rejects.toThrow("changed the selected family away from GPT-5.6 Sol");
 });
 
 test("an absent effort slider cannot turn three model rows into a saved non-Pro capability", async () => {

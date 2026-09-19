@@ -20,12 +20,21 @@ function source(): Record<string, unknown> {
 }
 
 describe("Portal model catalog", () => {
-  test("preserves native models and appends only ChatGPT Web Pro", () => {
+  test("preserves native models and appends fixed Web thinking levels", () => {
     const config = defaultConfig();
+    config.solAvailable = true;
     config.proAvailable = true;
     const models = augmentNativeModelCatalog(source(), config).models as Array<Record<string, unknown>>;
-    expect(models.map(model => model.slug)).toEqual(["gpt-5.6-sol", "chatgpt-web/pro"]);
+    expect(models.map(model => model.slug)).toEqual([
+      "gpt-5.6-sol", "chatgpt-web/light", "chatgpt-web/medium", "chatgpt-web/high", "chatgpt-web/pro",
+    ]);
     expect(models[1]).toMatchObject({
+      display_name: "ChatGPT Web — Instant",
+      default_reasoning_level: "low",
+      supported_in_api: true,
+      tool_mode: null,
+    });
+    expect(models[4]).toMatchObject({
       display_name: "ChatGPT Web — Pro",
       default_reasoning_level: "ultra",
       supported_in_api: true,
@@ -33,10 +42,13 @@ describe("Portal model catalog", () => {
     });
   });
 
-  test("preserves native passthrough without advertising a broken Pro route", () => {
+  test("preserves native passthrough while advertising verified non-Pro routes", () => {
     const config = defaultConfig();
+    config.solAvailable = true;
     config.proAvailable = false;
     const models = augmentNativeModelCatalog(source(), config).models as Array<Record<string, unknown>>;
-    expect(models.map(model => model.slug)).toEqual(["gpt-5.6-sol"]);
+    expect(models.map(model => model.slug)).toEqual([
+      "gpt-5.6-sol", "chatgpt-web/light", "chatgpt-web/medium", "chatgpt-web/high",
+    ]);
   });
 });

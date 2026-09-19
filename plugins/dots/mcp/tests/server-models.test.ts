@@ -10,7 +10,7 @@ const nativeModel = {
   max_context_window: 320_000, auto_compact_token_limit: 270_000,
 };
 
-test("proxies native models and appends only ChatGPT Web Pro", async () => {
+test("proxies native models and appends available ChatGPT Web levels", async () => {
   const request = new Request("http://127.0.0.1:17841/v1/models?client_version=1.2.3", {
     headers: { authorization: "Bearer codex-oauth-token", "if-none-match": "native-etag" },
   });
@@ -27,9 +27,11 @@ test("proxies native models and appends only ChatGPT Web Pro", async () => {
   expect(upstream!.headers.get("if-none-match")).toBeNull();
   expect(response.headers.get("etag")).not.toBe("native-etag");
   const body = await response.json() as { models: Array<Record<string, unknown>> };
-  expect(body.models.map(model => model.slug)).toEqual(["gpt-5.6-sol", "chatgpt-web/pro"]);
+  expect(body.models.map(model => model.slug)).toEqual([
+    "gpt-5.6-sol", "chatgpt-web/light", "chatgpt-web/medium", "chatgpt-web/high", "chatgpt-web/pro",
+  ]);
   expect(body.models[0]).toMatchObject({ max_context_window: 371_851, multi_agent_version: "v2" });
-  expect(body.models[1]).toMatchObject({
+  expect(body.models[4]).toMatchObject({
     display_name: "ChatGPT Web — Pro", default_reasoning_level: "ultra",
     supported_in_api: true, tool_mode: null, multi_agent_version: "v2",
   });

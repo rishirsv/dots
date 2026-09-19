@@ -20,6 +20,7 @@ export const CHATGPT_EFFORT_ITEM_SELECTOR = '[role="menuitemradio"]';
 export const CHATGPT_EFFORT_SLIDER_CONTAINER_SELECTOR = '[data-model-reasoning-effort-slider]';
 export const CHATGPT_EFFORT_SLIDER_SELECTOR = '[data-model-reasoning-effort-slider] [role="slider"]';
 export const CHATGPT_EFFORT_SLIDER_MAX_OPTIONS = 5;
+const CHATGPT_MODEL_FAMILY_SWITCH_TIMEOUT_MS = 10_000;
 export const CHATGPT_STOP_BUTTON_SELECTOR = '[data-testid="stop-button"]';
 export const CHATGPT_COMPLETION_ACTION_SELECTOR = 'button[data-testid="copy-turn-action-button"]';
 export const CHATGPT_ASSISTANT_TURN_SELECTOR = [
@@ -130,6 +131,52 @@ export async function activateChatGptEffortMenu(
   );
 }
 
+export const CHATGPT_MODEL_FAMILY_NAME = "GPT-5.6 Sol";
+export const CHATGPT_MODEL_FAMILY_TOGGLE_NAME = "Select model";
+
+/**
+ * A thinking-level label alone does not identify the selected ChatGPT model family: the composer
+ * picker can sit on "Latest" while the slider still reads Instant..Pro.
+ *
+ * `menu` must be the activation menu owned by the effort control (`activateChatGptEffortMenu`).
+ * The picker nests several elements that match `CHATGPT_EFFORT_MENU_SELECTOR`, and the innermost
+ * one holds the family radios without the toggle that reaches them.
+ *
+ * Observed picker behaviour: the family radios live in an advanced view panel stacked behind the
+ * active simple view. Their `aria-checked` state is readable from the simple view, but they are
+ * pointer-intercepted by it — so verification never needs the view switch and selection always
+ * does. Activating the toggle replaces it with the advanced view; choosing a family applies the
+ * selection and returns the picker to its simple view on its own. Nothing here restores the view.
+ */
+export async function ensureChatGptSolFamily(menu: Locator, select: boolean): Promise<void> {
+  const sol = menu.getByRole("menuitemradio", { name: CHATGPT_MODEL_FAMILY_NAME, exact: true });
+  if (await sol.count() !== 1) {
+    throw new Error(`ChatGPT did not expose a verifiable ${CHATGPT_MODEL_FAMILY_NAME} choice`);
+  }
+  if (await sol.getAttribute("aria-disabled") === "true") {
+    throw new Error(`${CHATGPT_MODEL_FAMILY_NAME} is not selectable in this ChatGPT account`);
+  }
+  if (await sol.getAttribute("aria-checked") === "true") return;
+  if (!select) {
+    throw new Error(`ChatGPT changed the selected family away from ${CHATGPT_MODEL_FAMILY_NAME} before Send`);
+  }
+  const toggle = menu.getByRole("menuitem", { name: CHATGPT_MODEL_FAMILY_TOGGLE_NAME, exact: true });
+  if (await toggle.count() !== 1) {
+    throw new Error("ChatGPT did not expose a verifiable model-family selector");
+  }
+  await toggle.click();
+  // The radio only becomes clickable once the advanced view is the active panel. Let Playwright's
+  // actionability retry own that transition instead of reading the picker's internal view state.
+  await sol.click({ timeout: CHATGPT_MODEL_FAMILY_SWITCH_TIMEOUT_MS });
+  const deadline = Date.now() + CHATGPT_MODEL_FAMILY_SWITCH_TIMEOUT_MS;
+  while (await sol.getAttribute("aria-checked") !== "true") {
+    if (Date.now() >= deadline) {
+      throw new Error(`ChatGPT did not retain the ${CHATGPT_MODEL_FAMILY_NAME} family selection`);
+    }
+    await new Promise(resolveSleep => setTimeout(resolveSleep, 50));
+  }
+}
+
 function safeIntegerAttribute(value: string | null): number | undefined {
   if (value === null || !/^-?\d+$/.test(value)) return undefined;
   const parsed = Number(value);
@@ -214,17 +261,19 @@ export async function detectChatGptAccountCapabilities(
     }
     await new Promise(resolveSleep => setTimeout(resolveSleep, 100));
   }
-  const menu = page.locator(CHATGPT_EFFORT_MENU_SELECTOR).last();
-  const menuVisible = await menu.isVisible().catch(() => false);
-  const menuExpanded = await effortButton.getAttribute("aria-expanded").catch(() => null);
-  if (!menuVisible && menuExpanded !== "true") await effortButton.press("Enter");
+  // Resolve the menu through the control that owns it (`aria-controls`), exactly as the submit
+  // path does. `page.locator(CHATGPT_EFFORT_MENU_SELECTOR).last()` matches the innermost nested
+  // picker element, which holds the family radios but not the toggle that reaches them.
+  const activation = await activateChatGptEffortMenu(page, effortButton);
+  const menu = activation.menu;
   try {
-    const { sliderContainer, slider } = chatGptEffortSlider(page);
+    const { sliderContainer, slider } = activation;
     const timeout = options.selectorTimeoutMs ?? 70_000;
     // Model radio rows can hydrate before the effort control. They carry no evidence
     // of the account's reasoning range, so an absent slider must fail, not cache false.
     await sliderContainer.waitFor({ state: "visible", timeout });
     await slider.waitFor({ state: "attached", timeout });
+    await ensureChatGptSolFamily(menu, true);
     const state = parseChatGptEffortSliderState(
       await slider.getAttribute("aria-valuemin"),
       await slider.getAttribute("aria-valuemax"),

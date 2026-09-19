@@ -240,6 +240,47 @@ export interface ChatGptWebAccountCapabilities {
  */
 export const CHATGPT_WEB_MODEL_ROUTES: readonly ChatGptWebAutomaticModelRoute[] = [
   {
+    slug: "chatgpt-web/light",
+    displayName: "ChatGPT Web — Instant",
+    description: "GPT-5.6 Sol Instant through the native Codex harness.",
+    interactionMode: "automatic",
+    backendModel: CHATGPT_WEB_BACKEND_MODEL,
+    codexEffort: "low",
+    adapterEffort: "low",
+    requiresPro: false,
+  },
+  {
+    slug: "chatgpt-web/medium",
+    displayName: "ChatGPT Web — Medium",
+    description: "GPT-5.6 Sol Medium through the native Codex harness.",
+    interactionMode: "automatic",
+    backendModel: CHATGPT_WEB_BACKEND_MODEL,
+    codexEffort: "medium",
+    adapterEffort: "medium",
+    requiresPro: false,
+  },
+  {
+    slug: "chatgpt-web/high",
+    displayName: "ChatGPT Web — High",
+    description: "GPT-5.6 Sol High through the native Codex harness.",
+    interactionMode: "automatic",
+    backendModel: CHATGPT_WEB_BACKEND_MODEL,
+    codexEffort: "high",
+    adapterEffort: "high",
+    requiresPro: false,
+  },
+  {
+    slug: "chatgpt-web/extra-high",
+    displayName: "ChatGPT Web — Extra High",
+    description: "Account-gated GPT-5.6 Sol Extra High through the native Codex harness.",
+    interactionMode: "automatic",
+    backendModel: CHATGPT_WEB_BACKEND_MODEL,
+    codexEffort: "xhigh",
+    adapterEffort: "xhigh",
+    requiresPro: false,
+    requiresExtraHigh: true,
+  },
+  {
     slug: "chatgpt-web/pro",
     displayName: "ChatGPT Web — Pro",
     description: "Account-gated ChatGPT Pro through the native Codex harness.",
@@ -263,8 +304,10 @@ export function isChatGptWebModelSlug(modelId: string): boolean {
 export function availableChatGptWebModelRoutes(
   capabilities: ChatGptWebAccountCapabilities,
 ): readonly ChatGptWebModelRoute[] {
-  if (!capabilities.proAvailable) return [];
-  return CHATGPT_WEB_MODEL_ROUTES;
+  if (!capabilities.solAvailable) return [];
+  return CHATGPT_WEB_MODEL_ROUTES.filter(route =>
+    (!route.requiresPro || capabilities.proAvailable)
+    && (!route.requiresExtraHigh || capabilities.extraHighAvailable === true));
 }
 
 export function requireChatGptWebModelRoute(
@@ -272,9 +315,13 @@ export function requireChatGptWebModelRoute(
   capabilities: ChatGptWebAccountCapabilities,
 ): ChatGptWebModelRoute {
   const route = routesBySlug.get(modelId);
-  if (!route || route.slug !== "chatgpt-web/pro") {
-    throw new Error(`Portal exposes only ChatGPT Web — Pro: ${modelId}`);
+  if (!route) throw new Error(`ChatGPT Web model is not enabled: ${modelId}`);
+  if (!capabilities.solAvailable) throw new Error(`${route.displayName} is not available without GPT-5.6 Sol`);
+  if (route.requiresExtraHigh && capabilities.extraHighAvailable !== true) {
+    throw new Error(`${route.displayName} is not available for this account`);
   }
-  if (!capabilities.proAvailable) throw new Error("ChatGPT Web — Pro is not available for this account");
+  if (route.requiresPro && !capabilities.proAvailable) {
+    throw new Error(`${route.displayName} is not available for this account`);
+  }
   return route;
 }

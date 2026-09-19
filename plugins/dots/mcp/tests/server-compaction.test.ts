@@ -423,7 +423,7 @@ test("rejects an unknown routed compact model instead of treating it as ChatGPT 
 
   expect(response.status).toBe(400);
   const body = await response.json() as { error: { message: string } };
-  expect(body.error.message).toContain("only ChatGPT Web — Pro");
+  expect(body.error.message).toContain("ChatGPT Web model is not enabled");
 });
 
 test("rejects Pro before opening a browser when the account has no Pro access", async () => {

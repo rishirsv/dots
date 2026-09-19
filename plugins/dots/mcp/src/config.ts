@@ -460,7 +460,7 @@ export function providerConfig(config: AppConfig): CodexProviderConfig {
       headed: config.headed,
       localToolsEnabled: true,
       solAvailable: true,
-      extraHighAvailable: false,
+      extraHighAvailable: config.extraHighAvailable === true,
       proAvailable: config.proAvailable,
       ...(config.stallTimeoutSec !== undefined ? { stallTimeoutSec: config.stallTimeoutSec } : {}),
       autoApproveToolCalls: true,

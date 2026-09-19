@@ -2737,11 +2737,11 @@ test("effort readback fails before Send if ChatGPT changes the selected mode", a
     assertSelectedEffort(page: unknown, mode: unknown): Promise<void>;
   };
   const page = { url: () => state.url };
-  await worker.assertSelectedEffort(page, { selection });
+  await worker.assertSelectedEffort(page, { effort: "max", selection });
   for (const change of [{ label: "High" }, { url: "https://chatgpt.com/" }, { expanded: "true" },
     { editable: false }, { count: 2 }]) {
     Object.assign(state, { url: selection.url, label: "Pro", expanded: "false", editable: true, count: 1 }, change);
-    await expect(worker.assertSelectedEffort(page, { selection })).rejects.toMatchObject({
+    await expect(worker.assertSelectedEffort(page, { effort: "max", selection })).rejects.toMatchObject({
       code: "upstream_server_error", retryable: false,
     });
   }
@@ -3308,7 +3308,7 @@ test("Bigger Context fits mixed-density whole records within both token and comp
     const maxStageMessageTokens = Math.max(...stages.map(text => estimateTokens(text)));
     const maxStageChars = Math.max(...stages.map(text => text.length));
     const stagingMode = resolveChatGptWebMultipartStagingMode(
-      CHATGPT_WEB_MODEL_ID, capabilities, maxStageMessageTokens, maxStageChars,
+      CHATGPT_WEB_MODEL_ID, capabilities, maxStageMessageTokens, maxStageChars, "high",
     );
     const finalMessageTokens = estimateTokens(final);
     expect(() => assertChatGptWebMultipartInputWithinLimits(
@@ -3420,15 +3420,15 @@ test("Bigger Context preflight expands only the total context ceiling and keeps 
 test("Bigger Context stages use the lowest account mode that can carry the stage", () => {
   const plus = { localToolsEnabled: false, solAvailable: true, extraHighAvailable: false, proAvailable: false };
   const pro = { localToolsEnabled: false, solAvailable: true, extraHighAvailable: true, proAvailable: true };
-  expect(resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", plus, 30_000, 200_000).effort).toBe("low");
-  expect(resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", plus, 30_000, 300_000).effort).toBe("medium");
-  expect(resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", plus, 80_000, 300_000).effort).toBe("medium");
+  expect(resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", plus, 30_000, 200_000, "high").effort).toBe("low");
+  expect(resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", plus, 30_000, 300_000, "high").effort).toBe("medium");
+  expect(resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", plus, 80_000, 300_000, "high").effort).toBe("medium");
   // The same text must have the same available input budget inline, staged or in the final part.
   // 80k is the early compaction trigger; the remaining input budget includes an 8192-token reserve.
-  expect(resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", plus, 80_169, 276_680).effort).toBe("medium");
+  expect(resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", plus, 80_169, 276_680, "high").effort).toBe("medium");
   for (const tokens of [81_807, 81_808]) {
     const inline = () => assertChatGptWebInputWithinLimits(tokens + 8_192, tokens, "gpt-5.6-sol", "high", plus, 300_000);
-    const stage = () => resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", plus, tokens, 300_000);
+    const stage = () => resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", plus, tokens, 300_000, "high");
     const final = () => assertChatGptWebMultipartInputWithinLimits(
       tokens + 10_000, tokens, "gpt-5.6-sol", "high", plus, 300_000, 3,
       { stagingEffort: "medium", maxStageMessageTokens: 500, maxStageChars: 2_000, finalMessageTokens: tokens, finalMessageChars: 300_000 },
@@ -3443,15 +3443,21 @@ test("Bigger Context stages use the lowest account mode that can carry the stage
     plus,
     81_808,
     300_000,
+    "high",
   )).toThrow("No ChatGPT effort");
-  expect(resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", pro, 100_000, 500_000).effort).toBe("low");
-  expect(resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", pro, 100_000, 600_000).effort).toBe("medium");
-  expect(resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", pro, 104_000, 1_200_000).effort).toBe("max");
+  expect(resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", pro, 100_000, 500_000, "high").effort).toBe("low");
+  expect(resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", pro, 100_000, 600_000, "high").effort).toBe("medium");
+  expect(() => resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", pro, 104_000, 1_200_000, "high"))
+    .toThrow("No ChatGPT effort");
+  expect(resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", pro, 104_000, 1_200_000, "max").effort).toBe("max");
+  expect(() => resolveChatGptWebMultipartStagingMode("gpt-5.6-sol", pro, 100_000, 600_000, "low"))
+    .toThrow("No ChatGPT effort");
   expect(() => resolveChatGptWebMultipartStagingMode(
     "gpt-5.6-luna",
     { localToolsEnabled: false, solAvailable: false, extraHighAvailable: false, proAvailable: false },
     10_000,
     20_000,
+    "low",
   )).toThrow("Luna-only");
   expect(() => assertChatGptWebMultipartInputWithinLimits(
     100_000,
