@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { defaultConfig } from "../src/config";
 import { createTunnelConfig, mcpCommand } from "../src/tunnel";
 import { tunnelServiceDefinition } from "../src/tunnel-service";
-import { existingFullSetupCredentials, tunnelWorkerRuntimeChanged } from "../src/setup";
+import { existingFullSetupCredentials, tunnelProfileInputsChanged, tunnelWorkerRuntimeChanged } from "../src/setup";
 
 const roots: string[] = [];
 
@@ -90,12 +90,20 @@ describe("tunnel launchd ownership", () => {
     before.mode = "full";
     before.releaseVersion = "0.1.3";
     before.runtimeCommand = [runtime];
+    before.tunnel = createTunnelConfig({
+      binaryPath: runtime,
+      tunnelId: "tunnel_00000000000000000000000000000000",
+      runtimeKeyFile: join(root, "runtime.key"),
+    });
     const after = structuredClone(before);
     after.releaseVersion = "0.1.9";
 
     expect(tunnelWorkerRuntimeChanged(before, after)).toBe(true);
+    expect(tunnelProfileInputsChanged(before, after)).toBe(false);
     after.releaseVersion = before.releaseVersion;
     expect(tunnelWorkerRuntimeChanged(before, after)).toBe(false);
+    after.tunnel!.tunnelId = "tunnel_11111111111111111111111111111111";
+    expect(tunnelProfileInputsChanged(before, after)).toBe(true);
   });
 
   test("reuses complete full-mode tunnel credentials during setup updates", () => {

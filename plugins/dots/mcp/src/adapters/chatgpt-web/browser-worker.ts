@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { chmodSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { skillFileTokens, validateSkillFiles } from "./skill-attachments";
-import { chromium, type Browser, type BrowserContext, type Locator, type Page } from "playwright-core";
+import { chromium, errors as playwrightErrors, type Browser, type BrowserContext, type Locator, type Page } from "playwright-core";
 import {
   atomicWriteFile,
   CHATGPT_CONNECTOR_NAME,
@@ -2831,7 +2831,7 @@ export class ChatGptBrowserWorker {
     );
     if (!identity) return "";
     const locator = page.locator(`[data-turn-id=${JSON.stringify(identity)}]`);
-    return (await this.responseDomSnapshot(locator, {})).visibleText;
+    return (await this.responseDomSnapshot(locator, {}, signal)).visibleText;
   }
 
   private async captureSubmissionBaseline(page: Page): Promise<ChatGptSubmissionBaseline> {
@@ -2931,6 +2931,7 @@ export class ChatGptBrowserWorker {
           ? (await this.responseDomSnapshot(
             observationPage.locator(`[data-turn-id=${JSON.stringify(identity)}]`),
             {},
+            signal,
           )).visibleText
           : "";
         completionTracker.observeToolBatch(progress.lastToolBatchRevision, boundaryText);
@@ -3508,7 +3509,7 @@ export class ChatGptBrowserWorker {
       }
       await throwIfChatGptSessionFailureAlert(page);
       await throwIfChatGptTerminalErrorAlert(responseTurn.locator);
-      let snapshot = await this.responseDomSnapshot(responseTurn.locator, responseDomCache);
+      let snapshot = await this.responseDomSnapshot(responseTurn.locator, responseDomCache, abortSignal);
       if (!snapshot.responsePresent && await responseTurn.locator.count() !== 1) {
         const rebound = await this.reconcileAssistantTurnBinding(
           page,
@@ -3520,7 +3521,7 @@ export class ChatGptBrowserWorker {
           responseTurn = rebound;
           responseDomCache.key = undefined;
           responseDomCache.snapshot = undefined;
-          snapshot = await this.responseDomSnapshot(responseTurn.locator, responseDomCache);
+          snapshot = await this.responseDomSnapshot(responseTurn.locator, responseDomCache, abortSignal);
         }
       }
       if (snapshot.stoppedThinkingVisible) throw chatGptStoppedThinkingError();
@@ -3792,8 +3793,11 @@ export class ChatGptBrowserWorker {
   private async responseDomSnapshot(
     responseTurn: Locator,
     cache?: ChatGptResponseDomCache,
+    signal?: AbortSignal,
   ): Promise<ChatGptResponseDomSnapshot> {
-    const observed = await responseTurn.evaluate((element, options) => {
+    let observed;
+    try {
+      observed = await withChatGptBrowserObservationTimeout(withBrowserTurnAbort(responseTurn.evaluate((element, options) => {
       const root = element as HTMLElement;
       type ObserverState = {
         id: number;
@@ -4217,12 +4221,13 @@ export class ChatGptBrowserWorker {
       stoppedThinkingLabels: [...CHATGPT_STOPPED_THINKING_LABELS],
       knownKey: cache?.key,
       attributeFilter: [...CHATGPT_DOM_REVISION_ATTRIBUTES],
-    }, { timeout: 2_000 }).catch(() => undefined);
-    if (!observed) {
+    }, { timeout: 2_000 }), signal));
+    } catch (error) {
       if (responseTurn.page().isClosed()) {
         throw chatGptBrowserTabClosedError();
       }
-      return absentResponseDomSnapshot();
+      if (error instanceof playwrightErrors.TimeoutError) return absentResponseDomSnapshot();
+      throw error;
     }
     const snapshot = observed.snapshot ?? cache?.snapshot ?? absentResponseDomSnapshot();
     if (observed.snapshot && cache) {
@@ -4569,7 +4574,7 @@ export class ChatGptBrowserWorker {
         attempt: number,
         cause: ChatGptBrowserObservationTimeoutError,
         baseline: ChatGptSubmissionBaseline,
-        checkpoint: "submission-page-rebound" | "assistant-page-rebound",
+        checkpoint: "submission-page-rebound" | "assistant-page-rebound" | "response-page-rebound",
         abortSignal?: AbortSignal,
       ): Promise<ChatGptSubmissionObservationRecovery> => {
         if (launcherSurfaceId) {
@@ -4894,7 +4899,7 @@ export class ChatGptBrowserWorker {
       };
       const domHealthTracker = new ChatGptTurnDomHealthTracker();
       const responseDomCache: ChatGptResponseDomCache = {};
-      let consecutiveObservationRebinds = 0;
+      let consecutiveObservationRecoveries = 0;
       let internalObservationFaults = 0;
       let observedThisIteration = false;
       let completionFenceRevision: number | undefined;
@@ -4933,9 +4938,10 @@ export class ChatGptBrowserWorker {
           continue;
         }
 
-        let snapshot = await this.responseDomSnapshot(responseTurn.locator, responseDomCache);
-        if (!snapshot.responsePresent) {
-          try {
+        let snapshot: ChatGptResponseDomSnapshot;
+        try {
+          snapshot = await this.responseDomSnapshot(responseTurn.locator, responseDomCache, turn.abortSignal);
+          if (!snapshot.responsePresent) {
             const rebound = await withChatGptBrowserObservationTimeout(
               this.reconcileAssistantTurnBinding(
                 page,
@@ -4948,36 +4954,37 @@ export class ChatGptBrowserWorker {
               responseTurn = rebound;
               responseDomCache.key = undefined;
               responseDomCache.snapshot = undefined;
-              snapshot = await this.responseDomSnapshot(responseTurn.locator, responseDomCache);
+              snapshot = await this.responseDomSnapshot(responseTurn.locator, responseDomCache, turn.abortSignal);
             }
-          } catch (error) {
-            if (!(error instanceof ChatGptBrowserObservationTimeoutError) || !launcherSurfaceId) throw error;
-            consecutiveObservationRebinds += 1;
-            if (consecutiveObservationRebinds > MAX_CHATGPT_BROWSER_PAGE_REBINDS) {
-              throw new Error(
-                `ChatGPT browser DOM remained unresponsive after ${MAX_CHATGPT_BROWSER_PAGE_REBINDS} same-page rebinds`,
-                { cause: error },
-              );
-            }
-            await rebindLauncherPage(consecutiveObservationRebinds, error, turn.abortSignal);
-            submissionBaseline = {
-              ...submissionBaseline,
-              userTurns: page.locator(CHATGPT_USER_TURN_SELECTOR),
-              responseTurns: page.locator(CHATGPT_ASSISTANT_TURN_SELECTOR),
-              domCache: {},
-            };
-            responseTurn = {
-              ...responseTurn,
-              locator: page.locator(`[data-turn-id=${JSON.stringify(responseTurn.identity)}]`),
-            };
-            responseDomCache.key = undefined;
-            responseDomCache.snapshot = undefined;
-            await diagnostics.capture(page, "response-page-rebound");
-            continue;
           }
+        } catch (error) {
+          if (!(error instanceof ChatGptBrowserObservationTimeoutError) || !turnObservationRecovery) throw error;
+          consecutiveObservationRecoveries += 1;
+          if (consecutiveObservationRecoveries > MAX_CHATGPT_BROWSER_PAGE_REBINDS) {
+            throw new Error(
+              `ChatGPT browser DOM remained unresponsive after ${MAX_CHATGPT_BROWSER_PAGE_REBINDS} recovery attempts`,
+              { cause: error },
+            );
+          }
+          const recovered = await recoverPageObservation(
+            consecutiveObservationRecoveries,
+            error,
+            submissionBaseline,
+            "response-page-rebound",
+            turn.abortSignal,
+          );
+          page = recovered.page;
+          submissionBaseline = recovered.baseline;
+          responseTurn = {
+            ...responseTurn,
+            locator: page.locator(`[data-turn-id=${JSON.stringify(responseTurn.identity)}]`),
+          };
+          responseDomCache.key = undefined;
+          responseDomCache.snapshot = undefined;
+          continue;
         }
         if (snapshot.stoppedThinkingVisible) throw chatGptStoppedThinkingError();
-        if (snapshot.responsePresent) consecutiveObservationRebinds = 0;
+        if (snapshot.responsePresent) consecutiveObservationRecoveries = 0;
         // The page was read successfully, so the fault budget is genuinely consecutive even when
         // this iteration goes on to `continue` for a rebind, confirmation, or liveness pause.
         internalObservationFaults = 0;

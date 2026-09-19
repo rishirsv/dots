@@ -1,4 +1,5 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -104,15 +105,19 @@ async function runDirectMcpSmoke(): Promise<void> {
       throw new Error(`relocated MCP direct smoke exposed an unexpected tool contract: ${JSON.stringify(listed.tools.map(tool => tool.name))}`);
     }
     const inventory = await client.callTool({ name: "portal_tools", arguments: {} });
-    const inventoryValue = inventory.structuredContent as { mode?: unknown; tools?: Array<{ wire_name?: unknown }> } | undefined;
-    if (inventory.isError || inventoryValue?.mode !== "direct" || inventoryValue.tools?.[0]?.wire_name !== "exec_command") {
+    const inventoryValue = inventory.structuredContent as { mode?: unknown; operation_prefix?: unknown; tools?: Array<{ wire_name?: unknown }> } | undefined;
+    if (inventory.isError || inventoryValue?.mode !== "direct" || inventoryValue.tools?.[0]?.wire_name !== "exec_command"
+      || typeof inventoryValue.operation_prefix !== "string") {
       throw new Error(`relocated MCP direct smoke did not select direct execution: ${JSON.stringify(inventory.structuredContent)}`);
     }
     const executed = await client.callTool({
       name: "portal_call",
       arguments: {
         wire_name: "exec_command",
-        arguments: { cmd: `printf DIRECT_ACCESS_SMOKE > ${JSON.stringify(marker)}` },
+        arguments: {
+          cmd: `printf DIRECT_ACCESS_SMOKE > ${JSON.stringify(marker)}`,
+          operation_id: `${inventoryValue.operation_prefix}.${randomUUID()}`,
+        },
       },
     });
     if (executed.isError || (executed.structuredContent as { mode?: unknown } | undefined)?.mode !== "direct"

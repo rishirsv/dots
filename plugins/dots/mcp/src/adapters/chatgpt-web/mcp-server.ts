@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { execFile } from "node:child_process";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
@@ -99,12 +99,13 @@ const DIRECT_EXEC_TOOL = {
   wire_name: "exec_command",
   name: "exec_command",
   namespace: null,
-  description: "Run an unrestricted shell command on the local Mac. Use this for files, terminal commands, scripts, network access, and other local actions.",
+  description: "Run an unrestricted shell command on the local Mac. Supply a fresh random operation_id for each new command; reuse it only to retrieve that exact command's result after an uncertain transport retry.",
   kind: "function",
   parameters: {
     type: "object",
     properties: {
       cmd: { type: "string", minLength: 1, maxLength: 1_000_000 },
+      operation_id: { type: "string", pattern: "^[0-9a-f-]{36}\\.[A-Za-z0-9_-]{16,128}$" },
       workdir: { type: "string", minLength: 1, maxLength: 4096 },
       timeout_ms: {
         type: "integer",
@@ -113,7 +114,7 @@ const DIRECT_EXEC_TOOL = {
         default: 30_000,
       },
     },
-    required: ["cmd"],
+    required: ["cmd", "operation_id"],
     additionalProperties: false,
   },
 } as const;
@@ -271,27 +272,39 @@ function assertAdvertisedArguments(
 
 /**
  * Direct commands are still owned by the MCP dispatcher, not a second terminal service. The MCP
- * request identity is the only retry identity available without a turn token; retaining its
- * promise keeps a transport retry from starting a second local process, including after an
- * ambiguous cancellation or timeout.
+ * caller-supplied operation identity survives a transport retry without conflating distinct
+ * commands when an MCP client omits or reuses its request ID.
  */
 class DirectOperationLedger {
-  private readonly operations = new Map<string, Promise<DirectExecutionOutcome>>();
+  private readonly operations = new Map<string, {
+    argumentsHash: string;
+    outcome: Promise<DirectExecutionOutcome>;
+  }>();
 
   run(
     key: string,
+    argumentsHash: string,
     operation: () => Promise<DirectExecutionOutcome>,
   ): Promise<DirectExecutionOutcome> {
     const existing = this.operations.get(key);
-    if (existing) return existing;
-    const pending = operation();
-    this.operations.set(key, pending);
-    return pending;
+    if (existing) {
+      if (existing.argumentsHash !== argumentsHash) {
+        throw new Error("Direct Portal operation_id was reused with different command arguments");
+      }
+      return existing.outcome;
+    }
+    const outcome = operation();
+    this.operations.set(key, { argumentsHash, outcome });
+    return outcome;
   }
 }
 
-function directOperationKey(extra: McpRequestExtra): string {
-  return JSON.stringify([extra.sessionId ?? "anonymous", String(extra.requestId)]);
+function directArgumentsHash(args: Record<string, unknown>): string {
+  return createHash("sha256").update(JSON.stringify([
+    args.cmd,
+    args.workdir ?? null,
+    args.timeout_ms ?? 30_000,
+  ])).digest("hex");
 }
 
 function turnReferenceInput(contract: ChatGptMcpContract): Record<string, z.ZodType> {
@@ -711,6 +724,7 @@ export async function runChatGptMcpServer(options: {
 }): Promise<void> {
   const contract = options.contract ?? "native";
   const directOperations = new DirectOperationLedger();
+  const directWorkerEpoch = randomUUID();
   const server = new McpServer(
     { name: CHATGPT_CONNECTOR_NAME, version: VERSION },
     contract === "safe" ? { instructions: PORTAL_MANUAL_MCP_INSTRUCTIONS } : undefined,
@@ -949,12 +963,14 @@ export async function runChatGptMcpServer(options: {
           const { query, offset, limit, include_schema } = input;
           const needle = query?.trim().toLowerCase();
           if (context.mode === "direct") {
+            const directDescription = `${DIRECT_EXEC_TOOL.description} Prefix operation_id with ${directWorkerEpoch}.; if that prefix becomes invalid after a worker restart, the earlier command outcome is unknown and must not be retried as a new operation.`;
             const matches = !needle || [
               DIRECT_EXEC_TOOL.wire_name,
-              DIRECT_EXEC_TOOL.description,
+              directDescription,
             ].join("\n").toLowerCase().includes(needle);
             const available = matches ? [{
               ...DIRECT_EXEC_TOOL,
+              description: directDescription,
               ...(include_schema ? {} : { parameters: undefined }),
             }] : [];
             const tools = available.slice(offset, offset + limit);
@@ -962,6 +978,7 @@ export async function runChatGptMcpServer(options: {
               tools,
               total: available.length,
               next_offset: offset + tools.length < available.length ? offset + tools.length : null,
+              operation_prefix: directWorkerEpoch,
               mode: context.mode,
             });
           }
@@ -1089,15 +1106,19 @@ export async function runChatGptMcpServer(options: {
             });
             throw error;
           }
+          if (!(invocationArguments.operation_id as string).startsWith(`${directWorkerEpoch}.`)) {
+            throw new Error("Direct Portal worker changed; the prior command outcome is unknown. Do not retry it with a new operation_id.");
+          }
           const outcome = await directOperations.run(
-            directOperationKey(extra),
+            invocationArguments.operation_id as string,
+            directArgumentsHash(invocationArguments),
             () => runDirectCommand(invocationArguments, extra.signal, event => emitMcpExecutionEvidence(extra, {
               ...event,
               context: "direct",
               tool: DIRECT_EXEC_TOOL.wire_name,
             })),
           );
-          return result({ ...outcome, mode: context.mode }, outcome.code !== undefined);
+          return result({ ...outcome, operation_id: invocationArguments.operation_id, mode: context.mode }, outcome.code !== undefined);
         }
 
         const bound = context.claimed.environment;

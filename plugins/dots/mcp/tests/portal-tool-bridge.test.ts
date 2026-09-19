@@ -124,19 +124,61 @@ describe("Portal dynamic tool bridge", () => {
       });
       expect(inventory).toMatchObject({
         structuredContent: {
-          tools: [{ wire_name: "exec_command" }],
+          tools: [{ wire_name: "exec_command", parameters: { required: ["cmd", "operation_id"] } }],
           total: 1,
           mode: "direct",
         },
       });
+      const prefix = (inventory.structuredContent as { operation_prefix: string }).operation_prefix;
+      const firstOperationId = `${prefix}.${crypto.randomUUID()}`;
       const executed = await client.callTool({
         name: "portal_call",
         arguments: {
           wire_name: "exec_command",
-          arguments: { cmd: "printf 'Hello, world!'" },
+          arguments: { cmd: "printf 'Hello, world!'", operation_id: firstOperationId },
         },
       });
-      expect(executed.structuredContent).toMatchObject({ exit_code: 0, stdout: "Hello, world!", stderr: "" });
+      expect(executed.structuredContent).toMatchObject({
+        exit_code: 0,
+        stdout: "Hello, world!",
+        stderr: "",
+        operation_id: firstOperationId,
+      });
+      const replay = await client.callTool({
+        name: "portal_call",
+        arguments: {
+          wire_name: "exec_command",
+          arguments: { cmd: "printf 'Hello, world!'", operation_id: firstOperationId },
+        },
+      });
+      expect(replay.structuredContent).toEqual(executed.structuredContent);
+      const second = await client.callTool({
+        name: "portal_call",
+        arguments: {
+          wire_name: "exec_command",
+          arguments: { cmd: "printf 'A different command'", operation_id: `${prefix}.${crypto.randomUUID()}` },
+        },
+      });
+      expect(second.structuredContent).toMatchObject({ exit_code: 0, stdout: "A different command" });
+      const reusedId = await client.callTool({
+        name: "portal_call",
+        arguments: {
+          wire_name: "exec_command",
+          arguments: { cmd: "printf 'Should not run'", operation_id: firstOperationId },
+        },
+      });
+      expect(reusedId.isError).toBe(true);
+      expect(JSON.stringify(reusedId)).toContain("operation_id was reused");
+      const staleWorker = await client.callTool({
+        name: "portal_call",
+        arguments: {
+          wire_name: "exec_command",
+          arguments: { cmd: "printf PORTAL_STALE_WORKER_EXECUTED", operation_id: `${crypto.randomUUID()}.${crypto.randomUUID()}` },
+        },
+      });
+      expect(staleWorker.isError).toBe(true);
+      expect(JSON.stringify(staleWorker)).toContain("prior command outcome is unknown");
+      expect(JSON.stringify(staleWorker)).not.toContain("PORTAL_STALE_WORKER_EXECUTED");
     } finally {
       await client.close();
     }
@@ -187,12 +229,24 @@ describe("Portal dynamic tool bridge", () => {
     const client = new Client({ name: "portal-argument-contract-test", version: "1.0.0" });
     try {
       await client.connect(transport);
+      const inventory = await client.callTool({ name: "portal_tools", arguments: {} });
+      const prefix = (inventory.structuredContent as { operation_prefix: string }).operation_prefix;
+      const missingId = await client.callTool({
+        name: "portal_call",
+        arguments: {
+          wire_name: "exec_command",
+          arguments: { cmd: "printf PORTAL_MISSING_OPERATION_ID_EXECUTED" },
+        },
+      });
+      expect(missingId.isError).toBe(true);
+      expect(JSON.stringify(missingId)).not.toContain("PORTAL_MISSING_OPERATION_ID_EXECUTED");
       const malformed = await client.callTool({
         name: "portal_call",
         arguments: {
           wire_name: "exec_command",
           arguments: {
             cmd: "printf PORTAL_MALFORMED_ARGUMENT_EXECUTED",
+            operation_id: `${prefix}.${crypto.randomUUID()}`,
             unexpected: true,
           },
         },
@@ -217,11 +271,13 @@ describe("Portal dynamic tool bridge", () => {
     const client = new Client({ name: "portal-direct-timeout-test", version: "1.0.0" });
     try {
       await client.connect(transport);
+      const inventory = await client.callTool({ name: "portal_tools", arguments: {} });
+      const prefix = (inventory.structuredContent as { operation_prefix: string }).operation_prefix;
       const timedOut = await client.callTool({
         name: "portal_call",
         arguments: {
           wire_name: "exec_command",
-          arguments: { cmd: "sleep 1", timeout_ms: 25 },
+          arguments: { cmd: "sleep 1", operation_id: `${prefix}.${crypto.randomUUID()}`, timeout_ms: 25 },
         },
       });
       expect(timedOut).toMatchObject({
@@ -293,12 +349,14 @@ describe("Portal dynamic tool bridge", () => {
     const client = new Client({ name: "portal-direct-cancellation-test", version: "1.0.0" });
     try {
       await client.connect(transport);
+      const inventory = await client.callTool({ name: "portal_tools", arguments: {} });
+      const prefix = (inventory.structuredContent as { operation_prefix: string }).operation_prefix;
       const controller = new AbortController();
       const pending = client.callTool({
         name: "portal_call",
         arguments: {
           wire_name: "exec_command",
-          arguments: { cmd: "sleep 1" },
+          arguments: { cmd: "sleep 1", operation_id: `${prefix}.${crypto.randomUUID()}` },
         },
       }, undefined, { signal: controller.signal });
       await Bun.sleep(25);

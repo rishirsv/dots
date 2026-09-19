@@ -275,13 +275,21 @@ async function tunnelCommand(args: string[]): Promise<void> {
   const config = loadConfig();
   if (action === "start") startTunnelService();
   else if (action === "restart") {
-    await assertServiceIdle(config);
-    await restartTunnelService();
+    const drain = await acquireServiceDrain(config);
+    try {
+      await restartTunnelService();
+    } finally {
+      await drain.release();
+    }
   }
   else if (action === "stop") {
-    await assertServiceIdle(config);
-    await stopTunnelService();
-    stopTunnel(config);
+    const drain = await acquireServiceDrain(config);
+    try {
+      await stopTunnelService();
+      stopTunnel(config);
+    } finally {
+      await drain.release();
+    }
   }
   else if (action !== "status") throw new Error(`Unknown tunnel action: ${action}`);
   const status = action === "start" || action === "restart"

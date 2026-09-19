@@ -89,6 +89,10 @@ ChatGPT sees two stable connector operations: `portal_tools` for discovery and
 release or connector schema refresh. An omitted turn token means an explicit
 direct ChatGPT call; a supplied turn token must remain bound to the originating
 Codex turn and may never fall back to direct local execution.
+Direct shell commands carry a fresh worker-prefixed operation ID per distinct
+invocation; replaying the same ID returns only that command's result, and reusing
+it with different arguments is rejected. After a worker restart, old IDs fail
+closed because the earlier execution outcome is unknown.
 
 The runtime keeps only transient state necessary for an active logical turn.
 A logical turn may span multiple Responses requests while Codex executes tools,

@@ -1,5 +1,4 @@
 import { existsSync } from "node:fs";
-import { randomBytes } from "node:crypto";
 import { createServer } from "node:net";
 import { join } from "node:path";
 import type { AppConfig, RuntimeMode, SubagentProtocol } from "./config";
@@ -101,6 +100,16 @@ export function tunnelWorkerRuntimeChanged(before: AppConfig | undefined, after:
     || JSON.stringify(before.runtimeCommand) !== JSON.stringify(after.runtimeCommand)
     || before.brokerSocketPath !== after.brokerSocketPath
     || JSON.stringify(before.tunnel) !== JSON.stringify(after.tunnel);
+}
+
+export function tunnelProfileInputsChanged(before: AppConfig | undefined, after: AppConfig): boolean {
+  if (!before || before.mode !== "full" || after.mode !== "full") return false;
+  return JSON.stringify(before.runtimeCommand) !== JSON.stringify(after.runtimeCommand)
+    || before.brokerSocketPath !== after.brokerSocketPath
+    || before.tunnel?.tunnelId !== after.tunnel?.tunnelId
+    || before.tunnel?.runtimeKeyFile !== after.tunnel?.runtimeKeyFile
+    || before.tunnel?.profileDir !== after.tunnel?.profileDir
+    || before.tunnel?.profileName !== after.tunnel?.profileName;
 }
 
 async function assertPortAvailable(host: string, port: number): Promise<void> {
@@ -282,8 +291,6 @@ export async function setup(options: SetupOptions): Promise<SetupResult> {
   preflightCodexIntegration(config, {
     replaceExistingRoute: options.replaceCodexRoute,
   });
-  const refreshTunnelWorker = tunnelWorkerRuntimeChanged(existing, config);
-  if (existing && options.restartService) config.controlToken = randomBytes(32).toString("base64url");
   const beforeService = getServiceStatus();
   if (beforeService.loaded && !existing) {
     throw new Error("A Portal service is loaded but its configuration is missing; refusing to replace an unverifiable process");
@@ -342,6 +349,8 @@ export async function setup(options: SetupOptions): Promise<SetupResult> {
   }
   if (beforeService.loaded && preliminaryChange && existing) await assertServiceIdle(existing);
   await configureTunnel(config, existing, options);
+  const refreshTunnelWorker = tunnelWorkerRuntimeChanged(existing, config);
+  const refreshTunnelProfile = tunnelProfileInputsChanged(existing, config);
 
   const changedWhileLoaded = Boolean(existing && beforeService.loaded && meaningfulRuntimeChange(existing, config));
   if (changedWhileLoaded && !options.restartService) {
@@ -364,17 +373,21 @@ export async function setup(options: SetupOptions): Promise<SetupResult> {
     const tunnelService = getTunnelServiceStatus();
     const needsProfile = !existsSync(profilePath);
     const needsOwnershipMigration = !tunnelService.installed || !tunnelService.loaded || !tunnelServiceDefinitionMatches(config);
-    if (needsOwnershipMigration || needsProfile) {
-      await assertServiceIdle(config);
-      if (tunnelService.loaded) await stopTunnelService();
-      await bootstrapTunnelProfile(config);
-      installTunnelService(config);
-    } else if (refreshTunnelWorker) {
-      await assertServiceIdle(config);
-      await restartTunnelService();
+    const needsTunnelChange = needsOwnershipMigration || needsProfile || refreshTunnelProfile || refreshTunnelWorker;
+    const tunnelDrain = needsTunnelChange ? await acquireServiceDrain(config) : undefined;
+    try {
+      if (needsOwnershipMigration || needsProfile || refreshTunnelProfile) {
+        if (tunnelService.loaded) await stopTunnelService();
+        await bootstrapTunnelProfile(config);
+        installTunnelService(config);
+      } else if (refreshTunnelWorker) {
+        await restartTunnelService();
+      }
+      const status = await waitForTunnelReady(config);
+      if (!status.ok) throw new Error(`Tunnel runtime did not become healthy and ready: ${status.detail}`);
+    } finally {
+      await tunnelDrain?.release();
     }
-    const status = await waitForTunnelReady(config);
-    if (!status.ok) throw new Error(`Tunnel runtime did not become healthy and ready: ${status.detail}`);
     tunnelReady = true;
   }
   let connectorSetupRequired = false;

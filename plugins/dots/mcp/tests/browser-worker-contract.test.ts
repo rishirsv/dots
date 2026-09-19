@@ -1028,6 +1028,23 @@ test("closing the launcher page is an immediate terminal turn error", async () =
   expect((error as Error).message).toContain("turn was cancelled");
 });
 
+test("a stalled response DOM evaluation is bounded and preserves evaluation failures", async () => {
+  const responseDomSnapshot = (ChatGptBrowserWorker.prototype as unknown as {
+    responseDomSnapshot(responseTurn: unknown, cache?: unknown, signal?: AbortSignal): Promise<unknown>;
+  }).responseDomSnapshot;
+  const stalled = {
+    evaluate: async () => await new Promise<never>(() => {}),
+    page: () => ({ isClosed: () => false }),
+  };
+  await expect(responseDomSnapshot.call({}, stalled, undefined, AbortSignal.timeout(20)))
+    .rejects.toBeInstanceOf(Error);
+  const failure = new Error("DOM evaluation failed");
+  await expect(responseDomSnapshot.call({}, {
+    evaluate: async () => { throw failure; },
+    page: () => ({ isClosed: () => false }),
+  })).rejects.toBe(failure);
+});
+
 test("active composer resolution waits for exactly one visible editor", async () => {
   const composer = { id: "active" };
   const counts = [2, 1];
