@@ -66,7 +66,10 @@ user-authored turns between those two surfaces.
   and signed into ChatGPT Web. Portal does not implement a separate
   user-account system or ship an Electron/web UI.
 - **Transport**: Loopback Responses API plus the reference tunnel required for
-  ChatGPT's remote connector to reach the local bridge.
+  ChatGPT's remote connector to reach the local bridge. A Codex task holds one
+  ChatGPT Web conversation: the Launcher browser host owns the Chrome surfaces
+  and leases a retained conversation per Codex thread, so follow-up turns
+  continue the same visible chat instead of opening a new Temporary Chat.
 - **Model routing**: Native OpenAI models and endpoints pass through unchanged;
   Portal adds fixed Web thinking-level routes after verifying account
   availability. Non-Pro routes bind GPT-5.6 Sol explicitly.
@@ -76,7 +79,7 @@ user-authored turns between those two surfaces.
 
 ## Architecture
 
-Portal has five internal owners in one package:
+Portal has six internal owners in one package:
 
 1. **Runtime** owns the CLI-managed daemon, tunnel, active turns, cancellation,
    and the local lifecycle control channel.
@@ -89,6 +92,11 @@ Portal has five internal owners in one package:
    stable response identity.
 5. **Tool bridge** discovers the current direct and gateway tools, dispatches
    exact wire names, and correlates calls and results to one logical turn.
+6. **Launcher browser host** owns the Chrome process and its surfaces, publishes
+   a loopback CDP endpoint and token-authenticated control channel through a
+   descriptor file, and leases one retained conversation per Codex thread. It is
+   the only owner of retention state: which surface holds which conversation,
+   whether a lease reused one, and when a user closed the tab.
 
 ChatGPT sees two stable connector operations: `portal_tools` for discovery and
 `portal_call` for invocation. Adding a Codex tool must not require a Portal
@@ -132,9 +140,12 @@ expected broker-revocation error must not replace it.
   replay database.
 - Redaction, privacy dashboards, document-fidelity policy, or content filters.
 - Hosted relay accounts, OAuth, device pairing, Postgres, or multi-device use.
-- Browser-only, Portal manual, Bigger Context, Luna checkpoint, alternate
-  ChatGPT-model families beyond the verified Sol thinking levels and existing
-  Pro alias, dashboard, activity, or configurable transport modes.
+- Browser-only, Portal manual, zero-risk, Bigger Context, Luna checkpoint,
+  alternate ChatGPT-model families beyond the verified Sol thinking levels and
+  existing Pro alias, dashboard, or activity modes. The Launcher browser host is
+  in scope only as the retained-conversation transport described above; the
+  manual and zero-risk turn flows that share that host stay out of scope, and
+  the host remains a local Chrome-owning process, never an Electron or web UI.
 
 ## Completion Criteria
 
@@ -144,6 +155,10 @@ expected broker-revocation error must not replace it.
   select and retain Sol plus the requested thinking level before Send. Oversized
   multipart staging cannot upgrade a non-Pro turn to Pro. No automated live test
   consumes a Pro model turn just to validate the lower-level routes.
+- One Codex thread maps to one retained ChatGPT conversation across turns, and
+  each subagent thread gets its own. Losing a surface degrades to a fresh
+  conversation instead of failing the turn. Changing the routed model or
+  thinking level deliberately starts a new conversation.
 - Text, image, compaction, and multi-round tool conversations stream correctly.
 - File, terminal, MCP/app, free-form, and nested subagent tools execute in the
   originating Codex task.

@@ -51,6 +51,7 @@
     "smoke:cancel": "bun run scripts/smoke-codex-cancel.ts",
     "smoke:interrupt": "bun run scripts/smoke-codex-interrupt.ts",
     "smoke:subagents": "bun run scripts/smoke-codex-subagents.ts --v1 && bun run scripts/smoke-codex-subagents.ts --v2",
+    "smoke:launcher-retention": "bun run scripts/smoke-launcher-retention.ts",
     "verify": "bun run scripts/verify.ts"
   },
   "dependencies": {
