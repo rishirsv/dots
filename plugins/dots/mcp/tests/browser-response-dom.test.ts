@@ -92,6 +92,21 @@ test("captured DIL smoke response reaches Markdown delivery and stable completio
   }
 });
 
+test("volatile widget markup does not reset semantic answer completion", async () => {
+  const make = (frame: string) => `<section id="turn"><div class="markdown"><p>Stable answer</p><div class="chart-widget-container" data-frame="${frame}">Loading ${frame}</div></div><button data-testid="copy-turn-action-button"></button></section>`;
+  const first = await snapshot(make("one"));
+  const second = await snapshot(make("two"));
+  expect(first.visibleText).toBe("Stable answer");
+  expect(second.visibleText).toBe(first.visibleText);
+  expect(first.fullHtml).toBe(second.fullHtml);
+  expect(first.fullHtml).not.toContain("data-frame");
+  const tracker = new ChatGptCompletionTracker(2_000);
+  const state = (response: Snapshot) => ({ responsePresent: true, running: false,
+    currentText: "Stable answer", currentHtml: response.fullHtml, completionActionVisible: true });
+  expect(tracker.update(state(first), 0)).toBeFalse();
+  expect(tracker.update(state(second), 2_000)).toBeTrue();
+});
+
 test("DIL response extraction preserves ownership, commentary and completion boundaries", async () => {
   for (const html of [
     smokeHtml.replace('data-message-author-role="assistant"', 'data-message-author-role="user"'),

@@ -738,6 +738,7 @@ const chatGptRateLimitDialog = (page: Page): Locator => page.locator('[role="dia
 export async function throwIfChatGptRateLimitDialog(page: Page): Promise<void> {
   const dialog = chatGptRateLimitDialog(page);
   if (!await dialog.isVisible().catch(() => false)) return;
+  const explanation = (await dialog.innerText?.().catch(() => "") ?? "").replace(/\s+/g, " ").trim().slice(0, 240);
 
   const acknowledge = dialog.getByRole("button", { name: /^(Got it|知道了|了解)$/ }).last();
   if (await acknowledge.isVisible().catch(() => false)) {
@@ -745,13 +746,13 @@ export async function throwIfChatGptRateLimitDialog(page: Page): Promise<void> {
       await acknowledge.press("Enter");
     } catch (error) {
       throw new ChatGptWebAdapterError(
-        `ChatGPT rate limit: too many requests, and the dialog could not be dismissed (${error instanceof Error ? error.message : String(error)}). Try again in a few minutes.`,
+        `ChatGPT rate limit: ${explanation || "too many requests"}; the dialog could not be dismissed.`,
         { status: 429, errorType: "rate_limit_error", code: "rate_limit_exceeded", retryable: true },
       );
     }
   }
   throw new ChatGptWebAdapterError(
-    "ChatGPT rate limit: too many requests. Try again in a few minutes.",
+    `ChatGPT rate limit: ${explanation || "too many requests"}.`,
     { status: 429, errorType: "rate_limit_error", code: "rate_limit_exceeded", retryable: true },
   );
 }
@@ -808,15 +809,23 @@ const chatGptTerminalErrorAlert = (scope: ChatGptTextScope): Locator => scope
 export async function throwIfChatGptTerminalErrorAlert(scope: ChatGptTextScope): Promise<void> {
   if (await scope.getByTestId("regenerate-thread-error-button").last().isVisible().catch(() => false)) {
     throw new ChatGptWebAdapterError(
-      "ChatGPT displayed an error for this response. Check the ChatGPT tab for the exact error, then retry the turn.",
+      "ChatGPT displayed an error for this response. The cause was not verified.",
       { status: 502, errorType: "server_error", code: "upstream_server_error", retryable: true },
     );
   }
   if (!await chatGptTerminalErrorAlert(scope).isVisible().catch(() => false)) return;
   throw new ChatGptWebAdapterError(
-    "ChatGPT ended the turn with 'Something went wrong'. Retry the turn.",
+    "ChatGPT ended the turn with 'Something went wrong'. The cause was not verified.",
     { status: 502, errorType: "server_error", code: "upstream_server_error", retryable: true },
   );
+}
+
+/** Consult the same ordered UI evidence during submission and active observation. */
+async function throwIfChatGptUiFailure(page: Page, response?: ChatGptTextScope, stopped = false): Promise<void> {
+  await throwIfChatGptSessionFailureAlert(page);
+  await throwIfChatGptRateLimitDialog(page);
+  if (response) await throwIfChatGptTerminalErrorAlert(response);
+  if (stopped) throw chatGptStoppedThinkingError();
 }
 
 export async function resolveChatGptToolConfirmation(
@@ -1204,6 +1213,8 @@ export interface BrowserTurn {
   onTextDelta: (delta: string) => void;
   /** Proven current-turn MCP activity; never response content or completion. */
   externalProgress?: ChatGptTurnProgressReader;
+  /** Revoke the failed turn's tool authority before its page can be retained for inspection. */
+  onFailure?: () => Promise<void>;
   /** Atomically fences browser completion against concurrent MCP claims in the turn broker. */
   completionFence?: {
     begin(): Promise<number | undefined>;
@@ -2129,6 +2140,11 @@ export class ChatGptBrowserWorker {
   private context?: BrowserContext;
   private page?: Page;
   private managedBrowserReady?: Promise<{ browser: Browser; context: BrowserContext }>;
+  private managedGeneration = 0;
+  private maintenanceActive = false;
+  private retainedFailurePage?: { page: Page; timer: ReturnType<typeof setTimeout> };
+  private sessionSaveTail: Promise<void> = Promise.resolve();
+  private lastFailure?: { code: string; at: string };
   private launcherHelper?: LauncherBrowserHelperClient;
   private maintenanceTail: Promise<void> = Promise.resolve();
   private readonly activeRuns = new Map<string, Promise<string>>();
@@ -2193,6 +2209,9 @@ export class ChatGptBrowserWorker {
   }
 
   run(turn: BrowserTurn): Promise<string> {
+    if (this.maintenanceActive) {
+      return Promise.reject(new Error("ChatGPT browser maintenance is in progress"));
+    }
     if (this.activeRuns.has(turn.traceId)) {
       return Promise.reject(new Error(`Duplicate ChatGPT web browser turn: ${turn.traceId}`));
     }
@@ -2212,6 +2231,11 @@ export class ChatGptBrowserWorker {
     });
     const run = Promise.resolve().then(() => useHelper ? this.launcherHelper!.run(turn) : this.runExclusive(turn));
     this.activeRuns.set(turn.traceId, run);
+    void run.catch(error => {
+      this.lastFailure = {
+        code: chatGptExecutionErrorCode(error), at: new Date().toISOString(),
+      };
+    });
     void run.finally(() => {
       if (this.activeRuns.get(turn.traceId) === run) this.activeRuns.delete(turn.traceId);
       this.activeExecutionContexts?.delete(turn.traceId);
@@ -2242,11 +2266,13 @@ export class ChatGptBrowserWorker {
   }
 
   private enqueueMaintenance<T>(name: string, action: () => Promise<T>): Promise<T> {
-    const operation = this.maintenanceTail.then(() => {
+    const operation = this.maintenanceTail.then(async () => {
       if (this.activeRuns.size > 0) {
         throw new Error(`ChatGPT ${name} requires all browser turns to finish`);
       }
-      return action();
+      this.maintenanceActive = true;
+      try { return await action(); }
+      finally { this.maintenanceActive = false; }
     });
     this.maintenanceTail = operation.then(() => undefined, () => undefined);
     return operation;
@@ -2260,11 +2286,18 @@ export class ChatGptBrowserWorker {
     }
     await Promise.allSettled([...this.activeRuns.values()]);
     await this.maintenanceTail;
+    await this.sessionSaveTail;
+    if (this.retainedFailurePage) {
+      clearTimeout(this.retainedFailurePage.timer);
+      await this.retainedFailurePage.page.close().catch(() => {});
+      this.retainedFailurePage = undefined;
+    }
     const browser = this.browser;
     this.browser = undefined;
     this.context = undefined;
     this.page = undefined;
     this.managedBrowserReady = undefined;
+    this.managedGeneration += 1;
     // For connectOverCDP, Playwright implements Browser.close as a transport disconnect; it does
     // not close the launcher-owned Electron process. Always release that connection and its
     // artifact directory instead of leaking one per timeout/helper lifecycle.
@@ -2353,7 +2386,7 @@ export class ChatGptBrowserWorker {
   }
 
   private async ensurePage(): Promise<Page> {
-    if (this.page && !this.page.isClosed()) return this.page;
+    if (this.page && !this.page.isClosed() && this.browser?.isConnected()) return this.page;
     if (this.config.browserHost === "launcher") {
       const connection = await connectLauncherBrowserHost(this.config.browserHostDescriptorPath!);
       this.browser = connection.browser;
@@ -2361,23 +2394,20 @@ export class ChatGptBrowserWorker {
       this.page = connection.page;
       return this.page;
     }
-    if (!existsSync(this.config.storageStatePath) || !existsSync(loginVerificationMarkerPath(this.config.storageStatePath))) {
-      throw new Error(`ChatGPT web login state is missing: ${this.config.storageStatePath}`);
-    }
-    if (!existsSync(this.config.chromeExecutablePath)) {
-      throw new Error(`Configured Chrome executable does not exist: ${this.config.chromeExecutablePath}`);
-    }
-    this.browser = await chromium.launch({
-      executablePath: this.config.chromeExecutablePath,
-      headless: !this.config.headed,
-    });
-    this.context = await this.browser.newContext({ storageState: this.config.storageStatePath });
-    this.page = await this.context.newPage();
+    const { context } = await this.ensureManagedBrowser();
+    this.page = await context.newPage();
     return this.page;
   }
 
   private async ensureManagedBrowser(): Promise<{ browser: Browser; context: BrowserContext }> {
-    if (this.managedBrowserReady) return this.managedBrowserReady;
+    if (this.managedBrowserReady) {
+      const ready = this.managedBrowserReady;
+      const owned = await ready;
+      if (this.managedBrowserReady !== ready) return this.ensureManagedBrowser();
+      if (owned.browser.isConnected()) return owned;
+      this.invalidateManagedBrowser(owned.browser);
+    }
+    const generation = ++this.managedGeneration;
     const opening = (async () => {
       if (!existsSync(this.config.storageStatePath) || !existsSync(loginVerificationMarkerPath(this.config.storageStatePath))) {
         throw new Error(`ChatGPT web login state is missing: ${this.config.storageStatePath}`);
@@ -2389,7 +2419,22 @@ export class ChatGptBrowserWorker {
         executablePath: this.config.chromeExecutablePath,
         headless: !this.config.headed,
       });
-      const context = await browser.newContext({ storageState: this.config.storageStatePath });
+      let context: BrowserContext;
+      try { context = await browser.newContext({ storageState: this.config.storageStatePath }); }
+      catch (error) {
+        await browser.close().catch(() => {});
+        throw error;
+      }
+      browser.on("disconnected", () => this.invalidateManagedBrowser(browser, generation));
+      context.on("close", () => {
+        if (this.browser !== browser || this.managedGeneration !== generation) return;
+        this.invalidateManagedBrowser(browser, generation);
+        void browser.close().catch(() => {});
+      });
+      if (generation !== this.managedGeneration) {
+        await browser.close().catch(() => {});
+        throw new Error("ChatGPT browser opening was superseded");
+      }
       this.browser = browser;
       this.context = context;
       return { browser, context };
@@ -2401,6 +2446,23 @@ export class ChatGptBrowserWorker {
       if (this.managedBrowserReady === opening) this.managedBrowserReady = undefined;
       throw error;
     }
+  }
+
+  private invalidateManagedBrowser(browser: Browser, generation = this.managedGeneration): void {
+    if (this.browser !== browser || this.managedGeneration !== generation) return;
+    this.lastFailure = { code: "browser_disconnected", at: new Date().toISOString() };
+    this.managedGeneration += 1;
+    this.browser = undefined;
+    this.context = undefined;
+    this.page = undefined;
+    this.managedBrowserReady = undefined;
+  }
+
+  executionStatus(): { browser: "connected" | "degraded" | "unknown"; phase: "active" | "idle"; lastFailure?: { code: string; at: string } } {
+    const browser = this.config.browserHost === "managed-chrome"
+      ? this.browser?.isConnected() ? "connected" : this.lastFailure ? "degraded" : "unknown"
+      : "unknown";
+    return { browser, phase: this.activeRuns.size ? "active" : "idle", ...(this.lastFailure ? { lastFailure: this.lastFailure } : {}) };
   }
 
   /**
@@ -4212,8 +4274,10 @@ export class ChatGptBrowserWorker {
         key: observerKey,
         snapshot: {
           responsePresent: true,
-          visibleText: renderedRoots.map(candidate => candidate.innerText.trim()).filter(Boolean).join("\n\n"),
-          fullHtml: renderedRoots.map(candidate => candidate.innerHTML).join(""),
+          visibleText: markdownSegments.map(segment => segment.text.trim()).filter(Boolean).join("\n\n"),
+          // Stability and delivery must use the same sanitized projection. Raw widget HTML can
+          // keep changing after the actual answer has finished.
+          fullHtml: markdownSegments.map(segment => segment.html).join(""),
           markdownSegments,
           completionActionVisible: completionAction !== undefined,
           stoppedThinkingVisible,
@@ -4421,6 +4485,7 @@ export class ChatGptBrowserWorker {
     let turnConnection: Browser | undefined;
     let managedPage: Page | undefined;
     let diagnosticPage: Page | undefined;
+    let retainFailedPage = false;
     try {
       if (turn.abortSignal?.aborted) throw new DOMException("ChatGPT web turn aborted", "AbortError");
       // Validate only the selected physical message, not canonical history used for usage estimates.
@@ -4927,8 +4992,7 @@ export class ChatGptBrowserWorker {
         if (deadline !== undefined && Date.now() >= deadline) {
           throw new Error("ChatGPT web turn timed out");
         }
-        await throwIfChatGptSessionFailureAlert(page);
-        await throwIfChatGptTerminalErrorAlert(responseTurn.locator);
+        await throwIfChatGptUiFailure(page, responseTurn.locator);
 
         if (mode.localTools && await resolveChatGptToolConfirmation(
           page,
@@ -4987,7 +5051,7 @@ export class ChatGptBrowserWorker {
           responseDomCache.snapshot = undefined;
           continue;
         }
-        if (snapshot.stoppedThinkingVisible) throw chatGptStoppedThinkingError();
+        if (snapshot.stoppedThinkingVisible) await throwIfChatGptUiFailure(page, responseTurn.locator, true);
         if (snapshot.responsePresent) consecutiveObservationRecoveries = 0;
         // The page was read successfully, so the fault budget is genuinely consecutive even when
         // this iteration goes on to `continue` for a rebind, confirmation, or liveness pause.
@@ -5151,11 +5215,20 @@ export class ChatGptBrowserWorker {
        }
       }
 
-      if (this.context && this.config.browserHost === "managed-chrome") {
-        const state = await this.context.storageState();
-        atomicWriteFile(this.config.storageStatePath, `${JSON.stringify(state)}\n`);
+      if (this.config.browserHost === "managed-chrome") {
+        const context = page.context();
+        const save = this.sessionSaveTail.then(async () => {
+          const state = await context.storageState();
+          atomicWriteFile(this.config.storageStatePath, `${JSON.stringify(state)}\n`);
+        });
+        this.sessionSaveTail = save.catch(error => {
+          console.warn(`[chatgpt-web] completed turn ${turn.traceId} session persistence warning: ${String(error)}`);
+        });
+        await this.sessionSaveTail;
       }
-      await diagnostics.capture(page, "turn-completed");
+      await diagnostics.capture(page, "turn-completed").catch(error => {
+        console.warn(`[chatgpt-web] completed turn ${turn.traceId} diagnostic warning: ${String(error)}`);
+      });
       console.info(
         `[chatgpt-web] browser turn ${turn.traceId} completed`
         + ` (markdownChars=${finalText.length}, domFullScans=${responseDomCache.fullScans ?? 0}, domCacheHits=${responseDomCache.cacheHits ?? 0})`,
@@ -5205,7 +5278,22 @@ export class ChatGptBrowserWorker {
         + ` ${redactChatGptUiDiagnostic(error instanceof Error ? error.message : String(error))}`,
       );
       if (diagnosticPage && !diagnosticPage.isClosed()) {
-        await diagnostics.capture(diagnosticPage, "turn-failed", error);
+        await diagnostics.capture(diagnosticPage, "turn-failed", error).catch(() => {});
+      }
+      if (managedPage && !managedPage.isClosed() && this.browser?.isConnected()
+        && !cancelled && !handoffAccepted) {
+        // Halt generation before removing tool authority. A page is kept only if both succeed.
+        const stop = managedPage.locator(CHATGPT_STOP_BUTTON_SELECTOR).last();
+        const stopped = !await stop.isVisible().catch(() => false)
+          || await stop.press("Enter").then(() => true, () => false);
+        if (stopped) {
+          try {
+            await turn.onFailure?.();
+            retainFailedPage = true;
+          } catch (revokeError) {
+            console.error(`[chatgpt-web] failed to revoke turn ${turn.traceId} before inspection retention: ${String(revokeError)}`);
+          }
+        }
       }
       throw error;
     } finally {
@@ -5217,7 +5305,21 @@ export class ChatGptBrowserWorker {
           );
         });
       } else if (managedPage && !managedPage.isClosed()) {
-        await managedPage.close().catch(error => {
+        if (retainFailedPage) {
+          const previous = this.retainedFailurePage;
+          if (previous) {
+            clearTimeout(previous.timer);
+            await previous.page.close().catch(() => {});
+          }
+          const page = managedPage;
+          const timer = setTimeout(() => {
+            if (this.retainedFailurePage?.page === page) this.retainedFailurePage = undefined;
+            void page.close().catch(() => {});
+          }, 10 * 60_000);
+          timer.unref?.();
+          this.retainedFailurePage = { page, timer };
+          console.warn(`[chatgpt-web] retained failed browser turn ${turn.traceId} for inspection (up to 10 minutes)`);
+        } else await managedPage.close().catch(error => {
           console.error(
             `[chatgpt-web] failed to close managed browser tab for ${turn.traceId}: ${error instanceof Error ? error.message : String(error)}`,
           );
@@ -5225,4 +5327,13 @@ export class ChatGptBrowserWorker {
       }
     }
   }
+}
+
+/** Read-only local browser evidence; a helper in another process remains unknown here. */
+export function getChatGptBrowserWorkerStatus(): ReturnType<ChatGptBrowserWorker["executionStatus"]> {
+  const statuses = [...workers.values()].map(worker => worker.executionStatus());
+  return statuses.find(status => status.phase === "active")
+    ?? statuses.find(status => status.browser === "degraded")
+    ?? statuses.find(status => status.browser === "connected")
+    ?? { browser: "unknown", phase: "idle" };
 }

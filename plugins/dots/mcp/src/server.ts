@@ -1,7 +1,9 @@
 import { chatGptWebTraceId, createChatGptWebAdapter } from "./adapters/chatgpt-web";
-import { closeChatGptBrowserWorkers } from "./adapters/chatgpt-web/browser-worker";
+import { closeChatGptBrowserWorkers, getChatGptBrowserWorkerStatus } from "./adapters/chatgpt-web/browser-worker";
 import { closeTurnBrokers, TurnBroker } from "./adapters/chatgpt-web/turn-broker";
 import { timingSafeEqual } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { chatGptTurnSessions } from "./adapters/chatgpt-web/turn-execution";
 import {
   cancelAllStructuredCompactions,
@@ -19,7 +21,7 @@ import { rememberCompactionContinuation } from "./adapters/chatgpt-web/compactio
 import { bridgeToResponsesSSE, buildResponseJSON, formatErrorResponse } from "./bridge";
 import type { AppConfig } from "./config";
 import { providerConfig } from "./config";
-import { AsyncEventQueue } from "./event-queue";
+import { AdapterEventOverloadError, AsyncEventQueue } from "./event-queue";
 import { readJsonRequestBody } from "./http-body";
 import { httpStatusFromTerminalError } from "./lib/errors";
 import { createHash } from "node:crypto";
@@ -653,9 +655,17 @@ export async function responseRequest(
         queue.push(event);
       });
     } catch (error) {
-      const event: AdapterEvent = { type: "error", message: error instanceof Error ? error.message : String(error) };
-      options.onAdapterEvent?.(event);
-      queue.push(event);
+      if (error instanceof AdapterEventOverloadError) {
+        abort.abort();
+        queue.fail(error);
+      } else {
+        const event: AdapterEvent = { type: "error", message: error instanceof Error ? error.message : String(error) };
+        options.onAdapterEvent?.(event);
+        try { queue.push(event); } catch (overload) {
+          abort.abort();
+          queue.fail(overload instanceof Error ? overload : new AdapterEventOverloadError());
+        }
+      }
     } finally {
       queue.close();
     }
@@ -692,8 +702,23 @@ export async function responseRequest(
     });
   }
 
-  await run();
-  const events = await queue.collect();
+  // Drain while producing: awaiting the producer first can fill even a healthy queue.
+  const collection = queue.collect(32 * 1024 * 1024);
+  const producer = run();
+  let events: AdapterEvent[];
+  try {
+    events = await collection;
+  } catch (error) {
+    abort.abort();
+    if (error instanceof AdapterEventOverloadError) {
+      return Response.json(buildResponseJSON([{
+        type: "error", status: 503, errorType: "adapter_event_overload", code: error.code,
+        message: error.message,
+      }], responseModel));
+    }
+    throw error;
+  }
+  await producer;
   const json = buildResponseJSON(events, responseModel, {
     hideThinkingSummary: parsed.options.hideThinkingSummary,
     toolNsMap: maps.toolNsMap,
@@ -820,6 +845,16 @@ export function startServer(
   dependencies: { fetchUpstream?: NativeFetch; adapterFactory?: ChatGptWebAdapterFactory } = {},
 ): ReturnType<typeof Bun.serve> {
   const startedAt = Date.now();
+  // Capture the runtime manifest at process start; reading the installed file on each status
+  // request would falsely identify an old daemon as a newly installed bundle.
+  const loadedBuildId = (() => {
+    const entry = typeof Bun !== "undefined" ? Bun.main : process.argv[1];
+    if (!entry || !/[/\\]app[/\\]cli\.js$/.test(entry)) return null;
+    try {
+      const manifest = JSON.parse(readFileSync(join(dirname(dirname(resolve(entry))), "manifest.json"), "utf8")) as { bundleId?: unknown };
+      return typeof manifest.bundleId === "string" && /^[a-f0-9]{64}$/.test(manifest.bundleId) ? manifest.bundleId : null;
+    } catch { return null; }
+  })();
   const turnBroker = TurnBroker.forSocket(config.brokerSocketPath);
   let brokerReady = false;
   let brokerFailure: string | null = null;
@@ -861,6 +896,9 @@ export function startServer(
           status: brokerReady ? "ok" : "error",
           service: "portal",
           version: VERSION,
+          loaded_build_id: loadedBuildId,
+          mcp_worker_build_id: null,
+          browser_execution: getChatGptBrowserWorkerStatus(),
           mode: config.mode,
           pid: process.pid,
           port: config.port,

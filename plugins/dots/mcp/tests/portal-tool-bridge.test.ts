@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { TurnBroker } from "../src/adapters/chatgpt-web/turn-broker";
@@ -294,6 +295,63 @@ describe("Portal dynamic tool bridge", () => {
     }
   });
 
+  test("times out a direct command without leaving its child and grandchild running", async () => {
+    const directory = mkdtempSync(join(tmpdir(), "portal-command-tree-"));
+    const childPath = join(directory, "child.pid");
+    const grandchildPath = join(directory, "grandchild.pid");
+    const unrelated = Bun.spawn(["/bin/sleep", "10"]);
+    const socket = join(tmpdir(), `p-${process.pid}-${crypto.randomUUID().slice(0, 8)}.sock`);
+    sockets.push(socket);
+    const transport = new StdioClientTransport({
+      command: process.execPath,
+      args: ["src/cli.ts", "mcp", "--broker-socket", socket],
+      cwd: process.cwd(),
+      stderr: "pipe",
+    });
+    const client = new Client({ name: "portal-direct-process-tree-test", version: "1.0.0" });
+    const ownedPids: number[] = [];
+    const isRunning = (pid: number) => {
+      try {
+        process.kill(pid, 0);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+    try {
+      await client.connect(transport);
+      const inventory = await client.callTool({ name: "portal_tools", arguments: {} });
+      const prefix = (inventory.structuredContent as { operation_prefix: string }).operation_prefix;
+      const startedAt = performance.now();
+      const timedOut = await client.callTool({
+        name: "portal_call",
+        arguments: {
+          wire_name: "exec_command",
+          arguments: {
+            cmd: `/bin/sh -c 'trap "" TERM; sleep 5 & echo $! > "${grandchildPath}"; wait' & echo $! > "${childPath}"; wait`,
+            operation_id: `${prefix}.${crypto.randomUUID()}`,
+            timeout_ms: 150,
+          },
+        },
+      });
+      const elapsed = performance.now() - startedAt;
+      for (const path of [childPath, grandchildPath]) ownedPids.push(Number(readFileSync(path, "utf8").trim()));
+      expect(timedOut).toMatchObject({
+        isError: true,
+        structuredContent: { code: "portal_direct_timeout", started: true, retryable: false },
+      });
+      expect(elapsed).toBeLessThan(2_000);
+      expect(ownedPids.every(pid => !isRunning(pid))).toBe(true);
+      expect(isRunning(unrelated.pid)).toBe(true);
+    } finally {
+      await client.close();
+      for (const pid of ownedPids) if (isRunning(pid)) process.kill(pid, "SIGKILL");
+      unrelated.kill();
+      await unrelated.exited;
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
+
   test("treats invalid, revoked, and expired explicit tokens as terminal binding errors", async () => {
     const cases: Array<"invalid" | "revoked" | "expired"> = ["invalid", "revoked", "expired"];
     for (const state of cases) {
@@ -338,6 +396,10 @@ describe("Portal dynamic tool bridge", () => {
   });
 
   test("cancelling a direct operation does not poison the MCP process", async () => {
+    const directory = mkdtempSync(join(tmpdir(), "portal-cancel-tree-"));
+    const childPath = join(directory, "child.pid");
+    const grandchildPath = join(directory, "grandchild.pid");
+    const ownedPids: number[] = [];
     const socket = join(tmpdir(), `p-${process.pid}-${crypto.randomUUID().slice(0, 8)}.sock`);
     sockets.push(socket);
     const transport = new StdioClientTransport({
@@ -356,12 +418,20 @@ describe("Portal dynamic tool bridge", () => {
         name: "portal_call",
         arguments: {
           wire_name: "exec_command",
-          arguments: { cmd: "sleep 1", operation_id: `${prefix}.${crypto.randomUUID()}` },
+          arguments: {
+            cmd: `/bin/sh -c 'trap "" TERM; sleep 5 & echo $! > "${grandchildPath}"; wait' & echo $! > "${childPath}"; wait`,
+            operation_id: `${prefix}.${crypto.randomUUID()}`,
+          },
         },
       }, undefined, { signal: controller.signal });
-      await Bun.sleep(25);
+      for (let attempt = 0; attempt < 100 && (!existsSync(childPath) || !existsSync(grandchildPath)); attempt++) {
+        await Bun.sleep(10);
+      }
+      for (const path of [childPath, grandchildPath]) ownedPids.push(Number(readFileSync(path, "utf8").trim()));
       controller.abort();
       await expect(pending).rejects.toThrow();
+      await Bun.sleep(500);
+      for (const pid of ownedPids) expect(() => process.kill(pid, 0)).toThrow();
       const listed = await client.callTool({
         name: "portal_tools",
         arguments: {},
@@ -369,6 +439,10 @@ describe("Portal dynamic tool bridge", () => {
       expect(listed).toMatchObject({ structuredContent: { mode: "direct" } });
     } finally {
       await client.close();
+      for (const pid of ownedPids) {
+        try { process.kill(pid, "SIGKILL"); } catch { /* already exited */ }
+      }
+      rmSync(directory, { recursive: true, force: true });
     }
   });
 

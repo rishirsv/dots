@@ -1,5 +1,4 @@
 import { createHash, randomBytes, randomUUID } from "node:crypto";
-import { execFile } from "node:child_process";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import Ajv, { type ValidateFunction } from "ajv";
@@ -127,121 +126,130 @@ async function runDirectCommand(
   assertAdvertisedArguments("exec_command", DIRECT_EXEC_TOOL.parameters, input);
   const cmd = input.cmd as string;
   const workdir = input.workdir as string | undefined;
-  const timeout = input.timeout_ms as number;
-  return await new Promise((resolve, reject) => {
-    let started = false;
-    const startedAt = performance.now();
+  // Reserve termination time inside the tunnel's invocation deadline.
+  const duration = Math.min(input.timeout_ms as number, CHATGPT_WEB_MCP_INVOCATION_TIMEOUT_MS - 2_000);
+  const startedAt = performance.now();
+  let started = false;
+  let child: Bun.Subprocess | undefined;
+  let timeoutTimer: ReturnType<typeof setTimeout> | undefined;
+  let escalationTimer: ReturnType<typeof setTimeout> | undefined;
+  let finishTimer: ReturnType<typeof setTimeout> | undefined;
+  let interruption: "timeout" | "cancelled" | undefined;
+  let stdout = "";
+  let stderr = "";
+  const signalGroup = (name: NodeJS.Signals) => {
+    if (!child?.pid) return;
     try {
-      const child = execFile("/bin/zsh", ["-lc", cmd], {
-        ...(workdir ? { cwd: workdir } : {}),
-        timeout: Math.min(timeout, CHATGPT_WEB_MCP_INVOCATION_TIMEOUT_MS),
-        maxBuffer: 2 * 1024 * 1024,
-        signal,
-      }, (error, stdout, stderr) => {
-        const errorCode = error && (error as NodeJS.ErrnoException & { code?: unknown }).code;
-        if (!error) {
-          report?.({
-            stage: "execution_completion",
-            outcome: "completed",
-            started,
-            elapsed_ms: Math.round(performance.now() - startedAt),
-            execution_proven: true,
-            retry_guidance: "do_not_retry",
-          });
-          resolve({ exit_code: 0, stdout, stderr, started });
-          return;
-        }
-        if (signal?.aborted) {
-          report?.({
-            stage: "cancellation",
-            outcome: "cancelled",
-            started,
-            elapsed_ms: Math.round(performance.now() - startedAt),
-            error_code: "client_cancelled",
-            execution_proven: false,
-            retry_guidance: "do_not_retry",
-          });
-          resolve({
-            exit_code: null,
-            stdout,
-            stderr,
-            started,
-            code: "client_cancelled",
-            retryable: false,
-            message: "The direct command was cancelled. Its side effect status is not retryable.",
-          });
-          return;
-        }
-        if (errorCode === "ETIMEDOUT" || ((error as NodeJS.ErrnoException & { killed?: boolean; signal?: string }).killed
-          && (error as NodeJS.ErrnoException & { signal?: string }).signal === "SIGTERM")) {
-          report?.({
-            stage: "unknown",
-            outcome: "unknown",
-            started,
-            elapsed_ms: Math.round(performance.now() - startedAt),
-            error_code: "portal_direct_timeout",
-            execution_proven: false,
-            retry_guidance: "do_not_retry",
-          });
-          resolve({
-            exit_code: null,
-            stdout,
-            stderr,
-            started,
-            code: "portal_direct_timeout",
-            retryable: false,
-            message: `The direct command did not complete within ${Math.min(timeout, CHATGPT_WEB_MCP_INVOCATION_TIMEOUT_MS)}ms. Its side effect status is not retryable.`,
-          });
-          return;
-        }
-        if (typeof errorCode !== "number") {
-          report?.({
-            stage: "execution_completion",
-            outcome: "failed",
-            started,
-            elapsed_ms: Math.round(performance.now() - startedAt),
-            error_code: chatGptExecutionErrorCode(error),
-            execution_proven: started,
-            retry_guidance: started ? "do_not_retry" : "retry_safe",
-          });
-          reject(error);
-          return;
-        }
-        report?.({
-          stage: "execution_completion",
-          outcome: "failed",
-          started,
-          elapsed_ms: Math.round(performance.now() - startedAt),
-          error_code: `exit_${errorCode}`,
-          execution_proven: true,
-          retry_guidance: "do_not_retry",
-        });
-        resolve({ exit_code: errorCode, stdout, stderr, started });
-      });
-      child.once("spawn", () => {
-        started = true;
-        report?.({
-          stage: "dispatch",
-          outcome: "started",
-          started: true,
-          elapsed_ms: Math.round(performance.now() - startedAt),
-          execution_proven: false,
-          retry_guidance: "unknown",
-        });
-      });
+      process.kill(-child.pid, name);
     } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ESRCH") throw error;
+    }
+  };
+  let finishInterruption!: () => void;
+  const interrupted = new Promise<DirectExecutionOutcome>(resolve => {
+    finishInterruption = () => {
+      const cancelled = interruption === "cancelled";
       report?.({
-        stage: "execution_completion",
-        outcome: "failed",
+        stage: cancelled ? "cancellation" : "unknown",
+        outcome: cancelled ? "cancelled" : "unknown",
         started,
         elapsed_ms: Math.round(performance.now() - startedAt),
-        error_code: chatGptExecutionErrorCode(error),
-        execution_proven: started,
-        retry_guidance: started ? "do_not_retry" : "retry_safe",
+        error_code: cancelled ? "client_cancelled" : "portal_direct_timeout",
+        execution_proven: false,
+        retry_guidance: "do_not_retry",
       });
-      reject(error);
-    }
+      resolve({
+        exit_code: null,
+        stdout,
+        stderr,
+        started,
+        code: cancelled ? "client_cancelled" : "portal_direct_timeout",
+        retryable: false,
+        message: cancelled
+          ? "The direct command was cancelled. Its side effect status is not retryable."
+          : `The direct command did not complete within ${duration}ms. Its side effect status is not retryable.`,
+      });
+    };
   });
+  const interrupt = (reason: "timeout" | "cancelled") => {
+    if (interruption) return;
+    interruption = reason;
+    signalGroup("SIGTERM");
+    escalationTimer = setTimeout(() => signalGroup("SIGKILL"), 250);
+    finishTimer = setTimeout(finishInterruption, 350);
+  };
+  const onAbort = () => interrupt("cancelled");
+  try {
+    // Bun's native detached spawn creates a new session on macOS. Its Node-compatible
+    // execFile detached option does not; only the owned group may be signalled here.
+    child = Bun.spawn({
+      cmd: ["/bin/zsh", "-lc", cmd],
+      ...(workdir ? { cwd: workdir } : {}),
+      detached: true,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+    started = true;
+    report?.({
+      stage: "dispatch",
+      outcome: "started",
+      started: true,
+      elapsed_ms: Math.round(performance.now() - startedAt),
+      execution_proven: false,
+      retry_guidance: "unknown",
+    });
+    const readOutput = async (stream: ReadableStream<Uint8Array>, assign: (text: string) => void) => {
+      const reader = stream.getReader();
+      const decoder = new TextDecoder();
+      let bytes = 0;
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        bytes += value.byteLength;
+        if (bytes > 2 * 1024 * 1024) throw new Error("Direct command maxBuffer exceeded");
+        assign(decoder.decode(value, { stream: true }));
+      }
+      assign(decoder.decode());
+    };
+    const completion = Promise.all([
+      child.exited,
+      readOutput(child.stdout as ReadableStream<Uint8Array>, chunk => { stdout += chunk; }),
+      readOutput(child.stderr as ReadableStream<Uint8Array>, chunk => { stderr += chunk; }),
+    ]).then(([exitCode]) => ({ exitCode }));
+    signal?.addEventListener("abort", onAbort, { once: true });
+    if (signal?.aborted) onAbort();
+    timeoutTimer = setTimeout(() => interrupt("timeout"), duration);
+    const outcome = await Promise.race([completion, interrupted]);
+    if (interruption) return await interrupted;
+    if (!("exitCode" in outcome)) return outcome;
+    report?.({
+      stage: "execution_completion",
+      outcome: outcome.exitCode === 0 ? "completed" : "failed",
+      started,
+      elapsed_ms: Math.round(performance.now() - startedAt),
+      ...(outcome.exitCode === 0 ? {} : { error_code: `exit_${outcome.exitCode}` }),
+      execution_proven: true,
+      retry_guidance: "do_not_retry",
+    });
+    return { exit_code: outcome.exitCode, stdout, stderr, started };
+  } catch (error) {
+    if (started) signalGroup("SIGKILL");
+    report?.({
+      stage: "execution_completion",
+      outcome: "failed",
+      started,
+      elapsed_ms: Math.round(performance.now() - startedAt),
+      error_code: chatGptExecutionErrorCode(error),
+      execution_proven: started,
+      retry_guidance: started ? "do_not_retry" : "retry_safe",
+    });
+    throw error;
+  } finally {
+    if (timeoutTimer) clearTimeout(timeoutTimer);
+    if (escalationTimer) clearTimeout(escalationTimer);
+    if (finishTimer) clearTimeout(finishTimer);
+    signal?.removeEventListener("abort", onAbort);
+  }
 }
 
 function assertAdvertisedArguments(

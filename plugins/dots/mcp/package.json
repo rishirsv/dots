@@ -1,6 +1,6 @@
 {
   "name": "@rishirsv/portal",
-  "version": "5.0.14",
+  "version": "5.0.15",
   "private": true,
   "description": "Run ChatGPT Web Pro as a Codex model with the current task's complete tool set.",
   "repository": {

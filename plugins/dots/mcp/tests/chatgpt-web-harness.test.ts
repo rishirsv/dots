@@ -1159,6 +1159,109 @@ describe("ChatGPT outer-native harness v4", () => {
     }
   });
 
+  test("a retryable upstream error after an accepted mutation cannot repeat the browser turn", async () => {
+    const socketPath = brokerTestEndpoint(`cgw-accepted-mutation-${process.pid}-${Date.now()}`);
+    const provider: CodexProviderConfig = {
+      adapter: "chatgpt-web",
+      baseUrl: `browser://chatgpt-accepted-mutation-${Date.now()}`,
+      chatgptWeb: { brokerSocketPath: socketPath, localToolsEnabled: true, solAvailable: true, extraHighAvailable: true, proAvailable: true },
+    };
+    const worker = ChatGptBrowserWorker.forProvider(provider);
+    const originalRun = worker.run;
+    let submissions = 0;
+    let mutations = 0;
+    worker.run = async turn => {
+      submissions += 1;
+      const prepared = await turn.prepare();
+      try {
+        const token = prepared.text.match(/turn_token (turn_[A-Za-z0-9_-]+)/)?.[1];
+        if (!token) throw new Error("turn token missing from compiled prompt");
+        turn.onSendActivated?.();
+        turn.onSubmitted?.();
+        const claimed = await callTurnBroker<{ bindingId: string }>(socketPath, { method: "claim", token });
+        await invokeAfterBrowserBoundary(turn, () => callTurnBroker<BrokerToolResult>(socketPath, {
+          method: "invoke",
+          bindingId: claimed.bindingId,
+          wireName: "exec_command",
+          freeform: false,
+          arguments: { cmd: "perform-once", workdir: tempRoot },
+        }, 30_000));
+        throw new ChatGptWebAdapterError("ChatGPT upstream failed after the mutation", {
+          status: 502,
+          errorType: "server_error",
+          code: "upstream_server_error",
+          retryable: true,
+        });
+      } finally {
+        prepared.release();
+      }
+    };
+    try {
+      const request = rawWireRequest(environmentXml);
+      const initial: AdapterEvent[] = [];
+      await createChatGptWebAdapter(provider).runTurn!(request,
+        { headers: new Headers() }, event => initial.push(event));
+      const toolCall = initial.find((event): event is Extract<AdapterEvent, { type: "tool_call_start" }> => event.type === "tool_call_start");
+      expect(toolCall?.name).toBe("exec_command");
+      expect(initial.at(-1)).toMatchObject({ type: "done", stopReason: "tool_use" });
+      // The native Codex tool has executed once; its result now resumes the same accepted browser.
+      mutations += 1;
+      const continuation = structuredClone(request);
+      continuation.context.messages.push({
+        role: "toolResult", toolCallId: toolCall!.id, toolName: "exec_command",
+        content: "mutation completed", isError: false, timestamp: Date.now(),
+      });
+      (continuation._rawBody as { input: unknown[] }).input.push({
+        type: "function_call_output", call_id: toolCall!.id, output: "mutation completed",
+      });
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        const events: AdapterEvent[] = [];
+        await createChatGptWebAdapter(provider).runTurn!(continuation,
+          { headers: new Headers() }, event => events.push(event));
+        expect(events.at(-1)).toMatchObject({
+          type: "error", code: "upstream_server_error", status: 502, retryable: false,
+        });
+      }
+      expect(submissions).toBe(1);
+      expect(mutations).toBe(1);
+    } finally {
+      worker.run = originalRun;
+      await TurnBroker.forSocket(socketPath).close();
+    }
+  });
+
+  test("a typed retryable error after Send activation is still an ambiguous, non-retryable submission", async () => {
+    const provider: CodexProviderConfig = {
+      adapter: "chatgpt-web",
+      baseUrl: `browser://chatgpt-typed-ambiguous-${Date.now()}`,
+      chatgptWeb: { localToolsEnabled: false, solAvailable: true, extraHighAvailable: true, proAvailable: true },
+    };
+    const worker = ChatGptBrowserWorker.forProvider(provider);
+    const originalRun = worker.run;
+    let submissions = 0;
+    worker.run = async turn => {
+      submissions += 1;
+      turn.onSendActivated?.();
+      throw new ChatGptWebAdapterError("Upstream confirmation vanished", {
+        status: 502, errorType: "server_error", code: "upstream_server_error", retryable: true,
+      });
+    };
+    try {
+      const request = rawWireRequest(environmentXml);
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        const events: AdapterEvent[] = [];
+        await createChatGptWebAdapter(provider).runTurn!(request,
+          { headers: new Headers() }, event => events.push(event));
+        expect(events.at(-1)).toMatchObject({
+          type: "error", code: "upstream_server_error", retryable: false,
+        });
+      }
+      expect(submissions).toBe(1);
+    } finally {
+      worker.run = originalRun;
+    }
+  });
+
   test("an unclassified browser failure retires its session before the next native retry", async () => {
     const socketPath = brokerTestEndpoint(`cgw-h4-error-retry-${process.pid}-${Date.now()}`);
     const provider: CodexProviderConfig = {
@@ -1221,7 +1324,7 @@ describe("ChatGPT outer-native harness v4", () => {
       const response = buildResponseJSON(events, CHATGPT_WEB_MODEL_ID);
       expect(response).toMatchObject({ status: "failed", retryable: false,
         error: { type: "server_error", code: "chatgpt_stopped_thinking" } });
-      expect(JSON.stringify(response)).toContain("usage limit may have been reached");
+      expect(JSON.stringify(response)).toContain("cause was not verified");
       expect(browserStarts).toBe(1);
       expect(events.some(event => event.type === "done")).toBeFalse();
     } finally {
@@ -1230,7 +1333,7 @@ describe("ChatGPT outer-native harness v4", () => {
     }
   });
 
-  test("caps automatic rate-limit browser sends at three retries for one native turn", async () => {
+  test("caps proven pre-send rate-limit browser attempts at three retries for one native turn", async () => {
     const socketPath = brokerTestEndpoint(`cgw-h4-retry-budget-${process.pid}-${Date.now()}`);
     const provider: CodexProviderConfig = {
       adapter: "chatgpt-web",
@@ -1242,7 +1345,6 @@ describe("ChatGPT outer-native harness v4", () => {
     let browserStarts = 0;
     (worker as unknown as { run: (turn: BrowserTurn) => Promise<string> }).run = async turn => {
       browserStarts += 1;
-      turn.onSendActivated?.();
       throw new ChatGptWebAdapterError("ChatGPT rate limit: too many requests. Try again in a few minutes.", {
         status: 429,
         errorType: "rate_limit_error",

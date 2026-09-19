@@ -4,6 +4,7 @@ import { encodeCompactionSummary } from "./responses/compaction";
 import { encodeReasoningEnvelope, type ReasoningEnvelope } from "./responses/reasoning-envelope";
 import { resolveStallTimeoutSec } from "./stall-timeout";
 import { usageDisplayTotalTokens } from "./usage/totals";
+import { AdapterEventOverloadError } from "./event-queue";
 
 function uuid(): string {
   return crypto.randomUUID().replace(/-/g, "");
@@ -80,6 +81,15 @@ function plaintextCollaborationFields(namespace: string | undefined, name: strin
 }
 
 export type ResponsesTerminalStatus = "completed" | "failed" | "incomplete";
+
+function terminalOutcome(event: Extract<AdapterEvent, { type: "done" | "incomplete" | "error" }>):
+  { status: ResponsesTerminalStatus; reason?: string } {
+  if (event.type === "error") return { status: "failed" };
+  if (event.type === "incomplete") return { status: "incomplete", reason: event.reason };
+  if (event.stopReason === "max_tokens") return { status: "incomplete", reason: "max_output_tokens" };
+  if (event.stopReason === "content_filter") return { status: "incomplete", reason: "content_filter" };
+  return { status: "completed" };
+}
 
 export function bridgeToResponsesSSE(
   events: AsyncIterable<AdapterEvent>,
@@ -583,6 +593,7 @@ export function bridgeToResponsesSSE(
               break;
             }
             case "done": {
+              const outcome = terminalOutcome(event);
               if (currentMsg) closeCurrentMessage();
               if (currentReasoning) closeCurrentReasoning();
               if (currentRawReasoning) closeCurrentRawReasoning();
@@ -591,7 +602,7 @@ export function bridgeToResponsesSSE(
               // Redacted-only turns (or hidden thinking without a trailing signature event) still
               // need their envelope-only reasoning item so the blocks replay next turn.
               flushHiddenReasoningEnvelope();
-              if (options?.compaction) {
+              if (options?.compaction && outcome.status === "completed" && compactionText.trim()) {
                 // Exactly one compaction item per turn; codex-rs takes the first and fatals on 0.
                 const item = {
                   type: "compaction", id: `cmp_${uuid()}`,
@@ -601,14 +612,14 @@ export function bridgeToResponsesSSE(
                 finishedItems.push(item as OutputItem);
                 outputIndex++;
               }
-              if (event.stopReason === "max_tokens" || event.stopReason === "content_filter") {
+              if (outcome.status === "incomplete" || (options?.compaction && !compactionText.trim())) {
                 // Upstream stopped before a normal completion. Surface as incomplete so the
                 // client can distinguish a truncated/filtered turn from a finished one.
                 const response = {
                   ...responseSnapshot("incomplete", finishedItems, event.endTurn),
                   usage: responsesUsage(event.usage),
                   incomplete_details: {
-                    reason: event.stopReason === "max_tokens" ? "max_output_tokens" : "content_filter",
+                    reason: outcome.reason ?? "invalid_compaction_summary",
                   },
                 };
                 // Cache max-output partials so previous_response_id replay can continue them;
@@ -682,11 +693,14 @@ export function bridgeToResponsesSSE(
       } catch (err) {
         if (!terminated) {
           flushHiddenRawReasoning();
+          const failure = err instanceof AdapterEventOverloadError
+            ? { message: err.message, type: "server_error", code: err.code }
+            : responseError(500, "proxy_error", err instanceof Error ? err.message : String(err));
           emit("response.failed", {
             response: {
               ...responseSnapshot("failed", finishedItems),
-              error: responseError(500, "proxy_error", err instanceof Error ? err.message : String(err)),
-              last_error: responseError(500, "proxy_error", err instanceof Error ? err.message : String(err)),
+              error: failure,
+              last_error: failure,
             },
           });
           reportTerminal("failed");
@@ -867,6 +881,7 @@ export function buildResponseJSON(
   let incompleteEvent: Extract<AdapterEvent, { type: "incomplete" }> | undefined;
   let endTurn: boolean | undefined;
   let stopReason: string | undefined;
+  let terminalStatus: ResponsesTerminalStatus | undefined;
   let compactionText = "";
 
   let currentText = "";
@@ -1023,21 +1038,25 @@ export function buildResponseJSON(
         flushToolCall();
         break;
       case "error":
+        terminalStatus = terminalOutcome(e).status;
         errorEvent = e;
         usage = e.usage ?? usage;
         break;
       case "incomplete":
+        terminalStatus = terminalOutcome(e).status;
         incompleteEvent = e;
         endTurn = e.endTurn;
         if (e.providerState) options?.onProviderState?.(e.providerState);
         break;
       case "done":
+        terminalStatus = terminalOutcome(e).status;
         usage = e.usage;
         endTurn = e.endTurn;
         if (e.providerState) options?.onProviderState?.(e.providerState);
-        if (e.stopReason === "max_tokens") stopReason = "max_tokens";
+        stopReason = terminalOutcome(e).reason;
         break;
     }
+    if (terminalStatus) break;
   }
   flushText();
   flushSummaryReasoning();
@@ -1045,20 +1064,17 @@ export function buildResponseJSON(
   flushToolCall();
   // A truncated turn must never become replacement history. Emit a compaction item only after
   // authoritative turn completion.
-  if (options?.compaction && !errorEvent && !incompleteEvent && stopReason !== "max_tokens") {
+  if (options?.compaction && terminalStatus === "completed" && compactionText.trim()) {
     output.push({ type: "compaction", id: `cmp_${uuid()}`, encrypted_content: encodeCompactionSummary(compactionText) });
   }
 
   const failure = errorEvent ? adapterFailureFromEvent(errorEvent) : undefined;
-  const status = errorEvent
-    ? "failed"
-    : incompleteEvent || stopReason === "max_tokens"
-      ? "incomplete"
-      : "completed";
+  const status = terminalStatus ?? "incomplete";
+  const finalStatus = options?.compaction && status === "completed" && !compactionText.trim() ? "incomplete" : status;
   return {
     id: responseId, object: "response",
     created_at: Math.floor(Date.now() / 1000),
-    status,
+    status: finalStatus,
     model: modelId, output,
     ...(endTurn !== undefined ? { end_turn: endTurn } : {}),
     ...(failure ? { error: failure.error, last_error: failure.error } : {}),
@@ -1069,8 +1085,8 @@ export function buildResponseJSON(
         ...(incompleteEvent.message ? { message: incompleteEvent.message } : {}),
         ...(incompleteEvent.retryable !== undefined ? { retryable: incompleteEvent.retryable } : {}),
       },
-    } : stopReason === "max_tokens" ? {
-      incomplete_details: { reason: "max_output_tokens" },
+    } : finalStatus === "incomplete" ? {
+      incomplete_details: { reason: stopReason ?? (terminalStatus ? "invalid_compaction_summary" : "adapter_eof") },
     } : {}),
     usage: responsesUsage(incompleteEvent?.usage ?? usage),
   };

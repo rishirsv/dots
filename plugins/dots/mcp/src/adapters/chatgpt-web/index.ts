@@ -300,9 +300,23 @@ function replayEvents(events: AdapterEvent[], emit: (event: AdapterEvent) => voi
 
 function submittedTurnFailure(session: ChatGptTurnSession, error: unknown): Error {
   const normalized = error instanceof Error ? error : new Error(String(error));
-  if (normalized instanceof ChatGptWebAdapterError) return normalized;
   const phase = session.runtime.submission?.phase;
-  if (!phase || phase === "prepared") return normalized;
+  const toolsDispatched = session.runtime.mode === "tools"
+    && session.runtime.externalProgress.snapshot().lastToolBatchRevision > 0;
+  if ((!phase || phase === "prepared") && !toolsDispatched) return normalized;
+  if (normalized instanceof ChatGptWebAdapterError) {
+    if (!normalized.retryable) return normalized;
+    // A typed upstream error describes the failure, not whether repeating the prompt is safe.
+    // Preserve its code and cause for diagnosis, but never start fresh inference after Send or
+    // tool dispatch. The same accepted execution can still be observed on a stream reconnect.
+    return new ChatGptWebAdapterError(normalized.message, {
+      status: normalized.status,
+      errorType: normalized.errorType,
+      code: normalized.code,
+      retryable: false,
+      cause: normalized,
+    });
+  }
   const ambiguous = phase === "send_activated";
   return new ChatGptWebAdapterError(
     ambiguous
@@ -770,6 +784,9 @@ export function createChatGptWebAdapter(
       onCommentary: (text, continuation) => trace.push({ kind: "commentary", text, ...(continuation ? { continuation: true } : {}) }),
       onTextDelta: delta => text.push(delta),
       externalProgress,
+      onFailure: async () => {
+        if (activeToken) await broker.revoke(activeToken);
+      },
       completionFence: {
         begin: async () => broker.beginCompletionFence(await token.promise),
         commit: async revision => broker.commitCompletionFence(await token.promise, revision),

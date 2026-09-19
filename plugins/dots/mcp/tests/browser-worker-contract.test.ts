@@ -272,6 +272,47 @@ test("browser turns run concurrently up to the five-tab limit", async () => {
   await Promise.all([...active.slice(1), sixth]);
 });
 
+test("an old browser disconnect cannot invalidate its replacement generation", () => {
+  const oldBrowser = { isConnected: () => false };
+  const replacement = { isConnected: () => true };
+  const ready = Promise.resolve({ browser: replacement, context: {} });
+  const worker = Object.assign(Object.create(ChatGptBrowserWorker.prototype), {
+    config: { browserHost: "managed-chrome" },
+    browser: replacement,
+    context: {},
+    managedBrowserReady: ready,
+    managedGeneration: 2,
+    activeRuns: new Map(),
+  }) as { browser?: unknown; managedBrowserReady?: unknown; managedGeneration: number;
+    invalidateManagedBrowser(browser: unknown, generation?: number): void;
+    executionStatus(): { browser: string; lastFailure?: { code: string } } };
+  worker.invalidateManagedBrowser(oldBrowser, 1);
+  expect(worker.browser).toBe(replacement);
+  expect(worker.managedBrowserReady).toBe(ready);
+  worker.invalidateManagedBrowser(replacement, 1);
+  expect(worker.browser).toBe(replacement);
+  worker.invalidateManagedBrowser(replacement, 2);
+  expect(worker.browser).toBeUndefined();
+  expect(worker.managedBrowserReady).toBeUndefined();
+  expect(worker.managedGeneration).toBe(3);
+  expect(worker.executionStatus()).toMatchObject({ browser: "degraded", lastFailure: { code: "browser_disconnected" } });
+});
+
+test("maintenance admission prevents a task from racing its browser page", async () => {
+  let release!: () => void;
+  const worker = Object.assign(Object.create(ChatGptBrowserWorker.prototype), {
+    config: { browserHost: "managed-chrome" }, activeRuns: new Map(),
+    maintenanceTail: Promise.resolve(), maintenanceActive: false,
+  }) as { enqueueMaintenance<T>(name: string, action: () => Promise<T>): Promise<T>;
+    run(turn: Parameters<ChatGptBrowserWorker["run"]>[0]): Promise<string> };
+  const maintenance = worker.enqueueMaintenance("check", () => new Promise<void>(resolve => { release = resolve; }));
+  await Promise.resolve();
+  await expect(worker.run({ traceId: "race" } as Parameters<ChatGptBrowserWorker["run"]>[0]))
+    .rejects.toThrow("maintenance is in progress");
+  release();
+  await maintenance;
+});
+
 test("browser turns have no absolute deadline unless one is explicitly configured", () => {
   const provider = { adapter: "chatgpt-web" as const, baseUrl: "browser://chatgpt" };
   expect(resolveBrowserConfig(provider).turnTimeoutMs).toBeUndefined();
@@ -2559,7 +2600,7 @@ test("the known ChatGPT rate-limit dialog is acknowledged and returns a structur
     errorType: "rate_limit_error",
     code: "rate_limit_exceeded",
     retryable: true,
-    message: "ChatGPT rate limit: too many requests. Try again in a few minutes.",
+    message: "ChatGPT rate limit: too many requests.",
   });
   expect(fixture.pressed).toEqual(["Enter"]);
 });
@@ -3434,7 +3475,8 @@ test("visible DOM trace emits one complete commentary paragraph before the next 
 test("Stopped thinking is an explicit upstream error, not a user cancellation or a proven quota error", () => {
   const error = chatGptStoppedThinkingError();
   expect(error).toMatchObject({ status: 502, errorType: "server_error", code: "chatgpt_stopped_thinking", retryable: false });
-  expect(error.message).toContain("usage limit may have been reached");
+  expect(error.message).toContain("cause was not verified");
+  expect(error.message).not.toMatch(/usage limit|quota/i);
   expect(error.message).not.toContain("5 seconds");
 });
 
@@ -3686,7 +3728,7 @@ test("both response loops check explicit Stopped thinking before acknowledging f
   const worker = readFileSync("src/adapters/chatgpt-web/browser-worker.ts", "utf8");
   for (const method of ["private async waitForMultipartAcknowledgement(", "private async runBrowserTurn("]) {
     const loop = worker.slice(worker.indexOf(method));
-    const failure = loop.indexOf("if (snapshot.stoppedThinkingVisible) throw chatGptStoppedThinkingError();");
+    const failure = loop.indexOf("if (snapshot.stoppedThinkingVisible)");
     const acknowledgement = loop.indexOf(".acknowledgeToolBatch(", failure);
     expect(failure).toBeGreaterThan(0);
     expect(acknowledgement).toBeGreaterThan(failure);

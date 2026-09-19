@@ -1,4 +1,5 @@
-import { existsSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import type { AppConfig } from "./config";
 import { getConfigDir, getConfigPath, loadConfig } from "./config";
 import { inspectCodexIntegration } from "./codex-integration";
@@ -27,44 +28,87 @@ function secureFile(path: string): boolean {
   return (statSync(path).mode & 0o077) === 0;
 }
 
-async function proxyCheck(config: AppConfig): Promise<DoctorCheck> {
+function configuredBuildId(config: AppConfig): string | null {
+  const command = config.runtimeCommand;
+  const entry = command.find(part => /[/\\]app[/\\]cli\.js$/.test(part));
+  const launcher = command.find(part => /[/\\]bin[/\\]portal(?:\.cmd)?$/.test(part));
+  const root = entry ? dirname(dirname(resolve(entry))) : launcher ? dirname(dirname(resolve(launcher))) : null;
+  if (!root) return null;
+  try {
+    const manifest = JSON.parse(readFileSync(join(root, "manifest.json"), "utf8")) as { bundleId?: unknown };
+    return typeof manifest.bundleId === "string" && /^[a-f0-9]{64}$/.test(manifest.bundleId) ? manifest.bundleId : null;
+  } catch { return null; }
+}
+
+export function browserExecutionCheck(value: unknown): DoctorCheck {
+  const state = value && typeof value === "object" ? value as Record<string, unknown> : {};
+  const lastFailure = state.lastFailure && typeof state.lastFailure === "object"
+    ? state.lastFailure as Record<string, unknown> : {};
+  const failure = typeof lastFailure.code === "string" ? lastFailure.code.slice(0, 100) : undefined;
+  const at = typeof lastFailure.at === "string" ? lastFailure.at.slice(0, 40) : undefined;
+  const phase = state.phase === "active" ? "active" : "idle";
+  if (state.browser === "degraded") return {
+    id: "browser-execution", status: "error",
+    message: `Browser execution is degraded (${phase}); restart Portal before a new turn`,
+    ...(failure ? { detail: `Last failure: ${failure}${at ? ` at ${at}` : ""}.` } : {}),
+  };
+  if (state.browser === "connected") return {
+    id: "browser-execution", status: "ok", message: `Managed browser is connected (${phase}); no inference was sent by status`,
+  };
+  return {
+    id: "browser-execution", status: "warning",
+    message: `Browser execution is unverified (${phase}); run an authenticated canary before treating it as ready`,
+    ...(failure ? { detail: `Last failure: ${failure}${at ? ` at ${at}` : ""}.` } : {}),
+  };
+}
+
+async function proxyCheck(config: AppConfig): Promise<DoctorCheck[]> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 2_000);
   try {
     const response = await fetch(`http://${config.host}:${config.port}/healthz`, { signal: controller.signal });
-    if (!response.ok) return { id: "proxy", status: "error", message: `Responses proxy returned HTTP ${response.status}` };
+    if (!response.ok) return [{ id: "proxy", status: "error", message: `Responses proxy returned HTTP ${response.status}` }];
     const body = await response.json() as Record<string, unknown>;
     if (body.service !== "portal") {
-      return { id: "proxy", status: "error", message: "The configured port belongs to another service" };
+      return [{ id: "proxy", status: "error", message: "The configured port belongs to another service" }];
     }
     if (body.broker_ready !== true) {
-      return {
+      return [{
         id: "proxy",
         status: "error",
         message: "Responses proxy is running but its bound-turn broker is unavailable",
         ...(typeof body.broker_error === "string" ? { detail: body.broker_error } : {}),
-      };
+      }];
     }
     if (body.status !== "ok") {
-      return { id: "proxy", status: "error", message: "Responses proxy is not healthy" };
+      return [{ id: "proxy", status: "error", message: "Responses proxy is not healthy" }];
     }
     if (body.mode !== config.mode) {
-      return { id: "proxy", status: "error", message: `Daemon is running in ${String(body.mode)} mode; config requires ${config.mode}` };
+      return [{ id: "proxy", status: "error", message: `Daemon is running in ${String(body.mode)} mode; config requires ${config.mode}` }];
     }
     if (body.version !== config.releaseVersion) {
-      return { id: "proxy", status: "error", message: `Daemon version is ${String(body.version)}; config requires ${config.releaseVersion}` };
+      return [{ id: "proxy", status: "error", message: `Daemon version is ${String(body.version)}; config requires ${config.releaseVersion}` }];
     }
     if (body.accepting_turns !== true) {
-      return {
+      return [{
         id: "proxy",
         status: "error",
         message: "Responses proxy is drained and is not accepting Codex turns",
-      };
+      }];
     }
-    return { id: "proxy", status: "ok", message: `Responses proxy is healthy on 127.0.0.1:${config.port}` };
+    const configured = configuredBuildId(config);
+    const loaded = typeof body.loaded_build_id === "string" ? body.loaded_build_id : null;
+    const builds: DoctorCheck = configured && loaded && configured !== loaded
+      ? { id: "build", status: "error", message: "Running daemon differs from the configured Portal build; restart Portal completely", detail: `daemon=${loaded.slice(0, 12)} configured=${configured.slice(0, 12)}` }
+      : { id: "build", status: "warning", message: `Daemon build: ${loaded?.slice(0, 12) ?? "unknown"}; MCP worker loaded build: unknown${configured ? `; configured build: ${configured.slice(0, 12)}` : ""}`, detail: "Restart both Portal daemon and tunnel/MCP worker after installation; worker identity cannot yet be observed from status." };
+    return [
+      { id: "proxy", status: "ok", message: `Responses transport is healthy on 127.0.0.1:${config.port}` },
+      browserExecutionCheck(body.browser_execution),
+      builds,
+    ];
   } catch (error) {
     const detail = error instanceof Error ? error.message : String(error);
-    return { id: "proxy", status: "error", message: "Responses proxy is not reachable", detail };
+    return [{ id: "proxy", status: "error", message: "Responses proxy is not reachable", detail }];
   } finally {
     clearTimeout(timeout);
   }
@@ -93,7 +137,13 @@ export async function runDoctor(): Promise<DoctorReport> {
   } else if (!secureFile(loginVerificationMarkerPath(config.storageStatePath))) {
     checks.push({ id: "login", status: "error", message: "ChatGPT login verification marker is readable by other users" });
   } else {
-    checks.push({ id: "login", status: "ok", message: "ChatGPT login state has previously verified authenticated browser evidence" });
+    let verifiedAt: string | undefined;
+    try {
+      const marker = JSON.parse(readFileSync(loginVerificationMarkerPath(config.storageStatePath), "utf8")) as { verifiedAt?: unknown };
+      if (typeof marker.verifiedAt === "string" && Number.isFinite(Date.parse(marker.verifiedAt))) verifiedAt = marker.verifiedAt;
+    } catch { /* browserLoginStateExists already checked validity; keep age unknown */ }
+    const ageDays = verifiedAt ? Math.max(0, Math.floor((Date.now() - Date.parse(verifiedAt)) / 86_400_000)) : undefined;
+    checks.push({ id: "login", status: "warning", message: `ChatGPT login was last verified ${ageDays === undefined ? "at an unknown time" : `${ageDays} day(s) ago`}; status does not recheck the account`, ...(verifiedAt ? { detail: `Last verification: ${verifiedAt}` } : {}) });
   }
 
   const codex = inspectCodexIntegration();
@@ -115,7 +165,7 @@ export async function runDoctor(): Promise<DoctorReport> {
   } else {
     checks.push({ id: "service", status: "ok", message: "macOS background service is loaded" });
   }
-  checks.push(await proxyCheck(config));
+  checks.push(...await proxyCheck(config));
 
   {
     const settings = config.tunnel!;
@@ -160,6 +210,6 @@ export function formatDoctorReport(report: DoctorReport): string {
     `${icon[check.status]} ${check.message}`,
     ...(check.detail ? [`  ${check.detail}`] : []),
   ]);
-  lines.push(report.ok ? "Doctor result: ready" : "Doctor result: not ready");
+  lines.push(report.ok ? "Doctor result: transport ready; authenticated browser execution is not verified by status" : "Doctor result: not ready");
   return `${lines.join("\n")}\n`;
 }

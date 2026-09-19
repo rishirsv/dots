@@ -51,8 +51,7 @@ export function chatGptTurnSupersededError(): ChatGptWebAdapterError {
 
 export function chatGptStoppedThinkingError(): ChatGptWebAdapterError {
   return new ChatGptWebAdapterError(
-    "ChatGPT displayed 'Stopped thinking' and could not continue this response. "
-    + "A ChatGPT Web usage limit may have been reached. Check the ChatGPT tab for the exact reason before retrying.",
+    "ChatGPT displayed 'Stopped thinking' and could not continue this response. The cause was not verified; the turn was not automatically retried.",
     {
       status: 502,
       errorType: "server_error",

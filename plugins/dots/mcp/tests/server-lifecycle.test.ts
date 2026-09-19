@@ -1242,9 +1242,13 @@ test("health proves that Codex received a successful augmented model catalog", a
       status: "ok",
       broker_ready: true,
       accepting_turns: true,
+      loaded_build_id: null,
+      mcp_worker_build_id: null,
       successful_model_catalog_requests: 0,
       last_successful_model_catalog_request_at: null,
     });
+    expect(["unknown", "connected", "degraded"]).toContain((initialHealth.browser_execution as { browser: string }).browser);
+    expect(["active", "idle"]).toContain((initialHealth.browser_execution as { phase: string }).phase);
 
     const models = await fetch(`${endpoint}/v1/models`, {
       headers: { authorization: "Bearer test-codex-session" },
