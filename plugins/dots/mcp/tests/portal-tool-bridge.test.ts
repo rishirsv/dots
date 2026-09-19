@@ -12,6 +12,35 @@ afterEach(async () => {
 });
 
 describe("Portal dynamic tool bridge", () => {
+  test("keeps diagnostics off the MCP stdout stream", async () => {
+    const request = JSON.stringify({
+      jsonrpc: "2.0",
+      id: 0,
+      method: "tools/call",
+      params: { name: "portal_tools", arguments: {} },
+    });
+    const child = Bun.spawn({
+      cmd: [process.execPath, "src/cli.ts", "mcp", "--broker-socket", join(tmpdir(), `p-missing-${crypto.randomUUID()}.sock`)],
+      cwd: process.cwd(),
+      stdin: "pipe",
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+    child.stdin.write(`${request}\n`);
+    child.stdin.end();
+    const [exitCode, stdout, stderr] = await Promise.all([
+      child.exited,
+      new Response(child.stdout).text(),
+      new Response(child.stderr).text(),
+    ]);
+
+    expect(exitCode).toBe(0);
+    const messages = stdout.trim().split("\n").map(line => JSON.parse(line));
+    expect(messages).toHaveLength(1);
+    expect(messages[0]).toMatchObject({ jsonrpc: "2.0", id: 0, result: { structuredContent: { mode: "direct" } } });
+    expect(stderr).toContain("[portal] execution_evidence");
+  });
+
   test("publishes only portal_tools and portal_call and invokes an exact live tool", async () => {
     const socket = join(tmpdir(), `p-${process.pid}-${crypto.randomUUID().slice(0, 8)}.sock`);
     sockets.push(socket);

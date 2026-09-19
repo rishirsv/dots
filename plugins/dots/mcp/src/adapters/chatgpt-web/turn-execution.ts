@@ -69,7 +69,7 @@ export function chatGptExecutionErrorCode(error: unknown, fallback = "unknown"):
 }
 
 const defaultExecutionEvidenceWriter: ChatGptExecutionEvidenceWriter = event => {
-  console.info(`[portal] execution_evidence ${JSON.stringify(event)}`);
+  console.error(`[portal] execution_evidence ${JSON.stringify(event)}`);
 };
 
 /** Diagnostics are a side channel: a failing logger can never affect execution ownership. */

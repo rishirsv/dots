@@ -5,9 +5,10 @@ import { unzipSync } from "fflate";
 import type { AppConfig, TunnelConfig } from "./config";
 import { atomicWriteFile, getConfigDir } from "./config";
 import { runCommand, runChecked } from "./process";
+import { getTunnelServiceStatus } from "./tunnel-service";
 
-export const TUNNEL_VERSION = "0.0.12";
-const MIGRATABLE_TUNNEL_VERSIONS = new Set(["0.0.10"]);
+export const TUNNEL_VERSION = "0.0.14";
+const MIGRATABLE_TUNNEL_VERSIONS = new Set(["0.0.12"]);
 const RELEASE_BASE = `https://github.com/openai/tunnel-client/releases/download/v${TUNNEL_VERSION}`;
 const MAX_DOWNLOAD_BYTES = 100 * 1024 * 1024;
 export const TUNNEL_READY_TIMEOUT_MS = 120_000;
@@ -371,7 +372,7 @@ export function parseTunnelStatus(
       throw new Error("local inventory has an unsupported runtime state");
     }
     const state = rawState;
-    // tunnel-client 0.0.12 derives these states from the live process and local healthz/readyz
+    // tunnel-client derives these states from the live process and local healthz/readyz
     // probes. It does not need the optional remote control-plane lookup made by `status`.
     const processRunning = state !== "stopped";
     const healthy = state === "healthy" || state === "ready";
@@ -408,20 +409,86 @@ export function parseTunnelStatus(
   }
 }
 
+function booleanField(value: unknown, key: string): boolean | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+  const field = (value as Record<string, unknown>)[key];
+  return typeof field === "boolean" ? field : undefined;
+}
+
+/** Verify the health of a separately proven launchd-owned tunnel-client process. */
+export function parseServiceTunnelStatus(
+  output: string,
+  alias: string,
+  serviceRunning: boolean,
+  exitStatus = 0,
+  expectedTunnelId?: string,
+): TunnelRuntimeStatus {
+  if (exitStatus !== 0) {
+    return { ok: false, processRunning: serviceRunning, healthy: false, ready: false, detail: safeTunnelDetail(output) };
+  }
+  try {
+    const parsed = JSON.parse(output) as Record<string, unknown>;
+    if (parsed.alias !== alias) throw new Error(`runtime status alias does not match ${alias}`);
+    const actualTunnelId = parsed.tunnel_id;
+    const selectedTunnelMismatch = expectedTunnelId !== undefined
+      && actualTunnelId !== expectedTunnelId;
+    const local = nestedRecord(parsed, "local");
+    const effectiveHealth = nestedRecord(local, "effective_health");
+    const healthz = nestedRecord(effectiveHealth, "healthz");
+    const readyz = nestedRecord(effectiveHealth, "readyz");
+    const healthzOk = booleanField(healthz, "ok");
+    const readyzOk = booleanField(readyz, "ok");
+    const directHealth = healthzOk === true && readyzOk === true;
+    const healthy = healthzOk === true;
+    const ready = readyzOk === true;
+    const ok = serviceRunning && directHealth && !selectedTunnelMismatch;
+    const detail = ok
+      ? "process_running=true healthy=true ready=true"
+      : safeTunnelDetail([
+        `process_running=${serviceRunning}`,
+        `healthy=${healthy}`,
+        `ready=${ready}`,
+        ...(selectedTunnelMismatch ? ["selected_alias_tunnel_id_mismatch=true"] : []),
+        ...(!directHealth ? ["direct_health_probes_incomplete=true"] : []),
+      ].join("; "));
+    return { ok, processRunning: serviceRunning, healthy, ready, detail };
+  } catch (error) {
+    return { ok: false, processRunning: serviceRunning, healthy: false, ready: false, detail: `tunnel-client returned invalid runtime status: ${safeTunnelDetail(error instanceof Error ? error.message : String(error))}` };
+  }
+}
+
 export function tunnelStatus(config: AppConfig): TunnelRuntimeStatus {
   const settings = tunnel(config);
   if (!existsSync(settings.binaryPath)) {
     return { ok: false, processRunning: false, healthy: false, ready: false, detail: `Missing ${settings.binaryPath}` };
   }
-  const result = runCommand(
+  const service = getTunnelServiceStatus();
+  if (service.installed || service.loaded) {
+    if (!service.running) {
+      return { ok: false, processRunning: false, healthy: false, ready: false, detail: "managed tunnel service is not running" };
+    }
+    const managed = runCommand(
+      settings.binaryPath,
+      ["runtimes", "status", settings.alias, "--json"],
+      { timeout: 10_000 },
+    );
+    return parseServiceTunnelStatus(
+      tunnelCommandOutput(managed),
+      settings.alias,
+      true,
+      managed.status,
+      settings.tunnelId,
+    );
+  }
+  const temporary = runCommand(
     settings.binaryPath,
     ["runtimes", "cleanup", "--json"],
     { timeout: 10_000 },
   );
   return parseTunnelStatus(
-    tunnelCommandOutput(result),
+    tunnelCommandOutput(temporary),
     settings.alias,
-    result.status,
+    temporary.status,
     settings.tunnelId,
   );
 }

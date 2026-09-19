@@ -1,10 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { TUNNEL_VERSION, parseTunnelStatus, tunnelClientInstallAction, tunnelCommandOutput, tunnelConnectLaunchError } from "../src/tunnel";
+import { TUNNEL_VERSION, parseServiceTunnelStatus, parseTunnelStatus, tunnelClientInstallAction, tunnelCommandOutput, tunnelConnectLaunchError } from "../src/tunnel";
 
-test("pins the fixed tunnel-client and migrates only the previously shipped version", () => {
-  expect(TUNNEL_VERSION).toBe("0.0.12");
-  expect(tunnelClientInstallAction("0.0.12")).toBe("reuse");
-  expect(tunnelClientInstallAction("0.0.10")).toBe("upgrade");
+test("pins the fixed tunnel-client and migrates only the current release predecessor", () => {
+  expect(TUNNEL_VERSION).toBe("0.0.14");
+  expect(tunnelClientInstallAction("0.0.14")).toBe("reuse");
+  expect(tunnelClientInstallAction("0.0.12")).toBe("upgrade");
+  expect(() => tunnelClientInstallAction("0.0.10")).toThrow("not a trusted upgrade source");
   expect(() => tunnelClientInstallAction("0.0.11")).toThrow("not a trusted upgrade source");
   expect(() => tunnelClientInstallAction("9.9.9")).toThrow("not a trusted upgrade source");
 });
@@ -102,6 +103,106 @@ describe("tunnel status boundary", () => {
     expect(result.detail).toContain("selected_alias_tunnel_id_mismatch=true");
     expect(result.detail).not.toContain("tunnel_wrong");
     expect(result.detail).not.toContain("tunnel_expected");
+  });
+
+  test("accepts direct health evidence for a launchd-managed runtime absent from the registry", () => {
+    const tunnelId = "tunnel_0123456789abcdef0123456789abcdef";
+    const result = parseServiceTunnelStatus(JSON.stringify({
+      alias: "portal",
+      tunnel_id: tunnelId,
+      process_running: false,
+      healthy: true,
+      ready: true,
+      local: {
+        effective_health: {
+          healthz: { ok: true, status: 200 },
+          readyz: { ok: true, status: 200 },
+        },
+      },
+    }), "portal", true, 0, tunnelId);
+    expect(result).toEqual({
+      ok: true,
+      processRunning: true,
+      healthy: true,
+      ready: true,
+      detail: "process_running=true healthy=true ready=true",
+    });
+  });
+
+  test("does not accept direct health from another alias or tunnel", () => {
+    const result = parseServiceTunnelStatus(JSON.stringify({
+      alias: "legacy-portal",
+      tunnel_id: "tunnel_wrong",
+      process_running: false,
+      healthy: true,
+      ready: true,
+      local: {
+        effective_health: {
+          healthz: { ok: true },
+          readyz: { ok: true },
+        },
+      },
+    }), "portal", true, 0, "tunnel_expected");
+    expect(result).toMatchObject({ ok: false, ready: false });
+    expect(result.detail).toContain("invalid runtime status");
+  });
+
+  test("does not accept a stale health URL without both live probes", () => {
+    const result = parseServiceTunnelStatus(JSON.stringify({
+      alias: "portal",
+      tunnel_id: "tunnel_0123456789abcdef0123456789abcdef",
+      process_running: false,
+      healthy: true,
+      ready: true,
+      local: {
+        effective_health: {
+          healthz: { ok: true },
+          readyz: { ok: false },
+        },
+      },
+    }), "portal", true, 0, "tunnel_0123456789abcdef0123456789abcdef");
+    expect(result).toMatchObject({ ok: false, processRunning: true, healthy: true, ready: false });
+    expect(result.detail).toContain("direct_health_probes_incomplete=true");
+  });
+
+  test("requires independent service proof and both direct probes", () => {
+    const status = JSON.stringify({
+      alias: "portal",
+      tunnel_id: "tunnel_0123456789abcdef0123456789abcdef",
+      process_running: true,
+      healthy: true,
+      ready: true,
+    });
+    expect(parseServiceTunnelStatus(
+      status,
+      "portal",
+      true,
+      0,
+      "tunnel_0123456789abcdef0123456789abcdef",
+    )).toMatchObject({ ok: false, processRunning: true, healthy: false, ready: false });
+    expect(parseServiceTunnelStatus(
+      status,
+      "portal",
+      false,
+      0,
+      "tunnel_0123456789abcdef0123456789abcdef",
+    )).toMatchObject({ ok: false, processRunning: false, healthy: false, ready: false });
+  });
+
+  test("preserves independent process proof when runtime status fails", () => {
+    expect(parseServiceTunnelStatus("status failed", "portal", true, 1)).toEqual({
+      ok: false,
+      processRunning: true,
+      healthy: false,
+      ready: false,
+      detail: "status failed",
+    });
+    expect(parseServiceTunnelStatus("invalid JSON", "portal", true)).toMatchObject({
+      ok: false,
+      processRunning: true,
+      healthy: false,
+      ready: false,
+    });
   });
 
   test("missing, ambiguous, or malformed local inventory cannot report ready", () => {
