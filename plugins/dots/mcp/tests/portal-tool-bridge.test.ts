@@ -101,6 +101,18 @@ describe("Portal dynamic tool bridge", () => {
         isError: false,
       });
       expect((await pending).structuredContent).toEqual({ value: "world", mode: "bound" });
+
+      const plainText = client.callTool({
+        name: "portal_call",
+        arguments: { turn_token: token, wire_name: "fixture_tool", arguments: { value: "readback" } },
+      });
+      const [readback] = await broker.nextToolBatch(token);
+      broker.completeTool(token, readback!.callId, {
+        content: [{ type: "text", text: "PORTAL_TOOL_CANARY_5_0_15" }], isError: false,
+      });
+      expect((await plainText).structuredContent).toEqual({
+        mode: "bound", content: [{ type: "text", text: "PORTAL_TOOL_CANARY_5_0_15" }],
+      });
     } finally {
       await client.close();
     }

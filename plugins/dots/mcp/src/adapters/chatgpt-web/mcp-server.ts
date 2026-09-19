@@ -501,7 +501,9 @@ function asMcpResult(value: BrokerToolResult, mode: PortalExecutionMode) {
     ? { ...(value.structuredContent as Record<string, unknown>), mode }
     : value.structuredContent !== undefined
       ? { mode, result: value.structuredContent }
-      : { mode };
+      // ChatGPT Web favors structuredContent over content. A content-only native Codex tool
+      // must still expose its actual result, not merely the Portal execution mode.
+      : { mode, content: value.content };
   return {
     content: value.content as never,
     structuredContent,
