@@ -27,8 +27,6 @@ To view a local HTML file, put its full absolute filesystem path directly into C
   materially improve speed or quality. Keep simple tasks local.
 - Use configured agent roles for model and reasoning defaults.
   Prefer Luna for narrow, self-contained tasks.
-- Use the orchestrate skill for coordination unless the active
-  workflow already defines its own team.
 - A subagent assigned a pull request owns implementation, required
   checks, the configured review process, and final handoff.
   The parent remains responsible for integration and the final result.
