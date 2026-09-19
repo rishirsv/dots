@@ -7,6 +7,7 @@ import {
   currentRuntimeCommand,
   defaultBrokerEndpoint,
   defaultConfig,
+  defaultLauncherDescriptorPath,
   getConfigPath,
   loadConfigForSetup,
   providerConfig,
@@ -50,6 +51,8 @@ export interface SetupOptions {
   forceLogin?: boolean;
   replaceCodexRoute?: boolean;
   restartService?: boolean;
+  /** managed-chrome opens a fresh Temporary Chat per turn; launcher retains one per Codex thread. */
+  browserHost?: "managed-chrome" | "launcher";
   acknowledgedUnofficial?: boolean;
   tunnelId?: string;
   runtimeKeyFile?: string;
@@ -178,8 +181,13 @@ function baseConfig(
     config.port = options.port;
   }
   if (options.chromeExecutablePath) config.chromeExecutablePath = options.chromeExecutablePath;
-  config.browserHost = "managed-chrome";
-  delete config.browserHostDescriptorPath;
+  if (options.browserHost) config.browserHost = options.browserHost;
+  if (config.browserHost === "launcher") {
+    config.browserHostDescriptorPath ??= defaultLauncherDescriptorPath();
+  } else {
+    config.browserHost = "managed-chrome";
+    delete config.browserHostDescriptorPath;
+  }
   config.autoApproveToolCalls = true;
   if (options.acknowledgedUnofficial) config.acknowledgedUnofficialAt = new Date().toISOString();
   config.acknowledgedUnofficialAt ??= new Date().toISOString();

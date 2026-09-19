@@ -78,19 +78,12 @@ Timeouts: start 5s, heartbeat interval 10s / timeout 5s, end 15s.
    `bun run smoke:launcher-retention`: reused=true on the second lease with the
    same surfaceId and retained connector binding, release returns 1, and a
    later requireRetainedConversation raises the typed unavailable error.
-3. [next] Open the config surface (`browserHost: "launcher"` + descriptor path) that
-   `config.ts`/`setup.ts` currently strip.
-4. Service/CLI wiring so the host starts and stops with Portal; doctor/status.
-5. Tests, then a LIVE canary proving turn 2 continues turn 1's conversation.
-
-## Additional gap found
-
-`scripts/build-runtime-bundle.ts` emits only `cli.js`, but
-`launcher-helper-client.ts:206` expects a sibling `browser-helper.cjs` and its
-comment claims the builder emits both. It does not. In launcher mode the daemon
-delegates every turn to that helper subprocess (`browser-worker.ts:2355`), so
-the bundle needs a second entrypoint built from `browser-helper-main.ts` before
-launcher mode can run outside a source checkout.
+3. [done] Config surface: `BrowserHostMode` widened, `loadConfigForSetup` keeps a stored
+   launcher host, `parseConfig` requires a descriptor path for launcher and rejects
+   one for managed-chrome, `setup` accepts `--browser-host`.
+4. [done] `portal serve` starts/stops the host when configured; doctor reports host pid and
+   live surface count. Bundle now emits `browser-helper.cjs` (CJS) beside `cli.js`.
+5. [in progress] Tests done (652 pass). LIVE end-to-end canary through Codex still to run.
 
 ## Risks
 

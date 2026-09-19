@@ -17,6 +17,7 @@ import { formatDoctorReport, runDoctor } from "./doctor";
 import { runChatGptMcpMain } from "./adapters/chatgpt-web/mcp-main";
 import { runCommand } from "./process";
 import { startServer } from "./server";
+import { launcherHostOptions, startLauncherBrowserHost } from "./launcher-host";
 import { acquireRestartDrain, acquireServiceDrain, assertServiceIdle, cancelActiveTurns, getServiceStatus, installService, interruptActiveTurn, restartService, startService, stopService, uninstallService } from "./service";
 import { existingFullSetupCredentials, preflightSetup, setup, type SetupOptions } from "./setup";
 import { installRuntimeKeyBytes, managedRuntimeKeyPath, stopTunnel, tunnelStatus, waitForTunnelReady } from "./tunnel";
@@ -43,6 +44,8 @@ Start options:
   --runtime-key-file PATH      File containing a Tunnels Read+Use runtime key
   --replace-codex-route        Reversibly replace existing Responses or Voice route settings
   --restart-service            Cancel active turns and restart the daemon and tunnel worker now
+  --browser-host MODE          managed-chrome (fresh chat per turn) or launcher
+                               (one retained ChatGPT conversation per Codex thread)
   --login                      Refresh the stored ChatGPT login even if one exists
 
 Global:
@@ -126,6 +129,13 @@ async function setupCommand(args: string[]): Promise<void> {
   options.forceLogin = takeFlag(args, "--login");
   options.replaceCodexRoute = takeFlag(args, "--replace-codex-route");
   options.restartService = takeFlag(args, "--restart-service");
+  const browserHost = takeOption(args, "--browser-host");
+  if (browserHost !== undefined) {
+    if (browserHost !== "managed-chrome" && browserHost !== "launcher") {
+      throw new Error("--browser-host must be managed-chrome or launcher");
+    }
+    options.browserHost = browserHost;
+  }
   assertNoArgs(args);
 
   if (preflightOnly) {
@@ -417,6 +427,17 @@ async function main(): Promise<void> {
   } else if (command === "serve") {
     assertNoArgs(args);
     const config = loadConfig();
+    // The launcher host owns Chrome and the retained conversations. It must be live before the
+    // first turn, because the worker resolves its surface through the published descriptor.
+    const launcher = config.browserHost === "launcher"
+      ? await startLauncherBrowserHost(launcherHostOptions(config))
+      : undefined;
+    if (launcher) {
+      const stopLauncher = () => { void launcher.close(); };
+      process.once("SIGINT", stopLauncher);
+      process.once("SIGTERM", stopLauncher);
+      stdout.write(`Portal launcher browser host ready at ${launcher.descriptorPath}\n`);
+    }
     const server = startServer(config);
     stdout.write(`Portal ${VERSION} listening on http://${config.host}:${server.port}/v1\n`);
     await new Promise<void>(() => {});

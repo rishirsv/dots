@@ -7,6 +7,7 @@ import { browserLoginStateExists, loginVerificationMarkerPath } from "./browser-
 import { getServiceStatus } from "./service";
 import { tunnelStatus } from "./tunnel";
 import { getTunnelServiceStatus } from "./tunnel-service";
+import { readLauncherBrowserHostDescriptor } from "./launcher-browser-host";
 
 export type CheckStatus = "ok" | "warning" | "error";
 
@@ -129,6 +130,26 @@ export async function runDoctor(): Promise<DoctorReport> {
     checks.push({ id: "chrome", status: "error", message: `Chrome executable is missing: ${config.chromeExecutablePath}` });
   } else {
     checks.push({ id: "chrome", status: "ok", message: `Chrome executable found: ${config.chromeExecutablePath}` });
+  }
+  if (config.browserHost === "launcher") {
+    // Retention lives entirely in the host. A stale or missing descriptor means every turn either
+    // fails to lease a surface or silently falls back to a fresh conversation.
+    try {
+      const descriptor = readLauncherBrowserHostDescriptor(config.browserHostDescriptorPath!);
+      checks.push({
+        id: "launcher-host",
+        status: "ok",
+        message: `Launcher browser host is running (pid ${descriptor.pid}) with `
+          + `${Object.keys(descriptor.surfaceTargets).length} live surface(s)`,
+      });
+    } catch (error) {
+      checks.push({
+        id: "launcher-host",
+        status: "error",
+        message: "Launcher browser host is not available; retained conversations cannot be leased",
+        detail: error instanceof Error ? error.message : String(error),
+      });
+    }
   }
   if (!browserLoginStateExists(config)) {
     checks.push({ id: "login", status: "error", message: "ChatGPT login state is missing or unverified; run `portal login`" });

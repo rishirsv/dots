@@ -17,8 +17,11 @@ describe("Portal CLI", () => {
     expect(output).not.toContain("bigger-context");
     expect(output).not.toContain("skill-attachments");
     expect(output).not.toContain("dev ");
-    expect(output).not.toContain("launcher");
     expect(output).not.toContain("browser-host-descriptor");
+    // The launcher browser host is a supported transport: it retains one ChatGPT conversation per
+    // Codex thread. The manual and zero-risk flows that share that host stay unavailable.
+    expect(output).toContain("--browser-host MODE");
+    expect(output).not.toContain("manual");
     expect(output).toContain("portal uninstall [--yes] [--purge-data]");
     expect(output).not.toContain("--keep-data");
   });

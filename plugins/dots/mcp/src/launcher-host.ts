@@ -2,7 +2,14 @@ import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { createServer } from "node:net";
 import { chromium, type BrowserContext, type Page } from "playwright-core";
-import { atomicWriteFile, expandUserPath } from "./config";
+import { dirname, join } from "node:path";
+import {
+  atomicWriteFile,
+  defaultLauncherDescriptorPath,
+  expandUserPath,
+  getConfigDir,
+  type AppConfig,
+} from "./config";
 import {
   LAUNCHER_BROWSER_HOST_KIND,
   LAUNCHER_BROWSER_IDLE_URL,
@@ -113,6 +120,28 @@ async function seedAuthentication(context: BrowserContext, storageStatePath: str
     throw new Error("Launcher host cannot authenticate: stored ChatGPT login state has no cookies");
   }
   await context.addCookies(state.cookies);
+}
+
+/**
+ * Resolve the host's runtime paths from Portal's configuration. The helper subprocess that drives
+ * every launcher turn is advertised here, so it must be the runtime actually executing this code.
+ */
+export function launcherHostOptions(config: AppConfig): LauncherHostOptions {
+  const entrypoint = process.argv[1];
+  const bundledHelper = typeof entrypoint === "string"
+    ? join(dirname(entrypoint), "browser-helper.cjs")
+    : undefined;
+  return {
+    chromeExecutablePath: config.chromeExecutablePath,
+    storageStatePath: config.storageStatePath,
+    profileDir: join(getConfigDir(), "browser", "launcher-profile"),
+    descriptorPath: config.browserHostDescriptorPath ?? defaultLauncherDescriptorPath(),
+    helperExecutable: process.execPath,
+    helperScript: bundledHelper && existsSync(bundledHelper)
+      ? bundledHelper
+      : new URL("./adapters/chatgpt-web/browser-helper-main.ts", import.meta.url).pathname,
+    headless: config.headed !== true,
+  };
 }
 
 export async function startLauncherBrowserHost(

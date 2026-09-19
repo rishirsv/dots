@@ -66,6 +66,23 @@ if (!build.success) {
   throw new Error(`Runtime bundle failed: ${build.logs.map(log => log.message).join("; ")}`);
 }
 
+// The launcher browser host runs every turn inside a helper subprocess, and the helper client
+// resolves it as a `browser-helper.cjs` sibling of `cli.js`. CommonJS output keeps Bun's `.cjs`
+// parsing honest: an ESM bundle under that extension fails to load.
+const helperBuild = await Bun.build({
+  entrypoints: [join(root, "src", "adapters", "chatgpt-web", "browser-helper-main.ts")],
+  target: "bun",
+  format: "cjs",
+  minify: true,
+  external: ["playwright-core"],
+  packages: "external",
+  outdir: appDir,
+  naming: "browser-helper.cjs",
+});
+if (!helperBuild.success) {
+  throw new Error(`Browser helper bundle failed: ${helperBuild.logs.map(log => log.message).join("; ")}`);
+}
+
 copyFileSync(join(root, "package.json"), join(appDir, "package.json"));
 copyFileSync(join(root, "bun.lock"), join(appDir, "bun.lock"));
 const install = Bun.spawnSync([process.execPath, "install", "--production", "--frozen-lockfile", "--ignore-scripts"], {

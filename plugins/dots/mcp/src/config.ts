@@ -7,7 +7,7 @@ import type { CodexProviderConfig } from "./types";
 import { VERSION } from "./version";
 
 export type RuntimeMode = "full";
-export type BrowserHostMode = "managed-chrome";
+export type BrowserHostMode = "managed-chrome" | "launcher";
 export type SubagentProtocol = "compatibility-v1" | "native";
 
 /** ChatGPT connector identity owned by the Portal configuration contract. */
@@ -67,6 +67,11 @@ export function getConfigPath(): string {
 
 export function isWindowsPipeEndpoint(value: string): boolean {
   return /^\\\\\.\\pipe\\[A-Za-z0-9._-]+$/.test(value);
+}
+
+/** The launcher host publishes its live surface map here; the worker re-reads it on every call. */
+export function defaultLauncherDescriptorPath(home = getConfigDir()): string {
+  return join(home, "runtime", "launcher-browser-host.json");
 }
 
 export function defaultBrokerEndpoint(home = getConfigDir(), platform = process.platform): string {
@@ -295,8 +300,12 @@ export function loadConfigForSetup(): AppConfig {
   raw.mode = "full";
   raw.appName = CHATGPT_CONNECTOR_NAME;
   raw.automaticAppName = CHATGPT_CONNECTOR_NAME;
-  raw.browserHost = "managed-chrome";
-  delete raw.browserHostDescriptorPath;
+  // browserHost is a supported transport choice: managed-chrome opens a fresh Temporary Chat per
+  // turn, launcher retains one conversation per Codex thread. Preserve whichever one is stored.
+  if (raw.browserHost !== "launcher") {
+    raw.browserHost = "managed-chrome";
+    delete raw.browserHostDescriptorPath;
+  }
   raw.autoApproveToolCalls = true;
   delete raw.browserInteractionMode;
   delete raw.manualAppName;
@@ -321,8 +330,15 @@ function parseConfig(value: unknown, path: string): AppConfig {
     throw new Error(`Invalid subagentProtocol in ${path}`);
   }
   if (parsed.host !== "127.0.0.1") throw new Error("The Responses proxy must bind to 127.0.0.1");
-  if (parsed.browserHost !== "managed-chrome") {
+  if (parsed.browserHost !== "managed-chrome" && parsed.browserHost !== "launcher") {
     throw new Error(`Invalid browserHost in ${path}`);
+  }
+  if (parsed.browserHost === "launcher") {
+    if (typeof parsed.browserHostDescriptorPath !== "string" || !parsed.browserHostDescriptorPath.trim()) {
+      throw new Error(`The launcher browser host requires browserHostDescriptorPath in ${path}`);
+    }
+  } else if (parsed.browserHostDescriptorPath !== undefined) {
+    throw new Error(`browserHostDescriptorPath is only valid for the launcher browser host in ${path}`);
   }
   if (!Number.isInteger(parsed.port) || parsed.port! < 1 || parsed.port! > 65_535) throw new Error(`Invalid port in ${path}`);
   if (!Number.isSafeInteger(parsed.contextWindow) || parsed.contextWindow! <= 0) {

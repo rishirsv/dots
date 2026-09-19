@@ -1,6 +1,6 @@
 {
   "name": "@rishirsv/portal",
-  "version": "5.0.20",
+  "version": "5.0.21",
   "private": true,
   "description": "Run ChatGPT Web thinking levels as Codex models with the current task's complete tool set.",
   "repository": {

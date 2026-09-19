@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-VERSION="${PORTAL_VERSION:-5.0.20}"
+VERSION="${PORTAL_VERSION:-5.0.21}"
 SOURCE="${PORTAL_RUNTIME_BUNDLE:-$(CDPATH= cd -- "$(dirname "$0")/.." && pwd -P)/dist/runtime}"
 BIN_DIR="${PORTAL_BIN_DIR:-$HOME/.local/bin}"
 LIB_DIR="${PORTAL_LIB_DIR:-$HOME/.local/lib/portal}"
