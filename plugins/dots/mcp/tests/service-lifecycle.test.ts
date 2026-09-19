@@ -1,7 +1,34 @@
 import { describe, expect, test } from "bun:test";
-import { negotiateDrain } from "../src/service";
+import { negotiateDrain, prepareForcedRestart } from "../src/service";
 
 describe("service drain lifecycle", () => {
+  test("forced restart cancels active turns while admission is drained", async () => {
+    const actions: string[] = [];
+    const lease = await prepareForcedRestart(
+      async () => {
+        actions.push("drain");
+        return { release: async () => { actions.push("resume"); } };
+      },
+      async () => { actions.push("cancel-active"); },
+    );
+    expect(actions).toEqual(["drain", "cancel-active"]);
+    await lease.release();
+    expect(actions).toEqual(["drain", "cancel-active", "resume"]);
+  });
+
+  test("unresponsive admin drain and cancellation do not veto a forced process replacement", async () => {
+    const warnings: string[] = [];
+    const actions: string[] = [];
+    const lease = await prepareForcedRestart(
+      async () => { actions.push("drain"); throw new Error("unresponsive"); },
+      async () => { actions.push("cancel-active"); throw new Error("timed out"); },
+      message => warnings.push(message),
+    );
+    await lease.release();
+    expect(actions).toEqual(["drain", "cancel-active"]);
+    expect(warnings).toHaveLength(2);
+  });
+
   test("compensates when a drain may have reached the daemon before the client times out", async () => {
     const actions: string[] = [];
     let acceptingTurns = true;

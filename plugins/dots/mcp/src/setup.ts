@@ -26,6 +26,7 @@ import {
   readCodexSubagentProtocol,
 } from "./codex-integration";
 import {
+  acquireRestartDrain,
   acquireServiceDrain,
   assertServiceIdle,
   getServiceStatus,
@@ -317,7 +318,7 @@ export async function setup(options: SetupOptions): Promise<SetupResult> {
         + "Rerun from a normal terminal with --restart-service after the active task finishes.",
       );
     }
-    if (beforeService.loaded && (loginRequired || capabilityProbeRequired) && existing) await assertServiceIdle(existing);
+    if (beforeService.loaded && (loginRequired || capabilityProbeRequired) && existing && !options.restartService) await assertServiceIdle(existing);
     if (loginRequired) {
       const login = await loginToChatGpt(config);
       solAvailable = login.solAvailable;
@@ -347,7 +348,7 @@ export async function setup(options: SetupOptions): Promise<SetupResult> {
       + "Rerun from a normal terminal with --restart-service after the active task finishes.",
     );
   }
-  if (beforeService.loaded && preliminaryChange && existing) await assertServiceIdle(existing);
+  if (beforeService.loaded && preliminaryChange && existing && !options.restartService) await assertServiceIdle(existing);
   await configureTunnel(config, existing, options);
   const refreshTunnelWorker = tunnelWorkerRuntimeChanged(existing, config);
   const refreshTunnelProfile = tunnelProfileInputsChanged(existing, config);
@@ -359,12 +360,12 @@ export async function setup(options: SetupOptions): Promise<SetupResult> {
       + "Rerun from a normal terminal with --restart-service after the active task finishes.",
     );
   }
-  if (changedWhileLoaded && !preliminaryChange && existing) await assertServiceIdle(existing);
+  if (changedWhileLoaded && !preliminaryChange && existing && !options.restartService) await assertServiceIdle(existing);
   if (!beforeService.loaded) await assertPortAvailable(config.host, config.port);
 
   saveConfig(config);
   installService(config);
-  if (changedWhileLoaded && options.restartService && existing) await restartService(existing);
+  if (beforeService.loaded && options.restartService && existing) await restartService(existing);
   await waitForProxy(config);
 
   let tunnelReady: boolean | null = null;
@@ -373,14 +374,16 @@ export async function setup(options: SetupOptions): Promise<SetupResult> {
     const tunnelService = getTunnelServiceStatus();
     const needsProfile = !existsSync(profilePath);
     const needsOwnershipMigration = !tunnelService.installed || !tunnelService.loaded || !tunnelServiceDefinitionMatches(config);
-    const needsTunnelChange = needsOwnershipMigration || needsProfile || refreshTunnelProfile || refreshTunnelWorker;
-    const tunnelDrain = needsTunnelChange ? await acquireServiceDrain(config) : undefined;
+    const needsTunnelChange = needsOwnershipMigration || needsProfile || refreshTunnelProfile || refreshTunnelWorker || options.restartService;
+    const tunnelDrain = needsTunnelChange
+      ? options.restartService ? await acquireRestartDrain(config) : await acquireServiceDrain(config)
+      : undefined;
     try {
       if (needsOwnershipMigration || needsProfile || refreshTunnelProfile) {
         if (tunnelService.loaded) await stopTunnelService();
         await bootstrapTunnelProfile(config);
         installTunnelService(config);
-      } else if (refreshTunnelWorker) {
+      } else if (refreshTunnelWorker || options.restartService) {
         await restartTunnelService();
       }
       const status = await waitForTunnelReady(config);
@@ -407,7 +410,7 @@ export async function setup(options: SetupOptions): Promise<SetupResult> {
   removeLegacyRuntimeArtifacts(config);
   let codexRestartRequired = false;
   const routeDrain = beforeService.loaded
-    ? await acquireServiceDrain(config)
+    ? options.restartService ? await acquireRestartDrain(config) : await acquireServiceDrain(config)
     : undefined;
   try {
     if (connectorSetupRequired) {

@@ -251,6 +251,35 @@ export async function acquireServiceDrain(
   return negotiateDrain(action => control(config, action), options);
 }
 
+/** Best-effort admission stop and turn cancellation; launchd remains the final process owner. */
+export async function prepareForcedRestart(
+  drain: () => Promise<DrainLease>,
+  cancel: () => Promise<unknown>,
+  warn: (message: string) => void = console.warn,
+): Promise<DrainLease> {
+  let lease: DrainLease = { release: async () => {} };
+  try {
+    lease = await drain();
+  } catch (error) {
+    warn(`Portal restart could not drain admission: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  try {
+    await cancel();
+  } catch (error) {
+    warn(`Portal restart could not confirm turn cancellation; proceeding with the forced update: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  return lease;
+}
+
+/** An explicit restart owns the service process even when its admin channel is wedged. */
+export async function acquireRestartDrain(config: AppConfig): Promise<DrainLease> {
+  if (!getServiceStatus().loaded) return { release: async () => {} };
+  return prepareForcedRestart(
+    () => acquireServiceDrain(config, { requireIdle: false }),
+    () => cancelActiveTurns(config),
+  );
+}
+
 async function releaseDrainAfterFailure(lease: DrainLease, failure: unknown): Promise<never> {
   try {
     await lease.release();
@@ -270,13 +299,16 @@ export async function assertServiceIdle(config: AppConfig): Promise<void> {
 export async function restartService(config: AppConfig): Promise<ServiceStatus> {
   assertMacOs();
   if (!getServiceStatus().loaded) return startService();
-  const lease = await acquireServiceDrain(config);
+  const lease = await acquireRestartDrain(config);
+  let removed = false;
   try {
     runChecked("launchctl", ["bootout", serviceTarget()]);
+    removed = true;
     await waitForServiceUnloaded();
     await bootstrapService(plistPath());
   } catch (error) {
-    return releaseDrainAfterFailure(lease, error);
+    if (!removed) return releaseDrainAfterFailure(lease, error);
+    throw error;
   }
   return getServiceStatus();
 }

@@ -17,7 +17,7 @@ import { formatDoctorReport, runDoctor } from "./doctor";
 import { runChatGptMcpMain } from "./adapters/chatgpt-web/mcp-main";
 import { runCommand } from "./process";
 import { startServer } from "./server";
-import { acquireServiceDrain, assertServiceIdle, cancelActiveTurns, getServiceStatus, installService, interruptActiveTurn, restartService, startService, stopService, uninstallService } from "./service";
+import { acquireRestartDrain, acquireServiceDrain, assertServiceIdle, cancelActiveTurns, getServiceStatus, installService, interruptActiveTurn, restartService, startService, stopService, uninstallService } from "./service";
 import { existingFullSetupCredentials, preflightSetup, setup, type SetupOptions } from "./setup";
 import { installRuntimeKeyBytes, managedRuntimeKeyPath, stopTunnel, tunnelStatus, waitForTunnelReady } from "./tunnel";
 import { getTunnelServiceStatus, restartTunnelService, startTunnelService, stopTunnelService, uninstallTunnelService } from "./tunnel-service";
@@ -42,7 +42,7 @@ Start options:
   --tunnel-id ID               Existing OpenAI tunnel id (full mode)
   --runtime-key-file PATH      File containing a Tunnels Read+Use runtime key
   --replace-codex-route        Reversibly replace existing Responses or Voice route settings
-  --restart-service            Explicitly restart this project's daemon after an update
+  --restart-service            Cancel active turns and restart the daemon and tunnel worker now
   --login                      Refresh the stored ChatGPT login even if one exists
 
 Global:
@@ -275,7 +275,7 @@ async function tunnelCommand(args: string[]): Promise<void> {
   const config = loadConfig();
   if (action === "start") startTunnelService();
   else if (action === "restart") {
-    const drain = await acquireServiceDrain(config);
+    const drain = await acquireRestartDrain(config);
     try {
       await restartTunnelService();
     } finally {
