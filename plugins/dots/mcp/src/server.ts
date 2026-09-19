@@ -56,6 +56,13 @@ import {
   type ChatGptExecutionEvidenceWriter,
 } from "./adapters/chatgpt-web/turn-execution";
 
+/**
+ * How long one `/admin/drain` call suppresses admission. A service operation that needs longer
+ * re-posts `/admin/drain` to renew; a holder that dies mid-operation simply stops renewing and the
+ * daemon readmits Codex turns instead of 503-ing every request until someone runs `portal status`.
+ */
+export const DRAIN_LEASE_TTL_SEC = 90;
+
 type HttpTrackedEndpoint = "models" | "responses" | "compact" | "search" | "unspecified" | NativeImageEndpoint;
 
 export interface NativeCodexTurnIdentity {
@@ -842,8 +849,14 @@ export async function compactRequest(
 
 export function startServer(
   config: AppConfig,
-  dependencies: { fetchUpstream?: NativeFetch; adapterFactory?: ChatGptWebAdapterFactory } = {},
+  dependencies: {
+    fetchUpstream?: NativeFetch;
+    adapterFactory?: ChatGptWebAdapterFactory;
+    /** Shortened by tests; production always uses the published admin-contract lease. */
+    drainLeaseTtlSec?: number;
+  } = {},
 ): ReturnType<typeof Bun.serve> {
+  const drainLeaseTtlSec = dependencies.drainLeaseTtlSec ?? DRAIN_LEASE_TTL_SEC;
   const startedAt = Date.now();
   // Capture the runtime manifest at process start; reading the installed file on each status
   // request would falsely identify an old daemon as a newly installed bundle.
@@ -866,7 +879,30 @@ export function startServer(
       console.error(`[portal] turn broker endpoint is unavailable: ${brokerFailure}`);
     },
   );
-  let draining = false;
+  // A drain is a lease held by one live CLI process, not a latch. If that process dies between
+  // `/admin/drain` and `/admin/resume` — an interrupted `portal start --restart-service`, a
+  // cancelled agent turn, a crashed update — nothing else ever resumes admission, and every Codex
+  // turn and remote compaction fails with 503 until a human notices. Expire the lease instead.
+  let drainDeadline: number | undefined;
+  let drainExpiry: ReturnType<typeof setTimeout> | undefined;
+  const draining = (): boolean => drainDeadline !== undefined && Date.now() < drainDeadline;
+  const setDrainDeadline = (deadline: number | undefined): void => {
+    if (drainExpiry) clearTimeout(drainExpiry);
+    drainExpiry = undefined;
+    drainDeadline = deadline;
+    if (deadline !== undefined && Number.isFinite(deadline)) {
+      drainExpiry = setTimeout(() => {
+        drainExpiry = undefined;
+        drainDeadline = undefined;
+        turnBroker.setExternalOwnersAccepted(brokerReady);
+        console.warn(
+          `[portal] drain lease expired without an explicit resume after ${drainLeaseTtlSec}s; readmitting Codex turns`,
+        );
+      }, Math.max(0, deadline - Date.now()));
+      drainExpiry.unref?.();
+    }
+    turnBroker.setExternalOwnersAccepted(!draining() && brokerReady);
+  };
   let shutdownPromise: Promise<void> | undefined;
   let successfulModelCatalogRequests = 0;
   let lastSuccessfulModelCatalogRequestAt: string | null = null;
@@ -903,7 +939,7 @@ export function startServer(
           pid: process.pid,
           port: config.port,
           uptime: (Date.now() - startedAt) / 1_000,
-          accepting_turns: !draining && brokerReady,
+          accepting_turns: !draining() && brokerReady,
           broker_ready: brokerReady,
           ...(brokerFailure ? { broker_error: brokerFailure } : {}),
           successful_model_catalog_requests: successfulModelCatalogRequests,
@@ -915,12 +951,15 @@ export function startServer(
       }
       if (req.method === "POST" && (url.pathname === "/admin/drain" || url.pathname === "/admin/resume")) {
         if (!controlAuthorized(req)) return new Response("Unauthorized", { status: 401 });
-        draining = url.pathname === "/admin/drain";
-        turnBroker.setExternalOwnersAccepted(!draining && brokerReady);
+        // Re-posting `/admin/drain` renews the lease; the holder heartbeats for as long as it needs.
+        setDrainDeadline(
+          url.pathname === "/admin/drain" ? Date.now() + drainLeaseTtlSec * 1_000 : undefined,
+        );
         return Response.json({
           status: brokerReady ? "ok" : "error",
-          accepting_turns: !draining && brokerReady,
+          accepting_turns: !draining() && brokerReady,
           broker_ready: brokerReady,
+          drain_lease_ttl_sec: drainLeaseTtlSec,
           ...activity(),
         });
       }
@@ -1043,11 +1082,11 @@ export function startServer(
       if (req.method === "POST" && url.pathname === "/admin/shutdown") {
         if (!controlAuthorized(req)) return new Response("Unauthorized", { status: 401 });
         const current = activity();
-        if (!draining || current.active_http_turns > 0 || current.active_browser_turns > 0) {
+        if (!draining() || current.active_http_turns > 0 || current.active_browser_turns > 0) {
           return Response.json(
             {
               status: "refused",
-              accepting_turns: !draining,
+              accepting_turns: !draining(),
               ...current,
             },
             { status: 409 },
@@ -1057,7 +1096,7 @@ export function startServer(
         return Response.json({ status: "ok", accepting_turns: false, ...current });
       }
       if (req.method === "GET" && url.pathname === "/v1/models") {
-        if (draining) {
+        if (draining()) {
           return formatErrorResponse(
             503,
             "server_error",
@@ -1113,7 +1152,7 @@ export function startServer(
         });
       }
       if (req.method === "POST" && url.pathname === "/v1/responses") {
-        if (draining) return formatErrorResponse(503, "server_error", "Portal is draining for a requested service operation");
+        if (draining()) return formatErrorResponse(503, "server_error", "Portal is draining for a requested service operation");
         return httpTurns.track(
           (signal, bindIdentity, httpTurnId) => responseRequest(
             new Request(req, { signal }),
@@ -1127,7 +1166,7 @@ export function startServer(
         );
       }
       if (req.method === "POST" && url.pathname === "/v1/responses/compact") {
-        if (draining) return formatErrorResponse(503, "server_error", "Portal is draining for a requested service operation");
+        if (draining()) return formatErrorResponse(503, "server_error", "Portal is draining for a requested service operation");
         return httpTurns.track(
           (signal, bindIdentity, httpTurnId) => compactRequest(
             new Request(req, { signal }),
@@ -1141,7 +1180,7 @@ export function startServer(
         );
       }
       if (req.method === "POST" && url.pathname === "/v1/alpha/search") {
-        if (draining) return formatErrorResponse(503, "server_error", "Portal is draining for a requested service operation");
+        if (draining()) return formatErrorResponse(503, "server_error", "Portal is draining for a requested service operation");
         return httpTurns.track(
           signal => nativeSearchRequest(new Request(req, { signal }), dependencies.fetchUpstream),
           req.signal,
@@ -1151,7 +1190,7 @@ export function startServer(
       }
       if (req.method === "POST"
         && (url.pathname === "/v1/images/generations" || url.pathname === "/v1/images/edits")) {
-        if (draining) return formatErrorResponse(503, "server_error", "Portal is draining for a requested service operation");
+        if (draining()) return formatErrorResponse(503, "server_error", "Portal is draining for a requested service operation");
         const endpoint: NativeImageEndpoint = url.pathname === "/v1/images/generations"
           ? "images/generations"
           : "images/edits";
@@ -1167,7 +1206,8 @@ export function startServer(
   });
   function shutdown(): void {
     if (shutdownPromise) return;
-    draining = true;
+    // Shutdown owns the process; this drain must not expire back into admission.
+    setDrainDeadline(Number.POSITIVE_INFINITY);
     chatGptTurnSessions.clear();
     flushResponseState();
     shutdownPromise = (async () => {

@@ -1215,6 +1215,26 @@ test("a drained runtime rejects new model-catalog work before shutdown", async (
   }
 });
 
+test("an abandoned drain lease expires instead of locking Codex out forever", async () => {
+  const config = defaultConfig();
+  const server = startServer(config, { drainLeaseTtlSec: 0.2 });
+  const endpoint = `http://127.0.0.1:${server.port}`;
+  const authorization = { authorization: `Bearer ${config.controlToken}` };
+  try {
+    const drain = await fetch(`${endpoint}/admin/drain`, { method: "POST", headers: authorization });
+    expect(await drain.json()).toMatchObject({ accepting_turns: false, drain_lease_ttl_sec: 0.2 });
+    expect((await fetch(`${endpoint}/v1/models`)).status).toBe(503);
+
+    // The lease holder died without resuming; nothing else will ever send `/admin/resume`.
+    await Bun.sleep(300);
+    const health = await (await fetch(`${endpoint}/healthz`)).json() as Record<string, unknown>;
+    expect(health.accepting_turns).toBe(true);
+    expect((await fetch(`${endpoint}/v1/models`)).status).not.toBe(503);
+  } finally {
+    await server.stop(true);
+  }
+});
+
 test("health proves that Codex received a successful augmented model catalog", async () => {
   const config = defaultConfig();
   const server = startServer(config, {

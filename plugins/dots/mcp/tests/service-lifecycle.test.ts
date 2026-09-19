@@ -58,6 +58,28 @@ describe("service drain lifecycle", () => {
     expect(actions).toEqual(["drain", "resume"]);
   });
 
+  test("renews the daemon lease while the operation runs and stops renewing on release", async () => {
+    const actions: string[] = [];
+    let tick: (() => void) | undefined;
+    const lease = await negotiateDrain(async action => {
+      actions.push(action);
+      return action === "drain"
+        ? { accepting_turns: false, active_http_turns: 0, active_browser_turns: 0 }
+        : { accepting_turns: true, active_http_turns: 0, active_browser_turns: 0 };
+    }, { renew: callback => { tick = callback; return {}; } });
+
+    tick!();
+    tick!();
+    await Promise.resolve();
+    expect(actions).toEqual(["drain", "drain", "drain"]);
+
+    await lease.release();
+    expect(actions).toEqual(["drain", "drain", "drain", "resume"]);
+    tick!();
+    await Promise.resolve();
+    expect(actions).toEqual(["drain", "drain", "drain", "resume"]);
+  });
+
   test("releases a verified idle drain", async () => {
     const actions: string[] = [];
     const lease = await negotiateDrain(async action => {

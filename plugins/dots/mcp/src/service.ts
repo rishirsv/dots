@@ -4,6 +4,7 @@ import { dirname, join } from "node:path";
 import type { AppConfig } from "./config";
 import { assertDurableRuntimeCommand, atomicWriteFile, getConfigDir } from "./config";
 import { runCommand, runChecked } from "./process";
+import { DRAIN_LEASE_TTL_SEC } from "./server";
 
 const LABEL = "io.dots.portal.daemon";
 
@@ -208,7 +209,10 @@ export async function cancelActiveTurns(config: AppConfig): Promise<{
 
 export async function negotiateDrain(
   controlAction: (action: "drain" | "resume") => Promise<Record<string, unknown>>,
-  { requireIdle = true }: { requireIdle?: boolean } = {},
+  { requireIdle = true, renew = setInterval }: {
+    requireIdle?: boolean;
+    renew?: (callback: () => void, ms: number) => { unref?: () => void };
+  } = {},
 ): Promise<DrainLease> {
   let drained = false;
   let drainAttempted = false;
@@ -224,7 +228,21 @@ export async function negotiateDrain(
     if (requireIdle && ((activeHttp as number) > 0 || (activeBrowser as number) > 0)) {
       throw new Error(`daemon has ${activeHttp} active HTTP turn(s) and ${activeBrowser} active browser turn(s)`);
     }
-    return { release: async () => { if (drained) { await controlAction("resume"); drained = false; } } };
+    // The daemon expires this lease on its own. Hold it open only while this process is alive, so a
+    // crashed or interrupted service operation cannot leave Codex permanently locked out.
+    const heartbeat = renew(() => {
+      if (!drained) return;
+      void controlAction("drain").catch(() => {
+        // A missed renewal is recoverable: the operation continues and the lease lapses on schedule.
+      });
+    }, Math.max(1_000, Math.floor(DRAIN_LEASE_TTL_SEC * 1_000 / 3)));
+    heartbeat.unref?.();
+    return {
+      release: async () => {
+        clearInterval(heartbeat as ReturnType<typeof setInterval>);
+        if (drained) { await controlAction("resume"); drained = false; }
+      },
+    };
   } catch (error) {
     let resumeError: unknown;
     if (drainAttempted) {
