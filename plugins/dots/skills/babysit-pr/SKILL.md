@@ -28,15 +28,17 @@ original goal fixed, and merge only when the user asks.
 
 ## Watch
 
-Use scheduled checks every five minutes while CI or review is pending. Prefer
-the host's native scheduler attached to the current task; reuse an existing
-monitor for the same pull request. Do not keep the main agent in a polling loop.
+Prefer an available native event or check-completion notification while CI or
+review is pending. Otherwise use the host's supported scheduler and cadence;
+five minutes is a default only where supported. State the actual cadence and
+reuse an existing monitor for the same pull request. Do not silently substitute
+a different cadence when the user requested an exact one, or keep the main
+agent in a polling loop.
 
-When the scheduler supports choosing a model, use Luna with low reasoning for
-monitoring. Otherwise use the native heartbeat with its supported settings;
-do not add a subagent merely to relay unchanged status. For a short request to
-wait for one CI run, use a native check-completion wait without a subagent or
-recurring schedule.
+When model selection is supported, use the configured lightweight monitoring
+role; otherwise keep the host's supported settings. Do not add a subagent merely
+to relay unchanged status. For a short wait on one CI run, use a supported native
+check-completion wait without a recurring schedule.
 
 Give the monitor the repository, pull request, original goal, latest commit,
 last observed check states and review discussion IDs, and the task to notify.
@@ -55,8 +57,9 @@ Keep its work read-only:
   not poll the monitor. After a fix, resume from the new latest commit.
 
 Use the host's scheduling and task-notification tools only as supported. If
-persistent scheduling is unavailable, state that limit and use a bounded native
-wait for the current checks; do not claim future monitoring is active.
+persistent scheduling is unavailable, state that limit. Use a bounded native
+wait only if one is available; otherwise return the current status and blocker.
+Do not claim future monitoring is active without a successful scheduling result.
 
 If the repository offers automated review, request it once after the latest
 commit is pushed and stable, using the repository's exact command such as

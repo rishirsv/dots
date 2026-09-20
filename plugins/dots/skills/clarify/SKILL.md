@@ -5,9 +5,10 @@ description: "Use only when the user selects `$clarify` to resolve underspecifie
 
 # Clarify
 
-Ask the minimum set of clarifying questions needed to avoid wrong work. Before
-implementing, confirm the resulting shared understanding unless the user
-explicitly approves proceeding with stated assumptions.
+Resolve only ambiguities that could change the work. Once they are resolved,
+continue implementation already authorized by the user; do not ask them to
+confirm the same decisions again. A clarification-only request ends with the
+shared understanding.
 
 ## Workflow
 
@@ -30,8 +31,9 @@ change any of these:
 
 ### 2. Ask the must-have questions
 
-Ask one to three questions in the first pass. Prefer the question that removes
-the largest branch of possible work or the highest-value unresolved questions.
+Ask the smallest set of unresolved questions, at most three in the first pass.
+Ask none when the available evidence already settles them. Prioritize the
+question that removes the largest consequential branch of work.
 
 Make each question easy to answer:
 

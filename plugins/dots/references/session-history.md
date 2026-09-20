@@ -8,6 +8,24 @@ Read the smallest useful set of sessions. Transcripts can contain source files,
 command output, pasted text, credentials, and private user content. Return concise
 findings, not raw transcripts or unrelated private material.
 
+## Establish source coverage
+
+Codex and Claude Code session stores do not establish complete coverage of
+ChatGPT or Claude web conversations. For consumer chats, use an available
+authorized history interface or a supplied export and label its actual coverage.
+A project-file connector does not provide a terminal or history API.
+
+For a historical audit, record the requested sources, available stores, cutoff,
+window, exclusions, and sessions actually read. Select each platform explicitly:
+`auto` chooses one store, not both. Include alternate `CODEX_HOME` or
+`CLAUDE_CONFIG_DIR` locations only when they are in scope. Freeze the cohort and
+apply the parent skill's deduplication and causal-review rules.
+
+Distinguish missing access, an empty bounded search, an older report, and a newly
+read transcript. Reading a report does not repeat its transcript audit. Continue
+supported source review when history is unavailable and label the missing
+behavioral evidence; do not turn inaccessible history into zero usage.
+
 ## Codex
 
 ### Live task tools

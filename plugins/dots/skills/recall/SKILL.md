@@ -41,7 +41,7 @@ out of the answer.
 Lead with the capsule, then the thread status, then the problems, then the next move. Deeper detail goes below or gets cut.
 
 - **Capsule.** A short bulleted picture of what this work is and where it stands overall.
-- **Threads.** One line each, prefixed with exactly one status tag: `[merged #N]`, `[open PR #N]`, `[in flight <branch>]`, `[verified, uncommitted]`, `[reverted #N]`, or `[planned, not started]`. A thread with no tag is not done yet, so tag it.
+- **Threads.** One line each with a supported status: `[merged #N]`, `[open PR #N]`, `[in flight <branch>]`, `[verified, uncommitted]`, `[reverted #N]`, or `[planned, not started]`. Use `[blocked]`, `[complete, no PR]`, or `[status unverified]` when those are more accurate; absence of access is not evidence that work is unstarted or complete.
 - **Problems.** The recurring ones only. Include the symptoms users keep reporting and any fix that shipped and was reverted, so the next attempt starts where the last one failed.
 - **Next move.** The single most useful next action, concrete.
 

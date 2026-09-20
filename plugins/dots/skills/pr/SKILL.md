@@ -86,7 +86,14 @@ help a reviewer verify the change.
 Upload visual evidence only when the completed task already produced a
 screenshot or short video; `$pr` does not capture or recapture it.
 
-Use `gh pr create` or `gh pr edit` with `--attach`. Write the description to a
+Check the applicable `gh pr create --help` or `gh pr edit --help` before using
+`--attach`; availability belongs to the installed CLI, not this example. If it
+is unavailable, use another already-authorized attachment interface when one
+exists. Otherwise preserve the evidence locally and report the attachment gap.
+Do not leave local paths in a published body or call a PR evidence-complete when
+required attachments are missing.
+
+When supported, use `gh pr create` or `gh pr edit` with `--attach`. Write the description to a
 Markdown file, reference each image or video where it belongs using its local
 path, then attach that path. Put a video reference in its own paragraph so it
 renders as a player. For example:

@@ -14,7 +14,9 @@ Do not modify unrelated change made by other agents.
 
 Browser-use default: In-app browser > Chrome.
 
-To view a local HTML file, put its full absolute filesystem path directly into ChatGPT's in-app browser address bar and open it.
+To view local HTML, use its absolute path only when the browser can access that
+filesystem. Otherwise use an available supported preview or serving route.
+Confirm that the page opened before claiming visual inspection.
 
 # Subagents
 

@@ -14,9 +14,10 @@ build, edit, check, and deliver the result.
 ## Build from prepared material
 
 When another skill calls `$html`, use the audience, verified material, required
-points, decisions, and reading order it provides. Do not redo its research or
-second-guess its decisions. Turn that material into sound HTML without dropping
-evidence labels or required coverage.
+points, decisions, and reading order it provides. Preserve resolved decisions
+and reuse its research. Surface contradictions that prevent faithful composition
+rather than silently choosing a version. Turn the material into HTML without
+dropping evidence labels or required coverage.
 
 When the caller supplies an `artifact-template.json` with `kind: "html"`:
 
@@ -43,7 +44,7 @@ Read only what the artifact needs:
 ## Boundaries
 
 Use HTML for static product mocks when that is the requested deliverable. Use
-`design` for production UI, interactive editors, and real form state. Use an
+`interface-design` for production UI, interactive editors, and real form state. Use an
 interactive-visualization workflow for exploratory simulations or analysis led
 by filters. Use `docs-writer` for repository documentation; do not use HTML for
 slides.
