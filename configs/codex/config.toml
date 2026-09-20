@@ -9,16 +9,9 @@ sandbox_mode = "danger-full-access"
 web_search = "live"
 model = "gpt-6-astra"
 model_reasoning_effort = "medium"
-model_catalog_json = "/Users/rishi/.codex/models-combined.json"
-
-# Managed by Portal: Responses use the local bridge; Voice stays on ChatGPT.
-openai_base_url = "http://127.0.0.1:17841/v1"
-experimental_realtime_webrtc_call_base_url = "https://chatgpt.com/backend-api/codex"
 [features]
 context_management = true
 
-multi_agent = true # Managed by Portal: enables routed Web subagents.
-multi_agent_v2 = false # Managed by Portal: keeps routed Web subagent payloads readable.
 [model_providers.vercel-ai-gateway]
 name = "Vercel AI Gateway"
 base_url = "https://ai-gateway.vercel.sh/v1"

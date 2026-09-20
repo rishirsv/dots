@@ -21,10 +21,6 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
   every relevant repo sync command. Use `scripts/sync-plugins.sh --all` for
   plugin changes. For config changes, follow the dry-run and scoped sync rule
   below. Never include unrelated working-tree changes.
-- Portal runtime changes also require `bun run build` followed by
-  `scripts/install.sh`; `bun run verify` uses a disposable bundle and does not
-  refresh `dist/runtime`.
-- After every Portal code update, cancel active turns and immediately restart both the local daemon and tunnel/MCP worker; never wait for idleness before validating the installed browser workflow.
 - Bump the owning `plugin.json` version only when the release content is final
   and ready to commit. Do not bump versions during iterative editing.
 - Before syncing configs, run `scripts/sync-configs.sh --dry-run --all`; then

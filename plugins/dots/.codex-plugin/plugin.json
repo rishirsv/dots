@@ -12,6 +12,7 @@
     "skills"
   ],
   "skills": "./skills/",
+  "apps": "./.app.json",
   "interface": {
     "displayName": "Dots",
     "shortDescription": "Plan, build, review, and ship.",

@@ -44,46 +44,6 @@ Use only the command for the host installed on the Mac. Codex sync also
 refreshes the second profile at `~/.codex-personal` when that directory exists.
 Claude sessions that were already open require `/reload-plugins` or a restart.
 
-## Install Portal
-
-Portal is an optional local bridge included in the Dots repository. It keeps a
-Codex task as the authoritative conversation while ChatGPT Web Pro performs the
-model turn and the originating Codex task executes its tools.
-
-From the checkout, install the package's pinned Bun version (currently 1.4.0),
-build the relocatable runtime, and install it for the current user:
-
-```sh
-cd plugins/dots/mcp
-bun install --frozen-lockfile --ignore-scripts
-bun run build
-./scripts/install.sh
-export PATH="$HOME/.local/bin:$PATH"
-```
-
-Start Portal with an OpenAI tunnel id and a Tunnels Read+Use runtime key:
-
-```sh
-portal start --tunnel-id ID --runtime-key-file /absolute/path/to/key
-portal status
-```
-
-The first start opens the dedicated Chrome login flow when needed and prints the
-one remaining account-level connector step when ChatGPT has not yet been
-connected to the tunnel. Create/select the connector with the exact name
-**Portal** and allow the actions required by this local bridge. Portal installs
-its reversible Codex route only after its local runtime and tunnel are ready.
-
-Use `portal login` to refresh ChatGPT authentication, `portal stop` to restore
-the previous Codex route and stop Portal, and `portal uninstall` to remove the
-integration while preserving private login/application data. Pass
-`--purge-data` only when that private data should also be deleted.
-
-For a Codex-originated task, enter follow-ups in Codex. The Chrome window Portal
-opens is an execution surface, not a second synchronized task editor. A direct
-ChatGPT conversation that invokes `@Portal` is a separate workflow; continue
-that conversation in ChatGPT.
-
 ## Restore machine configuration
 
 Choose the targets needed on this Mac. Run `scripts/sync-configs.sh --help` to

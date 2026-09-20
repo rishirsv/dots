@@ -1,9 +1,0 @@
-node_modules/
-dist/
-.launcher-runtime/
-launcher/node_modules/
-launcher/dist/
-launcher/build/
-launcher/release/
-*.log
-.DS_Store
