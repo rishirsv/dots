@@ -83,6 +83,21 @@ The runtime's opt-in smoke entrypoint is:
 CODEX_CHATGPT_WEB_HOME=/absolute/portal-data bun run scripts/smoke-portal-live.ts --run
 ```
 
+The default is Medium. Pass `--model chatgpt-web/pro` only for an explicitly
+requested Pro test; the runner preserves the selected route's fixed effort.
+Use `--read-only` for a native canary read without a write. Use
+`--conversation-only` to test two prompts and exact tab retention without tool
+calls; that separate check proves neither MCP execution nor skill behavior.
+Do not use another test mode to retry or work around a denied operation.
+
+Before attributing a run to a model generation, inspect the runtime-owned
+picker. The runtime logs `model_selection` just before submission, keyed by
+the browser turn trace: requested effort, selected control label, and the
+picker's accessible value text when available. The internal backend routing ID
+is not a response model identifier. A missing `responseModelId` remains
+unverified; a browser label and the assistant's self-identification do not
+independently establish server-side weights.
+
 Inspect the installed version's script before running it. Supply the rewritten
 skill to the test task when evaluating skill behavior; a transport test that
 never loads the skill cannot validate its instructions. Keep test artifacts in

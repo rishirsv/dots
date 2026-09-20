@@ -24,6 +24,12 @@ The named Portal model row controls the browser effort; the separate Codex
 reasoning control does not override a fixed route. A skill cannot switch an
 already-running task's model by saying it has done so.
 
+When the user requests a particular model generation, verify the runtime-owned
+ChatGPT picker and report its actual label. A route name, internal backend ID,
+subscription badge, or model self-identification is not that evidence. Keep
+browser selection and any independently available response model ID separate;
+report an unavailable or mismatched model rather than silently substituting.
+
 For initial setup, missing model rows, login, or a failed connection, read
 [runtime.md](references/runtime.md). For an ordinary working session, proceed
 with the task rather than rerunning setup. Prefer Codex's in-app Browser for
@@ -111,7 +117,8 @@ Complete the authorized task, its required checks, and any repairs those checks
 show are necessary. Return the useful artifact or answer with the checks that
 actually ran. State a concrete missing prerequisite when blocked.
 
-For a Portal end-to-end test, use explicit Medium and a disposable workspace:
+For a Portal end-to-end test, preserve the user's explicit test mode; select
+Medium only when none was specified. Use a disposable workspace:
 read a canary unknown to the prompt, write and verify a result through native
 tools, then send a follow-up in the same Codex task and confirm exact browser
 tab reuse. Read the live-check procedure in [runtime.md](references/runtime.md).
