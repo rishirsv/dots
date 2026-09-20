@@ -63,16 +63,31 @@ repository's `.app.json` points to the maintainer's registered app; installing
 the source does not grant another account access to that app or this Mac.
 For a separate deployment, register your own app and update your local mapping.
 
-For a managed runtime named `dots-tunnel`:
+## Start, check, and stop
+
+On the configured Mac, invoke `$dots-tunnel` in Codex to start the saved
+connection on demand. The skill uses this helper (from the repository root):
 
 ```sh
-tunnel-client runtimes status dots-tunnel --json
-tunnel-client runtimes stop dots-tunnel
+python3 plugins/dots/scripts/dots-tunnel/runtime.py start
+python3 plugins/dots/scripts/dots-tunnel/runtime.py status
+python3 plugins/dots/scripts/dots-tunnel/runtime.py stop
 ```
 
-Follow the official client's setup instructions to start it again. Automatic
-startup after logout or reboot is not configured by this package. Stop the
-runtime before changing the authorized root; never expose a home directory.
+Start reuses a healthy runtime without restarting it. If stopped, it uses the
+saved command, tunnel, and credential-file reference, then verifies readiness.
+Missing setup or an unhealthy running process is reported, not silently replaced.
+The helper serializes concurrent invocations and prints only compact status.
+
+The runtime stays in the background after a chat or terminal closes. Stop it
+explicitly when finished; logout, reboot, or failure may also stop it. No login
+startup or extra watchdog is installed. While the Mac is asleep or offline,
+ChatGPT cannot reach it. A Web skill cannot start a stopped local server: invoke
+the skill in Codex on the Mac first, then mention `@Dots` in ChatGPT.
+
+Lifecycle commands are local operator actions, not remotely exposed MCP tools.
+They do not authorize new folders. Stop the runtime before changing the
+authorized root; never expose a home directory.
 
 ## Boundaries and recovery
 
