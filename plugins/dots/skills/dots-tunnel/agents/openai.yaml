@@ -1,0 +1,6 @@
+interface:
+  display_name: "dots-tunnel"
+  short_description: "Read and edit a locally authorized project."
+  default_prompt: "Use $dots-tunnel to inspect and edit the authorized project's files, then verify the changed content."
+policy:
+  allow_implicit_invocation: true

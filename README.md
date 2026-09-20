@@ -9,6 +9,13 @@ Follow [INSTALL.md](INSTALL.md) to install the Dots plugin. The repository also
 contains optional, opinionated machine configuration; inspect each config before
 syncing it.
 
+## Local files from ChatGPT
+
+Dots includes [dots-tunnel](plugins/dots/scripts/dots-tunnel/README.md), a small
+MCP server that lets ChatGPT read and patch files in one locally authorized
+folder. It uses your normal ChatGPT conversation and model selection, without
+a browser controller, shell access, or a separate application window.
+
 ## Source map
 
 - `plugins/`: plugin and skill source.

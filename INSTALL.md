@@ -44,6 +44,10 @@ Use only the command for the host installed on the Mac. Codex sync also
 refreshes the second profile at `~/.codex-personal` when that directory exists.
 Claude sessions that were already open require `/reload-plugins` or a restart.
 
+For ChatGPT access to local files, follow the optional
+[dots-tunnel setup](plugins/dots/scripts/dots-tunnel/README.md#local-setup).
+Plugin installation alone does not start a tunnel or authorize any folder.
+
 ## Restore machine configuration
 
 Choose the targets needed on this Mac. Run `scripts/sync-configs.sh --help` to
