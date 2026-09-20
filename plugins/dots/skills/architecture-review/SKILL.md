@@ -51,7 +51,10 @@ inspect: churn around the same modules, repeated edits to the same concept,
 duplicated call patterns, flaky or failing tests, and files accumulating
 unrelated responsibilities.
 
-Use fresh explorer or researcher subagents for large scans when available. Pass each subagent the compact repo guidance summary, relevant architecture docs, required domain skills, and any vocabulary needed to describe the assigned findings. Keep the parent agent responsible for the final recommendation.
+Use fresh read-only explorers when distinct evidence paths can be investigated
+independently and the benefit exceeds coordination cost. Give each a bounded
+question and the guidance needed to answer it; repository size alone does not
+justify delegation. The parent integrates the findings and owns the recommendation.
 
 ## Candidate Bar
 
@@ -72,11 +75,15 @@ Default to a ranked candidate report in chat unless the user asks for a file or 
 
 Write for the repo owner deciding what to do next: lead with the strongest candidate and why, keep candidates scannable, and skip dimensions that don't apply rather than filling in every field.
 
-Ask which candidate the user wants to explore before designing interfaces or editing code. If the user has already asked to implement, pick the strongest candidate, state the plan, and keep the patch scoped to that candidate.
+For an audit-only request, return the candidates before designing interfaces or
+editing code. When implementation is authorized, carry out the supported changes
+within that scope. Choose one candidate only when the user asked for one; a
+request to fix all supported findings is not limited to the highest-ranked item.
+Ask only when a remaining product or scope decision changes the work.
 
 ## Candidate Loop
 
-After the user chooses a candidate:
+For each candidate selected by the user or covered by the implementation request:
 
 1. Restate the problem space, constraints, dependency category, and current seam.
 2. Identify the behavior that must stay true, the current tests or commands that prove it, and the owning invariant. If the behavior is important and untested, characterize it before making behavior-adjacent edits.
@@ -88,4 +95,5 @@ After the user chooses a candidate:
 ## Boundaries
 
 - Do not turn a broad scan into a drive-by refactor.
-- Do not propose interfaces before the user chooses a candidate unless the user explicitly asks.
+- Design replacement interfaces only for selected candidates or an authorized
+  implementation scope.

@@ -77,7 +77,8 @@ Summarize completed work, current state, decisions, and constraints;
 reference artifacts by path or URL and name what changed since they were
 written, instead of duplicating them; list next actions in execution order;
 name validation run and still needed; call out blockers, assumptions, and
-risks. Use this shape:
+risks. Use this shape as a field guide, omitting empty or irrelevant sections.
+Preserve material unknowns and the distinction between completed and missing proof:
 
 ```md
 # Handoff: <task>

@@ -1,8 +1,9 @@
 # Instruction Files
 
-Use this reference when a proposal targets agent instructions. Self-Improve
-may apply an instruction change only after the user approves the exact rule and
-target file.
+Use this reference when a proposal targets agent instructions. Apply the edit
+authorization in Self-Improve's parent skill: an explicit request to audit and
+implement instruction changes already authorizes supported edits in that scope.
+For proposal-only work, obtain approval of the exact rule and target before editing.
 
 ## Choose the platform surface
 
@@ -59,15 +60,20 @@ stale text instead of appending another layer.
 
 ## Evidence and edit gate
 
-Require repeated mistakes, repeated review feedback, or durable context the
-user keeps re-explaining. One isolated bug is not an instruction rule.
+Use the generalization gate in [thread-evidence.md](thread-evidence.md) for
+claims about repeated behavior. A source-visible contradiction can support a
+narrow correction without inventing a history of failures; one task can also
+support an exact durable behavior the user explicitly requests.
 
 For every proposal:
 
-1. Cite the supporting thread cluster and governing files.
+1. Cite the governing files and any supporting thread clusters. Distinguish a
+   source correction from a behavior claim that still needs transcript evidence.
 2. Show the exact rule and target file.
 3. Explain why a check, skill, doc, or memory note is not the stronger home.
-4. Wait for approval.
+4. Check whether the request already authorizes the rule and target scope.
+   Wait for approval only when that authority is missing or a material decision
+   remains unresolved.
 5. Re-read the current file, apply the smallest edit, and inspect the merged
    instruction chain for contradictions.
 6. Run the relevant repository checks and report what they prove.
