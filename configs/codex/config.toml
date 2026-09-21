@@ -1,5 +1,5 @@
-# Portable Codex defaults managed by Dots.
-# Machine-local notification and runtime state remain in ~/.codex/config.toml.
+# Codex settings managed by Dots. Each setting present here overrides the same
+# live setting; unlisted machine-local and Codex Desktop state is preserved.
 
 # Default to non-interactive execution with unrestricted filesystem and
 # network access. Codex Desktop reads this legacy pair in its Settings UI.

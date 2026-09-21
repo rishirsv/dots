@@ -7,15 +7,17 @@ applying them.
 
 ## Prepare the Mac
 
-Put `git`, `python3`, and `zsh` on `PATH`. Install and sign in to Codex, Claude
-Code, or both. Claude plugin sync also requires `node` on `PATH`.
+Put `git`, `python3`, `uv`, and `zsh` on `PATH`. Install and sign in to Codex,
+Claude Code, or both. Claude plugin sync also requires `node` on `PATH`. Config
+sync uses `uv` to run its pinned TOML dependency without modifying system
+Python.
 
-Install and open each app whose configuration you plan to restore. The current
-config targets are Codex, a second Codex profile, Claude Code, VS Code, Ghostty,
-Tinycast, Wispr Flow with Logi Options+, Starship, and Zsh. Tinycast onboarding
-also expects its Coffee extension to be installed. The Wispr and Logitech
-repair requires `jq` and `sqlite3` and expects both apps to have created their
-local settings.
+Install and open each app whose configuration you plan to restore. Declarative
+config targets cover Codex, a second Codex profile, Claude Code, VS Code,
+Ghostty, Starship, and Zsh. Separate setup commands cover Computer Use,
+Tinycast, and Wispr Flow with Logi Options+. Tinycast onboarding expects its
+Coffee extension to be installed. The Wispr and Logitech repair requires `jq`
+and `sqlite3` and expects both apps to have created their local settings.
 
 ## Get the repository
 
@@ -61,8 +63,7 @@ scripts/sync-configs.sh --dry-run --codex --claude --vscode --ghostty --starship
 scripts/sync-configs.sh           --codex --claude --vscode --ghostty --starship --zsh
 ```
 
-On a personal Mac with every destination app installed and initialized, use the
-complete profile:
+To apply every declarative file target, use:
 
 ```sh
 scripts/sync-configs.sh --dry-run --all
@@ -73,6 +74,21 @@ Config sync creates timestamped backups before replacing existing files. It
 does not copy secrets, authentication state, sessions, caches, clipboard
 contents, AI conversations, or macOS privacy grants. Keep secrets and
 machine-local shell overrides in `~/.zshrc.local`.
+
+Application-specific setup is deliberately separate because it changes macOS
+defaults, app databases, or running processes. Preview and apply only the setup
+you need:
+
+```sh
+python3 scripts/sync-codex-computer-use.py apply --dry-run
+python3 scripts/sync-codex-computer-use.py apply
+
+python3 scripts/sync-tinycast-config.py apply --config configs/tinycast/settings.json --dry-run
+python3 scripts/sync-tinycast-config.py apply --config configs/tinycast/settings.json
+
+scripts/repair-wispr-logitech-shortcut.sh --dry-run
+scripts/repair-wispr-logitech-shortcut.sh
+```
 
 ## Finish per-machine setup
 
@@ -89,10 +105,10 @@ restore:
 5. Restore account-specific app settings and sign-ins from their original
    services rather than copying local application data.
 
-Dots enables the Computer Use helper's undocumented
+The optional Computer Use command enables the helper's undocumented
 `ComputerUseAllowForbiddenTargets` default so it can target ChatGPT, Codex, and
-terminal-class apps. Config sync fails if an installed helper no longer ships
-that override. ChatGPT's startup surface remains app runtime state and is not a
+terminal-class apps. It fails if an installed helper no longer ships that
+override. ChatGPT's startup surface remains app runtime state and is not a
 documented Codex config key.
 
 ## Verify the onboarding

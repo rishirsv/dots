@@ -1,21 +1,34 @@
 #!/usr/bin/env python3
-"""Sync Dots-owned Codex settings without owning the whole live config."""
+# /// script
+# requires-python = ">=3.9"
+# dependencies = ["tomlkit==0.13.3"]
+# ///
+"""Apply repo-owned Codex settings without replacing application-owned state."""
+
+from __future__ import annotations
 
 import argparse
+import copy
 import datetime
 import os
+from collections.abc import Mapping
+from dataclasses import dataclass
 from pathlib import Path
-import re
 import shutil
 import stat
 import subprocess
 import sys
 import tempfile
-from typing import List, Optional, Sequence, Tuple
+from typing import Any, Iterable, Optional, Tuple
+
+import tomlkit
+from tomlkit.exceptions import TOMLKitError
 
 
-BEGIN_MARKER = "# >>> Dots portable Codex config >>>"
-END_MARKER = "# <<< Dots portable Codex config <<<"
+LEGACY_MARKERS = {
+    "# >>> Dots portable Codex config >>>",
+    "# <<< Dots portable Codex config <<<",
+}
 
 LOCAL_TOP_LEVEL_KEYS = {"notify", "service_tier"}
 LOCAL_TABLE_PREFIXES = (
@@ -27,314 +40,161 @@ LOCAL_TABLE_PREFIXES = (
     ("shell_environment_policy",),
 )
 PORTABLE_TABLE_EXCEPTIONS = (("mcp_servers", "openaiDeveloperDocs"),)
-APP_RUNTIME_TABLE_KEYS = {("features",): {"chronicle", "js_repl"}}
-APP_RUNTIME_ROOT_DEFAULT_VALUES = {"approvals_reviewer": '"user"'}
-APP_RUNTIME_DEFAULT_VALUES = {
-    ("features",): {"default_mode_request_user_input": "false"},
-    ("desktop",): {
-        "dock-icon-preference": '"app-default"',
-        "open-link-in-target-preference": '"in-app-browser"',
-        "realtimeVoiceScreenContextEnabled": "true",
-        "show-ultra-in-model-picker-slider": "false",
-    },
-}
-APP_MOVED_TABLE_PREFIXES = (("desktop",),)
 
-ASSIGNMENT_RE = re.compile(r"^([A-Za-z0-9_-]+)\s*=")
-ASSIGNMENT_VALUE_RE = re.compile(r"^([A-Za-z0-9_-]+)\s*=\s*(.*?)\s*$")
+KeyPath = Tuple[str, ...]
+MISSING = object()
 
 
 class ConfigError(Exception):
     pass
 
 
-def canonical_portable(text: str) -> str:
-    return text.rstrip() + "\n"
-
-
-def marker_indexes(lines: Sequence[str]) -> Optional[Tuple[int, int]]:
-    begins = [
-        index
-        for index, line in enumerate(lines)
-        if line.rstrip("\r\n") == BEGIN_MARKER
-    ]
-    ends = [
-        index
-        for index, line in enumerate(lines)
-        if line.rstrip("\r\n") == END_MARKER
-    ]
-    if not begins and not ends:
-        return None
-    if len(begins) != 1 or len(ends) != 1 or begins[0] >= ends[0]:
-        raise ConfigError("live config has malformed or duplicate Dots markers")
-    return begins[0], ends[0]
-
-
-def extract_marker(text: str) -> Optional[str]:
-    lines = text.splitlines(keepends=True)
-    indexes = marker_indexes(lines)
-    if indexes is None:
-        return None
-    begin, end = indexes
-    return canonical_portable("".join(lines[begin + 1 : end]))
-
-
-def unwrap_marker(text: str) -> str:
-    """Return config content without marker lines, retaining its body.
-
-    Codex Desktop can append its runtime tables inside the portable block when
-    it updates. Keep those tables available to the local-state extractor so a
-    subsequent Dots sync does not discard them.
-    """
-    lines = text.splitlines(keepends=True)
-    indexes = marker_indexes(lines)
-    if indexes is None:
-        return text
-    begin, end = indexes
-    return "".join(lines[:begin] + lines[begin + 1 : end] + lines[end + 1 :])
-
-
-def outside_marker(text: str) -> str:
-    """Return only content that sits outside the Dots marker block."""
-    lines = text.splitlines(keepends=True)
-    indexes = marker_indexes(lines)
-    if indexes is None:
-        return text
-    begin, end = indexes
-    return "".join(lines[:begin] + lines[end + 1 :])
-
-
-def table_path(header: str) -> Tuple[str, ...]:
-    stripped = header.strip()
-    if stripped.startswith("[[") and stripped.endswith("]]"):
-        body = stripped[2:-2]
-    elif stripped.startswith("[") and stripped.endswith("]"):
-        body = stripped[1:-1]
-    else:
-        raise ConfigError("invalid TOML table header: {}".format(header.rstrip()))
-
-    parts: List[str] = []
-    current: List[str] = []
-    quote: Optional[str] = None
-    escaped = False
-    for character in body:
-        if quote is not None:
-            if quote == '"' and escaped:
-                current.append(character)
-                escaped = False
-            elif quote == '"' and character == "\\":
-                escaped = True
-            elif character == quote:
-                quote = None
-            else:
-                current.append(character)
-        elif character in ("'", '"'):
-            quote = character
-        elif character == ".":
-            parts.append("".join(current).strip())
-            current = []
-        else:
-            current.append(character)
-    if quote is not None:
-        raise ConfigError("unterminated quote in TOML table header")
-    parts.append("".join(current).strip())
-    return tuple(parts)
-
-
-def is_table_header(line: str) -> bool:
-    stripped = line.strip()
-    return (
-        (stripped.startswith("[") and stripped.endswith("]"))
-        or (stripped.startswith("[[") and stripped.endswith("]]"))
-    )
-
-
-def split_toml(text: str) -> Tuple[List[str], List[Tuple[Tuple[str, ...], List[str]]]]:
-    lines = text.splitlines(keepends=True)
-    header_indexes = [index for index, line in enumerate(lines) if is_table_header(line)]
-    if not header_indexes:
-        return lines, []
-
-    root = lines[: header_indexes[0]]
-    tables: List[Tuple[Tuple[str, ...], List[str]]] = []
-    for position, start in enumerate(header_indexes):
-        end = (
-            header_indexes[position + 1]
-            if position + 1 < len(header_indexes)
-            else len(lines)
-        )
-        tables.append((table_path(lines[start]), lines[start:end]))
-    return root, tables
-
-
-def strip_app_runtime_keys(text: str) -> str:
-    """Ignore settings Codex Desktop writes into the portable marker block."""
-    root, tables = split_toml(text)
-    parts = [
-        line
-        for line in root
-        if not (
-            (value_match := ASSIGNMENT_VALUE_RE.match(line))
-            and APP_RUNTIME_ROOT_DEFAULT_VALUES.get(value_match.group(1))
-            == value_match.group(2)
-        )
-    ]
-    for path, lines in tables:
-        runtime_keys = APP_RUNTIME_TABLE_KEYS.get(path, set())
-        runtime_defaults = APP_RUNTIME_DEFAULT_VALUES.get(path, {})
-        for line in lines:
-            match = ASSIGNMENT_VALUE_RE.match(line)
-            if match and (
-                match.group(1) in runtime_keys
-                or runtime_defaults.get(match.group(1)) == match.group(2)
-            ):
-                continue
-            parts.append(line)
-    return canonical_portable("".join(parts))
-
-
-def effective_portable(text: str) -> Optional[str]:
-    """Rebuild the portable config after Codex Desktop normalizes its layout."""
-    marked = extract_marker(text)
-    if marked is None:
-        return None
-
-    _, marked_tables = split_toml(marked)
-    marked_paths = {path for path, _ in marked_tables}
-    _, outside_tables = split_toml(outside_marker(text))
-    moved = [
-        "".join(lines).rstrip() + "\n"
-        for path, lines in outside_tables
-        if path not in marked_paths
-        and any(starts_with(path, prefix) for prefix in APP_MOVED_TABLE_PREFIXES)
-    ]
-    rebuilt = marked
-    if moved:
-        rebuilt = rebuilt.rstrip() + "\n\n" + "\n\n".join(
-            table.rstrip() for table in moved
-        ) + "\n"
-    return strip_app_runtime_keys(strip_local_content(rebuilt))
-
-
-def starts_with(path: Tuple[str, ...], prefix: Tuple[str, ...]) -> bool:
-    return path[: len(prefix)] == prefix
-
-
-def is_local_table(path: Tuple[str, ...]) -> bool:
-    if any(starts_with(path, prefix) for prefix in PORTABLE_TABLE_EXCEPTIONS):
-        return False
-    return any(starts_with(path, prefix) for prefix in LOCAL_TABLE_PREFIXES)
-
-
-def local_root_chunks(root_lines: Sequence[str]) -> List[str]:
-    starts: List[Tuple[int, str]] = []
-    for index, line in enumerate(root_lines):
-        match = ASSIGNMENT_RE.match(line)
-        if match:
-            starts.append((index, match.group(1)))
-
-    chunks: List[str] = []
-    for position, (start, key) in enumerate(starts):
-        end = starts[position + 1][0] if position + 1 < len(starts) else len(root_lines)
-        if key in LOCAL_TOP_LEVEL_KEYS:
-            chunk = "".join(
-                line
-                for line in root_lines[start:end]
-                if not line.lstrip().startswith("#")
-            ).rstrip()
-            if chunk:
-                chunks.append(chunk + "\n")
-    return chunks
-
-
-def strip_local_content(text: str) -> str:
-    root, tables = split_toml(text)
-    starts: List[Tuple[int, str]] = []
-    for index, line in enumerate(root):
-        match = ASSIGNMENT_RE.match(line)
-        if match:
-            starts.append((index, match.group(1)))
-
-    parts = list(root[: starts[0][0]]) if starts else list(root)
-    for position, (start, key) in enumerate(starts):
-        end = starts[position + 1][0] if position + 1 < len(starts) else len(root)
-        if key not in LOCAL_TOP_LEVEL_KEYS:
-            parts.extend(root[start:end])
-    parts.extend(
-        line
-        for path, lines in tables
-        if not is_local_table(path)
-        for line in lines
-    )
-    return canonical_portable("".join(parts))
-
-
-def local_content(text: str) -> Tuple[List[str], List[str]]:
-    root, tables = split_toml(unwrap_marker(text))
-    roots = local_root_chunks(root)
-    local_tables = [
-        "".join(lines).rstrip() + "\n"
-        for path, lines in tables
-        if is_local_table(path)
-    ]
-    return roots, local_tables
-
-
-def validate_portable_source(text: str) -> None:
-    if marker_indexes(text.splitlines(keepends=True)) is not None:
-        raise ConfigError("tracked portable source must not contain Dots markers")
-
-    root, tables = split_toml(text)
-    local_keys = []
-    permission_keys = set()
-    for line in root:
-        match = ASSIGNMENT_RE.match(line)
-        if match:
-            key = match.group(1)
-            if key in LOCAL_TOP_LEVEL_KEYS:
-                local_keys.append(key)
-            if key in {"default_permissions", "sandbox_mode"}:
-                permission_keys.add(key)
-    if permission_keys == {"default_permissions", "sandbox_mode"}:
-        raise ConfigError(
-            "tracked portable source cannot combine default_permissions "
-            "with sandbox_mode"
-        )
-    local_paths = [".".join(path) for path, _ in tables if is_local_table(path)]
-    if local_keys or local_paths:
-        owned = sorted(set(local_keys + local_paths))
-        raise ConfigError(
-            "tracked portable source contains machine-local settings: {}".format(
-                ", ".join(owned)
-            )
-        )
-
-
-def compose_live(portable: str, existing: str) -> str:
-    roots, tables = local_content(existing)
-    parts: List[str] = []
-    if roots:
-        parts.append("\n".join(chunk.rstrip() for chunk in roots) + "\n\n")
-    parts.append(BEGIN_MARKER + "\n")
-    parts.append(canonical_portable(portable))
-    parts.append(END_MARKER + "\n")
-    if tables:
-        parts.append("\n")
-        parts.append("\n\n".join(table.rstrip() for table in tables) + "\n")
-    return "".join(parts)
+@dataclass(frozen=True)
+class ConfigPlan:
+    before: Optional[bytes]
+    after: bytes
+    changed_paths: Tuple[KeyPath, ...]
+    repair_file: bool
 
 
 def path_exists(path: Path) -> bool:
     return os.path.lexists(str(path))
 
 
-def read_target(path: Path) -> str:
+def starts_with(path: KeyPath, prefix: KeyPath) -> bool:
+    return path[: len(prefix)] == prefix
+
+
+def is_local_path(path: KeyPath) -> bool:
+    if len(path) == 1 and path[0] in LOCAL_TOP_LEVEL_KEYS:
+        return True
+    if any(starts_with(path, prefix) for prefix in PORTABLE_TABLE_EXCEPTIONS):
+        return False
+    return any(starts_with(path, prefix) for prefix in LOCAL_TABLE_PREFIXES)
+
+
+def leaf_paths(value: Mapping[str, Any], prefix: KeyPath = ()) -> Iterable[KeyPath]:
+    for key, child in value.items():
+        path = prefix + (str(key),)
+        if isinstance(child, Mapping) and child:
+            yield from leaf_paths(child, path)
+        else:
+            yield path
+
+
+def unwrapped(value: Any) -> Any:
+    return value.unwrap() if hasattr(value, "unwrap") else value
+
+
+def parse_document(text: str, label: str) -> Any:
+    try:
+        return tomlkit.parse(text)
+    except TOMLKitError as error:
+        raise ConfigError("invalid TOML in {}: {}".format(label, error)) from error
+
+
+def without_legacy_markers(text: str) -> str:
+    return "".join(
+        line
+        for line in text.splitlines(keepends=True)
+        if line.rstrip("\r\n") not in LEGACY_MARKERS
+    )
+
+
+def validate_portable_source(source: Mapping[str, Any]) -> None:
+    root_keys = set(source.keys())
+    if {"default_permissions", "sandbox_mode"} <= root_keys:
+        raise ConfigError(
+            "tracked portable source cannot combine default_permissions with sandbox_mode"
+        )
+
+    local_paths = sorted(path for path in leaf_paths(source) if is_local_path(path))
+    if local_paths:
+        raise ConfigError(
+            "tracked portable source contains machine-local settings: {}".format(
+                ", ".join(".".join(path) for path in local_paths)
+            )
+        )
+
+
+def remove_root(document: Mapping[str, Any], key: str, changed: list[KeyPath]) -> None:
+    if key in document:
+        del document[key]
+        changed.append((key,))
+
+
+def apply_compatibility_rules(
+    source: Mapping[str, Any], live: Mapping[str, Any], changed: list[KeyPath]
+) -> None:
+    if "sandbox_mode" in source:
+        remove_root(live, "default_permissions", changed)
+        remove_root(live, "permissions", changed)
+    elif "default_permissions" in source:
+        remove_root(live, "sandbox_mode", changed)
+
+    if "approvals_reviewer" not in source and "approvals_reviewer" in live:
+        if unwrapped(live["approvals_reviewer"]) == "user":
+            remove_root(live, "approvals_reviewer", changed)
+
+
+def merge_settings(
+    live: Mapping[str, Any],
+    source: Mapping[str, Any],
+    changed: list[KeyPath],
+    prefix: KeyPath = (),
+) -> None:
+    for raw_key, source_value in source.items():
+        key = str(raw_key)
+        path = prefix + (key,)
+        live_value = live.get(key, MISSING)
+        if isinstance(source_value, Mapping):
+            if live_value is MISSING:
+                live[key] = copy.deepcopy(source_value)
+                changed.extend(leaf_paths(source_value, path))
+            elif not isinstance(live_value, Mapping):
+                raise ConfigError(
+                    "tracked table {} conflicts with a scalar in the live config".format(
+                        ".".join(path)
+                    )
+                )
+            else:
+                merge_settings(live_value, source_value, changed, path)
+        elif live_value is MISSING or unwrapped(live_value) != unwrapped(source_value):
+            live[key] = copy.deepcopy(source_value)
+            changed.append(path)
+
+
+def read_target(path: Path) -> bytes:
     if path.is_dir():
         raise ConfigError("target is a directory: {}".format(path))
     try:
-        return path.read_text(encoding="utf-8")
+        return path.read_bytes()
     except OSError as error:
-        raise ConfigError("cannot read {}: {}".format(path, error))
+        raise ConfigError("cannot read {}: {}".format(path, error)) from error
+
+
+def plan_config(source: Path, target: Path) -> ConfigPlan:
+    source_text = source.read_text(encoding="utf-8")
+    source_document = parse_document(source_text, str(source))
+    validate_portable_source(source_document)
+
+    before = read_target(target) if path_exists(target) else None
+    live_text = before.decode("utf-8") if before is not None else ""
+    live_document = parse_document(without_legacy_markers(live_text), str(target))
+
+    changed: list[KeyPath] = []
+    apply_compatibility_rules(source_document, live_document, changed)
+    merge_settings(live_document, source_document, changed)
+    after = tomlkit.dumps(live_document).encode("utf-8")
+
+    regular = target.is_file() and not target.is_symlink()
+    mode = stat.S_IMODE(target.stat().st_mode) if regular else None
+    return ConfigPlan(
+        before=before,
+        after=after,
+        changed_paths=tuple(dict.fromkeys(changed)),
+        repair_file=not regular or mode != 0o600,
+    )
 
 
 def next_backup_path(target: Path) -> Path:
@@ -353,14 +213,14 @@ def backup_target(target: Path) -> Path:
     return backup
 
 
-def atomic_write(path: Path, text: str, mode: int) -> None:
+def atomic_write(path: Path, data: bytes, mode: int) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     descriptor, temporary_name = tempfile.mkstemp(
         prefix=".{}.".format(path.name), dir=str(path.parent)
     )
     try:
-        with os.fdopen(descriptor, "w", encoding="utf-8") as temporary:
-            temporary.write(text)
+        with os.fdopen(descriptor, "wb") as temporary:
+            temporary.write(data)
             temporary.flush()
             os.fsync(temporary.fileno())
         os.chmod(temporary_name, mode)
@@ -383,13 +243,7 @@ def validate_codex_schema(text: str) -> None:
         environment = os.environ.copy()
         environment["CODEX_HOME"] = str(home)
         result = subprocess.run(
-            [
-                executable,
-                "app-server",
-                "--strict-config",
-                "--listen",
-                "stdio://",
-            ],
+            [executable, "app-server", "--strict-config", "--listen", "stdio://"],
             input="",
             text=True,
             capture_output=True,
@@ -400,93 +254,56 @@ def validate_codex_schema(text: str) -> None:
         raise ConfigError("Codex strict schema validation failed:\n{}".format(details))
 
 
-def apply(source: Path, target: Path, dry_run: bool) -> int:
-    portable = canonical_portable(source.read_text(encoding="utf-8"))
-    validate_portable_source(portable)
-    existing = read_target(target) if path_exists(target) else ""
-    desired = compose_live(portable, existing)
-    validate_codex_schema(desired)
-    is_regular = target.is_file() and not target.is_symlink()
-    current_mode = stat.S_IMODE(target.stat().st_mode) if is_regular else None
+def changed_summary(paths: Tuple[KeyPath, ...]) -> str:
+    return ", ".join(".".join(path) for path in paths)
 
-    if is_regular and existing == desired and current_mode == 0o600:
+
+def sync_config(
+    source: Path,
+    target: Path,
+    operation: str,
+    *,
+    dry_run: bool = False,
+) -> int:
+    plan = plan_config(source, target)
+    validate_codex_schema(plan.after.decode("utf-8"))
+
+    problems = []
+    if plan.changed_paths:
+        problems.append("managed settings differ: " + changed_summary(plan.changed_paths))
+    if plan.repair_file:
+        problems.append("target must be a regular 0600 file")
+
+    if operation == "status":
+        if problems:
+            print("Drift {}: {}".format(target, "; ".join(problems)))
+            return 1
         print("Current {}".format(target))
         return 0
 
+    if not problems:
+        print("Current {}".format(target))
+        return 0
     if dry_run:
-        if path_exists(target):
+        if plan.before is not None:
             print("Would back up {}".format(target))
         print("Would write {} as a regular 0600 file".format(target))
         return 0
 
-    if path_exists(target):
+    current = read_target(target) if path_exists(target) else None
+    if current != plan.before:
+        raise ConfigError("live config changed during sync; rerun after Codex is stable")
+    if plan.before is not None:
         backup = backup_target(target)
         print("Backed up {} -> {}".format(target, backup))
-    atomic_write(target, desired, 0o600)
-    print("Applied portable Codex config to {}".format(target))
-    return 0
-
-
-def status(source: Path, target: Path) -> int:
-    portable = canonical_portable(source.read_text(encoding="utf-8"))
-    validate_portable_source(portable)
-    if not path_exists(target):
-        print("Missing {}".format(target))
-        return 1
-    if target.is_symlink():
-        print("Drift {} is a symlink; apply must migrate it".format(target))
-        return 1
-    if not target.is_file():
-        print("Drift {} is not a regular file".format(target))
-        return 1
-
-    live = read_target(target)
-    desired = compose_live(portable, live)
-    validate_codex_schema(desired)
-    marked = effective_portable(live)
-    if marked is None:
-        print("Drift {} has no portable marker block".format(target))
-        return 1
-
-    problems = []
-    if marked != portable:
-        problems.append("portable block differs")
-    if stat.S_IMODE(target.stat().st_mode) != 0o600:
-        problems.append("mode is not 0600")
-    if problems:
-        print("Drift {}: {}".format(target, "; ".join(problems)))
-        return 1
-    print("Current {}".format(target))
-    return 0
-
-
-def capture(source: Path, target: Path) -> int:
-    if not path_exists(target):
-        raise ConfigError("target does not exist: {}".format(target))
-    if target.is_symlink() or not target.is_file():
-        raise ConfigError("capture requires a regular live config: {}".format(target))
-
-    marked = effective_portable(read_target(target))
-    if marked is None:
-        raise ConfigError("live config has no portable marker block: {}".format(target))
-    validate_portable_source(marked)
-    validate_codex_schema(marked)
-
-    existing_mode = (
-        stat.S_IMODE(source.stat().st_mode) if source.exists() else 0o644
-    )
-    existing = source.read_text(encoding="utf-8") if source.exists() else None
-    if existing is not None and canonical_portable(existing) == marked:
-        print("Current {}".format(source))
-        return 0
-    atomic_write(source, marked, existing_mode)
-    print("Captured portable Codex config to {}".format(source))
+    atomic_write(target, plan.after, 0o600)
+    print("Applied managed Codex settings to {}".format(target))
     return 0
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("operation", choices=("status", "apply", "capture"))
+    parser.add_argument("operation", choices=("status", "apply"))
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--target", type=Path, required=True)
     parser.add_argument("--dry-run", action="store_true")
@@ -499,12 +316,13 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     try:
-        if args.operation == "apply":
-            return apply(args.source, args.target, args.dry_run)
-        if args.operation == "status":
-            return status(args.source, args.target)
-        return capture(args.source, args.target)
-    except (ConfigError, OSError) as error:
+        return sync_config(
+            args.source,
+            args.target,
+            args.operation,
+            dry_run=args.dry_run,
+        )
+    except (ConfigError, OSError, UnicodeDecodeError) as error:
         print("Error: {}".format(error), file=sys.stderr)
         return 2
 

@@ -43,8 +43,8 @@ button slots so an application-specific profile cannot override the top button
 or wheel click. It fails without editing if the expected database row, button
 slots, or Wispr shortcut object is missing.
 
-The same repair is included in `scripts/sync-configs.sh --all`. Run only this
-target with `scripts/sync-configs.sh --wispr-logitech`.
+This repair is intentionally separate from `scripts/sync-configs.sh --all`
+because it stops applications and modifies their private stored state.
 
 ## Wispr Flow shortcuts
 

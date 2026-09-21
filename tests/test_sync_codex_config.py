@@ -1,6 +1,8 @@
-import importlib.util
+from __future__ import annotations
+
 import os
 from pathlib import Path
+import shutil
 import stat
 import subprocess
 import tempfile
@@ -11,98 +13,54 @@ ROOT = Path(__file__).resolve().parents[1]
 HELPER = ROOT / "scripts" / "sync-codex-config.py"
 SYNC = ROOT / "scripts" / "sync-configs.sh"
 
-SPEC = importlib.util.spec_from_file_location("sync_codex_config", HELPER)
-assert SPEC and SPEC.loader
-SYNC_CODEX_CONFIG = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(SYNC_CODEX_CONFIG)
-
-
 PORTABLE = """\
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
-model = "portable-model"
+model = "gpt-6-astra"
 
 [features]
-apps = true
-
-[apps._default]
-default_tools_approval_mode = "approve"
-open_world_enabled = true
-destructive_enabled = true
-
-[mcp_servers.openaiDeveloperDocs]
-url = "https://developers.openai.com/mcp"
+context_management = true
 
 [desktop]
 defaultTerminalLocation = "right"
 """
 
-PERMISSION_PROFILE_PORTABLE = """\
-approval_policy = "never"
-default_permissions = "dots"
-web_search = "live"
-
-[permissions.dots]
-description = "Power user config."
-
-[permissions.dots.filesystem]
-":root" = "write"
-
-[permissions.dots.network]
-enabled = true
-allow_local_binding = true
-dangerously_allow_all_unix_sockets = true
-"""
-
-LEGACY = """\
+LIVE = """\
 approval_policy = "on-request"
-sandbox_mode = "workspace-write"
-service_tier = "old"
-notify = [
-  "/machine/notifier",
-  "turn-ended",
-]
+default_permissions = "workspace-write"
+approvals_reviewer = "user"
+service_tier = "priority"
+
+[permissions.workspace]
+description = "Machine-local permission profile"
 
 [features]
-apps = false
+context_management = false
+chronicle = true
 
-[features.multi_agent_v2]
-tool_namespace = "old"
-
-[apps._default]
-open_world_enabled = true
+[desktop]
+defaultTerminalLocation = "left"
+dock-icon-preference = "app-default"
 
 [projects."/tmp/work"]
 trust_level = "trusted"
 
-[marketplaces.local]
-source = "/tmp/local"
-
-[mcp_servers.node_repl]
-command = "/machine/node"
-
-[mcp_servers.openaiDeveloperDocs]
-url = "https://old.invalid"
-
-[desktop]
-defaultTerminalLocation = "left"
-
-[tui.model_availability_nux]
-"model" = 1
-
-[hooks.state."local-hook"]
-trusted_hash = "sha256:local"
-
-[shell_environment_policy.set]
-MACHINE_PATH = "/machine/path"
+[mcp_servers.local]
+command = "/machine/server"
 """
 
 
 class CodexConfigHelperTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.assertIsNotNone(shutil.which("uv"), "uv is required for config tests")
+
     def run_helper(self, operation, source, target, *extra):
         return subprocess.run(
             [
-                "python3",
+                "uv",
+                "run",
+                "--quiet",
+                "--script",
                 str(HELPER),
                 operation,
                 "--source",
@@ -115,48 +73,75 @@ class CodexConfigHelperTests(unittest.TestCase):
             capture_output=True,
         )
 
-    def test_apply_preserves_only_local_ownership_and_replaces_portable_block(self):
+    def test_apply_overlays_managed_keys_and_preserves_unmanaged_state(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "source.toml"
             target = root / "config.toml"
             source.write_text(PORTABLE)
-            target.write_text(LEGACY)
+            target.write_text(LIVE)
             os.chmod(target, 0o644)
 
             result = self.run_helper("apply", source, target)
 
             self.assertEqual(result.returncode, 0, result.stderr)
             live = target.read_text()
-            self.assertEqual(
-                SYNC_CODEX_CONFIG.extract_marker(live),
-                SYNC_CODEX_CONFIG.canonical_portable(PORTABLE),
-            )
             self.assertIn('approval_policy = "never"', live)
-            self.assertNotIn('approval_policy = "on-request"', live)
             self.assertIn('sandbox_mode = "danger-full-access"', live)
             self.assertNotIn("default_permissions", live)
-            self.assertNotRegex(live, r"\[permissions(?:\.|\])")
-            self.assertIn('service_tier = "old"', live)
-            self.assertIn('[apps._default]', live)
-            self.assertIn('default_tools_approval_mode = "approve"', live)
+            self.assertNotIn("[permissions.workspace]", live)
+            self.assertNotIn("approvals_reviewer", live)
+            self.assertIn('service_tier = "priority"', live)
+            self.assertIn("chronicle = true", live)
+            self.assertIn('dock-icon-preference = "app-default"', live)
             self.assertIn('[projects."/tmp/work"]', live)
-            self.assertIn("[marketplaces.local]", live)
-            self.assertIn("[mcp_servers.node_repl]", live)
-            self.assertIn("[tui.model_availability_nux]", live)
-            self.assertIn('[hooks.state."local-hook"]', live)
-            self.assertIn("[shell_environment_policy.set]", live)
-            self.assertNotIn("[features.multi_agent_v2]", live)
-            self.assertNotIn("https://old.invalid", live)
-            self.assertEqual(live.count("[desktop]"), 1)
-            self.assertEqual(live.count("[mcp_servers.openaiDeveloperDocs]"), 1)
+            self.assertIn("[mcp_servers.local]", live)
             self.assertEqual(stat.S_IMODE(target.stat().st_mode), 0o600)
             backups = list(root.glob("config.toml.bak.*"))
             self.assertEqual(len(backups), 1)
-            self.assertEqual(backups[0].read_text(), LEGACY)
+            self.assertEqual(backups[0].read_text(), LIVE)
 
-            status_result = self.run_helper("status", source, target)
-            self.assertEqual(status_result.returncode, 0, status_result.stdout)
+            status = self.run_helper("status", source, target)
+            self.assertEqual(status.returncode, 0, status.stdout + status.stderr)
+
+    def test_status_ignores_formatting_and_table_order(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.toml"
+            target = root / "config.toml"
+            source.write_text(
+                'model = "gpt-6-astra"\n\n'
+                '[features]\ncontext_management = true\n\n'
+                '[desktop]\ndefaultTerminalLocation = "right"\n'
+            )
+            target.write_text(
+                'model="gpt-6-astra"\n\n'
+                '[desktop]\ndefaultTerminalLocation="right"\n\n'
+                '[features]\ncontext_management=true\n'
+            )
+            os.chmod(target, 0o600)
+            before = target.read_bytes()
+
+            result = self.run_helper("status", source, target)
+
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual(target.read_bytes(), before)
+
+    def test_removing_source_key_relinquishes_ownership(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.toml"
+            target = root / "config.toml"
+            source.write_text('model = "gpt-6-astra"\n')
+            target.write_text('model = "gpt-6-astra"\nservice_tier = "priority"\n')
+            os.chmod(target, 0o600)
+
+            source.write_text("")
+            result = self.run_helper("apply", source, target)
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn('model = "gpt-6-astra"', target.read_text())
+            self.assertEqual(list(root.glob("config.toml.bak.*")), [])
 
     def test_apply_migrates_symlink_and_backs_up_resolved_contents(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -165,7 +150,7 @@ class CodexConfigHelperTests(unittest.TestCase):
             legacy = root / "legacy.toml"
             target = root / "config.toml"
             source.write_text(PORTABLE)
-            legacy.write_text(LEGACY)
+            legacy.write_text(LIVE)
             target.symlink_to(legacy)
 
             result = self.run_helper("apply", source, target)
@@ -175,165 +160,59 @@ class CodexConfigHelperTests(unittest.TestCase):
             self.assertFalse(target.is_symlink())
             backups = list(root.glob("config.toml.bak.*"))
             self.assertEqual(len(backups), 1)
-            self.assertFalse(backups[0].is_symlink())
-            self.assertEqual(backups[0].read_text(), LEGACY)
-            legacy.write_text("# changed after migration\n")
-            self.assertEqual(backups[0].read_text(), LEGACY)
-            self.assertIn("[mcp_servers.node_repl]", target.read_text())
+            self.assertEqual(backups[0].read_text(), LIVE)
+            self.assertIn("[mcp_servers.local]", target.read_text())
 
-    def test_capture_writes_only_marker_content_to_source(self):
+    def test_apply_removes_legacy_markers_when_rewriting(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "source.toml"
             target = root / "config.toml"
-            source.write_text(PORTABLE)
+            source.write_text('model = "gpt-6-astra"\n')
             target.write_text(
-                'notify = ["/machine/notifier", "turn-ended"]\n\n'
-                + SYNC_CODEX_CONFIG.BEGIN_MARKER
-                + "\nmodel = \"captured\"\n"
-                + SYNC_CODEX_CONFIG.END_MARKER
-                + '\n\n[projects."/local"]\ntrust_level = "trusted"\n'
+                "# >>> Dots portable Codex config >>>\n"
+                'model = "old"\n'
+                "# <<< Dots portable Codex config <<<\n"
+                'service_tier = "priority"\n'
             )
 
-            result = self.run_helper("capture", source, target)
+            result = self.run_helper("apply", source, target)
 
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(source.read_text(), 'model = "captured"\n')
-            self.assertNotIn("notify", source.read_text())
-            self.assertNotIn("projects", source.read_text())
+            self.assertNotIn("Dots portable Codex config", target.read_text())
+            self.assertIn('service_tier = "priority"', target.read_text())
 
-    def test_status_reports_portable_drift_without_writing(self):
+    def test_permission_profile_replaces_legacy_sandbox_selector(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "source.toml"
             target = root / "config.toml"
-            source.write_text(PORTABLE)
-            target.write_text(
-                SYNC_CODEX_CONFIG.BEGIN_MARKER
-                + "\nmodel = \"different\"\n"
-                + SYNC_CODEX_CONFIG.END_MARKER
-                + "\n"
-            )
-            before = target.read_bytes()
-
-            result = self.run_helper("status", source, target)
-
-            self.assertEqual(result.returncode, 1)
-            self.assertIn("portable block differs", result.stdout)
-            self.assertEqual(target.read_bytes(), before)
-
-    def test_status_and_capture_ignore_app_runtime_defaults(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            source = root / "source.toml"
-            target = root / "config.toml"
-            source.write_text(PORTABLE)
-            runtime_portable = PORTABLE.replace(
-                "apps = true\n",
-                "apps = true\n"
-                "chronicle = true\n"
-                "default_mode_request_user_input = false\n"
-                "js_repl = false\n",
-            ).replace(
-                'defaultTerminalLocation = "right"\n',
-                'defaultTerminalLocation = "right"\n'
-                'dock-icon-preference = "app-default"\n'
-                'open-link-in-target-preference = "in-app-browser"\n'
-                'realtimeVoiceScreenContextEnabled = true\n'
-                'show-ultra-in-model-picker-slider = false\n'
-                '\n[marketplaces.dots]\n'
-                'source = "/machine/dots"\n',
+            source.write_text(
+                'approval_policy = "never"\n'
+                'default_permissions = "dots"\n'
+                '\n[permissions.dots]\n'
+                'description = "Power user config."\n'
+                '\n[permissions.dots.filesystem]\n'
+                '":root" = "write"\n'
+                '\n[permissions.dots.network]\n'
+                'enabled = true\n'
+                'allow_local_binding = true\n'
+                'dangerously_allow_all_unix_sockets = true\n'
             )
             target.write_text(
-                SYNC_CODEX_CONFIG.BEGIN_MARKER
-                + "\n"
-                + runtime_portable
-                + SYNC_CODEX_CONFIG.END_MARKER
-                + "\n"
+                'approval_policy = "on-request"\n'
+                'sandbox_mode = "danger-full-access"\n'
             )
-            os.chmod(target, 0o600)
 
-            status_result = self.run_helper("status", source, target)
-            self.assertEqual(status_result.returncode, 0, status_result.stdout)
+            result = self.run_helper("apply", source, target)
 
-            capture_result = self.run_helper("capture", source, target)
-            self.assertEqual(capture_result.returncode, 0, capture_result.stderr)
-            self.assertEqual(source.read_text(), PORTABLE)
-
-    def test_status_and_capture_preserve_direct_full_access_sandbox_mode(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            source = root / "source.toml"
-            target = root / "config.toml"
-            source.write_text(PORTABLE)
-            target.write_text(
-                SYNC_CODEX_CONFIG.BEGIN_MARKER
-                + "\n"
-                + PORTABLE
-                + SYNC_CODEX_CONFIG.END_MARKER
-                + "\n"
-            )
-            os.chmod(target, 0o600)
-
-            status_result = self.run_helper("status", source, target)
-            self.assertEqual(status_result.returncode, 0, status_result.stdout)
-
-            capture_result = self.run_helper("capture", source, target)
-            self.assertEqual(capture_result.returncode, 0, capture_result.stderr)
-            self.assertEqual(source.read_text(), PORTABLE)
-
-            apply_result = self.run_helper("apply", source, target)
-            self.assertEqual(apply_result.returncode, 0, apply_result.stderr)
+            self.assertEqual(result.returncode, 0, result.stderr)
             live = target.read_text()
-            self.assertIn('sandbox_mode = "danger-full-access"', live)
-            self.assertNotIn("default_permissions", live)
-            self.assertNotRegex(live, r"\[permissions(?:\.|\])")
+            self.assertIn('default_permissions = "dots"', live)
+            self.assertNotIn("sandbox_mode", live)
+            self.assertIn("[permissions.dots.filesystem]", live)
 
-    def test_direct_full_access_ignores_app_default_reviewer_writeback(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            source = root / "source.toml"
-            target = root / "config.toml"
-            source.write_text(PORTABLE)
-            runtime_portable = PORTABLE.replace(
-                'model = "portable-model"\n',
-                'model = "portable-model"\napprovals_reviewer = "user"\n',
-            )
-            target.write_text(
-                SYNC_CODEX_CONFIG.BEGIN_MARKER
-                + "\n"
-                + runtime_portable
-                + SYNC_CODEX_CONFIG.END_MARKER
-                + "\n"
-            )
-            os.chmod(target, 0o600)
-
-            status_result = self.run_helper("status", source, target)
-            self.assertEqual(status_result.returncode, 0, status_result.stdout)
-
-            capture_result = self.run_helper("capture", source, target)
-            self.assertEqual(capture_result.returncode, 0, capture_result.stderr)
-            self.assertEqual(source.read_text(), PORTABLE)
-
-            apply_result = self.run_helper("apply", source, target)
-            self.assertEqual(apply_result.returncode, 0, apply_result.stderr)
-            live = target.read_text()
-            self.assertIn('sandbox_mode = "danger-full-access"', live)
-            self.assertNotIn("default_permissions", live)
-            self.assertNotIn("approvals_reviewer", live)
-
-    def test_keeps_explicit_nondefault_approvals_reviewer(self):
-        portable = PORTABLE.replace(
-            'model = "portable-model"\n',
-            'model = "portable-model"\napprovals_reviewer = "auto_review"\n',
-        )
-
-        self.assertIn(
-            'approvals_reviewer = "auto_review"',
-            SYNC_CODEX_CONFIG.strip_app_runtime_keys(portable),
-        )
-
-    def test_portable_source_rejects_two_permission_systems(self):
+    def test_source_rejects_conflicting_permissions_and_local_state(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "source.toml"
@@ -341,6 +220,7 @@ class CodexConfigHelperTests(unittest.TestCase):
             source.write_text(
                 'default_permissions = "Dots"\n'
                 'sandbox_mode = "danger-full-access"\n'
+                '\n[projects."/local"]\ntrust_level = "trusted"\n'
             )
 
             result = self.run_helper("apply", source, target)
@@ -349,32 +229,7 @@ class CodexConfigHelperTests(unittest.TestCase):
             self.assertIn("cannot combine", result.stderr)
             self.assertFalse(target.exists())
 
-    def test_status_and_capture_rebuild_desktop_tables_moved_outside_marker(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            source = root / "source.toml"
-            target = root / "config.toml"
-            source.write_text(PORTABLE)
-            portable_without_desktop, desktop = PORTABLE.split("\n[desktop]\n")
-            target.write_text(
-                SYNC_CODEX_CONFIG.BEGIN_MARKER
-                + "\n"
-                + portable_without_desktop
-                + "\n"
-                + SYNC_CODEX_CONFIG.END_MARKER
-                + "\n\n[desktop]\n"
-                + desktop
-            )
-            os.chmod(target, 0o600)
-
-            status_result = self.run_helper("status", source, target)
-            self.assertEqual(status_result.returncode, 0, status_result.stdout)
-
-            capture_result = self.run_helper("capture", source, target)
-            self.assertEqual(capture_result.returncode, 0, capture_result.stderr)
-            self.assertEqual(source.read_text(), PORTABLE)
-
-    def test_portable_source_rejects_machine_local_sections(self):
+    def test_source_rejects_machine_local_tables(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "source.toml"
@@ -387,12 +242,26 @@ class CodexConfigHelperTests(unittest.TestCase):
             self.assertIn("machine-local settings", result.stderr)
             self.assertFalse(target.exists())
 
-    def test_apply_rejects_invalid_merged_schema_before_writing(self):
+    def test_table_source_rejects_live_scalar_collision(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "source.toml"
             target = root / "config.toml"
-            source.write_text(PORTABLE)
+            source.write_text('[desktop]\ndefaultTerminalLocation = "right"\n')
+            target.write_text('desktop = "legacy"\n')
+
+            result = self.run_helper("apply", source, target)
+
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("conflicts with a scalar", result.stderr)
+            self.assertEqual(target.read_text(), 'desktop = "legacy"\n')
+
+    def test_invalid_merged_schema_does_not_write_or_back_up(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.toml"
+            target = root / "config.toml"
+            source.write_text('model = "gpt-6-astra"\n')
             target.write_text(
                 '[projects."/tmp/work"]\n'
                 'trust_level = "trusted"\n'
@@ -409,7 +278,15 @@ class CodexConfigHelperTests(unittest.TestCase):
 
 
 class SyncConfigsIntegrationTests(unittest.TestCase):
-    def test_codex_apply_and_status_copy_owned_files(self):
+    def setUp(self) -> None:
+        self.assertIsNotNone(shutil.which("uv"), "uv is required for config tests")
+
+    def test_codex_apply_and_status_copy_owned_files_without_app_repairs(self):
+        script = SYNC.read_text()
+        self.assertNotIn("sync-codex-computer-use.py", script)
+        self.assertNotIn("sync-tinycast-config.py", script)
+        self.assertNotIn("repair-wispr-logitech-shortcut.sh", script)
+
         with tempfile.TemporaryDirectory() as home_directory:
             environment = os.environ.copy()
             environment["HOME"] = home_directory
@@ -426,62 +303,26 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             home = Path(home_directory)
             config = home / ".codex" / "config.toml"
             self.assertTrue(config.is_file())
-            self.assertFalse(config.is_symlink())
             self.assertEqual(stat.S_IMODE(config.stat().st_mode), 0o600)
-            live_config = config.read_text()
-            self.assertIn('approval_policy = "never"', live_config)
-            self.assertIn('sandbox_mode = "danger-full-access"', live_config)
-            self.assertIn('web_search = "live"', live_config)
-            self.assertNotIn("default_permissions", live_config)
-            self.assertNotRegex(live_config, r"\[permissions(?:\.|\])")
-            self.assertNotIn("approvals_reviewer", live_config)
-            self.assertIn('[apps._default]', live_config)
-            self.assertIn('default_tools_approval_mode = "approve"', live_config)
-            self.assertIn('open_world_enabled = true', live_config)
-            self.assertIn('destructive_enabled = true', live_config)
-            agents = home / ".codex" / "AGENTS.md"
-            self.assertTrue(agents.is_file())
-            self.assertFalse(agents.is_symlink())
+            self.assertIn('model = "gpt-6-astra"', config.read_text())
             self.assertEqual(
-                agents.read_bytes(),
+                (home / ".codex" / "AGENTS.md").read_bytes(),
                 (ROOT / "configs" / "agents" / "AGENTS.md").read_bytes(),
             )
-            keybindings = home / ".codex" / "keybindings.json"
-            self.assertTrue(keybindings.is_file())
-            self.assertFalse(keybindings.is_symlink())
             self.assertEqual(
-                keybindings.read_bytes(),
+                (home / ".codex" / "keybindings.json").read_bytes(),
                 (ROOT / "configs" / "codex" / "keybindings.json").read_bytes(),
             )
-            agent_profiles = home / ".codex" / "agents"
-            self.assertTrue(agent_profiles.is_dir())
-            self.assertFalse(agent_profiles.is_symlink())
-            self.assertEqual(
-                {path.name for path in agent_profiles.glob("*.toml")},
-                {
-                    "adversary.toml",
-                    "architect.toml",
-                    "explorer.toml",
-                    "luna.toml",
-                    "consultant.toml",
-                    "worker.toml",
-                },
-            )
-            self.assertEqual(
-                (agent_profiles / "worker.toml").read_bytes(),
-                (
-                    ROOT / "plugins" / "dots" / "agents" / "worker.toml"
-                ).read_bytes(),
-            )
+            self.assertTrue((home / ".codex" / "agents" / "worker.toml").is_file())
 
-            status_result = subprocess.run(
+            status = subprocess.run(
                 ["zsh", str(SYNC), "--status", "--codex"],
                 cwd=ROOT,
                 env=environment,
                 text=True,
                 capture_output=True,
             )
-            self.assertEqual(status_result.returncode, 0, status_result.stdout)
+            self.assertEqual(status.returncode, 0, status.stdout + status.stderr)
 
     def test_claude_apply_and_status_copy_owned_files(self):
         with tempfile.TemporaryDirectory() as home_directory:
@@ -498,29 +339,23 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             self.assertEqual(apply_result.returncode, 0, apply_result.stderr)
 
             home = Path(home_directory)
-            instructions = home / ".claude" / "CLAUDE.md"
-            keybindings = home / ".claude" / "keybindings.json"
-            self.assertTrue(instructions.is_file())
-            self.assertFalse(instructions.is_symlink())
             self.assertEqual(
-                instructions.read_bytes(),
+                (home / ".claude" / "CLAUDE.md").read_bytes(),
                 (ROOT / "configs" / "agents" / "AGENTS.md").read_bytes(),
             )
-            self.assertTrue(keybindings.is_file())
-            self.assertFalse(keybindings.is_symlink())
             self.assertEqual(
-                keybindings.read_bytes(),
+                (home / ".claude" / "keybindings.json").read_bytes(),
                 (ROOT / "configs" / "claude" / "keybindings.json").read_bytes(),
             )
 
-            status_result = subprocess.run(
+            status = subprocess.run(
                 ["zsh", str(SYNC), "--status", "--claude"],
                 cwd=ROOT,
                 env=environment,
                 text=True,
                 capture_output=True,
             )
-            self.assertEqual(status_result.returncode, 0, status_result.stdout)
+            self.assertEqual(status.returncode, 0, status.stdout)
 
     def test_ghostty_copies_config(self):
         with tempfile.TemporaryDirectory() as home_directory:

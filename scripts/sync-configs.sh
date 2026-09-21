@@ -9,17 +9,15 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--status|--capture] [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--claude|--vscode|--ghostty|--tinycast|--wispr-logitech|--starship|--zsh ...]
+Usage: scripts/sync-configs.sh [--status] [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--claude|--vscode|--ghostty|--starship|--zsh ...]
 
 Installs repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
-Apply is the default mode. --status makes no changes. --capture writes only
-the marked portable block from a live Codex config to the tracked source and
-requires --codex or --codex-personal.
+Apply is the default mode. --status makes no changes.
 
-Codex config.toml is a regular 0600 file containing a Dots-owned portable
-block and machine-local settings. Other managed files and directories are
-copied from the tracked source.
+Codex config.toml is a regular 0600 file. Settings explicitly present in the
+tracked source are managed by Dots; all other live settings are preserved.
+Other managed files and directories are copied from the tracked source.
 
 This script does not manage secrets. Keep shell secrets in ~/.zshrc.local.
 EOF
@@ -28,7 +26,7 @@ EOF
 add_target() {
   local target="$1"
   if [[ "$target" == "all" ]]; then
-    TARGETS=(codex codex-personal claude vscode ghostty tinycast wispr-logitech starship zsh)
+    TARGETS=(codex codex-personal claude vscode ghostty starship zsh)
     return
   fi
   TARGETS+=("$target")
@@ -41,17 +39,10 @@ while (( $# )); do
       ;;
     --status)
       if [[ "$MODE" != "apply" ]]; then
-        echo "--status and --capture are mutually exclusive" >&2
+        echo "--status may only be specified once" >&2
         exit 2
       fi
       MODE=status
-      ;;
-    --capture)
-      if [[ "$MODE" != "apply" ]]; then
-        echo "--status and --capture are mutually exclusive" >&2
-        exit 2
-      fi
-      MODE=capture
       ;;
     --all)
       add_target all
@@ -73,12 +64,6 @@ while (( $# )); do
       ;;
     --ghostty)
       add_target ghostty
-      ;;
-    --tinycast)
-      add_target tinycast
-      ;;
-    --wispr-logitech)
-      add_target wispr-logitech
       ;;
     --starship)
       add_target starship
@@ -107,15 +92,6 @@ fi
 if [[ "$MODE" != "apply" ]] && (( DRY_RUN )); then
   echo "--dry-run is only valid in apply mode" >&2
   exit 2
-fi
-
-if [[ "$MODE" == "capture" ]]; then
-  for target in "${TARGETS[@]}"; do
-    if [[ "$target" != "codex" && "$target" != "codex-personal" ]]; then
-      echo "--capture only supports --codex and --codex-personal" >&2
-      exit 2
-    fi
-  done
 fi
 
 timestamp() {
@@ -239,49 +215,34 @@ sync_agent_instructions() {
   sync_claude_agents
 }
 
-sync_codex() {
-  if [[ "$MODE" == "capture" ]]; then
-    python3 "$ROOT/scripts/sync-codex-config.py" capture \
-      --source "$ROOT/configs/codex/config.toml" \
-      --target "$HOME/.codex/config.toml"
-    return
+run_codex_config() {
+  if ! command -v uv >/dev/null 2>&1; then
+    echo "Missing required command: uv (install from https://docs.astral.sh/uv/)" >&2
+    return 2
   fi
-  sync_codex_agents
-  local helper_args=("$MODE" --source "$ROOT/configs/codex/config.toml" --target "$HOME/.codex/config.toml")
+  uv run --quiet --script "$ROOT/scripts/sync-codex-config.py" "$@"
+}
+
+sync_codex_profile() {
+  local codex_home="$1"
+  install_file "$ROOT/configs/agents/AGENTS.md" "$codex_home/AGENTS.md"
+  local helper_args=("$MODE" --source "$ROOT/configs/codex/config.toml" --target "$codex_home/config.toml")
   if (( DRY_RUN )); then
     helper_args+=(--dry-run)
   fi
-  if ! python3 "$ROOT/scripts/sync-codex-config.py" "${helper_args[@]}"; then
+  if ! run_codex_config "${helper_args[@]}"; then
     STATUS=1
   fi
-  local computer_use_args=("$MODE")
-  if (( DRY_RUN )); then
-    computer_use_args+=(--dry-run)
-  fi
-  if ! python3 "$ROOT/scripts/sync-codex-computer-use.py" "${computer_use_args[@]}"; then
-    STATUS=1
-  fi
-  install_file "$ROOT/configs/codex/keybindings.json" "$HOME/.codex/keybindings.json"
-  install_tree "$ROOT/plugins/dots/agents" "$HOME/.codex/agents"
+  install_file "$ROOT/configs/codex/keybindings.json" "$codex_home/keybindings.json"
+  install_tree "$ROOT/plugins/dots/agents" "$codex_home/agents"
+}
+
+sync_codex() {
+  sync_codex_profile "$HOME/.codex"
 }
 
 sync_codex_personal() {
-  if [[ "$MODE" == "capture" ]]; then
-    python3 "$ROOT/scripts/sync-codex-config.py" capture \
-      --source "$ROOT/configs/codex/config.toml" \
-      --target "$HOME/.codex-personal/config.toml"
-    return
-  fi
-  sync_codex_personal_agents
-  local helper_args=("$MODE" --source "$ROOT/configs/codex/config.toml" --target "$HOME/.codex-personal/config.toml")
-  if (( DRY_RUN )); then
-    helper_args+=(--dry-run)
-  fi
-  if ! python3 "$ROOT/scripts/sync-codex-config.py" "${helper_args[@]}"; then
-    STATUS=1
-  fi
-  install_file "$ROOT/configs/codex/keybindings.json" "$HOME/.codex-personal/keybindings.json"
-  install_tree "$ROOT/plugins/dots/agents" "$HOME/.codex-personal/agents"
+  sync_codex_profile "$HOME/.codex-personal"
 }
 
 sync_claude() {
@@ -300,28 +261,6 @@ sync_ghostty() {
   install_file "$ROOT/configs/ghostty/config.ghostty" "$HOME/.config/ghostty/config.ghostty"
 }
 
-sync_tinycast() {
-  local helper_args=("$MODE" --config "$ROOT/configs/tinycast/settings.json")
-  if (( DRY_RUN )); then
-    helper_args+=(--dry-run)
-  fi
-  if ! python3 "$ROOT/scripts/sync-tinycast-config.py" "${helper_args[@]}"; then
-    STATUS=1
-  fi
-}
-
-sync_wispr_logitech() {
-  local repair_args=()
-  if [[ "$MODE" == "status" ]]; then
-    repair_args+=(--check)
-  elif (( DRY_RUN )); then
-    repair_args+=(--dry-run)
-  fi
-  if ! "$ROOT/scripts/repair-wispr-logitech-shortcut.sh" "${repair_args[@]}"; then
-    STATUS=1
-  fi
-}
-
 sync_starship() {
   install_file "$ROOT/configs/starship.toml" "$HOME/.config/starship.toml"
 }
@@ -338,8 +277,6 @@ for target in "${TARGETS[@]}"; do
     claude) sync_claude ;;
     vscode) sync_vscode ;;
     ghostty) sync_ghostty ;;
-    tinycast) sync_tinycast ;;
-    wispr-logitech) sync_wispr_logitech ;;
     starship) sync_starship ;;
     zsh) sync_zsh ;;
     *)

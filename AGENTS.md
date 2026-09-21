@@ -34,8 +34,8 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
 - After editing a skill, review the changed files directly and run relevant
   deterministic tests plus the active environment's default skill validation.
 - `scripts/verify.py --plugins` checks both source plugin packages.
-- `scripts/verify.py --full` is the full repository integration gate; use
-  Python 3.10+ for either mode.
+- `scripts/verify.py --full` is the full repository integration gate. Use
+  Python 3.10+ for either mode; the full gate also requires `uv`.
 - Run `scripts/verify.py --full` only when the user explicitly requests it, for
   marketplace or plugin packaging, for cross-plugin/shared integration or
   release-infrastructure changes, or when changing the gate itself.
