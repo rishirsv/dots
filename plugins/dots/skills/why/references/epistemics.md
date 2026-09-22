@@ -141,4 +141,6 @@ Before delivering the output, the synthesizer should review every claim in "What
 1. Does this claim have a citation? If not, either add one or move it to "Inferred" / "Hypotheses".
 2. Is the phrasing calibrated to the tier? (A Direct claim can use "because"; an Inferred claim cannot.)
 3. Am I treating the code itself as evidence for its own intent? If so, that's not evidence. Remove or reclassify.
-4. Does the output include a "What We Don't Know" section? If no gaps are mentioned, that's suspicious. Either the evidence was unusually complete or something is being swept under the rug.
+4. Does the "What We Don't Know" section name each material gap? Omit it when
+   the scoped question has no material unanswered gap; do not invent one to
+   satisfy the format.

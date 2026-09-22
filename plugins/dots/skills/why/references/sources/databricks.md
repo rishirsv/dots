@@ -26,9 +26,9 @@ DESCRIBE TABLE <your_analytics_db>.<schema>.stg_<event>;
 
 **Prefer typed dbt models over the raw table.** `<your_analytics_db>.<schema>.<table>` is deduplicated, typed, and liquid-clustered; `your_warehouse.events.analytics_track_event` has duplicates and untyped `properties_json`. Model-name pattern: `stg_<source>_<event_name_with_underscores>`, where `<source>` is `app`, `backend`, `website`, or `cli`; confirm the exact model name with `SHOW TABLES` when the pattern alone doesn't resolve it. Drop to the raw table only when there's no dbt model yet, or you need events from inside the dbt refresh lag.
 
-**Column conventions on the typed dbt models** (knowing these avoids a `DESCRIBE` round-trip):
+**Column conventions on the typed dbt models** (examples; confirm with `DESCRIBE TABLE` before querying):
 
-- `_timestamp`, `_id`, `_auth_id`, `_request_id`, `event_name`. Standard on every model
+- `_timestamp`, `_id`, `_auth_id`, `_request_id`, `event_name`. Common example fields; actual schemas vary
 - `properties_<name>`. Typed, underscore-cased event properties (`properties_entrypoint`, `properties_size_bytes`, …)
 - `context_team_id`, `context_client_version`, `context_country`, `context_client_os`. Pre-extracted client context
 
