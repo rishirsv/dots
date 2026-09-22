@@ -58,6 +58,16 @@ class LifecycleTests(unittest.TestCase):
             {"ready": True, "process_running": True}, {}, {"runtime_state": "stopped"}]))["running"])
         self.assertEqual([call[2] for call in self.calls], ["status", "stop", "status"])
 
+    def test_second_account_keeps_its_saved_profile_and_key(self):
+        (self.root / "profiles/dots-tunnel-second.yaml").touch()
+        (self.root / "secrets/second-runtime.key").touch()
+        self.saved["profile_name"] = "dots-tunnel-second"
+        result = manage("start", self.root, self.runner([
+            {"process": self.saved}, {}, {"ready": True}]), alias="dots-tunnel-second")
+        self.assertEqual(result["alias"], "dots-tunnel-second")
+        self.assertIn("dots-tunnel-second", self.calls[1])
+        self.assertIn("file:" + str(self.root / "secrets/second-runtime.key"), self.calls[1])
+
     def test_client_failure_does_not_leak_diagnostics_or_retry(self):
         def fail(args, **kwargs):
             self.calls.append(args)

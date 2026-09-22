@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import select
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -14,9 +15,12 @@ from server import SKILL_PATH, SKILL_URI
 
 
 class Wire:
-    def __init__(self, root, state):
+    def __init__(self, root, state, mounts=None, execution=False):
+        scope = ([arg for name, path in mounts.items() for arg in ("--mount", f"{name}={path}")]
+                 if mounts else ["--root", str(root)])
         self.process = subprocess.Popen(
-            [sys.executable, str(Path(__file__).with_name("server.py")), "--root", str(root), "--state", str(state)],
+            [sys.executable, str(Path(__file__).with_name("server.py")), *scope, "--state", str(state),
+             *(["--exec"] if execution else [])],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
         self.sequence = 0
 
@@ -84,7 +88,10 @@ class ProtocolTests(unittest.TestCase):
             self.assertEqual("sha256:" + hashlib.sha256(data).hexdigest(), resource["digest"])
         self.assertEqual(self.wire.send("skills/get", {"uri": "skill://other/SKILL.md"})["error"]["code"], -32602)
         tools = self.wire.send("tools/list")["result"]
-        self.assertEqual([t["name"] for t in tools["tools"]], ["apply_patch", "list_files", "read_file", "search_files"])
+        self.assertEqual([t["name"] for t in tools["tools"]], ["apply_patch", "list_files", "read_file", "search_files", "get_workflow"])
+        workflow = self.tool("get_workflow", {})["structuredContent"]
+        self.assertFalse(workflow["execution_enabled"])
+        self.assertEqual(workflow["skill"], SKILL_PATH.read_text())
         self.assertGreater(tools["ttlMs"], 0)
         self.assertFalse(tools["tools"][0]["annotations"]["readOnlyHint"])
         self.assertLess(len(json.dumps(tools)), 6000)
@@ -113,7 +120,27 @@ class ProtocolTests(unittest.TestCase):
         self.wire.process.stdin.write('{"jsonrpc":"2.0","method":"notifications/initialized"}\n')
         self.wire.process.stdin.flush()
         tools = self.wire.send("tools/list", modern=False)
-        self.assertEqual(len(tools["result"]["tools"]), 4)
+        self.assertEqual(len(tools["result"]["tools"]), 5)
+
+    @unittest.skipUnless(shutil.which("codex"), "Native Codex required")
+    def test_native_tools_over_stateless_mcp(self):
+        self.wire.close()
+        self.wire = Wire(self.root, self.state, execution=True)
+        tools = self.wire.send("tools/list")["result"]["tools"]
+        schemas = {tool["name"]: tool["inputSchema"] for tool in tools}
+        self.assertEqual(set(schemas["exec_command"]["properties"]), {
+            "cmd", "workdir", "shell", "login", "tty", "yield_time_ms", "max_output_tokens",
+            "sandbox_permissions", "justification", "prefix_rule"})
+        self.assertTrue(self.tool("get_workflow", {})["structuredContent"]["execution_enabled"])
+        result = self.tool("exec_command", {"cmd": "printf MCP_NATIVE", "workdir": str(self.root), "login": False})
+        self.assertFalse(result.get("isError", False), result)
+        self.assertEqual(result["structuredContent"]["exit_code"], 0)
+        self.assertEqual(result["structuredContent"]["output"], "MCP_NATIVE")
+        running = self.tool("exec_command", {"cmd": "sleep 30", "workdir": str(self.root), "yield_time_ms": 250})
+        session = running["structuredContent"]["session_id"]
+        self.assertIn("exit_code", self.tool("terminate_command", {"session_id": session})["structuredContent"])
+        denied = self.tool("exec_command", {"cmd": "true", "sandbox_permissions": "require_escalated"})
+        self.assertTrue(denied["isError"])
 
 
 if __name__ == "__main__":

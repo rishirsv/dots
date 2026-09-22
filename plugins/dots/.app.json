@@ -2,6 +2,9 @@
   "apps": {
     "dots-tunnel": {
       "id": "asdk_app_6aaf4ad66f108191b548c1a6a1012373"
+    },
+    "dots-tunnel-second": {
+      "id": "asdk_app_6ab1d0f807a881918a496cec077a4566"
     }
   }
 }

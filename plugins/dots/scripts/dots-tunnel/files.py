@@ -116,13 +116,21 @@ class Workspace:
         state_stat = os.lstat(state_path)
         if stat.S_ISLNK(state_stat.st_mode) or state_stat.st_uid != os.getuid() or state_stat.st_mode & 0o077:
             raise ValueError("Recovery directory must be owner-only and not a symlink")
-        self.root_fd = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
-        self.state_fd = os.open(self.state, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
         self.mutex = threading.Lock()
         # Every process for this root uses the same lock, even when MCP starts
         # another stdio worker. State selection is local operator authority.
         lockname = "lock-" + revision(str(self.root).encode())
-        self.lock_fd = os.open(lockname, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600, dir_fd=self.state_fd)
+        opened = []
+        try:
+            self.root_fd = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+            opened.append(self.root_fd)
+            self.state_fd = os.open(self.state, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+            opened.append(self.state_fd)
+            self.lock_fd = os.open(lockname, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600, dir_fd=self.state_fd)
+        except BaseException:
+            for fd in opened:
+                os.close(fd)
+            raise
 
     def close(self):
         for fd in (self.lock_fd, self.state_fd, self.root_fd):
@@ -300,3 +308,85 @@ class Workspace:
                             "recovery_copy": backup, "bytes": len(updated)}
             finally:
                 fcntl.flock(self.lock_fd, fcntl.LOCK_UN)
+
+
+class MountedWorkspace:
+    """Virtual named roots; never opens their shared parent directory."""
+
+    def __init__(self, roots: dict, state: str):
+        if not roots or any(len(components(name)) != 1 for name in roots):
+            raise ValueError("Mounts require nonempty single-component names")
+        resolved = {name: Path(root).resolve(strict=True) for name, root in roots.items()}
+        state_path = Path(state).resolve()
+        for root in resolved.values():
+            if root in {Path('/'), Path.home()} or not root.is_dir():
+                raise ValueError("Mount a project directory, not home or filesystem root")
+            if state_path == root or root in state_path.parents:
+                raise ValueError("Recovery state must be outside every mount")
+        Path(state).mkdir(mode=0o700, parents=True, exist_ok=True)
+        info = os.lstat(state)
+        if stat.S_ISLNK(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
+            raise ValueError("Recovery directory must be owner-only and not a symlink")
+        self.workspaces = {}
+        try:
+            for name, root in resolved.items():
+                # Independent roots cannot race while creating identical backups.
+                self.workspaces[name] = Workspace(str(root), str(Path(state) / revision(str(root).encode())))
+        except BaseException:
+            self.close()
+            raise
+
+    def close(self):
+        for workspace in self.workspaces.values():
+            workspace.close()
+        self.workspaces.clear()
+
+    def route(self, path, directory=False):
+        parts = components(path)
+        name = parts[0]
+        if name not in self.workspaces or (len(parts) == 1 and not directory):
+            raise ValueError("Use an authorized mount followed by a relative file path")
+        return name, self.workspaces[name], '/'.join(parts[1:]) or '.'
+
+    def list_files(self, path='.', offset=0, limit=100):
+        if path == '.':
+            if not 0 <= offset <= 5000 or not 1 <= limit <= 200:
+                raise ValueError("offset is 0..5000; limit is 1..200")
+            entries = [{"path": name, "kind": "directory"} for name in sorted(self.workspaces)]
+            return {"entries": entries[offset:offset + limit],
+                    "next_offset": offset + limit if offset + limit < len(entries) else None}
+        name, workspace, relative = self.route(path, directory=True)
+        result = workspace.list_files(relative, offset, limit)
+        for entry in result['entries']:
+            entry['path'] = name + '/' + entry['path']
+        return result
+
+    def read_file(self, path, start_line=1, limit=100):
+        name, workspace, relative = self.route(path)
+        result = workspace.read_file(relative, start_line, limit)
+        result['path'] = name + '/' + result['path']
+        return result
+
+    def search_files(self, query, path='.', limit=30):
+        if path == '.':
+            raise ValueError("List available mounts, then search one named directory")
+        name, workspace, relative = self.route(path, directory=True)
+        result = workspace.search_files(query, relative, limit)
+        for match in result['matches']:
+            match['path'] = name + '/' + match['path']
+        return result
+
+    def apply_patch(self, input, expected_revision):
+        if len(input.encode('utf-8')) > MAX_BYTES:
+            raise ValueError("Patch exceeds 1 MiB")
+        lines = input.splitlines()
+        if len(lines) < 2 or not lines[1].startswith(('*** Add File: ', '*** Update File: ')):
+            raise ValueError("Expected Add File or Update File patch")
+        directive, path = lines[1].split(': ', 1)
+        name, workspace, relative = self.route(path)
+        lines[1] = directive + ': ' + relative
+        result = workspace.apply_patch('\n'.join(lines), expected_revision)
+        result['path'] = name + '/' + result['path']
+        if result['recovery_copy']:
+            result['recovery_copy'] = workspace.state.name + '/' + result['recovery_copy']
+        return result
