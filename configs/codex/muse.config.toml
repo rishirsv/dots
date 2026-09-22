@@ -1,0 +1,46 @@
+# Muse profile managed by Dots. Layered over the base config via `codex -p muse`.
+# Portable and self-contained: no secrets here. The OpenRouter API key stays in
+# the macOS keychain and is provisioned separately per machine.
+# `muse-models.json` is installed alongside this profile in the same CODEX_HOME;
+# the relative path resolves to CODEX_HOME on every computer.
+# Disabled stdio MCP servers declare `/usr/bin/true` (paper declares a dummy URL)
+# so Codex validation passes without extra `-c` flags; the commands never run.
+
+model = "meta/muse-spark-1.3-contributor"
+model_provider = "openrouter"
+model_catalog_json = "muse-models.json"
+model_reasoning_effort = "xhigh"
+web_search = "live"
+
+[features]
+apps = false
+plugins = true
+multi_agent = true
+
+[model_providers.openrouter]
+name = "OpenRouter"
+base_url = "https://openrouter.ai/api/v1"
+wire_api = "responses"
+
+[model_providers.openrouter.auth]
+command = "/usr/bin/security"
+args = ["find-generic-password", "-s", "com.openai.codex.openrouter", "-w"]
+
+[mcp_servers.portal]
+enabled = false
+command = "/usr/bin/true"
+
+[mcp_servers.paper]
+enabled = false
+url = "http://127.0.0.1:1/mcp"
+
+[mcp_servers.node_repl]
+enabled = false
+command = "/usr/bin/true"
+
+[mcp_servers.computer-use]
+enabled = false
+command = "/usr/bin/true"
+
+[tui]
+theme = "gruvbox-dark"

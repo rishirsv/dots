@@ -60,7 +60,9 @@ codex exec resume -m gpt-6-astra \
 
 `codex -p muse` layers `$CODEX_HOME/muse.config.toml` over the base config. The
 profile selects `meta/muse-spark-1.3-contributor` at `xhigh`; its catalog
-supports `none`, `minimal`, `low`, `medium`, `high`, and `xhigh`.
+supports `none`, `minimal`, `low`, `medium`, `high`, and `xhigh`. The synced
+profile supplies valid disabled MCP transports, so no extra `-c mcp_servers.*`
+flags are needed.
 
 ```sh
 codex -p muse exec -C /absolute/path/to/repo \

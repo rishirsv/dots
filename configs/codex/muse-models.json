@@ -1,0 +1,70 @@
+{
+  "models": [
+    {
+      "slug": "meta/muse-spark-1.3-contributor",
+      "display_name": "Muse Spark 1.3 Contributor",
+      "description": "Meta's contributor coding model via OpenRouter",
+      "default_reasoning_level": "medium",
+      "supported_reasoning_levels": [
+        {
+          "effort": "none",
+          "description": "Reasoning disabled"
+        },
+        {
+          "effort": "minimal",
+          "description": "Minimal reasoning"
+        },
+        {
+          "effort": "low",
+          "description": "Light reasoning"
+        },
+        {
+          "effort": "medium",
+          "description": "Balanced reasoning"
+        },
+        {
+          "effort": "high",
+          "description": "Deep reasoning"
+        },
+        {
+          "effort": "xhigh",
+          "description": "Extra-high reasoning"
+        }
+      ],
+      "shell_type": "unified_exec",
+      "visibility": "list",
+      "supported_in_api": true,
+      "priority": 1,
+      "availability_nux": null,
+      "upgrade": null,
+      "model_messages": {
+        "instructions_template": "You are a coding agent running in Codex. Work carefully in the user's workspace, follow the supplied instructions, use available tools when useful, and continue until the requested task is complete."
+      },
+      "include_skills_usage_instructions": false,
+      "include_plugin_usage_instructions": false,
+      "include_apps_usage_instructions": false,
+      "supports_reasoning_summary_parameter": true,
+      "default_reasoning_summary": "auto",
+      "support_verbosity": false,
+      "default_verbosity": null,
+      "apply_patch_tool_type": null,
+      "web_search_tool_type": "text",
+      "truncation_policy": {
+        "mode": "bytes",
+        "limit": 10000
+      },
+      "context_window": 1048576,
+      "max_context_window": 1048576,
+      "experimental_supported_tools": [],
+      "input_modalities": [
+        "text",
+        "image"
+      ],
+      "supports_search_tool": false,
+      "supports_experimental_context": false,
+      "use_responses_lite": false,
+      "node_repl_auto_review_required": false,
+      "node_repl_disabled": false
+    }
+  ]
+}
