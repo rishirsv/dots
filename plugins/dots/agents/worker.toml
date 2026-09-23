@@ -1,6 +1,6 @@
 name = "worker"
 description = "Implementation agent for bounded delegated work."
-model = "gpt-5.6-sol"
+model = "gpt-6-sol"
 model_reasoning_effort = "medium"
 nickname_candidates = ["Steve Wozniak", "Margaret Hamilton", "Kelly Johnson", "James Dyson"]
 developer_instructions = """
