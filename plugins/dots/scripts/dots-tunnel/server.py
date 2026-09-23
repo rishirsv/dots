@@ -86,7 +86,7 @@ def create_server(workspace: Workspace | MountedWorkspace, execution=None) -> MC
                     await execution.close()
 
     server = MCPServer(
-        "dots-tunnel", version="0.2.0", extensions=[Skills()], log_level="WARNING", lifespan=lifespan,
+        "Dots Tunnel", version="0.2.0", extensions=[Skills()], log_level="WARNING", lifespan=lifespan,
         instructions="Read and edit locally authorized folders. List '.' to discover paths; when named mounts are present, "
                      "include their prefix in all paths and patch headers, and search one mount at a time. "
                      "Workflow: skill://dots/dots-tunnel/SKILL.md. "
