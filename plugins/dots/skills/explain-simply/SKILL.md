@@ -1,9 +1,9 @@
 ---
-name: eli5
-description: "Use only when the user writes `$eli5`. Give a plain-language or ELI5 explanation of any subject, or the previous answer when none is named, building intuition through examples and diagrams for code-related subjects; not for rigorous code investigation, critique, review, or implementation."
+name: explain-simply
+description: "Use only when the user writes `$explain-simply`. Give a plain-language explanation of any subject, or the previous answer when none is named, building intuition through examples and diagrams for code-related subjects; not for rigorous code investigation, critique, review, or implementation."
 ---
 
-# ELI5
+# Explain Simply
 
 Explain the named subject or, when none is named, the previous answer. Ask what
 to explain only when neither is clear.

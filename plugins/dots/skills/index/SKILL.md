@@ -46,7 +46,7 @@ workflow. It routes into focused skills as its phases require.
 | Create, update, or review a Dots skill | `$skill-standards` |
 
 The user-controlled modes `$ask-model`, `$clarify-requirements`,
-`$shape-idea`, `$eli5`, `$recall`, and `$self-improve` remain explicit. Load
+`$shape-idea`, `$explain-simply`, `$recall`, and `$self-improve` remain explicit. Load
 them only when the user selects that mode. Their descriptions define the exact
 boundary.
 
