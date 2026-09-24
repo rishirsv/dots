@@ -86,6 +86,7 @@ export function normalizeSpec(type, spec) {
 
   const keys = ["label", "value"];
   let rows = toRows(spec.data, keys);
+  if (rows.some((row) => row.value < 0)) fail("bar chart values must be non-negative");
 
   const sort = spec.sort ?? (type === "bar" ? "desc" : "none");
   if (!["desc", "asc", "none"].includes(sort)) fail('spec.sort must be "desc", "asc", or "none"');
@@ -178,6 +179,33 @@ export function parseSpec(fragmentHtml) {
   return JSON.parse(m[1]);
 }
 
+/** Replace chart roots in a fragment or complete page without touching other markup. */
+export function regenerateCharts(html) {
+  const roots = /<(div|span)\b[^>]*\bdata-component="(?:bar-chart|sparkline)"[^>]*>\s*<!-- chart-spec (\{.*?\}) -->/gs;
+  const edits = [];
+  for (const match of html.matchAll(roots)) {
+    const tag = match[1];
+    const spec = JSON.parse(match[2]);
+    const tags = new RegExp(`<\\/?${tag}\\b[^>]*>`, "gi");
+    tags.lastIndex = match.index;
+    let depth = 0;
+    let end;
+    for (const token of html.matchAll(tags)) {
+      if (token.index < match.index) continue;
+      depth += token[0].startsWith("</") ? -1 : 1;
+      if (depth === 0) { end = token.index + token[0].length; break; }
+    }
+    if (end == null) fail(`unclosed ${tag} chart component`);
+    edits.push({ start: match.index, end, replacement: chart(spec.type, spec) });
+  }
+  if (!edits.length) fail("no chart-spec chart component found in fragment");
+  for (let i = edits.length - 1; i >= 0; i -= 1) {
+    const { start, end, replacement } = edits[i];
+    html = html.slice(0, start) + replacement + html.slice(end);
+  }
+  return html;
+}
+
 // ---------- CLI ----------
 
 const invokedDirectly = process.argv[1] && import.meta.url.endsWith(process.argv[1].split("/").pop());
@@ -192,9 +220,7 @@ if (invokedDirectly) {
     let type, spec;
     const fromFragment = flag("--from-fragment");
     if (fromFragment) {
-      spec = parseSpec(readFileSync(fromFragment, "utf8"));
-      type = spec.type;
-      writeFileSync(fromFragment, chart(type, spec) + "\n");
+      writeFileSync(fromFragment, regenerateCharts(readFileSync(fromFragment, "utf8")));
       process.exit(0);
     } else {
       type = args[0];

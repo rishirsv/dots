@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Package a real HTML body fragment with the dots page shell, theme, and the
- * CSS or behavior for explicitly selected registry components.
+ * CSS or behavior for registry components used by the body or explicitly selected.
  *
  * The caller supplies the narrative, component choice, and markup. This script
  * removes repeated packaging work and keeps component CSS deduplicated.
@@ -47,7 +47,7 @@ function sourceFor(name) {
 }
 
 function extractAll(source, tag) {
-  const pattern = new RegExp(`^<${tag}(?:\\s[^>]*)?>\\n?([\\s\\S]*?)^<\\/${tag}>`, "gim");
+  const pattern = new RegExp(`^[ \\t]*<${tag}(?:\\s[^>]*)?>\\n?([\\s\\S]*?)^[ \\t]*<\\/${tag}>`, "gim");
   return [...source.matchAll(pattern)].map((match) => match[1].trim()).filter(Boolean);
 }
 
@@ -92,13 +92,13 @@ function pageShell({ title, context, contextMarkup, dek, footer, body, layout })
   ].filter(Boolean).join("\n    ");
 
   shell = shell
-    .replace('data-layout="article"', `data-layout="${layout}"`)
-    .replace(/<p class="context-line">[\s\S]*?<\/p>/, renderedContext)
-    .replace(/<h1>[\s\S]*?<\/h1>/, `<h1>${escapeText(title)}</h1>`)
-    .replace(/<p class="dek">[\s\S]*?<\/p>/, dek ? `<p class="dek">${escapeText(dek)}</p>` : "")
+    .replace('data-layout="article"', () => `data-layout="${layout}"`)
+    .replace(/<p class="context-line">[\s\S]*?<\/p>/, () => renderedContext)
+    .replace(/<h1>[\s\S]*?<\/h1>/, () => `<h1>${escapeText(title)}</h1>`)
+    .replace(/<p class="dek">[\s\S]*?<\/p>/, () => dek ? `<p class="dek">${escapeText(dek)}</p>` : "")
     .replace(/\s*<!-- slot: toc-rail[^\n]*-->/, "")
-    .replace(/\s*<!-- slot: sections[^\n]*-->/, `\n\n  ${body.trim().replace(/\n/g, "\n  ")}`)
-    .replace(/\s*<footer class="sources">[\s\S]*?<\/footer>/, footer ? `\n\n  <footer class="sources">${escapeText(footer)}</footer>` : "");
+    .replace(/\s*<!-- slot: sections[^\n]*-->/, () => `\n\n  ${body.trim()}`)
+    .replace(/\s*<footer class="sources">[\s\S]*?<\/footer>/, () => footer ? `\n\n  <footer class="sources">${escapeText(footer)}</footer>` : "");
 
   return shell;
 }
@@ -108,7 +108,8 @@ export function assemble({ title, context = "", contextMarkup = "", dek = "", fo
   if (body == null) fail("body is required");
   if (!["article", "wide", "canvas"].includes(layout)) fail(`unknown layout "${layout}"`);
 
-  const selected = orderedComponents([...new Set(components.filter(Boolean))]);
+  const used = [...body.matchAll(/\bdata-component\s*=\s*(["'])(.*?)\1/gi)].map((match) => match[2]);
+  const selected = orderedComponents([...new Set([...components.filter(Boolean), ...used])]);
   const componentSources = selected.map((name) => sourceFor(name));
   const css = [
     readFileSync(join(root, "assets", "theme.css"), "utf8").trim(),
@@ -116,7 +117,7 @@ export function assemble({ title, context = "", contextMarkup = "", dek = "", fo
     ...componentSources.flatMap((source) => extractAll(source, "style")),
   ].join("\n\n");
   const scripts = componentSources
-    .flatMap((source) => [...source.matchAll(/^<script(?:\s[^>]*)?>[\s\S]*?^<\/script>/gim)].map((match) => match[0].trim()))
+    .flatMap((source) => [...source.matchAll(/^[ \t]*<script(?:\s[^>]*)?>[\s\S]*?^[ \t]*<\/script>/gim)].map((match) => match[0].trim()))
     .join("\n\n");
   const shell = pageShell({ title, context, contextMarkup, dek, footer, body: embedLocalImages(body, assetRoot), layout });
 
@@ -388,8 +389,8 @@ export function assembleSet({ manifest, manifestRoot }) {
       components: [...new Set([...(page.components ?? []), ...(chapterIndex ? ["chapter-index"] : []), "sequence-nav"])],
     });
     rendered.set(page.output, html
-      .replace("<body>", `<body class="has-sequence-nav">\n${markup.top}`)
-      .replace("</body>", `${markup.controls}\n</body>`));
+      .replace("<body>", () => `<body class="has-sequence-nav">\n${markup.top}`)
+      .replace("</body>", () => `${markup.controls}\n</body>`));
   });
   return rendered;
 }

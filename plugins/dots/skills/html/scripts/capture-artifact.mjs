@@ -9,7 +9,7 @@
  *     --out-dir /path/to/screenshots
  */
 
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -172,6 +172,7 @@ async function launchChrome(chrome) {
     theme = "light",
     reducedMotion = false,
     javascript = true,
+    pinnedTheme = false,
   } = {}) {
     const { targetId } = await call("Target.createTarget", { url: "about:blank" });
     const { sessionId } = await call("Target.attachToTarget", { targetId, flatten: true });
@@ -196,12 +197,26 @@ async function launchChrome(chrome) {
     const loaded = waitFor("Page.loadEventFired", sessionId);
     await pageCall("Page.navigate", { url: pathToFileURL(file).href });
     await loaded;
-    if (javascript) {
+    if (javascript && !pinnedTheme) {
       await pageCall("Runtime.evaluate", {
         expression: `document.documentElement.setAttribute("data-theme", ${JSON.stringify(theme)})`,
       });
-      await new Promise((resolveDelay) => setTimeout(resolveDelay, 500));
     }
+    if (javascript) await new Promise((resolveDelay) => setTimeout(resolveDelay, 500));
+
+    const images = await pageCall("Runtime.evaluate", {
+      expression: `Promise.all(Array.from(document.images, async (image) => {
+        try { await image.decode(); } catch { /* Report visible broken images below. */ }
+        if (image.getClientRects().length && getComputedStyle(image).visibility !== "hidden" && (!image.naturalWidth || !image.naturalHeight)) {
+          return image.currentSrc || image.src || "image without source";
+        }
+        return null;
+      })).then((items) => items.filter(Boolean))`,
+      awaitPromise: true,
+      returnByValue: true,
+    });
+    if (images.exceptionDetails) fail(images.exceptionDetails.text ?? "image decode failed");
+    if (images.result.value?.length) fail(`visible images failed to decode: ${images.result.value.join(", ")}`);
 
     return {
       async diagnose() {
@@ -218,6 +233,9 @@ async function launchChrome(chrome) {
         return outerHTML;
       },
       async screenshot(output, { fullPage = true } = {}) {
+        if (fullPage) await pageCall("Runtime.evaluate", {
+          expression: `document.querySelectorAll(".reveal").forEach((element) => element.classList.add("is-in"))`,
+        });
         const { data } = await pageCall("Page.captureScreenshot", {
           format: "png",
           captureBeyondViewport: fullPage,
@@ -251,6 +269,9 @@ try {
 
   const artifact = resolve(input);
   if (!existsSync(artifact)) fail(`cannot read "${input}"`);
+  const source = readFileSync(artifact, "utf8");
+  const pinnedTheme = source.match(/<html\b[^>]*\bdata-theme\s*=\s*(["'])(light|dark)\1/i)?.[2]?.toLowerCase();
+  const themes = pinnedTheme ? [pinnedTheme] : ["light", "dark"];
 
   const chrome = chromeCandidates.find(existsSync);
   if (!chrome) fail("Chrome was not found; set CHROME_BIN to a Chromium-based browser");
@@ -261,30 +282,30 @@ try {
   let lightText = "";
   try {
     for (const width of [1280, 768, 360, 320]) {
-      for (const theme of ["light", "dark"]) {
-        const page = await browser.openPage(artifact, width, { theme });
+      for (const theme of themes) {
+        const page = await browser.openPage(artifact, width, { theme, pinnedTheme: Boolean(pinnedTheme) });
         const result = await page.diagnose();
         if (result.viewport !== width) fail(`${theme} requested ${width}px but Chrome rendered ${result.viewport}px`);
         if (result.failures.length) fail(`${theme} ${width}px: ${result.failures.join("; ")}`);
-        if (width === 360 && theme === "light") lightText = normalizedVisibleText(await page.html());
-        await page.screenshot(join(outputDir, `${width}-${theme}.png`));
-        if (width === 1280 && theme === "light") {
-          await page.screenshot(join(outputDir, "1280-light-first-frame.png"), { fullPage: false });
-          states.push("1280-light-first-frame");
+        if (width === 360 && theme === themes[0]) lightText = normalizedVisibleText(await page.html());
+        if (width === 1280 && theme === themes[0]) {
+          await page.screenshot(join(outputDir, `1280-${theme}-first-frame.png`), { fullPage: false });
+          states.push(`1280-${theme}-first-frame`);
         }
+        await page.screenshot(join(outputDir, `${width}-${theme}.png`));
         await page.close();
         states.push(`${width}-${theme}`);
       }
     }
 
-    const reduced = await browser.openPage(artifact, 360, { reducedMotion: true });
+    const reduced = await browser.openPage(artifact, 360, { theme: themes[0], reducedMotion: true, pinnedTheme: Boolean(pinnedTheme) });
     const reducedResult = await reduced.diagnose();
     if (reducedResult.failures.length) fail(`reduced motion: ${reducedResult.failures.join("; ")}`);
     await reduced.screenshot(join(outputDir, "360-reduced-motion.png"));
     await reduced.close();
     states.push("360-reduced-motion");
 
-    const noJs = await browser.openPage(artifact, 360, { javascript: false });
+    const noJs = await browser.openPage(artifact, 360, { theme: themes[0], javascript: false, pinnedTheme: Boolean(pinnedTheme) });
     const noJsText = normalizedVisibleText(await noJs.html());
     if (noJsText !== lightText) fail("JS-off page does not preserve the visible document text");
     await noJs.screenshot(join(outputDir, "360-js-off.png"));
@@ -297,6 +318,7 @@ try {
   process.stdout.write([
     `capture-artifact.mjs: ${basename(artifact)} passed`,
     `screenshots: ${resolve(outputDir)}`,
+    ...(pinnedTheme ? [`pinned theme: ${pinnedTheme}`] : []),
     `states: ${states.join(", ")}`,
     "",
   ].join("\n"));

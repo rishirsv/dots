@@ -44,6 +44,7 @@ test("invalid specs fail loudly", () => {
   assert.throws(() => normalizeSpec("pie", BAR), /unknown type/);
   assert.throws(() => normalizeSpec("bar", { title: "t", data: [] }), /non-empty/);
   assert.throws(() => normalizeSpec("bar", { title: "t", data: [["a", NaN]] }), /finite/);
+  assert.throws(() => chart("bar", { title: "t", data: [["a", 5], ["b", -1]] }), /non-negative/);
   assert.throws(() => normalizeSpec("bar", { title: "t", data: [["a", 1]], emphasis: "zzz" }), /matches no row/);
   assert.throws(() => normalizeSpec("bar", { data: [["a", 1]] }), /title is required/);
   assert.throws(() => normalizeSpec("bar", { title: "x -- y", data: [["a", 1]] }), /--/);
@@ -120,7 +121,25 @@ test("--from-fragment rewrites the fragment file in place", () => {
     const script = fileURLToPath(new URL("./chart.mjs", import.meta.url));
     const result = spawnSync(process.execPath, [script, "--from-fragment", file], { encoding: "utf8" });
     assert.equal(result.status, 0, result.stderr);
-    assert.equal(readFileSync(file, "utf8"), chart("bar", edited) + "\n");
+    assert.equal(readFileSync(file, "utf8"), chart("bar", edited));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("--from-fragment updates edited charts inside a full page and preserves surrounding bytes", () => {
+  const dir = mkdtempSync(join(tmpdir(), "dots-chart-page-"));
+  const file = join(dir, "page.html");
+  const first = chart("bar", BAR);
+  const second = chart("sparkline", SPARK);
+  const edited = { ...parseSpec(first), data: [["platform", 500], ["growth", 255], ["ml", 104]] };
+  const input = `<!doctype html>\n<html><body>\n<header>$& untouched</header>\n${first.replace(/<!-- chart-spec \{.*?\} -->/s, `<!-- chart-spec ${JSON.stringify(edited)} -->`)}\n<aside>Between charts</aside>\n${second}\n<footer>untouched $'</footer>\n</body></html>\n`;
+  writeFileSync(file, input);
+  try {
+    const script = fileURLToPath(new URL("./chart.mjs", import.meta.url));
+    const result = spawnSync(process.execPath, [script, "--from-fragment", file], { encoding: "utf8" });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(readFileSync(file, "utf8"), input.replace(first.replace(/<!-- chart-spec \{.*?\} -->/s, `<!-- chart-spec ${JSON.stringify(edited)} -->`), chart("bar", edited)));
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

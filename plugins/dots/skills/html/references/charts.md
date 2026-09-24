@@ -20,12 +20,13 @@ echo '{"title":"Spend by team, $k",
 Forms: `bar` (ranked magnitudes) and `sparkline` (inline trend; spec needs
 `data` numbers plus visible `value` text). Bar spec keys: `title`, `data` (rows
 as `[label, value]`), `emphasis` (label of the one accent-colored element),
-`sort` (`desc`/`asc`/`none`), and `limit`. Labels, titles, and visible values
-must not contain `--`.
+`sort` (`desc`/`asc`/`none`), and `limit`. Bar values must be non-negative.
+Labels, titles, and visible values must not contain `--`.
 
 To edit an existing chart, never touch coordinates: read its `chart-spec`
 comment, change the spec, then run `node scripts/chart.mjs --from-fragment
-<file>`. The command rewrites that fragment file in place.
+<file>`. The command regenerates every chart with a `chart-spec` comment in
+place, preserving the rest of the file, including when `<file>` is a full page.
 
 Build chart types the script does not support when they make the data easier to
 understand. Follow the mark specs and accessibility rules below, use only

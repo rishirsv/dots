@@ -106,15 +106,16 @@ node scripts/assemble.mjs \
   --context "project / release" \
   --dek "What is ready, what is blocked, and the next decision." \
   --layout article \
-  --components process-steps,callout,data-table \
   --body /path/to/body.html \
   --out /path/to/release-readiness.html
 ```
 
-Add `--footer` or `page-behavior` in `--components` only when the content calls
-for them. `--layout` accepts `article`, `wide`, or `canvas` and defaults to
-`article`. The assembler packages chosen CSS and behavior; it does not select
-examples, components, content, or section order.
+`--components` is optional: the assembler includes registry components named
+by `data-component` in the body, plus their dependencies. Use `--components`
+for extra components such as `page-behavior` when needed. Add `--footer` only
+when the content calls for it. `--layout` accepts `article`, `wide`, or `canvas`
+and defaults to `article`. The assembler packages chosen CSS and behavior; it
+does not select examples, components, content, or section order.
 
 ### Working source and finished page
 
@@ -250,7 +251,15 @@ Treat delivery states precisely:
 
 ## Before delivery
 
-Never run automated HTML structural validation.
+Avoid automated markup validators as an authoring gate; they do not establish
+whether the rendered page works. For pages with layout risk, run the render check:
+
+```bash
+node scripts/capture-artifact.mjs --in <page> --out-dir <dir>
+```
+
+Inspect the saved viewport, theme, first-frame, reduced-motion, and JS-off
+screenshots. The command fails on overflow and visible images that cannot decode.
 
 Review the source before delivery:
 

@@ -8,6 +8,39 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import { assemble, assembleSet } from "./assemble.mjs";
 
+test("inserts dollar patterns literally and preserves preformatted body content", () => {
+  const code = "first\n  $& $` $' $1\nlast";
+  const body = `<section><pre>${code}</pre><textarea>${code}</textarea><p>$' $& $1</p></section>`;
+  const html = assemble({ title: "Cost $& $` $' $1 more", context: "$& $'", dek: "$` $1", footer: "$& $'", body });
+  assert.ok(html.includes("<h1>Cost $&amp; $` $&#39; $1 more</h1>"));
+  assert.ok(html.includes(`<pre>${code}</pre>`));
+  assert.ok(html.includes(`<textarea>${code}</textarea>`));
+  assert.ok(html.includes("<p>$' $& $1</p>"));
+  assert.ok(html.includes("<footer class=\"sources\">$&amp; $&#39;</footer>"));
+});
+
+test("includes body components and dependencies, and rejects unknown names", () => {
+  const html = assemble({ title: "Diff", body: '<div data-component="diff-block"></div>' });
+  assert.match(html, /\.diff-block \{/);
+  assert.match(html, /\.code-panel \{/);
+  assert.throws(() => assemble({ title: "Bad", body: '<div data-component="missing"></div>' }), /unknown component "missing"/);
+});
+
+test("extracts every registry style and script block", () => {
+  const registryRoot = fileURLToPath(new URL("../assets/registry/", import.meta.url));
+  const registry = JSON.parse(readFileSync(join(registryRoot, "registry.json"), "utf8"));
+  for (const item of registry.items) {
+    const source = readFileSync(join(registryRoot, item.file), "utf8");
+    const html = assemble({ title: item.name, body: "<section>Example</section>", components: [item.name] });
+    for (const tag of ["style", "script"]) {
+      for (const block of source.matchAll(new RegExp(`^[ \\t]*<${tag}(?:\\s[^>]*)?>[\\s\\S]*?^[ \\t]*<\\/${tag}>`, "gim"))) {
+        const content = block[0].replace(new RegExp(`^[ \\t]*<${tag}(?:\\s[^>]*)?>`), "").replace(new RegExp(`[ \\t]*<\\/${tag}>$`), "").trim();
+        assert.ok(html.includes(content), `${item.name}: missing ${tag}`);
+      }
+    }
+  }
+});
+
 function pageSetFixture() {
   const root = mkdtempSync(join(tmpdir(), "dots-html-set-"));
   for (const name of ["intro", "build", "review"]) {
@@ -182,6 +215,24 @@ test("assembles ordered page sets from one manifest", () => {
       assert.doesNotMatch(html, /class="sequence-time"><\/span>/);
       assert.ok(!/(?:href|src)="https?:/i.test(html));
     }
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("page-set titles, bodies, and generated navigation preserve dollar patterns", () => {
+  const { root, manifest } = pageSetFixture();
+  try {
+    manifest.title = "Guide $& $` $' $1";
+    manifest.pages[0].title = "Cost $& $` $' $1";
+    manifest.pages[0].label = "Start $& $` $' $1";
+    writeFileSync(join(root, "intro.body.html"), "<section><p>$& $` $' $1</p><pre>a\n  b</pre></section>");
+    const html = assembleSet({ manifest, manifestRoot: root }).get("index.html");
+    assert.ok(html.includes("<h1>Cost $&amp; $` $&#39; $1</h1>"));
+    assert.ok(html.includes("<p>$& $` $' $1</p>"));
+    assert.ok(html.includes("<pre>a\n  b</pre>"));
+    assert.ok(html.includes("Guide $&amp; $` $&#39; $1"));
+    assert.ok(html.includes("Start $&amp; $` $&#39; $1"));
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
