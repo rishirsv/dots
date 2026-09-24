@@ -66,11 +66,11 @@ one unusual task.
    refactors compare the pinned behavior; performance work repeats the frozen
    measurement.
 7. **Review and finish.** Inspect the final diff against the requested outcome.
-   Apply `$code-quality-review` when the user requests a review, repository
+   Apply `$change-review` when the user requests a review, repository
    policy requires it, or consequential behavior needs independent challenge.
    Give the reviewer the task's diff and intended behavior. During implementation, repair supported defects caused by the change within
    the authorized scope, rerun affected checks, and finish the requested work.
-   Follow `$code-quality-review` for its review and repair mode; preserve an
+   Follow `$change-review` for its review and repair mode; preserve an
    explicit review-only request. Report the result, proof, and material remaining gaps. Apply
    [Evidence in claims](technical-writing-guidance.md#evidence-in-claims)
    when writing the completion report.
@@ -96,7 +96,7 @@ verified material and reading order to `$html`. HTML changes the review surface,
 not the planning method. Do not make a durable artifact for a localized change
 whose handoff fits clearly in chat.
 
-`$code-quality-review` owns review scope, subagent strategy, findings, and the
+`$change-review` owns review scope, subagent strategy, findings, and the
 optional repair path. Do not recreate that procedure here.
 
 The playbook is complete when the requested behavior works through its real

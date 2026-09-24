@@ -111,7 +111,7 @@ Surface the answer instead of bolting the exception on.
 
 Use the repository's own verification skills and commands while filling in the
 design. Architect does not replace repository-specific proof or final
-`$code-quality-review`.
+`$change-review`.
 
 ## Phase E: Scrap when the architecture is wrong
 

@@ -32,7 +32,7 @@ workflow. It routes into focused skills as its phases require.
 | --- | --- |
 | Forward architecture for a new or changed boundary | `$architect` |
 | Structural audit or refactor candidates in existing code | `$architecture-review` |
-| Completed code change before merge | `$code-quality-review` |
+| Completed code change before merge | `$change-review` |
 | Resolve one uncertain choice through a throwaway build | `$prototype` |
 | Explain how code or a subsystem works | `$how` |
 | Investigate why code or a decision exists | `$why` |

@@ -1,9 +1,9 @@
 ---
-name: code-quality-review
+name: change-review
 description: "Review completed code changes before merging for correctness, readability, simplicity, and maintainability. Reviews and repairs supported in-scope findings by default; reports without edits when the user requests review only."
 ---
 
-# Code Quality Review
+# Change Review
 
 Review a completed change against its intended behavior and repository
 constraints. Repair supported in-scope findings by default after review. When
