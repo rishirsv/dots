@@ -276,7 +276,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
       <h1>Diagram atlas</h1>
 
     </div>
-    <p class="dek">Eighteen reusable templates for structure, process, hierarchy, interaction, and quantitative explanation.</p>
+    <p class="dek">Nineteen reusable templates for structure, process, hierarchy, interaction, and quantitative explanation.</p>
   </header>
 
   <style>
@@ -335,11 +335,179 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
       .diagram-grid { grid-template-columns: 1fr; }
     }
   </style>
+<style>
+  .flow-diagram-wrap {
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-gutter: stable;
+    margin-bottom: 12px;
+  }
+
+  .flow-diagram {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 560px;
+  }
+
+  .flow-node-rect {
+    fill: var(--background);
+    stroke: var(--a40);
+    stroke-width: 1.5;
+  }
+
+  .flow-node-rect.is-emphasized {
+    stroke: var(--accent);
+    stroke-width: 2;
+  }
+
+  .flow-node-label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    fill: var(--foreground);
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
+  .flow-edge {
+    fill: none;
+    stroke: var(--a40);
+    stroke-width: 1.5;
+  }
+
+  .flow-edge-label {
+    font-size: 13px;
+    fill: var(--a55);
+    text-anchor: middle;
+  }
+
+  .flow-caption {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .flow-callout {
+    fill: var(--accent);
+    stroke: var(--background);
+    stroke-width: 2;
+  }
+  .flow-callout-label {
+    fill: var(--background);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+  .flow-notes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    padding: 16px 0 0;
+    margin: 0;
+    list-style: none;
+    counter-reset: flow-note;
+  }
+  .flow-notes li {
+    counter-increment: flow-note;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .flow-notes li::before {
+    content: counter(flow-note);
+    display: block;
+    color: var(--accent-deep);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  @media (max-width: 680px) {
+    .flow-notes { grid-template-columns: 1fr; gap: 12px; }
+  }
+</style>
+<style>
+  .chart-card {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    padding: 20px 20px 16px;
+    margin-bottom: var(--section);
+  }
+
+  .chart-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .bar-row:last-child { margin-bottom: 0; }
+
+  .bar-name {
+    width: 148px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .bar-track {
+    flex: 1;
+    background: var(--a4);
+    border-radius: 4px;
+    height: 18px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--a20);
+  }
+
+  .bar-fill.emphasis { background: var(--accent); }
+
+  .bar-value {
+    width: 56px;
+    text-align: right;
+    flex-shrink: 0;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+  }
+</style>
+<style>
+  .chart-scroll { overflow-x: auto; }
+  .chart-scroll svg { display: block; width: 100%; height: auto; }
+  .chart-scroll svg text { fill: var(--text-muted); font: 12px var(--font-sans); }
+  .line-series { fill: none; stroke: var(--accent); stroke-width: 2; }
+  .line-point { fill: var(--accent); }
+</style>
+<style>
+  .stacked-row { display:grid; grid-template-columns:120px minmax(0,1fr) 48px; gap:12px; align-items:center; margin:0 0 12px; font-size:13px; }
+  .stacked-track { display:flex; height:18px; background:var(--a4); border-radius:4px; overflow:hidden; }
+  .stacked-segment { display:block; height:100%; }
+  .series-0 { background:var(--accent); }
+  .series-1 { background:var(--a40); }
+  .series-2 { background:var(--a20); }
+  .series-3 { background:var(--a12); }
+  .stacked-legend { display:flex; flex-wrap:wrap; gap:12px; font-size:12px; color:var(--text-muted); }
+  .stacked-legend span { display:inline-flex; align-items:center; gap:5px; }
+  .stacked-legend i { display:inline-block; width:10px; height:10px; }
+</style>
+<style>.diagram-card .chart-card{border:0;padding:0;margin:0}.diagram-card .flow-diagram-wrap{margin:0}.diagram-card:is([data-diagram="flowchart"],[data-diagram="state-machine"],[data-diagram="sequence"],[data-diagram="timeline"],[data-diagram="line-chart"]){grid-column:1/-1}</style>
 
   <div class="reading-column diagram-intro">
     <section id="choose">
       <h2>Choose the relationship before drawing</h2>
-      <p>These 18 templates cover system structure, process, hierarchy, interaction, and quantitative explanation. Copy the closest figure, keep the shared visual rules, and replace every illustrative label with grounded content.</p>
+      <p>These 19 templates cover system structure, process, hierarchy, interaction, and quantitative explanation. Copy the closest figure, keep the shared visual rules, and replace every illustrative label with grounded content.</p>
       <p>Use a table for a binary comparison and prose when the diagram would only put a box around a sentence.</p>
     </section>
   </div>
@@ -374,16 +542,8 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
     <figure id="flowchart" class="diagram-card" data-diagram="flowchart">
       <h2>Flowchart</h2>
       <p class="diagram-use">A decision branch where each edge changes the outcome.</p>
-      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
-        <defs><marker id="flowchart-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs>
-        <rect class="diagram-node" x="18" y="68" width="70" height="40" rx="6"/><text class="diagram-label" x="53" y="88">input</text>
-        <path class="diagram-node is-focal" d="M160 50 212 88 160 126 108 88Z"/><text class="diagram-label" x="160" y="88">valid?</text>
-        <rect class="diagram-node" x="238" y="22" width="66" height="36" rx="6"/><text class="diagram-label" x="271" y="40">accept</text>
-        <rect class="diagram-node" x="238" y="122" width="66" height="36" rx="6"/><text class="diagram-label" x="271" y="140">repair</text>
-        <path class="diagram-edge" d="M88 88H104M207 70 234 50M207 106 234 132" marker-end="url(#flowchart-arrow)"/>
-        <text class="diagram-label is-small" x="220" y="57">yes</text><text class="diagram-label is-small" x="220" y="119">no</text>
-      </svg></div>
-      <figcaption class="diagram-summary">Input is accepted when valid; otherwise it enters a repair path.</figcaption>
+      <!-- GENERATED from report helpers by diagram-examples.mjs -->
+      <div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="0 0 588 296" style="min-width:588px" aria-hidden="true"><defs><marker id="dots-flow-1-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs><path class="flow-edge" d="M144,95 H189 V95 H228" marker-end="url(#dots-flow-1-arrow)"/><path class="flow-edge" d="M354,95 H399 V48 H438" marker-end="url(#dots-flow-1-arrow)"/><text class="flow-edge-label" x="399" y="40">yes</text><path class="flow-edge" d="M354,95 H399 V142 H438" marker-end="url(#dots-flow-1-arrow)"/><text class="flow-edge-label" x="399" y="87">no</text><rect class="flow-node-rect" x="24" y="71" width="120" height="48" rx="8"/><text class="flow-node-label" x="84" y="95">input</text><rect class="flow-node-rect is-emphasized" x="234" y="71" width="120" height="48" rx="8"/><text class="flow-node-label" x="294" y="95">valid?</text><rect class="flow-node-rect" x="444" y="24" width="120" height="48" rx="8"/><text class="flow-node-label" x="504" y="48">accept</text><rect class="flow-node-rect" x="444" y="118" width="120" height="48" rx="8"/><text class="flow-node-label" x="504" y="142">repair</text></svg></div><p class="flow-caption">Input is accepted when valid; otherwise it enters a repair path.</p>
     </figure>
 
     <figure id="quadrant" class="diagram-card" data-diagram="quadrant">
@@ -415,14 +575,26 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
     <figure id="line-chart" class="diagram-card" data-diagram="line-chart">
       <h2>Line chart</h2>
       <p class="diagram-use">Show a time series whose direction and inflections matter.</p>
-      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
-        <line class="diagram-gridline" x1="34" y1="146" x2="300" y2="146"/><line class="diagram-gridline" x1="34" y1="22" x2="34" y2="146"/>
-        <line class="diagram-gridline" x1="34" y1="84" x2="300" y2="84"/>
-        <polyline points="38,126 82,112 126,118 170,78 214,66 258,40 296,52" fill="none" stroke="var(--accent)" stroke-width="3"/>
-        <g fill="var(--background)" stroke="var(--accent)" stroke-width="2"><circle cx="38" cy="126" r="4"/><circle cx="82" cy="112" r="4"/><circle cx="126" cy="118" r="4"/><circle cx="170" cy="78" r="4"/><circle cx="214" cy="66" r="4"/><circle cx="258" cy="40" r="4"/><circle cx="296" cy="52" r="4"/></g>
-        <text class="diagram-label is-small" x="48" y="164">week 1</text><text class="diagram-label is-small" x="278" y="164">week 7</text>
-      </svg></div>
-      <figcaption class="diagram-summary">The measure rises overall, with a small third-week reversal and a final-week pullback.</figcaption>
+      <!-- GENERATED from report helpers by diagram-examples.mjs -->
+      <div data-component="line-chart" data-source="illustrative" class="chart-card reveal">
+<!-- chart-spec {"type":"line","title":"Seven-week trend","data":[["W1",100],["W2",120],["W3",115],["W4",148],["W5",166],["W6",183],["W7",174]],"sort":"none"} -->
+  <div class="chart-title">Seven-week trend</div>
+  <div class="chart-scroll"><svg viewBox="0 0 640 250" style="min-width:640px" aria-hidden="true"><polyline class="line-series" points="44,190 137.33,153.86 230.67,162.89 324,103.25 417.33,70.72 510.67,40 604,56.27"/><circle class="line-point" cx="44" cy="190" r="4"/><circle class="line-point" cx="137.33" cy="153.86" r="4"/><circle class="line-point" cx="230.67" cy="162.89" r="4"/><circle class="line-point" cx="324" cy="103.25" r="4"/><circle class="line-point" cx="417.33" cy="70.72" r="4"/><circle class="line-point" cx="510.67" cy="40" r="4"/><circle class="line-point" cx="604" cy="56.27" r="4"/><text x="44" y="230" text-anchor="middle">W1</text><text x="137.33" y="230" text-anchor="middle">W2</text><text x="230.67" y="230" text-anchor="middle">W3</text><text x="324" y="230" text-anchor="middle">W4</text><text x="417.33" y="230" text-anchor="middle">W5</text><text x="510.67" y="230" text-anchor="middle">W6</text><text x="604" y="230" text-anchor="middle">W7</text></svg></div>
+</div>
+      <figcaption class="diagram-summary">The measure rises overall, with a third-week reversal and a final-week pullback.</figcaption>
+    </figure>
+
+    <figure id="stacked-chart" class="diagram-card" data-diagram="stacked-chart"><h2>Stacked chart</h2><p class="diagram-use">Compare the composition of totals across categories.</p>
+      <!-- GENERATED from report helpers by diagram-examples.mjs -->
+      <div data-component="stacked-chart" data-source="illustrative" class="chart-card reveal">
+<!-- chart-spec {"type":"stacked","title":"Completed and pending work","series":["Done","Pending"],"data":[["Search",5,2],["Checkout",3,4],["Auth",6,1]]} -->
+  <div class="chart-title">Completed and pending work</div>
+  <div class="stacked-row"><span>Search</span><div class="stacked-track"><span class="stacked-segment series-0" style="width:71.43%" title="Done: 5"></span><span class="stacked-segment series-1" style="width:28.57%" title="Pending: 2"></span></div><span>7</span></div>
+  <div class="stacked-row"><span>Checkout</span><div class="stacked-track"><span class="stacked-segment series-0" style="width:42.86%" title="Done: 3"></span><span class="stacked-segment series-1" style="width:57.14%" title="Pending: 4"></span></div><span>7</span></div>
+  <div class="stacked-row"><span>Auth</span><div class="stacked-track"><span class="stacked-segment series-0" style="width:85.71%" title="Done: 6"></span><span class="stacked-segment series-1" style="width:14.29%" title="Pending: 1"></span></div><span>7</span></div>
+<div class="stacked-legend"><span><i class="series-0"></i>Done</span><span><i class="series-1"></i>Pending</span></div>
+</div>
+      <figcaption class="diagram-summary">The total is seven items in each area, with different completed shares.</figcaption>
     </figure>
 
     <figure id="donut-chart" class="diagram-card" data-diagram="donut-chart">
@@ -432,7 +604,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
         <circle cx="98" cy="90" r="52" fill="none" stroke="var(--a12)" stroke-width="24"/>
         <circle cx="98" cy="90" r="52" fill="none" stroke="var(--accent)" stroke-width="24" stroke-dasharray="171.5 155.2" transform="rotate(-90 98 90)"/>
         <circle cx="98" cy="90" r="52" fill="none" stroke="var(--a40)" stroke-width="24" stroke-dasharray="98 228.7" stroke-dashoffset="-171.5" transform="rotate(-90 98 90)"/>
-        <text class="diagram-value" x="98" y="94">100%</text>
+        <text class="diagram-value" x="98" y="94">core 52%</text>
         <rect x="182" y="46" width="12" height="12" rx="2" fill="var(--accent)"/><text class="diagram-label is-small" x="240" y="52">core · 52%</text>
         <rect x="182" y="82" width="12" height="12" rx="2" fill="var(--a40)"/><text class="diagram-label is-small" x="240" y="88">support · 30%</text>
         <rect x="182" y="118" width="12" height="12" rx="2" fill="var(--a12)"/><text class="diagram-label is-small" x="240" y="124">other · 18%</text>
@@ -443,30 +615,15 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
     <figure id="state-machine" class="diagram-card" data-diagram="state-machine">
       <h2>State machine</h2>
       <p class="diagram-use">Finite states and the events that transition between them.</p>
-      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
-        <defs><marker id="state-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs>
-        <circle cx="28" cy="90" r="8" fill="var(--foreground)"/>
-        <rect class="diagram-node" x="58" y="68" width="68" height="44" rx="22"/><text class="diagram-label" x="92" y="90">draft</text>
-        <rect class="diagram-node is-focal" x="158" y="68" width="78" height="44" rx="22"/><text class="diagram-label" x="197" y="90">verified</text>
-        <rect class="diagram-node" x="264" y="68" width="42" height="44" rx="22"/><text class="diagram-label is-small" x="285" y="90">live</text>
-        <path class="diagram-edge" d="M36 90H54M126 90H154M236 90H260" marker-end="url(#state-arrow)"/>
-        <text class="diagram-label is-small" x="142" y="72">check</text><text class="diagram-label is-small" x="250" y="72">ship</text>
-      </svg></div>
-      <figcaption class="diagram-summary">A draft becomes verified after its check and moves live only through publication.</figcaption>
+      <!-- GENERATED from report helpers by diagram-examples.mjs -->
+      <div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="0 0 588 182" style="min-width:588px" aria-hidden="true"><defs><marker id="dots-state-2-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs><path class="flow-edge" d="M144,48 H189 V48 H228" marker-end="url(#dots-state-2-arrow)"/><text class="flow-edge-label" x="189" y="40">check</text><path class="flow-edge" d="M354,48 H399 V48 H438" marker-end="url(#dots-state-2-arrow)"/><text class="flow-edge-label" x="399" y="40">ship</text><rect class="flow-node-rect" x="24" y="24" width="120" height="48" rx="8"/><text class="flow-node-label" x="84" y="48">draft</text><rect class="flow-node-rect is-emphasized" x="234" y="24" width="120" height="48" rx="8"/><text class="flow-node-label" x="294" y="48">verified</text><rect class="flow-node-rect" x="444" y="24" width="120" height="48" rx="8"/><text class="flow-node-label" x="504" y="48">live</text></svg></div><p class="flow-caption">A draft becomes verified after its check and moves live through publication.</p>
     </figure>
 
     <figure id="timeline" class="diagram-card" data-diagram="timeline">
       <h2>Timeline</h2>
       <p class="diagram-use">Milestones where order and elapsed time carry meaning.</p>
-      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
-        <line x1="32" y1="90" x2="288" y2="90" stroke="var(--a20)" stroke-width="3"/>
-        <circle cx="54" cy="90" r="7" fill="var(--a40)"/><circle cx="132" cy="90" r="7" fill="var(--a40)"/><circle cx="214" cy="90" r="8" fill="var(--accent)"/><circle cx="280" cy="90" r="7" fill="var(--a40)"/>
-        <text class="diagram-label is-small" x="54" y="62">09:10</text><text class="diagram-label" x="54" y="122">detect</text>
-        <text class="diagram-label is-small" x="132" y="62">09:18</text><text class="diagram-label" x="132" y="122">contain</text>
-        <text class="diagram-label is-small" x="214" y="62">09:31</text><text class="diagram-label" x="214" y="122">repair</text>
-        <text class="diagram-label is-small" x="280" y="62">09:42</text><text class="diagram-label" x="280" y="122">close</text>
-      </svg></div>
-      <figcaption class="diagram-summary">Detection led to containment in eight minutes; repair completed 13 minutes later.</figcaption>
+      <!-- GENERATED from report helpers by diagram-examples.mjs -->
+      <div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="0 0 530 180" style="min-width:560px" aria-hidden="true"><path class="flow-edge" d="M40,90 H490"/><circle cx="40" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="40" y="65">09:10</text><text class="flow-node-label" x="40" y="120">detect</text><circle cx="190" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="190" y="65">09:18</text><text class="flow-node-label" x="190" y="120">contain</text><circle cx="340" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="340" y="65">09:31</text><text class="flow-node-label" x="340" y="120">repair</text><circle cx="490" cy="90" r="5" fill="var(--accent)"/><text class="flow-edge-label" x="490" y="65">09:42</text><text class="flow-node-label" x="490" y="120">close</text></svg></div><p class="flow-caption">Detection led to containment, repair, and closure.</p>
     </figure>
 
     <figure id="swimlane" class="diagram-card" data-diagram="swimlane">
@@ -554,18 +711,8 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
     <figure id="sequence" class="diagram-card" data-diagram="sequence">
       <h2>Sequence</h2>
       <p class="diagram-use">Messages among participants ordered from top to bottom.</p>
-      <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 220" aria-hidden="true">
-        <defs><marker id="sequence-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs>
-        <rect class="diagram-node" x="22" y="16" width="72" height="34" rx="5"/><text class="diagram-label" x="58" y="33">client</text>
-        <rect class="diagram-node is-focal" x="124" y="16" width="72" height="34" rx="5"/><text class="diagram-label" x="160" y="33">API</text>
-        <rect class="diagram-node" x="226" y="16" width="72" height="34" rx="5"/><text class="diagram-label" x="262" y="33">store</text>
-        <g stroke="var(--a20)" stroke-dasharray="5 4"><line x1="58" y1="50" x2="58" y2="204"/><line x1="160" y1="50" x2="160" y2="204"/><line x1="262" y1="50" x2="262" y2="204"/></g>
-        <path class="diagram-edge" d="M58 78H156" marker-end="url(#sequence-arrow)"/><text class="diagram-label is-small" x="109" y="68">request</text>
-        <path class="diagram-edge" d="M160 118H258" marker-end="url(#sequence-arrow)"/><text class="diagram-label is-small" x="211" y="108">read</text>
-        <path class="diagram-edge" d="M262 158H164" stroke-dasharray="5 4" marker-end="url(#sequence-arrow)"/><text class="diagram-label is-small" x="211" y="148">result</text>
-        <path class="diagram-edge" d="M160 194H62" stroke-dasharray="5 4" marker-end="url(#sequence-arrow)"/><text class="diagram-label is-small" x="109" y="184">response</text>
-      </svg></div>
-      <figcaption class="diagram-summary">The client calls the API, which reads the store and returns the result.</figcaption>
+      <!-- GENERATED from report helpers by diagram-examples.mjs -->
+      <div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="0 0 628 386" style="min-width:628px" aria-hidden="true"><defs><marker id="dots-sequence-3-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs><text class="flow-node-label" x="84" y="35">client</text><path class="flow-edge" d="M84,52 V366" stroke-dasharray="4 4"/><text class="flow-node-label" x="314" y="35">API</text><path class="flow-edge" d="M314,52 V366" stroke-dasharray="4 4"/><text class="flow-node-label" x="544" y="35">store</text><path class="flow-edge" d="M544,52 V366" stroke-dasharray="4 4"/><path class="flow-edge" d="M84,96 H308" marker-end="url(#dots-sequence-3-arrow)"/><text class="flow-edge-label" x="199" y="87">request</text><path class="flow-edge" d="M314,160 H538" marker-end="url(#dots-sequence-3-arrow)"/><text class="flow-edge-label" x="429" y="151">read</text><path class="flow-edge" d="M544,224 H320" marker-end="url(#dots-sequence-3-arrow)"/><text class="flow-edge-label" x="429" y="215">result</text><path class="flow-edge" d="M314,288 H90" marker-end="url(#dots-sequence-3-arrow)"/><text class="flow-edge-label" x="199" y="279">response</text></svg></div><p class="flow-caption">The client calls the API, which reads the store and returns the result.</p>
     </figure>
 
     <figure id="class" class="diagram-card" data-diagram="class">

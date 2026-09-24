@@ -241,6 +241,11 @@ export async function launchChrome(chrome) {
     for (const source of images.result.value ?? []) events.push({ rule: "image-decode", message: `visible image failed to decode: ${source}` });
 
     return {
+      async evaluate(expression) {
+        const result = await pageCall("Runtime.evaluate", { expression, returnByValue: true });
+        if (result.exceptionDetails) throw new Error(result.exceptionDetails.text ?? "page evaluation failed");
+        return result.result.value;
+      },
       async diagnose() {
         const result = await pageCall("Runtime.evaluate", {
           expression: `(${layoutDiagnostic.toString()})()`,

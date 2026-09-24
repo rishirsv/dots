@@ -10,11 +10,14 @@
 
 import { chart } from "../chart.mjs";
 import { SafeHtml, escapeHtml, html, raw, svg, tagged } from "../lib/html.mjs";
+import { layeredGraph, sequenceLayout, timelineLayout } from "../lib/layout.mjs";
 
 export const version = "1.0.0";
 
 const LAYOUTS = ["article", "wide", "canvas"];
 const SEVERITIES = ["high", "medium", "low"];
+let figureSerial = 0;
+export function resetFigureIds() { figureSerial = 0; }
 
 export class ContractError extends Error {
   constructor(helper, rule) {
@@ -165,6 +168,7 @@ function steps(items) {
 }
 
 function timeline(items) {
+  if (!Array.isArray(items)) return timelineFigure(items);
   list("timeline", "items", items);
   return html`<ol data-component="timeline" class="timeline">${items.map(({ title, date, detail, state }) => {
     if (state != null && !["current", "pending"].includes(state)) fail("timeline", "state must be current or pending");
@@ -260,6 +264,59 @@ function flowDiagram({ viewBox, content, caption, notes, minWidth, emphasis = []
   return html`<div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="${viewBox}"${style} aria-hidden="true">${content}</svg></div>${description}`;
 }
 
+function computedSvg(kind, markup, width, height, summary) {
+  required(kind, "summary", summary);
+  return html`<div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="0 0 ${width} ${height}" style="min-width:${Math.max(width, 560)}px" aria-hidden="true">${raw(markup)}</svg></div><p class="flow-caption">${summary}</p>`;
+}
+
+function flow({ nodes, edges, summary, emphasis = [] }, kind = "flow") {
+  list(kind, "nodes", nodes);
+  if (!Array.isArray(edges)) fail(kind, "edges must be an array");
+  const selected = Array.isArray(emphasis) ? emphasis : [emphasis];
+  if (selected.length > 2) fail(kind, "at most two nodes may be emphasized");
+  const layout = layeredGraph(nodes, edges);
+  const prefix = `dots-${kind}-${++figureSerial}`;
+  const marker = `${prefix}-arrow`;
+  const lines = layout.edges.map((edge) => `<path class="flow-edge" d="${edge.path}" marker-end="url(#${marker})"/>${edge.label ? `<text class="flow-edge-label" x="${edge.labelX}" y="${edge.labelY}">${escapeHtml(edge.label)}</text>` : ""}`).join("");
+  const boxes = layout.nodes.map((node) => `<rect class="flow-node-rect${selected.includes(node.id) ? " is-emphasized" : ""}" x="${node.x}" y="${node.y}" width="${node.width}" height="${node.height}" rx="8"/><text class="flow-node-label" x="${node.x + node.width / 2}" y="${node.y + node.height / 2}">${escapeHtml(node.label)}</text>`).join("");
+  return computedSvg(kind, `<defs><marker id="${marker}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs>${lines}${boxes}`, layout.width, layout.height, summary);
+}
+
+function state(spec) { return flow(spec, "state"); }
+
+function sequence({ actors, events, summary }) {
+  list("sequence", "actors", actors);
+  list("sequence", "events", events);
+  const layout = sequenceLayout(actors, events);
+  const prefix = `dots-sequence-${++figureSerial}`;
+  const marker = `${prefix}-arrow`;
+  const lines = layout.actors.map((actor) => `<text class="flow-node-label" x="${actor.x}" y="35">${escapeHtml(actor.label)}</text><path class="flow-edge" d="M${actor.x},52 V${layout.height - 20}" stroke-dasharray="4 4"/>`).join("");
+  const arrows = layout.events.map((event) => {
+    const from = layout.actors.find((actor) => actor.label === event.from);
+    const to = layout.actors.find((actor) => actor.label === event.to);
+    if (!from || !to) fail("sequence", "event references an unknown actor");
+    const mid = (from.x + to.x) / 2;
+    return `<path class="flow-edge" d="M${from.x},${event.y} H${to.x + (from.x < to.x ? -6 : 6)}" marker-end="url(#${marker})"/><text class="flow-edge-label" x="${mid}" y="${event.y - 9}">${escapeHtml(event.label ?? "")}</text>`;
+  }).join("");
+  return computedSvg("sequence", `<defs><marker id="${marker}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs>${lines}${arrows}`, layout.width, layout.height, summary);
+}
+
+function timelineFigure({ events, summary }) {
+  list("timeline", "events", events);
+  const layout = timelineLayout(events);
+  const line = `<path class="flow-edge" d="M40,90 H${layout.width - 40}"/>`;
+  const points = layout.events.map((event, index) => `<circle cx="${event.x}" cy="90" r="5" fill="${index === layout.events.length - 1 ? "var(--accent)" : "var(--foreground)"}"/><text class="flow-edge-label" x="${event.x}" y="65">${escapeHtml(event.date ?? "")}</text><text class="flow-node-label" x="${event.x}" y="120">${escapeHtml(event.title ?? event.label)}</text>`).join("");
+  return computedSvg("timeline", line + points, layout.width, layout.height, summary);
+}
+
+function line(data, { title, source, ...options } = {}) {
+  return withSource(chart("line", { title, data, ...options }), "line-chart", source, "line");
+}
+
+function stacked(data, { title, source, ...options } = {}) {
+  return withSource(chart("stacked", { title, data, ...options }), "stacked-chart", source, "stacked");
+}
+
 const MOCKUP_SKELETON = html`<div class="mockup-toolbar" aria-hidden="true"><span></span><span></span><span></span></div><div class="mockup-layout" aria-hidden="true"><div class="mockup-nav"><div class="mockup-line is-accent"></div><div class="mockup-line"></div><div class="mockup-line"></div><div class="mockup-line"></div></div><div class="mockup-main"><div class="mockup-line is-strong"></div><div class="mockup-line"></div><div class="mockup-line is-short"></div><div class="mockup-block"></div></div></div>`;
 
 function mockup({ label, caption, content }) {
@@ -272,10 +329,10 @@ export const helpers = Object.freeze({
   html, svg, raw,
   page, section, readingColumn,
   callout, calloutStack, recommendation, quote, disclosure,
-  stats, table, bars, sparkline,
+  stats, table, bars, sparkline, line, stacked,
   steps, timeline, finding, findings, fileMap, comparison,
   code, diff,
-  figure, gallery, flowDiagram, mockup,
+  figure, gallery, flowDiagram, flow, state, sequence, mockup,
 });
 
 export const meta = Object.freeze({
@@ -290,6 +347,8 @@ export const meta = Object.freeze({
   stats: { component: "stat-tiles", summary: "Two to five supplied headline measures.", params: "stats([{ value, label, note? }], { source? })", example: `stats([{ value: "14", label: "PRs merged", note: "+3 vs last week" }, { value: "6", label: "deploys" }], { source: "GitHub, week 38" })` },
   table: { component: "data-table", summary: "Rows compared line by line. Columns may be labels or { label, key?, numeric? }; rows arrays or objects.", params: "table({ columns, rows, stacked?, labelFirst? })", example: `table({ columns: ["Risk", "Owner", { label: "Exposure", numeric: true }], rows: [["Vendor SSO", "Priya", "$180k"]], stacked: true, labelFirst: true })` },
   bars: { component: "bar-chart", summary: "Ranked magnitudes with one emphasized row (via chart.mjs).", params: "bars(rows, { title, emphasis?, sort?, limit?, source? })", example: `bars([["checkout", 412], ["search", 255], ["auth", 104]], { title: "p95 latency, ms", emphasis: "checkout", source: "APM, last 7 days" })` },
+  line: { component: "line-chart", summary: "A sourced trend with ordered points.", params: "line([[label, value], ...], { title, source })", example: `line([["W1", 100], ["W2", 120], ["W3", 140]], { title: "Latency by week", source: "APM" })` },
+  stacked: { component: "stacked-chart", summary: "Sourced totals split into named segments.", params: "stacked([[label, ...values]], { title, series, source })", example: `stacked([["Search", 5, 2]], { title: "Work", series: ["Done", "Pending"], source: "Tracker" })` },
   sparkline: { component: "sparkline", summary: "An inline trend with visible value text.", params: "sparkline(numbers, { value, source })", example: `sparkline([96, 120, 180, 260, 312], { value: "312/wk", source: "APM, last 7 days" })` },
   steps: { component: "process-steps", summary: "A linear sequence of two to six stages.", params: "steps([{ title, detail?, current? }])", example: `steps([{ title: "Collect evidence", detail: "Record current behavior." }, { title: "Verify", detail: "Run focused checks.", current: true }])` },
   timeline: { component: "timeline", summary: "Milestones in order; order must carry information.", params: "timeline([{ title, date?, detail?, state?: 'current'|'pending' }])", example: `timeline([{ title: "Detected", date: "14:02", detail: "Alert fired." }, { title: "Rollback", date: "14:24", state: "current" }, { title: "Postmortem", date: "pending", state: "pending" }])` },
@@ -302,5 +361,8 @@ export const meta = Object.freeze({
   figure: { component: "wide-figure", summary: "One screenshot, image, or SVG wider than the column.", params: "figure({ src + alt | svg + label + viewBox?, caption?, contained?, eager? })", example: `figure({ svg: svg\`<rect width="1040" height="360" fill="var(--a4)" />\`, viewBox: "0 0 1040 360", label: "Wide comparison", caption: "The focal view stays readable." })` },
   gallery: { component: "evidence-gallery", summary: "Two to four screenshots with point-specific captions.", params: "gallery([{ src + alt | svg + label + viewBox?, caption?, featured? }])", example: `gallery([{ svg: svg\`<rect width="960" height="540" fill="var(--a4)" />\`, viewBox: "0 0 960 540", label: "Desktop report", caption: { lead: "Desktop.", text: "Evidence shares the first frame." }, featured: true }, { svg: svg\`<rect width="640" height="360" fill="var(--a4)" />\`, viewBox: "0 0 640 360", label: "Mobile report", caption: { lead: "Mobile.", text: "Status follows the title." } }])` },
   flowDiagram: { component: "flow-diagram", summary: "A hand-authored branching SVG with its text description.", params: "flowDiagram({ viewBox, content: svg\`\`, caption | notes, minWidth? })", example: `flowDiagram({ viewBox: "0 0 640 260", content: svg\`<rect class="flow-node-rect" x="12" y="110" width="112" height="44" rx="8" />\`, caption: "A commit triggers a build." })` },
+  flow: { component: "flow-diagram", summary: "Computed branching flow with a text summary.", params: "flow({ nodes, edges, summary, emphasis? })", example: `flow({ nodes: ["build", "verify"], edges: [["build", "verify"]], summary: "Build leads to verification." })` },
+  state: { component: "flow-diagram", summary: "Computed state transitions with a text summary.", params: "state({ nodes, edges, summary, emphasis? })", example: `state({ nodes: ["open", "closed"], edges: [["open", "closed", "finish"]], summary: "An open request closes when finished." })` },
+  sequence: { component: "flow-diagram", summary: "Computed actor messages with a text summary.", params: "sequence({ actors, events, summary })", example: `sequence({ actors: ["client", "server"], events: [{ from: "client", to: "server", label: "request" }], summary: "The client sends a request." })` },
   mockup: { component: "mockup-frame", summary: "A labeled static concept view; never observed UI.", params: "mockup({ label, caption, content? })", example: `mockup({ label: "Concept layout with navigation", caption: { lead: "Concept — not observed UI.", text: "The action and its evidence share one path." } })` },
 });

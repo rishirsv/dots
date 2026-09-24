@@ -85,6 +85,7 @@ export async function build(modulePath) {
   if (typeof inputs !== "object" || Array.isArray(inputs)) fail("inputs must be an object of name → relative path");
 
   const data = Object.fromEntries(Object.entries(inputs).map(([name, value]) => [name, loadInput(moduleDir, name, value)]));
+  kit.resetFigureIds?.();
   const spec = await mod.default(kit.helpers, data);
   if (!spec || spec.kit !== mod.kit || !spec.body) fail(`the default export must return the ${mod.kit} kit's page(...)`);
   const violations = checkPage(spec.body.__html);

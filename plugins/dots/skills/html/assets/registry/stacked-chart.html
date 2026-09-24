@@ -1,0 +1,24 @@
+<!-- component: stacked-chart
+title: Stacked chart
+type: ui
+when: Compare sourced totals and their composition across categories.
+deps: bar-chart for the shared card anatomy.
+gotchas: Use a table when exact segment values matter more than the shape.
+-->
+<style>
+  .stacked-row { display:grid; grid-template-columns:120px minmax(0,1fr) 48px; gap:12px; align-items:center; margin:0 0 12px; font-size:13px; }
+  .stacked-track { display:flex; height:18px; background:var(--a4); border-radius:4px; overflow:hidden; }
+  .stacked-segment { display:block; height:100%; }
+  .series-0 { background:var(--accent); }
+  .series-1 { background:var(--a40); }
+  .series-2 { background:var(--a20); }
+  .series-3 { background:var(--a12); }
+  .stacked-legend { display:flex; flex-wrap:wrap; gap:12px; font-size:12px; color:var(--text-muted); }
+  .stacked-legend span { display:inline-flex; align-items:center; gap:5px; }
+  .stacked-legend i { display:inline-block; width:10px; height:10px; }
+</style>
+<div data-component="stacked-chart" class="chart-card reveal">
+  <div class="chart-title">Completed and pending work</div>
+  <div class="stacked-row"><span>Search</span><div class="stacked-track"><span class="stacked-segment series-0" style="width:50%" title="Done: 5"></span><span class="stacked-segment series-1" style="width:20%" title="Pending: 2"></span></div><span>7</span></div>
+  <div class="stacked-legend"><span><i class="series-0"></i>Done</span><span><i class="series-1"></i>Pending</span></div>
+</div>

@@ -12,6 +12,8 @@
     { "name": "data-table", "title": "Data table", "type": "ui", "file": "data-table.html", "deps": [], "when": "Structured rows: decisions, inventories, risk registers. Use the stacked variant for text-heavy mobile comparisons." },
     { "name": "process-steps", "title": "Process steps", "type": "ui", "file": "process-steps.html", "deps": [], "when": "A linear sequence of two to six stages that must remain fully visible at narrow widths." },
     { "name": "bar-chart", "title": "Bar chart", "type": "ui", "file": "bar-chart.html", "deps": [], "when": "Compare magnitudes across up to ~8 items. Horizontal bars, one emphasized; page-behavior optionally adds a one-time grow reveal." },
+    { "name": "line-chart", "title": "Line chart", "type": "ui", "file": "line-chart.html", "deps": ["bar-chart"], "when": "Show a sourced trend across ordered observations." },
+    { "name": "stacked-chart", "title": "Stacked chart", "type": "ui", "file": "stacked-chart.html", "deps": ["bar-chart"], "when": "Compare totals and their composition across categories." },
     { "name": "sparkline", "title": "Sparkline", "type": "ui", "file": "sparkline.html", "deps": [], "when": "A trend inline with text or inside a stat tile; no axes, one emphasized endpoint." },
     { "name": "recommendation", "title": "Recommendation", "type": "ui", "file": "recommendation.html", "deps": [], "when": "The document's committing conclusion. One per document, near the end." },
     { "name": "code-panel", "title": "Code panel", "type": "ui", "file": "code-panel.html", "deps": [], "when": "Multi-line code or config. Dark surface in both modes, filename header, horizontal scroll contained." },

@@ -42,7 +42,7 @@ export function linearScale([d0, d1], [r0, r1]) {
 
 // ---------- spec normalization ----------
 
-const TYPES = ["bar", "sparkline"];
+const TYPES = ["bar", "sparkline", "line", "stacked"];
 
 function toRows(data, keys) {
   if (!Array.isArray(data) || data.length === 0) fail("spec.data must be a non-empty array");
@@ -77,9 +77,16 @@ export function normalizeSpec(type, spec) {
     return { ...norm, data: spec.data.slice(), value: spec.value };
   }
 
+  if (type === "stacked") {
+    if (!Array.isArray(spec.series) || spec.series.length < 2 || spec.series.some((name) => typeof name !== "string" || !name || name.includes("--"))) fail("stacked spec.series needs two or more names");
+    const rows = toRows(spec.data, ["label", ...spec.series]);
+    if (rows.some((row) => spec.series.some((name) => row[name] < 0))) fail("stacked values must be non-negative");
+    return { ...norm, series: spec.series.slice(), data: rows.map((row) => [row.label, ...spec.series.map((name) => row[name])]) };
+  }
+
   const keys = ["label", "value"];
   let rows = toRows(spec.data, keys);
-  if (rows.some((row) => row.value < 0)) fail("bar chart values must be non-negative");
+  if (type === "bar" && rows.some((row) => row.value < 0)) fail("bar chart values must be non-negative");
 
   const sort = spec.sort ?? (type === "bar" ? "desc" : "none");
   if (!["desc", "asc", "none"].includes(sort)) fail('spec.sort must be "desc", "asc", or "none"');
@@ -106,12 +113,32 @@ const specComment = (norm) => `<!-- chart-spec ${JSON.stringify(norm)} -->`;
 
 function chartCard(norm, body) {
   return [
-    `<div data-component="${norm.type === "bar" ? "bar-chart" : norm.type + "-chart"}" class="chart-card reveal">`,
+    `<div data-component="${norm.type}-chart" class="chart-card reveal">`,
     specComment(norm),
     `  <div class="chart-title">${escapeHtml(norm.title)}</div>`,
     body,
     `</div>`,
   ].join("\n");
+}
+
+function lineFragment(norm) {
+  const values = norm.data.map(([, value]) => value);
+  const lo = Math.min(...values), hi = Math.max(...values);
+  const x = (i) => 44 + i * (560 / Math.max(1, values.length - 1));
+  const y = (value) => hi === lo ? 110 : 190 - (value - lo) / (hi - lo) * 150;
+  const points = values.map((value, i) => `${round(x(i))},${round(y(value))}`).join(' ');
+  const labels = norm.data.map(([label], i) => `<text x="${round(x(i))}" y="230" text-anchor="middle">${escapeHtml(label)}</text>`).join('');
+  const body = `  <div class="chart-scroll"><svg viewBox="0 0 640 250" style="min-width:640px" aria-hidden="true"><polyline class="line-series" points="${points}"/>${values.map((value, i) => `<circle class="line-point" cx="${round(x(i))}" cy="${round(y(value))}" r="4"/>`).join('')}${labels}</svg></div>`;
+  return chartCard(norm, body);
+}
+
+function stackedFragment(norm) {
+  const totals = norm.data.map(([, ...values]) => values.reduce((sum, value) => sum + value, 0));
+  const max = Math.max(...totals);
+  if (max <= 0) fail('stacked chart needs at least one positive total');
+  const body = norm.data.map(([label, ...values], row) => `  <div class="stacked-row"><span>${escapeHtml(label)}</span><div class="stacked-track">${values.map((value, index) => `<span class="stacked-segment series-${index % 4}" style="width:${round(value / max * 100)}%" title="${escapeHtml(norm.series[index])}: ${value}"></span>`).join('')}</div><span>${totals[row]}</span></div>`).join('\n');
+  const legend = `<div class="stacked-legend">${norm.series.map((name, index) => `<span><i class="series-${index % 4}"></i>${escapeHtml(name)}</span>`).join('')}</div>`;
+  return chartCard(norm, body + '\n' + legend);
 }
 
 // ---------- presets ----------
@@ -156,7 +183,7 @@ function sparklineFragment(norm) {
   ].join("\n");
 }
 
-const PRESETS = { bar: barFragment, sparkline: sparklineFragment };
+const PRESETS = { bar: barFragment, sparkline: sparklineFragment, line: lineFragment, stacked: stackedFragment };
 
 // ---------- public API ----------
 
@@ -174,7 +201,7 @@ export function parseSpec(fragmentHtml) {
 
 /** Replace chart roots in a fragment or complete page without touching other markup. */
 export function regenerateCharts(html) {
-  const roots = /<(div|span)\b[^>]*\bdata-component="(?:bar-chart|sparkline)"[^>]*>\s*<!-- chart-spec (\{.*?\}) -->/gs;
+  const roots = /<(div|span)\b[^>]*\bdata-component="(?:bar-chart|sparkline|line-chart|stacked-chart)"[^>]*>\s*<!-- chart-spec (\{.*?\}) -->/gs;
   const edits = [];
   for (const match of html.matchAll(roots)) {
     const tag = match[1];
