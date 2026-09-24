@@ -256,7 +256,9 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
   .page[data-layout="canvas"] .reading-column { margin-left: auto; margin-right: auto; }
   .page > header { margin-bottom: var(--section); }
   .context-line { font-size: 13px; color: var(--text-muted); margin: 0 0 20px; }
-  .title-row { margin-bottom: 8px; }
+  .title-row {
+    margin-bottom: 8px;
+  }
   .dek { font-size: 16px; color: var(--text-muted); margin: 0; max-width: 62ch; }
   footer.sources {
     margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--a12);
@@ -387,30 +389,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
     <p class="dek">Three approaches reduce duplicate release work. Only one preserves a literal chain from verification to publication.</p>
   </header>
 
-  <div class="reading-column">
-    <section id="frame"><h2>The decision</h2><p>Choose the smallest release architecture that proves the exact candidate once, then passes that same artifact to packaging and upload. This is illustrative content; replace every claim with evidence from the real system.</p>
-      <div data-component="callout" class="callout"><p><strong>Non-negotiable.</strong> A successful source build is not proof of a separately reconstructed upload candidate.</p></div>
-    </section>
-  </div>
-  <section id="options"><h2>Three viable approaches</h2>
-    <div data-component="comparison-grid" class="comparison-grid" data-columns="3">
-      <div class="option-card"><h3>Keep separate gates</h3><p>Each release stage builds its own artifact. Familiar, but no single receipt identifies what shipped.</p><div class="best-for">best for: disposable development builds</div></div>
-      <div class="option-card"><h3>Freeze one candidate</h3><p><span class="recommend-mark">Recommended.</span> Build once, verify the immutable candidate, then package and upload that exact path.</p><div class="best-for">best for: releases that need auditable proof</div></div>
-      <div class="option-card"><h3>Trust remote CI</h3><p>Publish after external checks report green. Simple locally, but the remote result still needs an artifact identity contract.</p><div class="best-for">best for: mature artifact-producing CI</div></div>
-    </div>
-  </section>
-  <section id="criteria"><h2>Shared criteria expose the real tradeoff</h2>
-    <div data-component="data-table" class="table-scroll"><table><thead><tr><th>Criterion</th><th>Separate gates</th><th>Frozen candidate</th><th>Remote CI</th></tr></thead><tbody>
-      <tr><td>Candidate identity</td><td>Changes by stage</td><td>Stable end to end</td><td>Depends on CI contract</td></tr>
-      <tr><td>Duplicate work</td><td>High</td><td>Low</td><td>Low locally</td></tr>
-      <tr><td>Failure receipt</td><td>Fragmented</td><td>One local chain</td><td>Split across systems</td></tr>
-      <tr><td>Operational change</td><td>None</td><td>Contained</td><td>Broad</td></tr>
-    </tbody></table></div>
-  </section>
-  <div class="reading-column">
-    <section id="tradeoff"><h2>The cost worth accepting</h2><p>The frozen candidate approach adds explicit artifact ownership to the release path. That is a real change, but it is smaller than importing a new CI architecture and directly closes the proof gap.</p></section>
-    <section id="recommendation"><h2>Recommendation</h2><div data-component="recommendation" class="recommendation"><p><strong>Freeze one candidate and make every later stage consume it.</strong> Record the candidate identifier, focused verification results, and publication receipt in one release summary.</p><p>Do not widen this work into a build-system rewrite; preserve the existing build command and change only artifact handoff.</p></div></section>
-  </div>
+  <div class="reading-column"><section id="frame"><h2>The decision</h2><p>Choose the smallest release architecture that proves the exact candidate once, then passes that same artifact to packaging and upload. This is illustrative content; replace every claim with evidence from the real system.</p><div data-component="callout" class="callout"><p><strong>Non-negotiable.</strong> A successful source build is not proof of a separately reconstructed upload candidate.</p></div></section></div><section id="options"><h2>Three viable approaches</h2><div data-component="comparison-grid" class="comparison-grid" data-columns="3"><div class="option-card"><h3>Keep separate gates</h3><p>Each release stage builds its own artifact. Familiar, but no single receipt identifies what shipped.</p><div class="best-for">best for: disposable development builds</div></div><div class="option-card recommended"><h3>Freeze one candidate</h3><p><span class="recommend-mark">Recommended.</span> Build once, verify the immutable candidate, then package and upload that exact path.</p><div class="best-for">best for: releases that need auditable proof</div></div><div class="option-card"><h3>Trust remote CI</h3><p>Publish after external checks report green. Simple locally, but the remote result still needs an artifact identity contract.</p><div class="best-for">best for: mature artifact-producing CI</div></div></div></section><section id="criteria"><h2>Shared criteria expose the real tradeoff</h2><div data-component="data-table" class="table-scroll"><table><thead><tr><th>Criterion</th><th>Separate gates</th><th>Frozen candidate</th><th>Remote CI</th></tr></thead><tbody><tr><td>Candidate identity</td><td>Changes by stage</td><td>Stable end to end</td><td>Depends on CI contract</td></tr><tr><td>Duplicate work</td><td>High</td><td>Low</td><td>Low locally</td></tr><tr><td>Failure receipt</td><td>Fragmented</td><td>One local chain</td><td>Split across systems</td></tr><tr><td>Operational change</td><td>None</td><td>Contained</td><td>Broad</td></tr></tbody></table></div></section><div class="reading-column"><section id="tradeoff"><h2>The cost worth accepting</h2><p>The frozen candidate approach adds explicit artifact ownership to the release path. That is a real change, but it is smaller than importing a new CI architecture and directly closes the proof gap.</p></section><section id="recommendation"><h2>Recommendation</h2><div data-component="recommendation" class="recommendation"><p><strong>Freeze one candidate and make every later stage consume it.</strong> Record the candidate identifier, focused verification results, and publication receipt in one release summary.</p><p>Do not widen this work into a build-system rewrite; preserve the existing build command and change only artifact handoff.</p></div></section></div>
 
   <footer class="sources">Illustrative reference: replace all sample claims, dates, metrics, paths, and decisions with grounded source material.</footer>
 </div>

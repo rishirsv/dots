@@ -19,14 +19,13 @@ import {
 } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, posix, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { escapeHtml as escapeText } from "./lib/html.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const registryRoot = join(root, "assets", "registry");
 const registry = JSON.parse(readFileSync(join(registryRoot, "registry.json"), "utf8"));
 const items = new Map(registry.items.map((item) => [item.name, item]));
 
-const TEXT_ESC = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
-const escapeText = (value) => String(value).replace(/[&<>"']/g, (char) => TEXT_ESC[char]);
 const IMAGE_MIME = new Map([
   [".avif", "image/avif"],
   [".gif", "image/gif"],
@@ -82,6 +81,69 @@ function orderedComponents(requested) {
   return ordered;
 }
 
+// Comments, raw-text elements, and code samples can mention markup without being structure.
+function structuralMarkup(markup, { keepCode = false } = {}) {
+  const samples = keepCode ? "pre|textarea|script|style" : "pre|code|textarea|script|style";
+  return markup
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(new RegExp(`<(${samples})\\b[^>]*>[\\s\\S]*?<\\/\\1>`, "gi"), "");
+}
+
+function componentsIn(markup) {
+  const names = [];
+  for (const [tag] of structuralMarkup(markup).matchAll(/<[a-z][^>]*>/gi)) {
+    const name = tag.match(/\sdata-component\s*=\s*(["'])(.*?)\1/i)?.[2];
+    if (name) names.push(name);
+  }
+  return names;
+}
+
+function topLevelSections(markup) {
+  const sections = [];
+  let depth = 0;
+  // Headings may contain inline code, so keep it when reading section titles.
+  for (const match of structuralMarkup(markup, { keepCode: true }).matchAll(/<(\/?)section\b([^>]*)>|<h2\b[^>]*>([\s\S]*?)<\/h2>/gi)) {
+    const [, closing, attributes, heading] = match;
+    if (heading !== undefined) {
+      const current = sections.at(-1);
+      if (depth === 1 && current && current.title == null) current.title = heading.replace(/<[^>]+>/g, "").trim();
+    } else if (closing) {
+      depth = Math.max(0, depth - 1);
+    } else {
+      depth += 1;
+      const id = attributes.match(/\sid\s*=\s*(["'])(.*?)\1/i)?.[2];
+      if (depth === 1 && id) sections.push({ id, title: null });
+    }
+  }
+  return sections.filter((section) => section.title);
+}
+
+function tocMarkup(sections) {
+  // Ids and titles come from existing markup, so they are already escaped.
+  const links = sections.map(({ id, title }) => `      <a href="#${id}">${title}</a>`).join("\n");
+  return `<nav data-component="toc-rail" class="toc-rail" aria-label="On this page">
+  <div class="toc-wide">
+    <p class="toc-label">On this page</p>
+    <div class="toc-links">
+${links}
+    </div>
+  </div>
+  <details class="toc-compact">
+    <summary>On this page</summary>
+    <div class="toc-links">
+${links}
+    </div>
+  </details>
+</nav>`;
+}
+
+function withToc(body, toc) {
+  if (toc === false || componentsIn(body).includes("toc-rail")) return body;
+  const sections = topLevelSections(body);
+  if (toc === "auto" ? sections.length < 6 : sections.length === 0) return body;
+  return `${tocMarkup(sections)}\n\n${body.trim()}`;
+}
+
 function pageShell({ title, context, contextMarkup, dek, footer, body, layout }) {
   let shell = sourceFor("page-shell").match(/<div data-component="page-shell"[\s\S]*$/)?.[0];
   if (!shell) fail("page-shell markup is missing");
@@ -103,12 +165,14 @@ function pageShell({ title, context, contextMarkup, dek, footer, body, layout })
   return shell;
 }
 
-export function assemble({ title, context = "", contextMarkup = "", dek = "", footer = "", body, components = [], lang = "en", assetRoot, layout = "article" }) {
+export function assemble({ title, context = "", contextMarkup = "", dek = "", footer = "", body, components = [], lang = "en", assetRoot, layout = "article", toc = false }) {
   if (!title) fail("title is required");
   if (body == null) fail("body is required");
   if (!["article", "wide", "canvas"].includes(layout)) fail(`unknown layout "${layout}"`);
+  if (![false, true, "auto"].includes(toc)) fail(`toc must be false, true, or "auto"`);
 
-  const used = [...body.matchAll(/\bdata-component\s*=\s*(["'])(.*?)\1/gi)].map((match) => match[2]);
+  body = withToc(body, toc);
+  const used = componentsIn(body);
   const selected = orderedComponents([...new Set([...components.filter(Boolean), ...used])]);
   const componentSources = selected.map((name) => sourceFor(name));
   const css = [
@@ -138,12 +202,12 @@ ${scripts ? `\n${scripts}\n` : ""}</body>
 `;
 }
 
-function localPath(rootPath, value, label) {
+export function localPath(rootPath, value, label, scope = "manifest") {
   if (typeof value !== "string" || !value.trim()) fail(`${label} must be a non-empty relative path`);
   if (isAbsolute(value)) fail(`${label} must be relative`);
   const target = resolve(rootPath, value);
   const offset = relative(rootPath, target);
-  if (offset === ".." || offset.startsWith(`..${sep}`) || isAbsolute(offset)) fail(`${label} must stay inside the manifest directory`);
+  if (offset === ".." || offset.startsWith(`..${sep}`) || isAbsolute(offset)) fail(`${label} must stay inside the ${scope} directory`);
   return target;
 }
 

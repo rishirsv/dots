@@ -117,6 +117,41 @@ when the content calls for it. `--layout` accepts `article`, `wide`, or `canvas`
 and defaults to `article`. The assembler packages chosen CSS and behavior; it
 does not select examples, components, content, or section order.
 
+### Page modules
+
+A single page can instead be written as a module that calls the report kit's
+helpers, so the agent passes content and never copies component anatomy. The
+module has no imports: `build.mjs` passes in the helpers and the loaded inputs.
+
+```js
+// release-readiness.page.mjs
+export const kit = "report";
+export const inputs = { sizes: "./sizes.json" }; // .json, .csv, or .txt beside the module
+
+export default ({ page, section, callout, bars }, { sizes }) =>
+  page({ title: "Release readiness", context: "project / release", layout: "wide" }, [
+    section("state", "Current state", [
+      "Plain strings become paragraphs; use html`` for inline markup.",
+      callout.warn("Blocked.", "Staging credentials expired."),
+      bars(sizes, { title: "Artifact size, KB", emphasis: "cli" }),
+    ]),
+  ]);
+```
+
+```bash
+node scripts/build.mjs release-readiness.page.mjs --out release-readiness.html
+```
+
+Every value is escaped unless it comes from `html```, `svg```, or another
+helper. `raw()` is the explicit opt-out for trusted markup. Helper names,
+parameters, and examples are listed in `meta` in `scripts/kits/report.mjs`.
+`page()` adds a TOC automatically for six or more sections; pass
+`toc: false` to omit it. Inputs must stay inside the module's directory, and
+images use `figure({ src, alt })`, which embeds them like `data-embed-src`.
+Keep the module beside the finished page when the user wants to keep editing
+it. `assets/outcomes/status-report.page.mjs` and
+`decision-comparison.page.mjs` are complete examples.
+
 ### Working source and finished page
 
 Treat the body fragment as the main working source while constructing an

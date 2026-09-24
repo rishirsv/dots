@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { chart, parseSpec, normalizeSpec, escapeText, escapeAttr, linearScale } from "./chart.mjs";
+import { chart, parseSpec, normalizeSpec, linearScale } from "./chart.mjs";
 
 const BAR = {
   title: "Spend by team, $k",
@@ -16,11 +16,6 @@ const BAR = {
 const SPARK = { data: [96, 120, 118, 180, 210, 260, 312], value: "312/wk" };
 
 // ---------- primitives ----------
-
-test("escaping covers text and attribute contexts", () => {
-  assert.equal(escapeText('a<b>&"c'), 'a&lt;b&gt;&amp;"c');
-  assert.equal(escapeAttr('a<b>&"c\''), "a&lt;b&gt;&amp;&quot;c&#39;");
-});
 
 test("linearScale maps domain to range and rejects zero span", () => {
   const s = linearScale([0, 10], [0, 100]);

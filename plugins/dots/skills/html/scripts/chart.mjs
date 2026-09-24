@@ -25,14 +25,7 @@
  */
 
 import { readFileSync, writeFileSync } from "node:fs";
-
-// ---------- text safety ----------
-
-const TEXT_ESC = { "<": "&lt;", ">": "&gt;", "&": "&amp;" };
-const ATTR_ESC = { ...TEXT_ESC, '"': "&quot;", "'": "&#39;" };
-
-export const escapeText = (v) => String(v).replace(/[<>&]/g, (c) => TEXT_ESC[c]);
-export const escapeAttr = (v) => String(v).replace(/[<>&"']/g, (c) => ATTR_ESC[c]);
+import { escapeHtml } from "./lib/html.mjs";
 
 const round = (n) => Math.round(n * 100) / 100;
 
@@ -115,7 +108,7 @@ function chartCard(norm, body) {
   return [
     `<div data-component="${norm.type === "bar" ? "bar-chart" : norm.type + "-chart"}" class="chart-card reveal">`,
     specComment(norm),
-    `  <div class="chart-title">${escapeText(norm.title)}</div>`,
+    `  <div class="chart-title">${escapeHtml(norm.title)}</div>`,
     body,
     `</div>`,
   ].join("\n");
@@ -133,9 +126,9 @@ function barFragment(norm) {
       const pct = round((r.value / max) * 100);
       return [
         `  <div class="bar-row">`,
-        `    <div class="bar-name">${escapeText(r.label)}</div>`,
+        `    <div class="bar-name">${escapeHtml(r.label)}</div>`,
         `    <div class="bar-track"><div class="bar-fill${emph ? " emphasis" : ""}" style="width:${pct}%"></div></div>`,
-        `    <div class="bar-value"${emph ? ' style="color:var(--chart-value-emphasis);font-weight:600"' : ""}>${escapeText(r.value)}</div>`,
+        `    <div class="bar-value"${emph ? ' style="color:var(--chart-value-emphasis);font-weight:600"' : ""}>${escapeHtml(r.value)}</div>`,
         `  </div>`,
       ].join("\n");
     })
@@ -158,7 +151,7 @@ function sparklineFragment(norm) {
     `    <polyline class="sparkline-line" points="${points}" />`,
     `    <circle class="sparkline-dot" cx="${round(xs(d.length - 1))}" cy="${round(ys(last))}" r="2.5" />`,
     `  </svg>`,
-    `  <span class="sparkline-value">${escapeText(norm.value)}</span>`,
+    `  <span class="sparkline-value">${escapeHtml(norm.value)}</span>`,
     `</span>`,
   ].join("\n");
 }
