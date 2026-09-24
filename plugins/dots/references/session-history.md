@@ -101,7 +101,7 @@ or `self-improve` skill directory:
 python3 ../self-improve/scripts/self_improve.py --platform codex triage --days 30 --limit 100
 python3 ../self-improve/scripts/self_improve.py --platform claude show <session-id>
 python3 ../self-improve/scripts/self_improve.py --platform codex files <thread-id>
-python3 ../self-improve/scripts/self_improve.py --platform codex skill-usage --skill dots:pr --days 30 --limit 100
+python3 ../self-improve/scripts/self_improve.py --platform codex skill-usage --skill dots:publish-pr --days 30 --limit 100
 python3 ../self-improve/scripts/self_improve.py --platform claude stats
 ```
 

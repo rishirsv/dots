@@ -1,5 +1,5 @@
 ---
-name: pr
+name: publish-pr
 description: "Commits and pushes finished changes, then opens or updates a non-draft GitHub pull request ready for review. Use when the user asks to publish completed work as a PR. Not for merging, addressing review feedback, or monitoring checks and reviews."
 ---
 
@@ -7,7 +7,7 @@ description: "Commits and pushes finished changes, then opens or updates a non-d
 
 For commit messages, the pull-request title, and its description, apply
 [Technical writing guidance](../../references/technical-writing-guidance.md)
-as an editing standard. `$pr` still owns these publishing artifacts.
+as an editing standard. `$publish-pr` still owns these publishing artifacts.
 
 1. Confirm the GitHub repository and active account. If necessary, run
    `gh auth switch` and confirm access again.
@@ -84,7 +84,7 @@ help a reviewer verify the change.
 ## Visual Evidence
 
 Upload visual evidence only when the completed task already produced a
-screenshot or short video; `$pr` does not capture or recapture it.
+screenshot or short video; `$publish-pr` does not capture or recapture it.
 
 Check the applicable `gh pr create --help` or `gh pr edit --help` before using
 `--attach`; availability belongs to the installed CLI, not this example. If it

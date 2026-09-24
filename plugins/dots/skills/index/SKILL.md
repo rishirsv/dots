@@ -39,7 +39,7 @@ workflow. It routes into focused skills as its phases require.
 | Write or revise durable repository documentation | `$docs-writer` |
 | Design, build, refine, or audit a product interface | `$interface-design` |
 | Create a self-contained HTML artifact | `$html` |
-| Publish finished work as a pull request | `$pr` |
+| Publish finished work as a pull request | `$publish-pr` |
 | Keep a pull request moving | `$babysit-pr` |
 | Prepare work for another agent, task, or phase | `$handoff` |
 | Write or revise a standalone prompt for another assistant | `$meta-prompt` |
