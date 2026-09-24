@@ -1,9 +1,9 @@
 ---
-name: advisor
+name: ask-model
 description: "Run a named CLI model for repository advice, review, or implementation. Use when the user explicitly asks to involve that model."
 ---
 
-# Advisor
+# Ask Model
 
 Run the named advisor through its command-line provider. This CLI workflow is
 separate from the `consultant` subagent. Read and follow
