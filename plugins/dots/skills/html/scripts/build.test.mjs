@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { assemble, checkPage } from "./assemble.mjs";
-import { build, parseCsv } from "./build.mjs";
+import { build, extract, parseCsv } from "./build.mjs";
 import { html, raw, SafeHtml, svg } from "./lib/html.mjs";
 import { ContractError, helpers, meta } from "./kits/report.mjs";
 
@@ -240,4 +240,37 @@ test('build rejects a page-wide contract violation', () => withTempDir(async (di
   const file = join(dir, 'bad.page.mjs');
   writeFileSync(file, 'export const kit="report"; export default ({page,section,recommendation}) => page({title:"Bad"}, [section("one","One",[recommendation("First")]),section("two","Two",[recommendation("Second")])]);');
   await assert.rejects(build(file), /at most one recommendation/);
+}));
+
+test('embedded source extracts and rebuilds byte-identically', () => withTempDir(async (dir) => {
+  const module = join(dir, 'roundtrip.page.mjs');
+  const input = join(dir, 'facts.json');
+  const source = 'export const kit="report"; export const inputs={facts:"./facts.json"}; export default ({page,section}, {facts}) => page({title:"Roundtrip"}, [section("facts","Facts",[facts.note])]);\n';
+  writeFileSync(module, source);
+  writeFileSync(input, '{"note":"Cost < $10"}\n');
+  const first = await build(module, { embedSource: true });
+  assert.match(first, /application\/vnd\.dots-source\+json/);
+  assert.match(first, /\\u003c/);
+  const page = join(dir, 'page.html');
+  writeFileSync(page, first);
+  const target = join(dir, 'extracted');
+  const extractedModule = extract(page, target);
+  assert.equal(readFileSync(extractedModule, 'utf8'), source);
+  assert.equal(await build(extractedModule, { embedSource: true }), first);
+  assert.throws(() => extract(page, target), /refusing to overwrite/);
+  writeFileSync(join(target, '.dots-source.json'), '{"kitVersion":"2.0.0"}\n');
+  writeFileSync(extractedModule, 'throw new Error("executed before version check")');
+  await assert.rejects(build(extractedModule), /matching major version/);
+}));
+
+test('extract rejects path traversal without running embedded code', () => withTempDir((dir) => {
+  const payload = { kitVersion: '1.0.0', module: { name: '../escape.page.mjs', source: 'throw new Error("executed")' }, inputs: {} };
+  const page = join(dir, 'unsafe.html');
+  writeFileSync(page, `<html><body><script type="application/vnd.dots-source+json">${JSON.stringify(payload)}</script></body></html>`);
+  assert.throws(() => extract(page, join(dir, 'out')), /must stay inside/);
+  payload.module.name = 'safe.page.mjs';
+  payload.inputs = { './safe.page.mjs': 'collision' };
+  writeFileSync(page, `<html><body><script type="application/vnd.dots-source+json">${JSON.stringify(payload)}</script></body></html>`);
+  assert.throws(() => extract(page, join(dir, 'out')), /duplicate embedded file/);
+  assert.throws(() => extract(join(dir, 'missing.html'), join(dir, 'out')), /ENOENT/);
 }));

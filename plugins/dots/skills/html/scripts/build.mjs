@@ -9,8 +9,8 @@
  * Usage: node scripts/build.mjs <page.mjs> --out <page.html>
  */
 
-import { readFileSync, writeFileSync } from "node:fs";
-import { dirname, extname, resolve } from "node:path";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { basename, dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { assemble, checkPage, localPath } from "./assemble.mjs";
 import * as report from "./kits/report.mjs";
@@ -71,15 +71,27 @@ function loadInput(moduleDir, name, value) {
   return fail(`inputs.${name} must be .json, .csv, or .txt`);
 }
 
-export async function build(modulePath) {
+const SOURCE_TYPE = "application/vnd.dots-source+json";
+const SIDECAR = ".dots-source.json";
+
+function major(version) { return String(version).split(".")[0]; }
+
+export async function build(modulePath, { embedSource = false } = {}) {
   const file = resolve(modulePath);
   const moduleDir = dirname(file);
+  const sidecar = join(moduleDir, SIDECAR);
+  const expected = existsSync(sidecar) ? JSON.parse(readFileSync(sidecar, "utf8")).kitVersion : null;
+  if (expected && !Object.values(KITS).some((kit) => major(expected) === major(kit.version)))
+    fail(`page source uses kit ${expected}; installed kit major version differs. Rebuild with the matching major version.`);
   // A fresh URL per build so edits to the module are never served from the ESM cache.
   const url = `${pathToFileURL(file).href}?build=${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const mod = await import(url);
 
   const kit = KITS[mod.kit];
   if (!kit) fail(`page module must export kit = ${Object.keys(KITS).map((name) => `"${name}"`).join(" | ")}`);
+  if (expected) {
+    if (major(expected) !== major(kit.version)) fail(`page source uses ${mod.kit} kit ${expected}; installed kit is ${kit.version}. Rebuild with the matching major version.`);
+  }
   if (typeof mod.default !== "function") fail("page module must export a default function (helpers, data) => page(...)");
   const inputs = mod.inputs ?? {};
   if (typeof inputs !== "object" || Array.isArray(inputs)) fail("inputs must be an object of name → relative path");
@@ -91,7 +103,7 @@ export async function build(modulePath) {
   const violations = checkPage(spec.body.__html);
   if (violations.length) fail(violations.join("; "));
 
-  return assemble({
+  let result = assemble({
     title: spec.title,
     context: spec.context,
     dek: spec.dek,
@@ -103,6 +115,45 @@ export async function build(modulePath) {
     body: spec.body.__html,
     assetRoot: moduleDir,
   });
+  if (embedSource) {
+    const files = Object.fromEntries(Object.entries(inputs).map(([name, value]) => {
+      const path = localPath(moduleDir, value, `inputs.${name}`, "page module");
+      return [value, readFileSync(path, "utf8")];
+    }));
+    const payload = { kitVersion: kit.version, module: { name: basename(file), source: readFileSync(file, "utf8") }, inputs: files };
+    const json = JSON.stringify(payload).replace(/</g, "\\u003c");
+    result = result.replace("</body>", `<script type="${SOURCE_TYPE}">${json}</script>\n</body>`);
+  }
+  return result;
+}
+
+export function extract(pagePath, targetDir) {
+  const page = readFileSync(resolve(pagePath), "utf8");
+  const match = page.match(/<script type="application\/vnd\.dots-source\+json">([\s\S]*?)<\/script>/);
+  if (!match) fail("page has no embedded source");
+  let payload;
+  try { payload = JSON.parse(match[1]); }
+  catch { fail("embedded source is invalid JSON"); }
+  if (!payload?.module?.name || typeof payload.module.source !== "string" || !payload.kitVersion || !payload.inputs || typeof payload.inputs !== "object" || Array.isArray(payload.inputs)) fail("embedded source is incomplete");
+  const target = resolve(targetDir);
+  if (existsSync(target)) fail(`refusing to overwrite ${target}`);
+  const files = [[payload.module.name, payload.module.source], ...Object.entries(payload.inputs)];
+  const destinations = new Set([join(target, SIDECAR)]);
+  for (const [name, content] of files) {
+    const path = localPath(target, name, `embedded file ${name}`, "extract");
+    if (destinations.has(path)) fail(`duplicate embedded file ${name}`);
+    destinations.add(path);
+    if (typeof content !== "string") fail(`embedded file ${name} is not text`);
+  }
+  mkdirSync(target, { recursive: true });
+  for (const [name, content] of files) {
+    const path = localPath(target, name, `embedded file ${name}`, "extract");
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, content);
+  }
+  writeFileSync(join(target, SIDECAR), JSON.stringify({ kitVersion: payload.kitVersion }) + "\n");
+  console.warn("build.mjs: extracted modules are untrusted code; inspect them before rebuilding");
+  return join(target, payload.module.name);
 }
 
 const invokedDirectly = process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1]);
@@ -110,10 +161,17 @@ if (invokedDirectly) {
   const args = process.argv.slice(2);
   const outIndex = args.indexOf("--out");
   const out = outIndex === -1 ? undefined : args[outIndex + 1];
-  const modulePath = args.find((arg, index) => !arg.startsWith("--") && index !== outIndex + 1);
   try {
-    if (!modulePath || !out || args.length !== 3) fail("usage: node scripts/build.mjs <page.mjs> --out <page.html>");
-    writeFileSync(out, await build(modulePath));
+    if (args[0] === "--extract") {
+      if (args.length !== 4 || args[2] !== "--to") fail("usage: node scripts/build.mjs --extract <page.html> --to <dir>");
+      extract(args[1], args[3]);
+    } else {
+      const embedSource = args.includes("--embed-source");
+      const modulePath = args[0];
+      const valid = args.every((value, index) => index === 0 || index === outIndex || index === outIndex + 1 || value === "--embed-source");
+      if (!modulePath || !out || outIndex < 1 || args.length !== (embedSource ? 4 : 3) || !valid) fail("usage: node scripts/build.mjs <page.mjs> --out <page.html> [--embed-source]");
+      writeFileSync(out, await build(modulePath, { embedSource }));
+    }
   } catch (error) {
     console.error(error.message);
     process.exit(1);

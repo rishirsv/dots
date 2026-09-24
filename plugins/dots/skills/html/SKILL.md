@@ -1,59 +1,66 @@
 ---
 name: html
-description: "Creates and edits self-contained browser-openable HTML pages, linked page sets, fragments, static product mocks, templates, and HTML assets for template-driven skills. Not for production UI implementation, interactive data visualizations, underlying research or planning, durable documentation, or non-HTML skill authoring."
+description: "Create or edit self-contained HTML reports, linked page sets, embeddable fragments, static product mocks, and HTML assets for templates. Use for browser-openable artifacts; use ui-design for production interfaces and presentation-specific tooling for slide decks."
 ---
 
 # HTML
 
-Create one self-contained page or one embeddable fragment by default. Create a
-linked page set only when the user requests multiple pages or the supplied
-material has a real ordered sequence whose parts need independent URLs. Read
-[authoring.md](references/authoring.md) before building; it explains how to
-build, edit, check, and deliver the result.
+Create one self-contained report page by default. Use a linked page set when
+the user requests multiple pages or the material has a real ordered sequence
+whose parts need independent URLs. Use a fragment when the result must be
+embedded in another surface.
 
-## Build from prepared material
+## Report page loop
+
+1. Start with the reader's question and the verified material. Preserve the
+   source's decisions and reading order. Do not invent metrics, scores,
+   controls, evidence, or a recommendation.
+2. Run `node scripts/catalog.mjs --list` in this skill directory; use
+   `--help <helper>` for the few helpers the page needs. Write a `.page.mjs`
+   module with `kit = "report"`, local inputs, and a default function that
+   returns `page(...)`. [authoring.md](references/authoring.md#page-module-loop)
+   has the short command path and complete examples.
+3. Run `node scripts/build.mjs <module.page.mjs> --out <page.html>`.
+   Fix build contracts in the module. For layouts with figures, tables,
+   custom CSS, long content, or narrow-screen risk, run
+   `node scripts/capture-artifact.mjs --in <page.html> --out-dir <shots>`.
+   Open `sheet.png`, read `report.json`, fix findings, and inspect the relevant
+   full-page captures when the issue lies below the first viewport.
+4. Deliver the HTML file and state which render states you inspected. Keep the
+   module and its inputs when the user will edit or rerun it. `--embed-source`
+   is an opt-in portable source copy; extraction writes files without running
+   them. Inspect extracted code before rebuilding.
+
+The report kit generates a TOC from six or more top-level sections and gathers
+sources from quantitative helpers. It keeps hand-written body fragments and
+page-set manifests available through `assemble.mjs`; read
+[authoring.md](references/authoring.md#hand-written-body-fallback) for those
+routes. The [component registry](assets/registry/registry.json) is the
+agent-readable selection surface. [The atlas](assets/atlas.html) and
+[diagram gallery](assets/diagrams.html) are for visual review.
+
+## Other inputs and boundaries
 
 When another skill calls `$html`, use the audience, verified material, required
-points, decisions, and reading order it provides. Preserve resolved decisions
-and reuse its research. Surface contradictions that prevent faithful composition
-rather than silently choosing a version. Turn the material into HTML without
-dropping evidence labels or required coverage.
+points, decisions, and reading order it provides. Reuse its research and keep
+the evidence labels needed by readers. Surface contradictions that prevent
+faithful composition. When it supplies `artifact-template.json` with
+`kind: "html"`, inspect the retained reference and preview relative to that
+skill, follow its content and structure, and deliver the new artifact.
 
-When the caller supplies an `artifact-template.json` with `kind: "html"`:
+Read [form-factors.md](references/form-factors.md) when the source lacks a strong
+structure, [charts.md](references/charts.md) for chart choice,
+[diagrams.md](references/diagrams.md) for diagram choice, and
+[generated-images.md](references/generated-images.md) before using imagegen.
+Read [creating-templates.md](references/creating-templates.md) with
+`skill-standards` when creating an HTML-template skill. Use
+[writing-style.md](../../references/writing-style.md) when prose carries the
+page's argument.
 
-1. Open the retained reference and preview relative to the calling skill. Keep
-   them unchanged and inspect both before composing.
-2. Follow the content and structure supplied by the calling skill. Use the
-   reference for visual treatment; for an adaptive template, do not copy its
-   sample headings, claims, or order as slots.
-3. Deliver the new, verified artifact, not the reference, preview, or working
-   source.
-
-Read only what the artifact needs:
-
-- [form-factors.md](references/form-factors.md) when the source lacks a strong
-  structure;
-- [writing-style.md](../../references/writing-style.md) when prose carries the
-  page's argument or explanation;
-- [charts.md](references/charts.md) for charts;
-- [diagrams.md](references/diagrams.md) for diagrams;
-- [generated-images.md](references/generated-images.md) before using `imagegen`;
-- [creating-templates.md](references/creating-templates.md) with `skill-standards`
-  when creating or revising an HTML-template skill.
-
-## Boundaries
-
-Use HTML for static product mocks when that is the requested deliverable. Use
-`ui-design` for production UI, interactive editors, and real form state. Use an
-interactive-visualization workflow for exploratory simulations or analysis led
-by filters. Use `repo-docs` for repository documentation; do not use HTML for
-slides.
-
+Use `ui-design` for production UI and real form state, `repo-docs` for durable
+repository documentation, and presentation-specific tooling for slide decks.
 If the task still needs software planning, settle the plan before rendering it.
-When the user explicitly selected Dots, `$index`, or Dots Feature Development,
-apply its [planning-only boundary](../../references/feature-development.md). Use
-`$how` when the missing input is an explanation of current code. If a
-product-UI choice is unresolved, settle it through product design or
-`$prototype` before building the page. Those workflows decide the product
-hierarchy, interaction, accessibility requirements, and visual direction; HTML
-makes the resulting artifact readable, navigable, and accessible.
+When the user explicitly selected Dots Feature Development, apply its
+[planning-only boundary](../../references/feature-development.md). Use `$how`
+for missing explanations of current code and `$prototype` when a product UI
+choice needs observation before the page can be built.

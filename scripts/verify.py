@@ -189,6 +189,7 @@ def full_checks(codex_names: list[str], claude_names: list[str]) -> None:
         for name in codex_names:
             run("codex", "plugin", "add", f"{name}@dots", env=env)
     run("node", "plugins/dots/skills/html/scripts/generate-theme.mjs", "--check")
+    run("node", "plugins/dots/skills/html/scripts/catalog.mjs", "--check")
     html_tests = sorted(str(p.relative_to(ROOT)) for p in
                         (ROOT / "plugins/dots/skills/html/scripts").glob("*.test.mjs"))
     run("node", "--test", *html_tests)

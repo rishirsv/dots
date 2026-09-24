@@ -1,8 +1,37 @@
-# Build a page, linked page set, or fragment
+# Author report pages, linked sets, and fragments
 
-Use this when turning source material into a finished page or fragment. The
-visual style and shared component rules live in
-[DESIGN.md](DESIGN.md).
+Use a page module for a new standalone report. The visual style and shared
+component rules live in [DESIGN.md](DESIGN.md). Linked sets and embeddable
+fragments use the separate routes below.
+
+## Page-module loop
+
+1. Run `node scripts/catalog.mjs --list` to find a report helper, then
+   `node scripts/catalog.mjs --help <helper>` for its signature, rules, and
+   example. Use `assets/registry/registry.json` when choosing a hand-written
+   component; the large galleries are for human visual review.
+2. Write `<name>.page.mjs` with `export const kit = "report"` and a default
+   function `(helpers, data) => page(...)`. Put real `.json`, `.csv`, or `.txt`
+   inputs beside the module and name them in `export const inputs`. Do not
+   import kit code; `build.mjs` injects helpers. Strings are escaped; the
+   `html` and `svg` tagged templates preserve authored markup, and `raw()` is
+   a deliberate opt-out.
+3. Run `node scripts/build.mjs <name>.page.mjs --out <name>.html`. Build fails on
+   missing sources for quantitative helpers, invalid report structure, and
+   other helper contracts. `page()` adds a TOC when six or more top-level
+   sections need one and collects distinct sources in the footer.
+4. For pages with layout risk, run
+   `node scripts/capture-artifact.mjs --in <name>.html --out-dir <shots>`.
+   Open `sheet.png`, read `report.json`, and fix findings in the module. Repeat
+   the build and check until the page is clean.
+5. Deliver the self-contained HTML file. Keep the page module and inputs when
+   continued editing is useful. For a portable edit loop, build with
+   `--embed-source`; `node scripts/build.mjs --extract <page.html> --to <dir>`
+   restores the module and inputs without executing them. Inspect extracted
+   code before running it; extraction refuses to overwrite a directory.
+
+`assets/outcomes/status-report.page.mjs` and
+`decision-comparison.page.mjs` show complete modules.
 
 ## Select structure
 
@@ -30,26 +59,21 @@ meaning the reader would otherwise miss.
   when the subject is not intrinsically square.
 - Keep presentation-only interaction local and optional. If filtering,
   simulation, drill-down, mutable form state, or step-through control is the
-  page's main value, use an interactive-visualization or product-UI
-  workflow instead of building a half-interactive document.
+  page's main value, use an appropriate interactive or product-UI workflow
+  instead of building a half-interactive report.
 
 ## Read only what applies
 
-For a small edit, read the page and the source for its named component. For a
-new non-template page, also use the finished-page examples and component
-catalog. For a novel canvas or important long-lived page, read `DESIGN.md` and
-check the result with actual-page screenshots. Read specialized references
-only when the page uses them.
+For a small edit, read the page and its module, or the named registry component
+when the source module is unavailable. Read `DESIGN.md` for novel canvases or
+important long-lived pages. Read specialized references only when used.
 
-## Page assembly
+## Hand-written body fallback
 
-1. For a non-template page, open
-   [the finished-page examples](../assets/outcomes/index.html), choose the
-   preview closest to the reader's need, and inspect that page. It shows useful
-   reading order, density, and use of evidence; it does not dictate an exact
-   section list. Inspect a second example only when the first misses a distinct
-   part of the request. When a valid template manifest is supplied, inspect its
-   retained reference instead and do not load a generic outcome example.
+1. Select components from `assets/registry/registry.json` and read only the
+   matching fragment source. If a valid template manifest is supplied, inspect
+   its retained reference instead. Human outcome galleries can help review
+   visual treatment but are not an agent authoring input.
 2. Start from `page-shell`, which supplies the context line, title, short
    introduction (`dek`), footer, and width mode. Choose
    `article` for prose-led work, `wide` for parallel evidence, and `canvas` for
@@ -67,21 +91,12 @@ only when the page uses them.
 4. Lead with `stat-tiles` only when supplied headline measures summarize the
    story; otherwise lead with the argument or the visual that answers the
    reader's question. Never lead with a figure the reader cannot parse yet.
-5. Choose components in [the component atlas](../assets/atlas.html), then read
-   their source files in `assets/registry/`; each header comment states when to
-   use it. For a page with several components, use
-   `scripts/assemble.mjs` to inline the theme and each selected component's CSS
-   once around a real body fragment. For a small page, copying remains fine:
-   copy the fragment's CSS into the page `<style>` (after theme.css) and the
-   markup into place; replace every piece of example content.
-   Duplicate-component CSS is copied once, markup as often as needed. Use
-   `process-steps` for linear sequences. When relationships need a diagram,
-   choose the exact family through [diagrams.md](diagrams.md) instead of forcing
-   every structure into `flow-diagram`.
-   When an original raster image earns a place, read
-   [generated-images.md](generated-images.md), generate and inspect it through
-   `imagegen`, copy the selected final into the workspace, and reference it with
-   `data-embed-src`; the assembler embeds it as a data URI.
+5. Choose components by their registry `when` and fragment header. Use
+   `scripts/assemble.mjs` to inline the theme and selected CSS once around a
+   real body fragment. Use `process-steps` for linear sequences and
+   [diagrams.md](diagrams.md) when relationships need a figure. For raster
+   images, follow [generated-images.md](generated-images.md) and reference the
+   selected file with `data-embed-src` so the assembler embeds it.
 6. Add `page-behavior` only when the page needs motion, one-time reveals, TOC
    scroll-spy, or a theme toggle. Figures that should animate get
    `class="reveal"` on their container. Use it for charts and diagrams, not
@@ -117,48 +132,13 @@ when the content calls for it. `--layout` accepts `article`, `wide`, or `canvas`
 and defaults to `article`. The assembler packages chosen CSS and behavior; it
 does not select examples, components, content, or section order.
 
-### Page modules
-
-A single page can instead be written as a module that calls the report kit's
-helpers, so the agent passes content and never copies component anatomy. The
-module has no imports: `build.mjs` passes in the helpers and the loaded inputs.
-
-```js
-// release-readiness.page.mjs
-export const kit = "report";
-export const inputs = { sizes: "./sizes.json" }; // .json, .csv, or .txt beside the module
-
-export default ({ page, section, callout, bars }, { sizes }) =>
-  page({ title: "Release readiness", context: "project / release", layout: "wide" }, [
-    section("state", "Current state", [
-      "Plain strings become paragraphs; use html`` for inline markup.",
-      callout.warn("Blocked.", "Staging credentials expired."),
-      bars(sizes, { title: "Artifact size, KB", emphasis: "cli", source: "du -k dist/" }),
-    ]),
-  ]);
-```
-
-```bash
-node scripts/build.mjs release-readiness.page.mjs --out release-readiness.html
-```
-
-Every value is escaped unless it comes from `html```, `svg```, or another
-helper. `raw()` is the explicit opt-out for trusted markup. Helper names,
-parameters, and examples are listed in `meta` in `scripts/kits/report.mjs`.
-`page()` adds a TOC automatically for six or more sections; pass
-`toc: false` to omit it. Inputs must stay inside the module's directory, and
-images use `figure({ src, alt })`, which embeds them like `data-embed-src`.
-Keep the module beside the finished page when the user wants to keep editing
-it. `assets/outcomes/status-report.page.mjs` and
-`decision-comparison.page.mjs` are complete examples.
-
 ### Working source and finished page
 
-Treat the body fragment as the main working source while constructing an
-assembled page. Edit it and rerun the assembler rather than hand-editing copied
-theme or component CSS. Keep the fragment temporary by default; preserve
-it beside the output only when the user requests continued source editing. The
-single self-contained `.html` remains the deliverable.
+Treat the module or body fragment as the working source. Edit it and rebuild
+instead of changing copied theme or component CSS in the finished page. A page
+module can be embedded for later extraction; embedding is opt-in because it may
+carry unused input rows or local paths into the delivered file. A hand-written
+body stays beside the output when continued editing is useful.
 
 ## Editing an existing page
 
