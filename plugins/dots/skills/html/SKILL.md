@@ -46,7 +46,7 @@ Read only what the artifact needs:
 Use HTML for static product mocks when that is the requested deliverable. Use
 `ui-design` for production UI, interactive editors, and real form state. Use an
 interactive-visualization workflow for exploratory simulations or analysis led
-by filters. Use `docs-writer` for repository documentation; do not use HTML for
+by filters. Use `repo-docs` for repository documentation; do not use HTML for
 slides.
 
 If the task still needs software planning, settle the plan before rendering it.

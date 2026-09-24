@@ -36,7 +36,7 @@ workflow. It routes into focused skills as its phases require.
 | Resolve one uncertain choice through a throwaway build | `$prototype` |
 | Explain how code or a subsystem works | `$how` |
 | Investigate why code or a decision exists | `$why` |
-| Write or revise durable repository documentation | `$docs-writer` |
+| Write or revise durable repository documentation | `$repo-docs` |
 | Design, build, refine, or audit a product interface | `$ui-design` |
 | Create a self-contained HTML artifact | `$html` |
 | Publish finished work as a pull request | `$publish-pr` |

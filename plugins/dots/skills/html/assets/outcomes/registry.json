@@ -19,7 +19,7 @@
       "layout": "wide",
       "treatment": "editorial",
       "shape": ["thesis", "annotated flow", "responsibility map", "worked example", "gotchas"],
-      "boundary": "If the intended result is durable repository documentation, route to docs-writer."
+      "boundary": "If the intended result is durable repository documentation, route to repo-docs."
     },
     {
       "name": "status-report",

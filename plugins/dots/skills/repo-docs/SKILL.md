@@ -1,9 +1,9 @@
 ---
-name: docs-writer
+name: repo-docs
 description: "Use when writing, revising, or reviewing durable repository documentation such as READMEs, how-tos, runbooks, design docs, ADRs, troubleshooting guides, changelogs, release notes, PRDs, and agent-readable knowledge. Not for project instructions, code comments, chat explanations, publishing, or broad implementation."
 ---
 
-# Docs Writer
+# Repo Docs
 
 Write the smallest durable document that lets its reader act or understand
 correctly. Lead with the outcome, preserve technical truth, and stop when the
