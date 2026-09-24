@@ -1,9 +1,9 @@
 ---
-name: clarify
-description: "Use only when the user selects `$clarify` to resolve underspecified requirements before implementation; not for shaping a fuzzy idea, planning the implementation, or asking questions the repository can answer."
+name: clarify-requirements
+description: "Use only when the user selects `$clarify-requirements` to resolve underspecified requirements before implementation; not for shaping a fuzzy idea, planning the implementation, or asking questions the repository can answer."
 ---
 
-# Clarify
+# Clarify Requirements
 
 Resolve only ambiguities that could change the work. Once they are resolved,
 continue implementation already authorized by the user; do not ask them to
@@ -58,7 +58,7 @@ the user has already approved that path.
 
 For work with meaningful scope or risk, summarize the agreed outcome,
 definition of done, scope and non-goals, constraints, and remaining assumptions.
-Keep it short. Clarify owns alignment, not a repo-grounded implementation plan.
+Keep it short. This skill owns alignment, not a repo-grounded implementation plan.
 
 Finish when every blocking ambiguity is answered, explicitly deferred, or
 covered by an assumption the user authorized. If later evidence changes one of
