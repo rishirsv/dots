@@ -118,6 +118,10 @@ returning it.
   or partial updates when a clearer atomic structure is available.
 - Remove obsolete dual paths when callers can migrate; preserve compatibility
   when persisted data or an external contract requires it.
+- Clean up style in changed lines: names, idioms, comment density, and
+  structure that diverge from the surrounding code or repository conventions,
+  and verbose constructs with a shorter idiomatic form. Skip anything a
+  configured formatter or linter already enforces.
 
 ### Tests
 
@@ -164,9 +168,12 @@ Keep a finding only when all of these are true:
   the code and, for a specification finding, the cited specification.
 - The author would probably fix it if they knew about it.
 
+A style finding in changed lines needs only the last four conditions plus a
+cited convention from the surrounding code or repository; report it as `P3`.
+
 Reject speculation, pre-existing problems, intentional behavior within the
-stated scope, and style nits that do not obscure the code. Anchor each finding
-to the smallest useful changed-line range. State the evidence, affected
+stated scope, and style preferences without a cited convention. Anchor each
+finding to the smallest useful changed-line range. State the evidence, affected
 scenario, impact, and smallest credible repair. Cite the exact source and
 requirement for a specification or repository-rule finding. Return every
 qualifying finding without padding or a numeric cap.
