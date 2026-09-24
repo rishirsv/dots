@@ -1,10 +1,10 @@
 interface:
-  display_name: "Scout"
+  display_name: "Shape Idea"
   short_description: "Settle a fuzzy decision through focused questions"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
   brand_color: "#36C5A7"
-  default_prompt: "Use $scout to work this fuzzy idea as a decision tree, ask two or three frontier questions with recommendations per round, and finish with a self-contained Scout Snapshot."
+  default_prompt: "Use $shape-idea to work this fuzzy idea as a decision tree, ask two or three frontier questions with recommendations per round, and finish with a self-contained Idea Snapshot."
 
 policy:
   allow_implicit_invocation: false

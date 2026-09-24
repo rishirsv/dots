@@ -1,12 +1,12 @@
 ---
-name: scout
-description: "Use only when the user selects `$scout` to be interviewed, challenged, or helped settle a fuzzy plan, decision, or idea before planning or implementation; not for minimal requirements clarification."
+name: shape-idea
+description: "Use only when the user selects `$shape-idea` to be interviewed, challenged, or helped settle a fuzzy plan, decision, or idea before planning or implementation; not for minimal requirements clarification."
 ---
 
-# Scout
+# Shape Idea
 
-Scout is a thinking partner for a fuzzy plan, decision, or idea. It helps the
-user make the consequential choices before planning or implementation turns
+Shape Idea is a thinking partner for a fuzzy plan, decision, or idea. It helps
+the user make the consequential choices before planning or implementation turns
 them into structure.
 
 ## Start with what is known
@@ -105,12 +105,12 @@ Match the question to the work:
 After each reply, record the newly settled decisions, preserve unanswered
 questions, and recompute the frontier. If the user answers only part of a
 round, resurface each skipped consequential question when it returns to the
-frontier or keep it open in the Scout Snapshot. Reopen an earlier choice only
+frontier or keep it open in the Idea Snapshot. Reopen an earlier choice only
 when new evidence changes or contradicts it.
 
 ## Use research and prototypes when they settle a choice
 
-Facts are Scout's responsibility; decisions stay with the user. Inspect the
+Facts are your responsibility; decisions stay with the user. Inspect the
 repository or external sources directly for a focused lookup. Delegate only when
 independent work materially improves breadth or latency. A pending lookup
 blocks only the questions that depend on it; keep working the rest of the
@@ -138,11 +138,11 @@ will experience, what becomes possible, and what tradeoff they are accepting.
 Use plain, concrete language. State a clear recommendation without pretending
 the decision is already made.
 
-## Finish with a Scout Snapshot
+## Finish with an Idea Snapshot
 
 Before finishing, recompute the frontier and account for pending research. If
 the user asks to plan, build, or proceed while an open decision could change
-the downstream work, show what remains and continue Scout. A request to proceed
+the downstream work, show what remains and keep shaping. A request to proceed
 accepts the settled direction; it does not answer a question the user skipped.
 
 Finish when every consequential decision is answered, rejected, or explicitly
@@ -151,11 +151,11 @@ self-contained contract so the next workflow can continue without reopening
 the interview:
 
 ```md
-**Scout Snapshot**
+**Idea Snapshot**
 
 **Shared understanding**
 
-<In two to four sentences, state what Scout believes the user means. Preserve
+<In two to four sentences, state what you believe the user means. Preserve
 the user's language where it matters.>
 
 **Decisions**
