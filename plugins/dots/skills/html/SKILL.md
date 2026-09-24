@@ -44,7 +44,7 @@ Read only what the artifact needs:
 ## Boundaries
 
 Use HTML for static product mocks when that is the requested deliverable. Use
-`interface-design` for production UI, interactive editors, and real form state. Use an
+`ui-design` for production UI, interactive editors, and real form state. Use an
 interactive-visualization workflow for exploratory simulations or analysis led
 by filters. Use `docs-writer` for repository documentation; do not use HTML for
 slides.

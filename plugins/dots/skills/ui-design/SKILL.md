@@ -1,9 +1,9 @@
 ---
-name: interface-design
+name: ui-design
 description: "Design and refine web or native app interfaces, write UI copy, stress test components, review UI changes and UX, and verify builds against accepted designs."
 ---
 
-# Interface Design
+# UI Design
 
 Make deliberate, opinionated choices about palette, typography, composition,
 and interaction that belong to this brief. Challenge cliché and templated
