@@ -15,7 +15,7 @@ export default ({ page, section, stats, timeline, callout, recommendation }) =>
       { value: "7m", label: "focused gate", note: "fixture timing" },
       { value: "1", label: "owner decision open" },
       { value: "0", label: "production releases run", note: "not yet verified" },
-    ]),
+    ], { source: "illustrative" }),
     section("workstreams", "Workstreams", [
       timeline([
         { title: "Candidate identity contract", date: "complete", detail: "Build, verify, and publish now accept the same immutable reference." },

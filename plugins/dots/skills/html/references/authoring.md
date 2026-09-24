@@ -133,7 +133,7 @@ export default ({ page, section, callout, bars }, { sizes }) =>
     section("state", "Current state", [
       "Plain strings become paragraphs; use html`` for inline markup.",
       callout.warn("Blocked.", "Staging credentials expired."),
-      bars(sizes, { title: "Artifact size, KB", emphasis: "cli" }),
+      bars(sizes, { title: "Artifact size, KB", emphasis: "cli", source: "du -k dist/" }),
     ]),
   ]);
 ```

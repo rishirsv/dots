@@ -16,9 +16,14 @@ export const version = "1.0.0";
 const LAYOUTS = ["article", "wide", "canvas"];
 const SEVERITIES = ["high", "medium", "low"];
 
-function fail(helper, message) {
-  throw new Error(`report.${helper}: ${message}`);
+export class ContractError extends Error {
+  constructor(helper, rule) {
+    super(`report.${helper}: ${rule}`);
+    this.name = "ContractError";
+    this.helper = helper;
+  }
 }
+function fail(helper, message) { throw new ContractError(helper, message); }
 
 function required(helper, name, value) {
   if (value == null || value === "" || (Array.isArray(value) && value.length === 0)) fail(helper, `${name} is required`);
@@ -49,8 +54,8 @@ function paragraphs(lead, body) {
   return html`<p>${lead ? html`<strong>${lead}</strong> ` : ""}${first}</p>${rest.map((text) => html`<p>${text}</p>`)}`;
 }
 
-function withSource(markup, component, source) {
-  if (source == null) return raw(markup);
+function withSource(markup, component, source, helper) {
+  required(helper, "source (or \"illustrative\")", source);
   const attribute = ` data-source="${escapeHtml(source)}"`;
   return raw(markup.replace(`data-component="${component}"`, (match) => match + attribute));
 }
@@ -70,6 +75,7 @@ function page(meta, children) {
     footer: meta.footer ?? "",
     layout,
     toc: meta.toc ?? "auto",
+    sources: "collect",
     components: meta.behavior ? ["page-behavior"] : [],
     body: blocks(children ?? []),
   });
@@ -119,7 +125,7 @@ function stats(items, { source } = {}) {
   if (items.length > 5) fail("stats", "use two to five tiles");
   const markup = html`<div data-component="stat-tiles" class="kpi-grid">${items.map(({ value, label, note }) =>
     html`<div class="kpi-tile"><div class="kpi-value">${required("stats", "value", value)}</div><div class="kpi-label">${required("stats", "label", label)}</div>${note != null ? html`<div class="kpi-note">${note}</div>` : ""}</div>`)}</div>`;
-  return withSource(markup.__html, "stat-tiles", source);
+  return withSource(markup.__html, "stat-tiles", source, "stats");
 }
 
 function table({ columns, rows, stacked = false, labelFirst = false }) {
@@ -143,11 +149,11 @@ function bars(data, { title, emphasis, sort, limit, source } = {}) {
   if (emphasis != null) spec.emphasis = emphasis;
   if (sort != null) spec.sort = sort;
   if (limit != null) spec.limit = limit;
-  return withSource(chart("bar", spec), "bar-chart", source);
+  return withSource(chart("bar", spec), "bar-chart", source, "bars");
 }
 
 function sparkline(data, { value, source } = {}) {
-  return withSource(chart("sparkline", { data, value }), "sparkline", source);
+  return withSource(chart("sparkline", { data, value }), "sparkline", source, "sparkline");
 }
 
 // ---------- sequences and structure ----------
@@ -187,9 +193,10 @@ function fileMap(items) {
     html`<li class="file-map-item"><div class="file-path">${required("fileMap", "path", path)}</div><div class="file-role">${lead ? html`<strong>${lead}</strong> ` : ""}${role}</div></li>`)}</ul>`;
 }
 
-function comparison(options) {
+function comparison(options, { columns = options?.length } = {}) {
   list("comparison", "options", options);
   if (options.length < 2 || options.length > 4) fail("comparison", "use two to four options");
+  if (columns !== options.length) fail("comparison", "option count must match columns");
   return html`<div data-component="comparison-grid" class="comparison-grid" data-columns="${options.length}">${options.map(({ title, body, bestFor, recommended }) =>
     html`<div class="${recommended ? "option-card recommended" : "option-card"}"><h3>${required("comparison", "title", title)}</h3><p>${recommended ? html`<span class="recommend-mark">Recommended.</span> ` : ""}${body}</p>${bestFor != null ? html`<div class="best-for">best for: ${bestFor}</div>` : ""}</div>`)}</div>`;
 }
@@ -241,9 +248,10 @@ function gallery(items) {
     html`<figure class="${featured ? "evidence-item is-featured" : "evidence-item"}">${visual("gallery", content)}${caption != null ? html`<figcaption>${leadText(caption)}</figcaption>` : ""}</figure>`)}</div>`;
 }
 
-function flowDiagram({ viewBox, content, caption, notes, minWidth }) {
+function flowDiagram({ viewBox, content, caption, notes, minWidth, emphasis = [] }) {
   required("flowDiagram", "viewBox", viewBox);
   required("flowDiagram", "content", content);
+  if ((Array.isArray(emphasis) ? emphasis.length : 1) > 2) fail("flowDiagram", "at most two nodes may be emphasized");
   if (caption == null && notes == null) fail("flowDiagram", "caption or notes is required as the accessible description");
   const style = minWidth ? html` style="min-width:${minWidth}px"` : "";
   const description = notes
@@ -282,7 +290,7 @@ export const meta = Object.freeze({
   stats: { component: "stat-tiles", summary: "Two to five supplied headline measures.", params: "stats([{ value, label, note? }], { source? })", example: `stats([{ value: "14", label: "PRs merged", note: "+3 vs last week" }, { value: "6", label: "deploys" }], { source: "GitHub, week 38" })` },
   table: { component: "data-table", summary: "Rows compared line by line. Columns may be labels or { label, key?, numeric? }; rows arrays or objects.", params: "table({ columns, rows, stacked?, labelFirst? })", example: `table({ columns: ["Risk", "Owner", { label: "Exposure", numeric: true }], rows: [["Vendor SSO", "Priya", "$180k"]], stacked: true, labelFirst: true })` },
   bars: { component: "bar-chart", summary: "Ranked magnitudes with one emphasized row (via chart.mjs).", params: "bars(rows, { title, emphasis?, sort?, limit?, source? })", example: `bars([["checkout", 412], ["search", 255], ["auth", 104]], { title: "p95 latency, ms", emphasis: "checkout", source: "APM, last 7 days" })` },
-  sparkline: { component: "sparkline", summary: "An inline trend with visible value text.", params: "sparkline(numbers, { value, source? })", example: `sparkline([96, 120, 180, 260, 312], { value: "312/wk" })` },
+  sparkline: { component: "sparkline", summary: "An inline trend with visible value text.", params: "sparkline(numbers, { value, source })", example: `sparkline([96, 120, 180, 260, 312], { value: "312/wk", source: "APM, last 7 days" })` },
   steps: { component: "process-steps", summary: "A linear sequence of two to six stages.", params: "steps([{ title, detail?, current? }])", example: `steps([{ title: "Collect evidence", detail: "Record current behavior." }, { title: "Verify", detail: "Run focused checks.", current: true }])` },
   timeline: { component: "timeline", summary: "Milestones in order; order must carry information.", params: "timeline([{ title, date?, detail?, state?: 'current'|'pending' }])", example: `timeline([{ title: "Detected", date: "14:02", detail: "Alert fired." }, { title: "Rollback", date: "14:24", state: "current" }, { title: "Postmortem", date: "pending", state: "pending" }])` },
   finding: { component: "finding-list", summary: "One evidence-backed finding: finding.high, finding.medium, finding.low. Place inside findings().", params: "finding.high({ title, evidence?, consequence?, action? })", example: `findings([finding.high({ title: "Candidates differ", evidence: "The upload rebuilds.", consequence: "A pass proves nothing shipped.", action: "Upload the verified path." })])` },

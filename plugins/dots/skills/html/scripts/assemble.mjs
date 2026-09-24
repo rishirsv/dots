@@ -144,6 +144,45 @@ function withToc(body, toc) {
   return `${tocMarkup(sections)}\n\n${body.trim()}`;
 }
 
+export function checkPage(bodyHtml) {
+  const markup = structuralMarkup(bodyHtml, { keepCode: true });
+  const findings = [];
+  if (componentsIn(bodyHtml).filter((name) => name === "recommendation").length > 1)
+    findings.push("at most one recommendation is allowed");
+  const ids = new Set();
+  let depth = 0;
+  let current = null;
+  for (const match of markup.matchAll(/<(\/?)section\b([^>]*)>|<h2\b[^>]*>/gi)) {
+    if (match[0].toLowerCase().startsWith("<h2")) {
+      if (depth === 1 && current) current.hasH2 = true;
+    } else if (match[1]) {
+      if (depth === 1 && current && !current.hasH2) findings.push(`top-level section "${current.id || "(no id)"}" needs an h2`);
+      depth = Math.max(0, depth - 1);
+      if (depth === 0) current = null;
+    } else {
+      depth += 1;
+      const id = match[2].match(/\sid\s*=\s*(["'])(.*?)\1/i)?.[2];
+      if (id) {
+        if (ids.has(id)) findings.push(`duplicate section id "${id}"`);
+        ids.add(id);
+      }
+      if (depth === 1) current = { id, hasH2: false };
+    }
+  }
+  return findings;
+}
+
+function sourceFooter(body, footer, sources) {
+  if (sources !== "collect") return footer ? escapeText(footer) : "";
+  const values = [...new Set([...structuralMarkup(body).matchAll(/<[a-z][^>]*\sdata-source\s*=\s*(["'])(.*?)\1[^>]*>/gi)].map((match) => match[2]))];
+  if (!values.length) return footer ? escapeText(footer) : "";
+  return `${footer ? `<p>${escapeText(footer)}</p>` : ""}<ul>${values.map((value) => `<li>${value}</li>`).join("")}</ul>`;
+}
+
+function warnPage(body, label) {
+  for (const finding of checkPage(body)) console.warn(`assemble.mjs: ${label}: ${finding}`);
+}
+
 function pageShell({ title, context, contextMarkup, dek, footer, body, layout }) {
   let shell = sourceFor("page-shell").match(/<div data-component="page-shell"[\s\S]*$/)?.[0];
   if (!shell) fail("page-shell markup is missing");
@@ -160,17 +199,19 @@ function pageShell({ title, context, contextMarkup, dek, footer, body, layout })
     .replace(/<p class="dek">[\s\S]*?<\/p>/, () => dek ? `<p class="dek">${escapeText(dek)}</p>` : "")
     .replace(/\s*<!-- slot: toc-rail[^\n]*-->/, "")
     .replace(/\s*<!-- slot: sections[^\n]*-->/, () => `\n\n  ${body.trim()}`)
-    .replace(/\s*<footer class="sources">[\s\S]*?<\/footer>/, () => footer ? `\n\n  <footer class="sources">${escapeText(footer)}</footer>` : "");
+    .replace(/\s*<footer class="sources">[\s\S]*?<\/footer>/, () => footer ? `\n\n  <footer class="sources">${footer}</footer>` : "");
 
   return shell;
 }
 
-export function assemble({ title, context = "", contextMarkup = "", dek = "", footer = "", body, components = [], lang = "en", assetRoot, layout = "article", toc = false }) {
+export function assemble({ title, context = "", contextMarkup = "", dek = "", footer = "", body, components = [], lang = "en", assetRoot, layout = "article", toc = false, sources = false }) {
   if (!title) fail("title is required");
   if (body == null) fail("body is required");
   if (!["article", "wide", "canvas"].includes(layout)) fail(`unknown layout "${layout}"`);
   if (![false, true, "auto"].includes(toc)) fail(`toc must be false, true, or "auto"`);
+  if (![false, "collect"].includes(sources)) fail(`sources must be false or "collect"`);
 
+  const renderedFooter = sourceFooter(body, footer, sources);
   body = withToc(body, toc);
   const used = componentsIn(body);
   const selected = orderedComponents([...new Set([...components.filter(Boolean), ...used])]);
@@ -183,7 +224,7 @@ export function assemble({ title, context = "", contextMarkup = "", dek = "", fo
   const scripts = componentSources
     .flatMap((source) => [...source.matchAll(/^[ \t]*<script(?:\s[^>]*)?>[\s\S]*?^[ \t]*<\/script>/gim)].map((match) => match[0].trim()))
     .join("\n\n");
-  const shell = pageShell({ title, context, contextMarkup, dek, footer, body: embedLocalImages(body, assetRoot), layout });
+  const shell = pageShell({ title, context, contextMarkup, dek, footer: renderedFooter, body: embedLocalImages(body, assetRoot), layout });
 
   return `<!doctype html>
 <html lang="${escapeText(lang)}">
@@ -440,6 +481,7 @@ export function assembleSet({ manifest, manifestRoot }) {
       ? hierarchicalSequenceMarkup(validated, page, hierarchy)
       : flatSequenceMarkup(validated, page, index);
     const chapterIndex = hierarchical ? chapterIndexMarkup(page, hierarchy) : "";
+    warnPage(readFileSync(page.bodyPath, "utf8"), page.output);
     const html = assemble({
       title: page.title,
       context: page.context ?? (hierarchical && page.parent ? "" : `${validated.title} / ${page.label}`),
@@ -505,6 +547,8 @@ if (invokedDirectly) {
       process.exit(0);
     }
     if (!args.body) fail("--body is required");
+    const body = readFileSync(args.body, "utf8");
+    warnPage(body, args.body);
     const html = assemble({
       title: args.title,
       context: args.context,
@@ -512,7 +556,7 @@ if (invokedDirectly) {
       footer: args.footer,
       lang: args.lang,
       layout: args.layout,
-      body: readFileSync(args.body, "utf8"),
+      body,
       assetRoot: dirname(resolve(args.body)),
       components: (args.components ?? "").split(",").map((name) => name.trim()).filter(Boolean),
     });

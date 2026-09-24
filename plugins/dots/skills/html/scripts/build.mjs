@@ -12,7 +12,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, extname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { assemble, localPath } from "./assemble.mjs";
+import { assemble, checkPage, localPath } from "./assemble.mjs";
 import * as report from "./kits/report.mjs";
 
 const KITS = { report };
@@ -87,6 +87,8 @@ export async function build(modulePath) {
   const data = Object.fromEntries(Object.entries(inputs).map(([name, value]) => [name, loadInput(moduleDir, name, value)]));
   const spec = await mod.default(kit.helpers, data);
   if (!spec || spec.kit !== mod.kit || !spec.body) fail(`the default export must return the ${mod.kit} kit's page(...)`);
+  const violations = checkPage(spec.body.__html);
+  if (violations.length) fail(violations.join("; "));
 
   return assemble({
     title: spec.title,
@@ -95,6 +97,7 @@ export async function build(modulePath) {
     footer: spec.footer,
     layout: spec.layout,
     toc: spec.toc,
+    sources: spec.sources,
     components: spec.components,
     body: spec.body.__html,
     assetRoot: moduleDir,

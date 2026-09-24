@@ -1,14 +1,14 @@
 // node --test scripts/build.test.mjs
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { assemble } from "./assemble.mjs";
+import { assemble, checkPage } from "./assemble.mjs";
 import { build, parseCsv } from "./build.mjs";
 import { html, raw, SafeHtml, svg } from "./lib/html.mjs";
-import { helpers, meta } from "./kits/report.mjs";
+import { ContractError, helpers, meta } from "./kits/report.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const registry = JSON.parse(readFileSync(join(root, "assets", "registry", "registry.json"), "utf8"));
@@ -131,7 +131,7 @@ test("build loads json, csv, and txt inputs from the module directory", () => wi
 export const kit = "report";
 export const inputs = { sizes: "./sizes.json", runs: "runs.csv", intro: "intro.txt" };
 export default ({ page, section, bars, table }, { sizes, runs, intro }) =>
-  page({ title: "Inputs" }, [section("data", "Data", [intro, bars(sizes, { title: "Size" }), table({ columns: [{ label: "Step", key: "name" }, { label: "ms", key: "ms", numeric: true }], rows: runs })])]);
+  page({ title: "Inputs" }, [section("data", "Data", [intro, bars(sizes, { title: "Size", source: "fixture" }), table({ columns: [{ label: "Step", key: "name" }, { label: "ms", key: "ms", numeric: true }], rows: runs })])]);
 `);
   const out = await build(join(dir, "page.mjs"));
   assert.match(out, /<p>Plain &lt;intro&gt;<\/p>/);
@@ -197,3 +197,47 @@ test("toc is not duplicated when the body already has a rail", () => {
   const out = assemble({ title: "Has rail", body, toc: true });
   assert.equal((out.match(/data-component="toc-rail"/g) ?? []).length, 1);
 });
+
+test('report contracts name the helper and rule', () => {
+  const invalid = [
+    [() => helpers.finding({ severity: 'urgent', title: 'Risk' }), /severity must be high/],
+    [() => helpers.figure({ src: 'image.png' }), /alt is required/],
+    [() => helpers.comparison([{ title: 'A' }, { title: 'B' }], { columns: 3 }), /option count must match columns/],
+    [() => helpers.flowDiagram({ viewBox: '0 0 100 100', content: svg`<rect/>`, caption: 'Flow', emphasis: ['a', 'b', 'c'] }), /at most two nodes/],
+    [() => helpers.stats([{ value: 1, label: 'Count' }]), /source/],
+    [() => helpers.bars([['a', 1]], { title: 'Count' }), /source/],
+    [() => helpers.sparkline([1, 2], { value: '2' }), /source/],
+  ];
+  for (const [call, rule] of invalid) assert.throws(call, (error) => error instanceof ContractError && rule.test(error.message) && /^report\.[a-zA-Z]+:/.test(error.message));
+  assert.match(String(helpers.stats([{ value: 1, label: 'Count' }], { source: 'illustrative' })), /data-source="illustrative"/);
+});
+
+test('page checks one recommendation, unique ids, and top-level h2s', () => {
+  assert.deepEqual(checkPage('<section id="a"><h2>A</h2></section>'), []);
+  assert.match(checkPage('<div data-component="recommendation"></div><div data-component="recommendation"></div>').join(' '), /at most one recommendation/);
+  assert.match(checkPage('<section id="a"><h2>A</h2></section><section id="a"><h2>B</h2></section>').join(' '), /duplicate section id/);
+  assert.match(checkPage('<section id="a"><p>Missing heading</p></section>').join(' '), /needs an h2/);
+});
+
+test('sources are collected once and remain legible beside a footer', () => {
+  const page = assemble({ title: 'Sources', footer: 'Reading notes', sources: 'collect', body: '<section id="a"><h2>A</h2><div data-component="stat-tiles" data-source="API &amp; logs"></div><div data-component="bar-chart" data-source="API &amp; logs"></div></section>' });
+  assert.match(page, /<footer class="sources"><p>Reading notes<\/p><ul><li>API &amp; logs<\/li><\/ul><\/footer>/);
+  assert.equal((page.match(/<li>API &amp; logs<\/li>/g) ?? []).length, 1);
+});
+
+test('every committed full page passes page checks', () => {
+  for (const dir of ['assets/outcomes', 'assets', '../how/assets']) {
+    const names = readdirSync(join(root, dir)).filter((name) => name.endsWith('.html'));
+    for (const name of names) {
+      const source = readFileSync(join(root, dir, name), 'utf8');
+      const body = source.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1];
+      if (body) assert.deepEqual(checkPage(body), [], `${dir}/${name}`);
+    }
+  }
+});
+
+test('build rejects a page-wide contract violation', () => withTempDir(async (dir) => {
+  const file = join(dir, 'bad.page.mjs');
+  writeFileSync(file, 'export const kit="report"; export default ({page,section,recommendation}) => page({title:"Bad"}, [section("one","One",[recommendation("First")]),section("two","Two",[recommendation("Second")])]);');
+  await assert.rejects(build(file), /at most one recommendation/);
+}));
