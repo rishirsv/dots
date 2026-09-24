@@ -1,6 +1,6 @@
 ---
 name: how
-description: "Explains how code, a subsystem, change, commit, branch, or pull request works, including runtime flow, ownership, placement, and layering. Use why for historical rationale, explain for a quick ELI5 answer, and architecture-review for a broad structural audit."
+description: "Explains how code, a subsystem, change, commit, branch, or pull request works, including runtime flow, ownership, placement, and layering. Use why for historical rationale, eli5 for a quick plain-language answer, and architecture-review for a broad structural audit."
 ---
 
 # How
