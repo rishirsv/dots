@@ -9,18 +9,9 @@
  *     --out-dir /path/to/screenshots
  */
 
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
-import { spawn } from "node:child_process";
-
-const chromeCandidates = [
-  process.env.CHROME_BIN,
-  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-  "/Applications/Chromium.app/Contents/MacOS/Chromium",
-  "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
-].filter(Boolean);
+import { chromeCandidates, launchChrome } from "./lib/chrome.mjs";
 
 function fail(message) {
   throw new Error(`capture-artifact.mjs: ${message}`);
@@ -41,226 +32,6 @@ function normalizedVisibleText(html) {
     .trim();
 }
 
-function layoutDiagnostic() {
-  const viewport = document.documentElement.clientWidth;
-  const failures = [];
-
-  function visible(element) {
-    const style = getComputedStyle(element);
-    return style.display !== "none" && style.visibility !== "hidden";
-  }
-
-  function checkBounds(element) {
-    if (!visible(element)) return;
-    const rect = element.getBoundingClientRect();
-    if (rect.left < -1 || rect.right > viewport + 1) {
-      const label = element.getAttribute("data-component")
-        || element.id
-        || element.className
-        || element.tagName.toLowerCase();
-      failures.push(`${label} leaves viewport (${Math.round(rect.left)}..${Math.round(rect.right)} / ${viewport})`);
-    }
-  }
-
-  if (document.documentElement.scrollWidth > viewport + 1) {
-    failures.push(`document scroll width is ${document.documentElement.scrollWidth}px at ${viewport}px`);
-  }
-  if (document.body.scrollWidth > viewport + 1) {
-    failures.push(`body scroll width is ${document.body.scrollWidth}px at ${viewport}px`);
-  }
-
-  document.querySelectorAll(".page, [data-component], section, figure, .process-step, .evidence-item")
-    .forEach(checkBounds);
-
-  document.querySelectorAll("svg text").forEach((label) => {
-    const svg = label.closest("svg");
-    if (!svg?.viewBox?.baseVal?.width) return;
-    const scale = svg.getBoundingClientRect().width / svg.viewBox.baseVal.width;
-    const effectiveSize = parseFloat(getComputedStyle(label).fontSize) * scale;
-    if (effectiveSize < 11) {
-      failures.push(`scaled SVG label falls below 11px (${effectiveSize.toFixed(1)}px)`);
-    }
-  });
-
-  return { viewport, failures };
-}
-
-async function launchChrome(chrome) {
-  const profile = mkdtempSync(join(tmpdir(), "dots-html-capture-"));
-  const child = spawn(chrome, [
-    "--headless=new",
-    "--no-sandbox",
-    "--disable-gpu",
-    "--hide-scrollbars",
-    "--no-first-run",
-    "--disable-background-networking",
-    "--disable-component-update",
-    "--disable-default-apps",
-    "--disable-extensions",
-    "--disable-sync",
-    "--metrics-recording-only",
-    "--mute-audio",
-    `--user-data-dir=${profile}`,
-    "--remote-debugging-port=0",
-    "about:blank",
-  ], { stdio: ["ignore", "ignore", "pipe"] });
-
-  const websocketUrl = await new Promise((resolveUrl, reject) => {
-    let stderr = "";
-    const timer = setTimeout(
-      () => reject(new Error(`Chrome DevTools did not start: ${stderr.trim()}`)),
-      15000,
-    );
-    child.stderr.on("data", (chunk) => {
-      stderr += chunk;
-      const match = stderr.match(/DevTools listening on (ws:\/\/[^\s]+)/);
-      if (!match) return;
-      clearTimeout(timer);
-      resolveUrl(match[1]);
-    });
-    child.on("error", reject);
-    child.on("exit", (code) => reject(new Error(`Chrome exited before DevTools connected (${code})`)));
-  });
-
-  if (typeof WebSocket === "undefined") fail("this capture requires a Node.js runtime with WebSocket support");
-  const socket = new WebSocket(websocketUrl);
-  await new Promise((resolveSocket, reject) => {
-    socket.addEventListener("open", resolveSocket, { once: true });
-    socket.addEventListener("error", reject, { once: true });
-  });
-
-  let nextId = 1;
-  const pending = new Map();
-  const eventWaiters = [];
-  socket.addEventListener("message", (event) => {
-    const message = JSON.parse(event.data);
-    if (message.id) {
-      const waiter = pending.get(message.id);
-      if (!waiter) return;
-      pending.delete(message.id);
-      message.error ? waiter.reject(new Error(message.error.message)) : waiter.resolve(message.result ?? {});
-      return;
-    }
-    for (let index = eventWaiters.length - 1; index >= 0; index -= 1) {
-      const waiter = eventWaiters[index];
-      if (waiter.method !== message.method || waiter.sessionId !== message.sessionId) continue;
-      eventWaiters.splice(index, 1);
-      clearTimeout(waiter.timer);
-      waiter.resolve(message.params ?? {});
-    }
-  });
-
-  function call(method, params = {}, sessionId) {
-    const id = nextId++;
-    socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }));
-    return new Promise((resolveCall, reject) => pending.set(id, { resolve: resolveCall, reject }));
-  }
-
-  function waitFor(method, sessionId) {
-    return new Promise((resolveEvent, reject) => {
-      const waiter = { method, sessionId, resolve: resolveEvent, reject };
-      waiter.timer = setTimeout(() => {
-        const index = eventWaiters.indexOf(waiter);
-        if (index !== -1) eventWaiters.splice(index, 1);
-        reject(new Error(`timed out waiting for ${method}`));
-      }, 15000);
-      eventWaiters.push(waiter);
-    });
-  }
-
-  async function openPage(file, width, {
-    theme = "light",
-    reducedMotion = false,
-    javascript = true,
-    pinnedTheme = false,
-  } = {}) {
-    const { targetId } = await call("Target.createTarget", { url: "about:blank" });
-    const { sessionId } = await call("Target.attachToTarget", { targetId, flatten: true });
-    const pageCall = (method, params = {}) => call(method, params, sessionId);
-    await Promise.all([pageCall("Page.enable"), pageCall("Runtime.enable"), pageCall("DOM.enable")]);
-    await pageCall("Emulation.setDeviceMetricsOverride", {
-      width,
-      height: 1000,
-      deviceScaleFactor: 1,
-      mobile: false,
-      screenWidth: width,
-      screenHeight: 1000,
-    });
-    await pageCall("Emulation.setEmulatedMedia", {
-      features: [
-        { name: "prefers-color-scheme", value: theme },
-        { name: "prefers-reduced-motion", value: reducedMotion ? "reduce" : "no-preference" },
-      ],
-    });
-    if (!javascript) await pageCall("Emulation.setScriptExecutionDisabled", { value: true });
-
-    const loaded = waitFor("Page.loadEventFired", sessionId);
-    await pageCall("Page.navigate", { url: pathToFileURL(file).href });
-    await loaded;
-    if (javascript && !pinnedTheme) {
-      await pageCall("Runtime.evaluate", {
-        expression: `document.documentElement.setAttribute("data-theme", ${JSON.stringify(theme)})`,
-      });
-    }
-    if (javascript) await new Promise((resolveDelay) => setTimeout(resolveDelay, 500));
-
-    const images = await pageCall("Runtime.evaluate", {
-      expression: `Promise.all(Array.from(document.images, async (image) => {
-        try { await image.decode(); } catch { /* Report visible broken images below. */ }
-        if (image.getClientRects().length && getComputedStyle(image).visibility !== "hidden" && (!image.naturalWidth || !image.naturalHeight)) {
-          return image.currentSrc || image.src || "image without source";
-        }
-        return null;
-      })).then((items) => items.filter(Boolean))`,
-      awaitPromise: true,
-      returnByValue: true,
-    });
-    if (images.exceptionDetails) fail(images.exceptionDetails.text ?? "image decode failed");
-    if (images.result.value?.length) fail(`visible images failed to decode: ${images.result.value.join(", ")}`);
-
-    return {
-      async diagnose() {
-        const result = await pageCall("Runtime.evaluate", {
-          expression: `(${layoutDiagnostic.toString()})()`,
-          returnByValue: true,
-        });
-        if (result.exceptionDetails) throw new Error(result.exceptionDetails.text ?? "layout diagnostic failed");
-        return result.result.value;
-      },
-      async html() {
-        const { root } = await pageCall("DOM.getDocument", { depth: 0 });
-        const { outerHTML } = await pageCall("DOM.getOuterHTML", { nodeId: root.nodeId });
-        return outerHTML;
-      },
-      async screenshot(output, { fullPage = true } = {}) {
-        if (fullPage) await pageCall("Runtime.evaluate", {
-          expression: `document.querySelectorAll(".reveal").forEach((element) => element.classList.add("is-in"))`,
-        });
-        const { data } = await pageCall("Page.captureScreenshot", {
-          format: "png",
-          captureBeyondViewport: fullPage,
-          fromSurface: true,
-        });
-        writeFileSync(output, Buffer.from(data, "base64"));
-      },
-      close: () => call("Target.closeTarget", { targetId }),
-    };
-  }
-
-  return {
-    openPage,
-    async close() {
-      try { await call("Browser.close"); } catch { child.kill("SIGTERM"); }
-      socket.close();
-      child.kill("SIGTERM");
-      setTimeout(() => child.kill("SIGKILL"), 250).unref();
-      setTimeout(() => {
-        try { rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }); }
-        catch { /* The OS cleans up a profile Chrome has not released yet. */ }
-      }, 500);
-    },
-  };
-}
 
 try {
   const input = arg("--in");
@@ -279,50 +50,51 @@ try {
 
   const browser = await launchChrome(chrome);
   const states = [];
-  let lightText = "";
-  try {
-    for (const width of [1280, 768, 360, 320]) {
-      for (const theme of themes) {
-        const page = await browser.openPage(artifact, width, { theme, pinnedTheme: Boolean(pinnedTheme) });
-        const result = await page.diagnose();
-        if (result.viewport !== width) fail(`${theme} requested ${width}px but Chrome rendered ${result.viewport}px`);
-        if (result.failures.length) fail(`${theme} ${width}px: ${result.failures.join("; ")}`);
-        if (width === 360 && theme === themes[0]) lightText = normalizedVisibleText(await page.html());
-        if (width === 1280 && theme === themes[0]) {
-          await page.screenshot(join(outputDir, `1280-${theme}-first-frame.png`), { fullPage: false });
-          states.push(`1280-${theme}-first-frame`);
-        }
-        await page.screenshot(join(outputDir, `${width}-${theme}.png`));
-        await page.close();
-        states.push(`${width}-${theme}`);
+  const findings = [];
+  const sheetItems = [];
+  let baselineText = "";
+  async function capture(name, width, options, firstFrame = false) {
+    const page = await browser.openPage(artifact, width, options);
+    try {
+      const result = await page.diagnose();
+      if (result.viewport !== width) fail(`${name}: Chrome rendered ${result.viewport}px instead of ${width}px`);
+      findings.push(...result.findings.map((finding) => ({ state: name, ...finding })));
+      if (name === `360-${themes[0]}`) baselineText = normalizedVisibleText(await page.html());
+      if (name === "360-js-off" && normalizedVisibleText(await page.html()) !== baselineText)
+        findings.push({ state: name, rule: "js-off-text", section: null, component: null, index: null, message: "JS-off page changes document text" });
+      if (firstFrame) {
+        const first = `${name}-first-frame`;
+        sheetItems.push({ name: first, data: await page.screenshot(join(outputDir, `${first}.png`), { fullPage: false }) });
+        states.push(first);
       }
-    }
-
-    const reduced = await browser.openPage(artifact, 360, { theme: themes[0], reducedMotion: true, pinnedTheme: Boolean(pinnedTheme) });
-    const reducedResult = await reduced.diagnose();
-    if (reducedResult.failures.length) fail(`reduced motion: ${reducedResult.failures.join("; ")}`);
-    await reduced.screenshot(join(outputDir, "360-reduced-motion.png"));
-    await reduced.close();
-    states.push("360-reduced-motion");
-
-    const noJs = await browser.openPage(artifact, 360, { theme: themes[0], javascript: false, pinnedTheme: Boolean(pinnedTheme) });
-    const noJsText = normalizedVisibleText(await noJs.html());
-    if (noJsText !== lightText) fail("JS-off page does not preserve the visible document text");
-    await noJs.screenshot(join(outputDir, "360-js-off.png"));
-    await noJs.close();
-    states.push("360-js-off");
-  } finally {
-    await browser.close();
+      sheetItems.push({ name, data: await page.screenshot(null, { fullPage: false }) });
+      await page.screenshot(join(outputDir, `${name}.png`));
+      states.push(name);
+    } finally { await page.close(); }
   }
+  try {
+    for (const width of [1280, 768, 360, 320]) for (const theme of themes)
+      await capture(`${width}-${theme}`, width, { theme, pinnedTheme: Boolean(pinnedTheme) }, width === 1280 && theme === themes[0]);
+    await capture("360-reduced-motion", 360, { theme: themes[0], reducedMotion: true, pinnedTheme: Boolean(pinnedTheme) });
+    await capture("360-js-off", 360, { theme: themes[0], javascript: false, pinnedTheme: Boolean(pinnedTheme) });
 
-  process.stdout.write([
-    `capture-artifact.mjs: ${basename(artifact)} passed`,
-    `screenshots: ${resolve(outputDir)}`,
-    ...(pinnedTheme ? [`pinned theme: ${pinnedTheme}`] : []),
-    `states: ${states.join(", ")}`,
-    "",
-  ].join("\n"));
+    const sheetSource = join(outputDir, ".capture-sheet.html");
+    const cells = sheetItems.map(({ name, data }) => `<figure><img src="data:image/png;base64,${data}" alt="${name}"><figcaption>${name}</figcaption></figure>`).join("");
+    writeFileSync(sheetSource, `<!doctype html><html><meta charset="utf-8"><style>body{margin:12px;background:#eee;font:13px sans-serif;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}figure{margin:0;background:white;padding:8px;overflow:hidden}img{display:block;width:100%;height:210px;object-fit:cover;object-position:top}figcaption{padding-top:6px}</style>${cells}</html>`);
+    try {
+      const sheet = await browser.openPage(sheetSource, 1400, { pinnedTheme: true });
+      try { await sheet.screenshot(join(outputDir, "sheet.png")); }
+      finally { await sheet.close(); }
+    } finally { rmSync(sheetSource, { force: true }); }
+  } finally { await browser.close(); }
+
+  writeFileSync(join(outputDir, "report.json"), JSON.stringify({ artifact: basename(artifact), pinnedTheme: pinnedTheme ?? null, states, findings }, null, 2) + "\n");
+  process.stdout.write(`capture-artifact.mjs: ${basename(artifact)} ${findings.length ? `failed (${findings.length} findings)` : "passed"}\nscreenshots: ${resolve(outputDir)}\nstates: ${states.join(", ")}\n`);
+  if (findings.length) {
+    for (const item of findings) console.error(`${item.state} ${item.rule}: ${item.message}`);
+    process.exitCode = 1;
+  }
 } catch (error) {
   console.error(error.message);
-  process.exit(1);
+  process.exitCode = 1;
 }

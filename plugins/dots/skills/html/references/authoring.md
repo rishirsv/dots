@@ -293,8 +293,10 @@ whether the rendered page works. For pages with layout risk, run the render chec
 node scripts/capture-artifact.mjs --in <page> --out-dir <dir>
 ```
 
-Inspect the saved viewport, theme, first-frame, reduced-motion, and JS-off
-screenshots. The command fails on overflow and visible images that cannot decode.
+Open `sheet.png` to inspect the first viewport in every state, then read
+`report.json`. Resolve every finding before delivery. The report names the
+state, rule, nearest section, and component. Full-page screenshots remain
+available when the sheet reveals a problem farther down the page.
 
 Review the source before delivery:
 
