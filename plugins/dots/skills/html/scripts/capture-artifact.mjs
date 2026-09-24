@@ -80,7 +80,7 @@ try {
 
     const sheetSource = join(outputDir, ".capture-sheet.html");
     const cells = sheetItems.map(({ name, data }) => `<figure><img src="data:image/png;base64,${data}" alt="${name}"><figcaption>${name}</figcaption></figure>`).join("");
-    writeFileSync(sheetSource, `<!doctype html><html><meta charset="utf-8"><style>body{margin:12px;background:#eee;font:13px sans-serif;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}figure{margin:0;background:white;padding:8px;overflow:hidden}img{display:block;width:100%;height:210px;object-fit:cover;object-position:top}figcaption{padding-top:6px}</style>${cells}</html>`);
+    writeFileSync(sheetSource, `<!doctype html><html><meta charset="utf-8"><style>body{margin:12px;background:#eee;font:13px sans-serif;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}figure{margin:0;background:white;padding:8px;overflow:hidden}img{display:block;width:100%;height:360px;object-fit:contain;object-position:top center}figcaption{padding-top:6px}</style>${cells}</html>`);
     try {
       const sheet = await browser.openPage(sheetSource, 1400, { pinnedTheme: true });
       try { await sheet.screenshot(join(outputDir, "sheet.png")); }
