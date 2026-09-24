@@ -17,13 +17,3 @@ Browser-use default: In-app browser > Chrome.
 To view local HTML, use its absolute path only when the browser can access that
 filesystem. Otherwise use an available supported preview or serving route.
 Confirm that the page opened before claiming visual inspection.
-
-# Subagents
-
-- Delegate independent, bounded work when parallel execution will
-  materially improve speed or quality. Keep simple tasks local.
-- Use configured agent roles for model and reasoning defaults.
-  Prefer Luna for narrow, self-contained tasks.
-- A subagent assigned a pull request owns implementation, required
-  checks, the configured review process, and final handoff.
-  The parent remains responsible for integration and the final result.
