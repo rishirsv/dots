@@ -17,3 +17,26 @@ Browser-use default: In-app browser > Chrome.
 To view local HTML, use its absolute path only when the browser can access that
 filesystem. Otherwise use an available supported preview or serving route.
 Confirm that the page opened before claiming visual inspection.
+
+## Commits and pull requests
+
+- Use a descriptive type prefix for commit subjects and pull-request titles,
+  such as `feat:`, `fix:`, `docs:`, or `chore:`. Add a scope when it helps,
+  as in `fix(auth):`. Follow the repository's convention when it differs.
+  The text after the prefix must clearly describe the result in plain language;
+  do not use a branch name or task slug as the message.
+- Name branches for the work, using a descriptive prefix such as `feat/`,
+  `fix/`, or `docs/` unless the repository has another convention. If Codex
+  created a `codex/` branch, rename it before publishing when doing so will not
+  disrupt an existing remote branch or pull request.
+- Add a commit body when the reason or a material caveat is not clear from the
+  subject.
+- In a pull-request description, lead with what changes, what was wrong before,
+  and why it matters.
+  Then explain the approach, material risks, tests run, and anything unverified.
+  Preserve required pull-request template fields. Keep the description concise
+  and avoid file-by-file narration or raw commit history.
+- When asked to publish a pull request, commit and push only the scoped work,
+  update the branch's existing pull request or create one ready for review,
+  and confirm it contains the pushed commit. Report its URL and check status.
+  Do not merge unless asked.
