@@ -29,14 +29,15 @@ The [dots-tunnel skill](../../skills/dots-tunnel/SKILL.md) describes the workflo
 | `list_files` | List a directory with pagination. |
 | `search_files` | Find literal text in a bounded set of files. |
 | `read_file` | Read text and obtain its content revision. |
+| `read_files` | Read up to eight files, with a result or error for each path. |
 | `apply_patch` | Create or update one file using Codex-style patch syntax. |
 | `get_workflow` | Load the MCP-delivered skill, folder map, and execution availability. |
 | `exec_command` | Optional: run a command through Codex's native sandbox. |
 | `write_stdin` | Optional: poll a running command or send terminal input. |
 | `terminate_command` | Optional: stop a command without re-running it. |
 
-Updates require the revision returned by `read_file`; creation requires
-`expected_revision: "absent"`. A stale revision rejects the write. Read back an
+Updates require the revision returned by `read_file` or `read_files`;
+creation requires `expected_revision: "absent"`. A stale revision rejects the write. Read back an
 edit before claiming success. On uncertain delivery, read before considering
 another write. Do not retry a denied call through another connection or model.
 
@@ -154,10 +155,12 @@ Do not rerun a command after uncertain delivery without checking its effects.
 
 ## Boundaries and recovery
 
-- For the file helpers, only configured folders are available. Absolute paths, traversal, hidden
-  paths, symlinks, hard links, special files, and known credential names are
-  rejected. Filename filtering does not detect secrets embedded in ordinary
-  text: authorize only content you intend to share with ChatGPT.
+- For the file helpers, only configured folders are available. Absolute paths,
+  traversal, hidden paths except `.agents`, symlinks, hard links, special files,
+  and known credential names are rejected. The `.agents` directory still uses
+  the same file and credential checks. Filename filtering does not detect
+  secrets embedded in ordinary text: authorize only content you intend to
+  share with ChatGPT.
 - Text files are limited to 1 MiB. Reads return at most 200 lines or 16,000
   characters. Search is bounded; narrow the query when results are truncated.
 - Patches create or update one file with exact context. Delete, rename, binary

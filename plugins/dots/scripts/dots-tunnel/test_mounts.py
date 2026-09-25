@@ -46,6 +46,16 @@ class MountedTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.workspace.search_files("original")
 
+    def test_batched_reads_keep_mount_prefixes_and_errors(self):
+        agents = self.roots["Code"] / ".agents"
+        agents.mkdir()
+        (agents / "AGENTS.md").write_text("guidance\n")
+        results = self.workspace.read_files(["Code/.agents/AGENTS.md", "Other/note.txt", "Desktop/note.txt"])["results"]
+        self.assertEqual(results[0]["content"], "guidance\n")
+        self.assertEqual(results[0]["path"], "Code/.agents/AGENTS.md")
+        self.assertIn("error", results[1])
+        self.assertEqual(results[2]["content"], "original\n")
+
     def test_unauthorized_paths_and_symlinks_cannot_read_or_write(self):
         (self.roots["Code"] / "escape").symlink_to(self.base, target_is_directory=True)
         for path in ("private.txt", "Other/private.txt", "Code/../private.txt", "/Code/note.txt",

@@ -31,7 +31,7 @@ def components(path: str, directory: bool = False) -> list[str]:
     parts = path.split("/")
     for p in parts:
         name = p.casefold()
-        if (not p or name.startswith(".") or name in SKIP or
+        if (not p or (name.startswith(".") and name != ".agents") or name in SKIP or
             name in {"credentials", "credentials.json", "auth.json", "secrets", "id_rsa", "id_ed25519"} or
             name.endswith((".pem", ".key", ".p12", ".pfx", ".sqlite", ".db"))):
             raise ValueError("Path is outside dots-tunnel's permitted file surface")
@@ -180,6 +180,17 @@ class Workspace:
         end = start_line - 1 + len(selected)
         return {"path": path, "revision": revision(data), "content": content,
                 "start_line": start_line, "next_line": end + 1 if end < len(lines) else None}
+
+    def read_files(self, paths: list[str], start_line: int = 1, limit: int = 100) -> dict:
+        if not 1 <= len(paths) <= 8:
+            raise ValueError("Supply 1..8 paths per batch")
+        results = []
+        for path in paths:
+            try:
+                results.append(self.read_file(path, start_line, limit))
+            except (OSError, ValueError, UnicodeError) as error:
+                results.append({"path": path, "error": str(error)})
+        return {"results": results}
 
     def list_files(self, path: str = ".", offset: int = 0, limit: int = 100) -> dict:
         if not 0 <= offset <= 5000 or not 1 <= limit <= 200:
@@ -366,6 +377,17 @@ class MountedWorkspace:
         result = workspace.read_file(relative, start_line, limit)
         result['path'] = name + '/' + result['path']
         return result
+
+    def read_files(self, paths, start_line=1, limit=100):
+        if not 1 <= len(paths) <= 8:
+            raise ValueError("Supply 1..8 paths per batch")
+        results = []
+        for path in paths:
+            try:
+                results.append(self.read_file(path, start_line, limit))
+            except (OSError, ValueError, UnicodeError) as error:
+                results.append({"path": path, "error": str(error)})
+        return {"results": results}
 
     def search_files(self, query, path='.', limit=30):
         if path == '.':

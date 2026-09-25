@@ -105,13 +105,18 @@ def create_server(workspace: Workspace | MountedWorkspace, execution=None) -> MC
 
     @server.tool(annotations=read)
     def list_files(path: str = ".", offset: int = 0, limit: int = 100) -> dict[str, Any]:
-        """List a project directory. Paths are relative; follow next_offset if needed. Hidden/protected paths and symlinks are excluded. Limit 1..200."""
+        """List a project directory. Paths are relative; follow next_offset if needed. Hidden paths except .agents, protected paths, and symlinks are excluded. Limit 1..200."""
         return workspace.list_files(path, offset, limit)
 
     @server.tool(annotations=read)
     def read_file(path: str, start_line: int = 1, limit: int = 100) -> dict[str, Any]:
         """Read project UTF-8 text and its revision for safe editing. At most 200 lines/16000 characters per call, files <=1 MiB. Follow next_line when needed."""
         return workspace.read_file(path, start_line, limit)
+
+    @server.tool(annotations=read)
+    def read_files(paths: list[str], start_line: int = 1, limit: int = 100) -> dict[str, Any]:
+        """Read 1..8 project files in one call. Returns one result or error per path, in order; each successful result has its own revision and next_line."""
+        return workspace.read_files(paths, start_line, limit)
 
     @server.tool(annotations=read)
     def search_files(query: str, path: str = ".", limit: int = 30) -> dict[str, Any]:

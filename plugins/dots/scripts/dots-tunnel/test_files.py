@@ -136,6 +136,32 @@ class WorkspaceFilesTest(unittest.TestCase):
                     self.workspace.apply_patch(add(path, "bad"), "absent")
         self.assertEqual((self.root / "safe.txt").read_bytes(), b"safe\n")
 
+    def test_agents_directory_is_accessible_without_exposing_other_hidden_paths(self):
+        self.put(".agents/AGENTS.md", b"agent guidance\n")
+        self.put(".agents/.env", b"private\n")
+        self.put(".hidden/note.txt", b"private\n")
+        self.assertIn({"path": ".agents", "kind": "directory"}, self.workspace.list_files()["entries"])
+        self.assertEqual(self.workspace.read_file(".agents/AGENTS.md")["content"], "agent guidance\n")
+        self.assertEqual(self.workspace.search_files("agent guidance", ".agents")["matches"][0]["path"],
+                         ".agents/AGENTS.md")
+        self.assertEqual([entry["path"] for entry in self.workspace.list_files(".agents")["entries"]],
+                         [".agents/AGENTS.md"])
+        for path in (".agents/.env", ".hidden/note.txt", ".agents/secret.key"):
+            with self.subTest(path=path), self.assertRaises(ValueError):
+                self.workspace.read_file(path)
+
+    def test_batched_reads_keep_results_and_errors_independent(self):
+        self.put("one.txt", b"one\n")
+        self.put(".agents/two.md", b"two\n")
+        result = self.workspace.read_files(["one.txt", ".secret", ".agents/two.md"])["results"]
+        self.assertEqual([item["path"] for item in result], ["one.txt", ".secret", ".agents/two.md"])
+        self.assertEqual(result[0]["revision"], files.revision(b"one\n"))
+        self.assertIn("error", result[1])
+        self.assertEqual(result[2]["content"], "two\n")
+        for paths in ([], ["one.txt"] * 9):
+            with self.assertRaises(ValueError):
+                self.workspace.read_files(paths)
+
     def test_binary_non_utf8_and_oversize_files_rejected(self):
         for name, data in (("nul.txt", b"a\x00b"), ("bad.txt", b"\xff"),
                            ("large.txt", b"x" * (files.MAX_BYTES + 1))):
