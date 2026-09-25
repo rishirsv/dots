@@ -10,20 +10,25 @@ fragments use the separate routes below.
    `node scripts/catalog.mjs --help <helper>` for its signature, rules, and
    example. Use `assets/registry/registry.json` when choosing a hand-written
    component; the large galleries are for human visual review.
-2. Write `<name>.page.mjs` with `export const kit = "report"` and a default
+2. Write `<name>.page.mjs` with `export const kit = "report"` (the required
+   format selector) and a default
    function `(helpers, data) => page(...)`. Put real `.json`, `.csv`, or `.txt`
-   inputs beside the module and name them in `export const inputs`. Do not
-   import kit code; `build.mjs` injects helpers. Strings are escaped; the
+   inputs beside the module and name them in `export const inputs`.
+   `build.mjs` supplies the report helpers. Strings are escaped; the
    `html` and `svg` tagged templates preserve authored markup, and `raw()` is
    a deliberate opt-out.
 3. Run `node scripts/build.mjs <name>.page.mjs --out <name>.html`. Build fails on
    missing sources for quantitative helpers, invalid report structure, and
-   other helper contracts. `page()` adds a TOC when six or more top-level
-   sections need one and collects distinct sources in the footer.
+   other helper contracts. `page()` adds a contents list for six or more
+   top-level sections and collects distinct sources in the footer.
 4. For pages with layout risk, run
    `node scripts/capture-artifact.mjs --in <name>.html --out-dir <shots>`.
-   Open `sheet.png`, read `report.json`, and fix findings in the module. Repeat
-   the build and check until the page is clean.
+   Add `--check` to the build command to build and run this check in one step;
+   it writes captures and `report.json` beside the page at `<name>.html.capture/`.
+   Open `sheet.png`, read `report.json`, and fix findings in the module. Inspect
+   a full-page capture when the contact sheet cannot show the affected area.
+   The check flags desktop figures that scroll inside their container, data
+   marks under 24 px, and SVGs with a large unused area.
 5. Deliver the self-contained HTML file. Keep the page module and inputs when
    continued editing is useful. For a portable edit loop, build with
    `--embed-source`; `node scripts/build.mjs --extract <page.html> --to <dir>`
@@ -33,40 +38,18 @@ fragments use the separate routes below.
 `assets/outcomes/status-report.page.mjs` and
 `decision-comparison.page.mjs` show complete modules.
 
-## Select structure
+## Choose the content and structure
 
-Use a simple title, introduction, sections, and only the components the content
-needs by default. Add a table of contents, figures, pull quotes, motion, or a
-theme toggle only when the page will be kept, shared, presented, or explicitly
-needs stronger presentation. When unsure, choose the simpler page.
+Start with the reader's question and the supplied material. Use a title,
+introduction, and sections for a typical report; add components where they help
+the reader understand a point or make the requested decision.
 
-## Keep the page focused
-
-Choose the smallest composition that answers the reader's question. Start with
-the primary argument or dominant visual; add a component only when it carries
-meaning the reader would otherwise miss.
-
-- Do not invent search, filtering, reset, step, or parameter controls. Add a
-  control only when the user requested it or the supplied material requires it,
-  and use one visible mechanism per state.
-- Show only metrics that explain the requested behavior. Do not create
-  qualitative scores, status cards, KPI rows, repeated legends, or secondary
-  fact grids to fill space.
-- Use `stat-tiles` only when two to five supplied headline measures are central
-  to the first read. Do not repeat values already labeled clearly on a chart.
-- Prefer one compact dominant visual to several parallel treatments of the same
-  claim. Crop empty composition space; wide and shallow is a useful default
-  when the subject is not intrinsically square.
-- Keep presentation-only interaction local and optional. If filtering,
-  simulation, drill-down, mutable form state, or step-through control is the
-  page's main value, use an appropriate interactive or product-UI workflow
-  instead of building a half-interactive report.
-
-## Read only what applies
-
-For a small edit, read the page and its module, or the named registry component
-when the source module is unavailable. Read `DESIGN.md` for novel canvases or
-important long-lived pages. Read specialized references only when used.
+- Use `stat-tiles` only for two to five supplied headline measures that matter
+  at first glance; omit them when a chart already labels those values.
+- Add a control only when the user requests it or the material requires a
+  choice. If filtering, simulation, or mutable form state is the page's main
+  purpose, use a product-UI workflow.
+- Prefer one visual that explains the claim over several versions of it.
 
 ## Hand-written body fallback
 
@@ -80,24 +63,18 @@ important long-lived pages. Read specialized references only when used.
    visual references. Keep canvas prose inside `.reading-column`. Inline
    `theme.css` verbatim before component CSS; never edit its tokens or add
    colors inline.
-3. Preserve a strong reading order already present in the source material. If
-   it has none, use the selected example or choose suitable structures from
-   [form-factors.md](form-factors.md); neither may supply missing claims or
-   evidence. Outline sections before styling. Each
+3. Preserve the source's reading order when it serves the reader. Otherwise
+   choose a structure from [form-factors.md](form-factors.md). Each
    `<section id="...">` gets an `<h2>`; ids are short and stable. Add
-   `toc-rail` for six or more sections, or when a long reference page benefits
-   from non-linear lookup. Omit it from short, simple pages; on narrow
-   screens the component becomes a compact collapsible section.
-4. Lead with `stat-tiles` only when supplied headline measures summarize the
-   story; otherwise lead with the argument or the visual that answers the
-   reader's question. Never lead with a figure the reader cannot parse yet.
-5. Choose components by their registry `when` and fragment header. Use
+   `toc-rail` for six or more sections or a long reference page needing
+   non-linear lookup.
+4. Choose components by their registry `when` and fragment header. Use
    `scripts/assemble.mjs` to inline the theme and selected CSS once around a
    real body fragment. Use `process-steps` for linear sequences and
    [diagrams.md](diagrams.md) when relationships need a figure. For raster
    images, follow [generated-images.md](generated-images.md) and reference the
    selected file with `data-embed-src` so the assembler embeds it.
-6. Add `page-behavior` only when the page needs motion, one-time reveals, TOC
+5. Add `page-behavior` when the page needs motion, one-time reveals, TOC
    scroll-spy, or a theme toggle. Figures that should animate get
    `class="reveal"` on their container. Use it for charts and diagrams, not
    for text sections. Without `page-behavior`, the page remains static and
@@ -105,10 +82,9 @@ important long-lived pages. Read specialized references only when used.
    Generate the forms supported by `scripts/chart.mjs`; author other forms
    directly against the same tokens and accessibility rules. See
    [charts.md](charts.md#generate-supported-charts-build-others).
-7. Close with `recommendation` when the document commits to something, then
-   the sources footer. Appendix material (raw data, full logs, candidate
-   configs) goes in `disclosure` blocks after the footer, never before the
-   conclusion.
+6. Use `recommendation` when the supplied material commits to a decision.
+   Put appendix material (raw data, full logs, candidate configs) in
+   `disclosure` blocks after the main argument.
 
 ### Fast assembly
 
@@ -134,11 +110,9 @@ does not select examples, components, content, or section order.
 
 ### Working source and finished page
 
-Treat the module or body fragment as the working source. Edit it and rebuild
-instead of changing copied theme or component CSS in the finished page. A page
-module can be embedded for later extraction; embedding is opt-in because it may
-carry unused input rows or local paths into the delivered file. A hand-written
-body stays beside the output when continued editing is useful.
+Treat the module or body fragment as the working source; edit it and rebuild.
+Source embedding is opt-in because it may put unused input rows or local paths
+into the delivered file.
 
 ## Editing an existing page
 
@@ -249,9 +223,8 @@ location the user named — or ask where when it will be kept — and open it in
 the browser. Name files and page-set directories for the content
 (`sync-rollout-brief.html`, `agentic-product-workshop/`), not the skill.
 
-In Codex, open local HTML by entering its absolute path in the in-app browser address bar; `createBrowserTab` can misread it as an HTTPS URL.
-Inspect the rendered page before claiming visual verification; opening HTML source alone is not a render check.
-If automation is denied, respect the denial and report the exact failed operation, without implying the user cannot open the file.
+Open the delivered file in a browser when claiming visual verification; reading
+its source does not establish how it renders.
 
 Treat delivery states precisely:
 
@@ -266,23 +239,15 @@ Treat delivery states precisely:
 
 ## Before delivery
 
-Avoid automated markup validators as an authoring gate; they do not establish
-whether the rendered page works. For pages with layout risk, run the render check:
-
-```bash
-node scripts/capture-artifact.mjs --in <page> --out-dir <dir>
-```
-
-Open `sheet.png` to inspect the first viewport in every state, then read
-`report.json`. Resolve every finding before delivery. The report names the
-state, rule, nearest section, and component. Full-page screenshots remain
-available when the sheet reveals a problem farther down the page.
+For a render check, use the command in the page-module loop. Resolve its
+findings before delivery and inspect full-page screenshots when the contact
+sheet cannot show the affected area.
 
 Review the source before delivery:
 
-- Preserve the reasoning the reader needs. For each material finding, keep the
-  current behavior, consequence, recommendation, and proof gap. Trace figures
-  to their sources.
+- Preserve the reasoning the reader needs. For each material finding in the
+  source, keep its consequence and evidence; include an action only when the
+  source or request supports one. Trace figures to their sources.
 - Keep a page self-contained with no external requests. Keep a fragment scoped
   to one root with no page shell, document footer, script, reveal state, or
   dependency on host behavior.
@@ -293,13 +258,9 @@ Review the source before delivery:
   context when needed, and no claim to be observed evidence.
 - Remove internal working details, prompts, private paths, scratch files, and
   generation metadata.
-- Remove title chips and system meta-narration. The page must not tell the
-  audience how to read, review, navigate, use, or respond to the artifact, or
-  describe its own structure. Lead with subject matter.
+- Lead with the subject. Omit title chips and directions about how to read or
+  respond to the page unless the interaction actually needs them.
 
-Use browser or rendered review when the user asks for it, when visual proof is
-the task, or when the page carries meaningful layout risk: custom CSS, a wide
-or canvas layout, product mocks, diagrams, long or wide tables, or six or more
-sections. Inspect desktop and narrow layouts plus the states relevant to the
-risk. Report exactly what was reviewed. Do not imply rendered or interaction
-proof from source inspection.
+Layout risk includes custom CSS, a wide or canvas layout, product mocks,
+diagrams, long or wide tables, and many sections. Inspect desktop and narrow
+layouts and report exactly what was reviewed.

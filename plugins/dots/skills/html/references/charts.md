@@ -1,15 +1,16 @@
 # Charts
 
-Read this before building any chart. The reader's question determines the chart,
-design tokens determine the colors, and the fixed sizes below keep charts
-consistent.
+Use this reference when choosing or editing a chart. For a page module, find
+the supported helper with `node scripts/catalog.mjs --list` and read its
+signature with `--help <helper>`.
 
 ## Generate supported charts, build others
 
-Use `scripts/chart.mjs` for bar charts and sparklines. It computes every
-coordinate and emits a finished catalog fragment (`data-component`, title,
-accessible data, `reveal`, `--chart-*` tokens) with the input spec embedded as
-a `<!-- chart-spec {...} -->` comment:
+Use the report helpers, or `scripts/chart.mjs` for a hand-written body, to
+build bar, line, stacked, and sparkline charts. The script computes
+coordinates and emits a chart fragment with its input spec embedded as a
+`<!-- chart-spec {...} -->` comment. Chart text cannot contain `--`, which
+would break that comment:
 
 ```sh
 echo '{"title":"Spend by team, $k",
@@ -17,14 +18,14 @@ echo '{"title":"Spend by team, $k",
        "emphasis":"platform"}' | node scripts/chart.mjs bar
 ```
 
-Forms: `bar` (ranked magnitudes) and `sparkline` (inline trend; spec needs
-`data` numbers plus visible `value` text). Bar spec keys: `title`, `data` (rows
-as `[label, value]`), `emphasis` (label of the one accent-colored element),
-`sort` (`desc`/`asc`/`none`), and `limit`. Bar values must be non-negative.
-Labels, titles, and visible values must not contain `--`.
+Forms: `bar` for ranked magnitudes; `line` for ordered `[label, value]` points;
+`stacked` for `[label, ...values]` rows with named `series`; and `sparkline`
+for an inline trend with visible `value` text. Bar spec keys include `emphasis`,
+`sort`, and `limit`. Bar and stacked values must be non-negative. Use the
+catalog's `--help` for the exact helper signatures.
 
-To edit an existing chart, never touch coordinates: read its `chart-spec`
-comment, change the spec, then run `node scripts/chart.mjs --from-fragment
+To edit a generated chart, change its `chart-spec` comment and run
+`node scripts/chart.mjs --from-fragment
 <file>`. The command regenerates every chart with a `chart-spec` comment in
 place, preserving the rest of the file, including when `<file>` is a full page.
 
@@ -33,17 +34,15 @@ understand. Follow the mark specs and accessibility rules below, use only
 the `x-chart` roles in [DESIGN.md](DESIGN.md), and preserve the closest registry
 component's structure where it applies.
 
-CSS: `bar` needs `bar-chart.html` on the page; `sparkline` needs
-`sparkline.html`. Colors flow through the `--chart-*` tokens — emphasis is
-accent, everything else neutral, and themes can re-point chart color without
-touching the script.
+For a hand-written body, add the matching registry component CSS. Colors flow
+through the `--chart-*` tokens so themes work without changing the chart data.
 
 ## Choose the chart from the reader's question
 
 | The reader needs to… | Form |
 |---|---|
 | Compare magnitudes across items | Horizontal bars (`bar-chart`) |
-| See a trend over time | Sparkline inline, or a line figure for keepers |
+| See a trend over time | Sparkline for a compact inline trend; line chart for a full figure |
 | See above/below a baseline | Diverging bars from a zero rule |
 | See parts of a whole | Stacked bar — one bar, labeled segments |
 | Compare several measures or distributions | Shared-scale small multiples |
@@ -53,8 +52,7 @@ touching the script.
 
 Use a chart when magnitude, direction, or shape is easier to see than read.
 Prefer prose or a table when visual encoding adds no decision value; dataset
-size alone is not the deciding rule. Refuse numbers you would have to invent.
-A missing chart is honest; a decorative one is not.
+size alone is not the deciding rule.
 
 ## Compose the chart, not a dashboard around it
 

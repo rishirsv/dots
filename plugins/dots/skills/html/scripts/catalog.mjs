@@ -3,23 +3,28 @@
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { helpers, meta, resetFigureIds } from './kits/report.mjs';
-import { renderDiagramGallery } from './diagram-examples.mjs';
+import { meta, resetFigureIds, ruleDescriptions } from './kits/report.mjs';
+import { diagramCount, diagramFigures, diagramStyles, helperExample } from './diagram-examples.mjs';
+import { replaceLiteral } from './lib/html.mjs';
 
 const skillRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const assets = join(skillRoot, 'assets');
 const templates = join(skillRoot, 'scripts', 'templates');
 const registry = JSON.parse(readFileSync(join(assets, 'registry', 'registry.json'), 'utf8'));
-const preferred = { callout: 'callout', 'finding-list': 'findings', 'flow-diagram': 'flow' };
+const preferred = { 'finding-list': 'findings', 'flow-diagram': 'flow' };
 
-function example(name) {
-  const names = Object.keys(helpers);
-  const result = new Function(...names, `return (${meta[name].example});`)(...names.map((key) => helpers[key]));
-  return Array.isArray(result) ? result.map(String).join('') : String(result.body ?? result);
+function slot(source, marker, content) {
+  if (!source.includes(marker)) throw new Error(`gallery template has no ${marker} slot`);
+  return replaceLiteral(source, marker, content);
+}
+
+function fragment(item) {
+  const source = readFileSync(join(assets, 'registry', item.file), 'utf8');
+  return source.slice(source.lastIndexOf('</style>') + 8).trim();
 }
 
 export function renderAtlas(source) {
-  source = renderDiagramGallery(source, { atlas: true });
+  const diagramSection = `<section id="diagram-vocabulary"><h2>Diagram templates</h2><p class="reading-column">Choose among ${diagramCount} relationship-specific forms before drawing. Open the dedicated <a href="./diagrams.html">diagram atlas</a> when this vocabulary is the main work surface.</p>\n${diagramFigures({ atlas: true })}\n</section>`;
   resetFigureIds(1000);
   const groups = new Map();
   for (const [name, entry] of Object.entries(meta)) {
@@ -28,28 +33,17 @@ export function renderAtlas(source) {
     list.push(name);
     groups.set(entry.component, list);
   }
-  for (const item of registry.items) {
+  const sections = registry.items.filter((item) => !['page-shell', 'page-behavior'].includes(item.name)).map((item) => {
     const names = groups.get(item.name);
-    if (!names?.length) continue;
-    const name = preferred[item.name] ?? names[0];
-    const id = item.name;
-    let start = source.indexOf(`<section id="${id}">`);
-    if (start < 0 && ['line-chart', 'stacked-chart'].includes(id)) {
-      const next = source.indexOf('<section id="sparkline">');
-      if (next < 0) throw new Error('atlas sparkline section is missing');
-      source = source.slice(0, next) + `<section id="${id}"><h2>${item.title}</h2><p class="reading-column">${item.when}</p></section>\n  ` + source.slice(next);
-      start = source.indexOf(`<section id="${id}">`);
-    }
-    if (start < 0) throw new Error(`atlas section ${id} is missing`);
-    const end = source.indexOf('</section>', start) + '</section>'.length;
-    if (end < '</section>'.length) throw new Error(`atlas section ${id} is not closed`);
-    const section = source.slice(start, end);
-    const introEnd = section.indexOf('</p>') + '</p>'.length;
-    if (introEnd < '</p>'.length) throw new Error(`atlas section ${id} needs its intro`);
-    const head = section.slice(0, introEnd);
-    source = source.slice(0, start) + `${head}\n    <!-- GENERATED from report meta by catalog.mjs: ${name} -->\n    ${example(name)}\n  </section>` + source.slice(end);
-  }
-  return source;
+    const name = preferred[item.name] ?? names?.[0];
+    const markup = name ? helperExample(name) : fragment(item);
+    return `<section id="${item.name}"><h2>${item.title}</h2><p class="reading-column">${item.when}</p>\n${markup}\n</section>`;
+  });
+  source = slot(source, '__CATALOG_SECTIONS__', [diagramSection, ...sections].join('\n'));
+  source = slot(source, '__ATLAS_FRAME_CSS__', readFileSync(join(assets, 'registry', 'atlas-frame.css'), 'utf8'));
+  const componentStyles = registry.items.map((item) => readFileSync(join(assets, 'registry', item.file), 'utf8').match(/<style>([\s\S]*?)<\/style>/)?.[1] ?? '').join('\n');
+  source = slot(source, '__COMPONENT_STYLES__', `<style>${componentStyles}</style>`);
+  return slot(source, '__DIAGRAM_STYLES__', diagramStyles({ components: false }));
 }
 
 function htmlFiles(dir) {
@@ -77,8 +71,11 @@ function freshGallery(name, assetsDir = assets) {
   const theme = readFileSync(join(assetsDir, 'theme.css'), 'utf8').trim();
   const template = readFileSync(join(templates, `${name}.template`), 'utf8');
   if (!template.includes('__DOTS_THEME_CSS__')) throw new Error(`${name} template has no theme slot`);
-  const source = template.replace('__DOTS_THEME_CSS__', theme);
-  return name === 'atlas' ? renderAtlas(source) : renderDiagramGallery(source);
+  let source = slot(template, '__DOTS_THEME_CSS__', theme);
+  if (name === 'atlas') return renderAtlas(source);
+  source = slot(source, '__DIAGRAM_FIGURES__', diagramFigures());
+  source = slot(source, '__DIAGRAM_STYLES__', diagramStyles());
+  return slot(source, '__DIAGRAM_COUNT__', String(diagramCount));
 }
 
 export function checkGalleries({ assetsDir = assets, howDir = join(skillRoot, '..', 'how', 'assets') } = {}) {
@@ -100,7 +97,7 @@ if (directly) {
     } else if (args.length === 2 && args[0] === '--help') {
       const entry = meta[args[1]];
       if (!entry) throw new Error(`unknown helper ${args[1]}`);
-      console.log(`${args[1]} — ${entry.summary}\nSignature: ${entry.params}\nRules: ${entry.rules ?? 'Pass required fields; strings are escaped, SafeHtml is preserved.'}\nExample: ${entry.example}`);
+      console.log(`${args[1]} — ${entry.summary}\nSignature: ${entry.params}\nRules: ${ruleDescriptions(args[1])}\nExample: ${entry.example}`);
     } else if (args.length === 1 && args[0] === '--write') {
       writeGalleries();
     } else if (args.length === 1 && args[0] === '--check') {

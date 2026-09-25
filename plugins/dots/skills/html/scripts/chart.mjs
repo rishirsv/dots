@@ -8,7 +8,7 @@
  * output is indistinguishable from hand-authored catalog work and
  * machine-editable.
  *
- * CLI:  node scripts/chart.mjs <bar|sparkline> --in spec.json
+ * CLI:  node scripts/chart.mjs <bar|sparkline|line|stacked> --in spec.json
  *       cat spec.json | node scripts/chart.mjs bar
  *       node scripts/chart.mjs bar --spec '{"title":"…","data":[["a",1]]}'
  *       node scripts/chart.mjs --from-fragment chart.html   (re-render from
@@ -22,10 +22,12 @@
  *
  * CSS dependencies (paste the registry fragment's CSS once per page):
  *   bar → bar-chart.html · sparkline → sparkline.html
+ *   line → line-chart.html · stacked → stacked-chart.html
  */
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { escapeHtml } from "./lib/html.mjs";
+import { rules } from './lib/contracts.mjs';
 
 const round = (n) => Math.round(n * 100) / 100;
 
@@ -72,13 +74,13 @@ export function normalizeSpec(type, spec) {
     if (!Array.isArray(spec.data) || spec.data.length < 2 || !spec.data.every(Number.isFinite)) {
       fail("sparkline spec.data must be 2+ finite numbers");
     }
-    if (typeof spec.value !== "string" || !spec.value.length) fail("sparkline spec.value (visible text) is required");
+    if (typeof spec.value !== "string" || !spec.value.length) fail(rules.sparkline.source);
     if (spec.value.includes("--")) fail('spec.value must not contain "--"');
     return { ...norm, data: spec.data.slice(), value: spec.value };
   }
 
   if (type === "stacked") {
-    if (!Array.isArray(spec.series) || spec.series.length < 2 || spec.series.some((name) => typeof name !== "string" || !name || name.includes("--"))) fail("stacked spec.series needs two or more names");
+    if (!Array.isArray(spec.series) || spec.series.length < 2 || spec.series.some((name) => typeof name !== "string" || !name || name.includes("--"))) fail(rules.stacked.source);
     const rows = toRows(spec.data, ["label", ...spec.series]);
     if (rows.some((row) => spec.series.some((name) => row[name] < 0))) fail("stacked values must be non-negative");
     return { ...norm, series: spec.series.slice(), data: rows.map((row) => [row.label, ...spec.series.map((name) => row[name])]) };
@@ -86,7 +88,7 @@ export function normalizeSpec(type, spec) {
 
   const keys = ["label", "value"];
   let rows = toRows(spec.data, keys);
-  if (type === "bar" && rows.some((row) => row.value < 0)) fail("bar chart values must be non-negative");
+  if (type === "bar" && rows.some((row) => row.value < 0)) fail(rules.bars.source);
 
   const sort = spec.sort ?? (type === "bar" ? "desc" : "none");
   if (!["desc", "asc", "none"].includes(sort)) fail('spec.sort must be "desc", "asc", or "none"');

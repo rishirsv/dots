@@ -1,9 +1,11 @@
 # Diagram vocabulary
 
-Read this when relationships, direction, hierarchy, state, or magnitude would
-teach the reader more clearly than prose. Start with the visual chooser in
-[the diagram atlas](../assets/diagrams.html), then copy the closest figure and
-replace its illustrative content.
+Use this when relationships, direction, hierarchy, or state are clearer as a
+figure. For page modules, use the `flow`, `state`, `sequence`, or computed
+`timeline` helper when it fits; `node scripts/catalog.mjs --help <helper>`
+shows the input shape. Use [the diagram gallery](../assets/diagrams.html) to
+compare visual forms. Hand-author a figure when the helpers cannot express the
+relationship or the composition needs precise placement.
 
 ## Choose by the question
 
@@ -65,14 +67,13 @@ Prefer bands with dividers over a field of small cards. Keep 10–25 major
 blocks; merge detail into domains beyond that. Orthogonal connectors should
 not cross text or run along a module border.
 
-## Copy and adapt
+## Hand-authored figures
 
-Each example in `assets/diagrams.html` is a complete `<figure>` with inline
-SVG and an adjacent text summary. Copy the figure plus the shared
-`.diagram-*` rules from that page. Replace every label, value, connector, and
-summary with real source material. Keep the selected diagram's viewBox and
-overall geometry when they already fit; change geometry only when the real
-relationship requires it.
+Each gallery example is a complete `<figure>` with inline SVG and an adjacent
+text summary. For a form without a computed helper, copy the closest figure
+and its shared `.diagram-*` rules, then replace the example labels, values,
+connectors, and summary with the supplied material. Adjust geometry to fit the
+actual labels and relationships.
 
 Before handoff, inspect the actual display width. A valid diagram has no
 overlapping labels, ambiguous crossings, clipped content, unreadable scaled

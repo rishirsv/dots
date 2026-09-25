@@ -72,10 +72,35 @@ function layoutDiagnostic() {
           add("svg-overlap", label, `SVG label touches a node shape: ${label.textContent.trim()}`);
       });
     });
+    if (svg.closest(".flow-diagram-wrap, .chart-scroll, figure") && svg.viewBox?.baseVal?.width) {
+      const marks = [...svg.querySelectorAll("rect,path,circle,ellipse,polyline,polygon,text,line")].filter((element) => !element.closest("defs") && visible(element));
+      const boxes = marks.map((element) => { try { return element.getBBox(); } catch { return null; } }).filter(Boolean);
+      if (boxes.length) {
+        const left = Math.min(...boxes.map((box) => box.x)), right = Math.max(...boxes.map((box) => box.x + box.width));
+        const top = Math.min(...boxes.map((box) => box.y)), bottom = Math.max(...boxes.map((box) => box.y + box.height));
+        const view = svg.viewBox.baseVal;
+        if ((view.width >= 300 && (right - left) / view.width < .35) || (view.height >= 180 && (bottom - top) / view.height < .35))
+          add("svg-empty-area", svg, `SVG marks use ${Math.round((right - left) / view.width * 100)}% width and ${Math.round((bottom - top) / view.height * 100)}% height`);
+      }
+    }
   });
-  document.querySelectorAll("h1,h2,h3,p,li,td,th,figcaption,.stat-value,.stat-label,svg text").forEach((element) => {
+  if (viewport >= 1000) document.querySelectorAll(".flow-diagram-wrap, .chart-scroll, .diagram-scroll").forEach((element) => {
+    if (visible(element) && element.scrollWidth > element.clientWidth + 2)
+      add("figure-desktop-scroll", element, `figure needs ${element.scrollWidth}px inside a ${element.clientWidth}px desktop area`);
+  });
+  document.querySelectorAll(".bar-track,.stacked-track").forEach((element) => {
+    if (visible(element) && element.getBoundingClientRect().width < 24)
+      add("data-mark-size", element, `data mark area is ${Math.round(element.getBoundingClientRect().width)}px wide; minimum is 24px`);
+  });
+  document.querySelectorAll(".bar-fill").forEach((element) => {
+    // A reveal may scale the painted bar to zero before scroll; test its layout width.
+    if (visible(element) && parseFloat(element.style.width) >= 25 && element.offsetWidth < 24)
+      add("data-mark-size", element, `data bar is ${element.offsetWidth}px wide; minimum is 24px`);
+  });
+  document.querySelectorAll("h1,h2,h3,p,li,td,th,figcaption,.kpi-value,.kpi-label,svg text").forEach((element) => {
     if (!visible(element) || !element.textContent.trim()) return;
-    const fg = channels(getComputedStyle(element).color);
+    const style = getComputedStyle(element);
+    const fg = channels(element instanceof SVGElement ? style.fill : style.color);
     if (fg.rgb.length !== 3) return;
     const bg = background(element);
     const ratio = contrast(composite(fg, bg), bg);
@@ -117,8 +142,9 @@ export async function launchChrome(chrome) {
 
   const websocketUrl = await new Promise((resolveUrl, reject) => {
     let stderr = "";
+    const abort = (error) => { clearTimeout(timer); child.kill(); reject(error); };
     const timer = setTimeout(
-      () => reject(new Error(`Chrome DevTools did not start: ${stderr.trim()}`)),
+      () => abort(new Error(`Chrome DevTools did not start: ${stderr.trim()}`)),
       15000,
     );
     child.stderr.on("data", (chunk) => {
@@ -128,27 +154,40 @@ export async function launchChrome(chrome) {
       clearTimeout(timer);
       resolveUrl(match[1]);
     });
-    child.on("error", reject);
-    child.on("exit", (code) => reject(new Error(`Chrome exited before DevTools connected (${code})`)));
-  });
+    child.on("error", abort);
+    child.on("exit", (code) => abort(new Error(`Chrome exited before DevTools connected (${code})`)));
+  }).catch((error) => { rmSync(profile, { recursive: true, force: true }); throw error; });
 
   if (typeof WebSocket === "undefined") fail("this capture requires a Node.js runtime with WebSocket support");
   const socket = new WebSocket(websocketUrl);
   await new Promise((resolveSocket, reject) => {
-    socket.addEventListener("open", resolveSocket, { once: true });
-    socket.addEventListener("error", reject, { once: true });
-  });
+    const timer = setTimeout(() => reject(new Error("timed out connecting to Chrome DevTools")), 15000);
+    socket.addEventListener("open", () => { clearTimeout(timer); resolveSocket(); }, { once: true });
+    socket.addEventListener("error", (event) => { clearTimeout(timer); reject(new Error(`Chrome DevTools connection failed: ${event.message ?? "socket error"}`)); }, { once: true });
+  }).catch((error) => { socket.close(); child.kill(); rmSync(profile, { recursive: true, force: true }); throw error; });
 
   let nextId = 1;
   const pending = new Map();
   const eventWaiters = [];
   const pageEvents = new Map();
+  let stopped = false;
+  function rejectAll(error) {
+    if (stopped) return;
+    stopped = true;
+    for (const waiter of pending.values()) { clearTimeout(waiter.timer); waiter.reject(error); }
+    pending.clear();
+    for (const waiter of eventWaiters.splice(0)) { clearTimeout(waiter.timer); waiter.reject(error); }
+  }
+  socket.addEventListener("close", () => rejectAll(new Error("Chrome DevTools connection closed")));
+  socket.addEventListener("error", () => rejectAll(new Error("Chrome DevTools connection failed")));
+  child.on("exit", (code) => rejectAll(new Error(`Chrome exited during capture (${code})`)));
   socket.addEventListener("message", (event) => {
     const message = JSON.parse(event.data);
     if (message.id) {
       const waiter = pending.get(message.id);
       if (!waiter) return;
       pending.delete(message.id);
+      clearTimeout(waiter.timer);
       message.error ? waiter.reject(new Error(message.error.message)) : waiter.resolve(message.result ?? {});
       return;
     }
@@ -171,12 +210,21 @@ export async function launchChrome(chrome) {
   });
 
   function call(method, params = {}, sessionId) {
+    if (stopped) return Promise.reject(new Error(`Chrome is unavailable during ${method}`));
     const id = nextId++;
-    socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }));
-    return new Promise((resolveCall, reject) => pending.set(id, { resolve: resolveCall, reject }));
+    return new Promise((resolveCall, reject) => {
+      const timer = setTimeout(() => {
+        pending.delete(id);
+        reject(new Error(`timed out waiting for Chrome ${method}`));
+      }, 15000);
+      pending.set(id, { resolve: resolveCall, reject, timer });
+      try { socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) })); }
+      catch (error) { clearTimeout(timer); pending.delete(id); reject(error); }
+    });
   }
 
   function waitFor(method, sessionId) {
+    if (stopped) return Promise.reject(new Error(`Chrome is unavailable while waiting for ${method}`));
     return new Promise((resolveEvent, reject) => {
       const waiter = { method, sessionId, resolve: resolveEvent, reject };
       waiter.timer = setTimeout(() => {
@@ -217,8 +265,7 @@ export async function launchChrome(chrome) {
     if (!javascript) await pageCall("Emulation.setScriptExecutionDisabled", { value: true });
 
     const loaded = waitFor("Page.loadEventFired", sessionId);
-    await pageCall("Page.navigate", { url: pathToFileURL(file).href });
-    await loaded;
+    await Promise.all([pageCall("Page.navigate", { url: pathToFileURL(file).href }), loaded]);
     if (javascript && !pinnedTheme) {
       await pageCall("Runtime.evaluate", {
         expression: `document.documentElement.setAttribute("data-theme", ${JSON.stringify(theme)})`,
@@ -279,6 +326,7 @@ export async function launchChrome(chrome) {
     openPage,
     async close() {
       try { await call("Browser.close"); } catch { child.kill("SIGTERM"); }
+      rejectAll(new Error("Chrome capture closed"));
       socket.close();
       child.kill("SIGTERM");
       setTimeout(() => child.kill("SIGKILL"), 250).unref();

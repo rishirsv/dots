@@ -4,16 +4,18 @@
  *
  * A page module has no imports. It exports `kit`, optional `inputs` (name →
  * path relative to the module), and a default function that receives the
- * kit's helpers and the loaded inputs and returns the kit's PageSpec.
+ * report helpers and the loaded inputs and returns a PageSpec.
  *
  * Usage: node scripts/build.mjs <page.mjs> --out <page.html>
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { basename, dirname, extname, join, resolve } from "node:path";
+import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
+import { basename, dirname, extname, join, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { spawnSync } from 'node:child_process';
 import { assemble, checkPage, localPath } from "./assemble.mjs";
 import * as report from "./kits/report.mjs";
+import { replaceLiteral } from "./lib/html.mjs";
 
 const KITS = { report };
 
@@ -58,6 +60,7 @@ export function parseCsv(text) {
 
 function loadInput(moduleDir, name, value) {
   const path = localPath(moduleDir, value, `inputs.${name}`, "page module");
+  containedInput(moduleDir, path, `inputs.${name}`);
   let text;
   try { text = readFileSync(path, "utf8"); }
   catch { fail(`cannot read inputs.${name} ("${value}")`); }
@@ -71,6 +74,13 @@ function loadInput(moduleDir, name, value) {
   return fail(`inputs.${name} must be .json, .csv, or .txt`);
 }
 
+function containedInput(moduleDir, path, label) {
+  let actual;
+  try { actual = realpathSync(path); }
+  catch { fail(`cannot read ${label}`); }
+  if (!actual.startsWith(`${realpathSync(moduleDir)}${sep}`)) fail(`${label} must stay inside the page module directory`);
+}
+
 const SOURCE_TYPE = "application/vnd.dots-source+json";
 const SIDECAR = ".dots-source.json";
 
@@ -82,16 +92,13 @@ export async function build(modulePath, { embedSource = false } = {}) {
   const sidecar = join(moduleDir, SIDECAR);
   const expected = existsSync(sidecar) ? JSON.parse(readFileSync(sidecar, "utf8")).kitVersion : null;
   if (expected && !Object.values(KITS).some((kit) => major(expected) === major(kit.version)))
-    fail(`page source uses kit ${expected}; installed kit major version differs. Rebuild with the matching major version.`);
+    fail(`page source uses format version ${expected}; installed major version differs. Rebuild with the matching major version.`);
   // A fresh URL per build so edits to the module are never served from the ESM cache.
   const url = `${pathToFileURL(file).href}?build=${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const mod = await import(url);
 
   const kit = KITS[mod.kit];
   if (!kit) fail(`page module must export kit = ${Object.keys(KITS).map((name) => `"${name}"`).join(" | ")}`);
-  if (expected) {
-    if (major(expected) !== major(kit.version)) fail(`page source uses ${mod.kit} kit ${expected}; installed kit is ${kit.version}. Rebuild with the matching major version.`);
-  }
   if (typeof mod.default !== "function") fail("page module must export a default function (helpers, data) => page(...)");
   const inputs = mod.inputs ?? {};
   if (typeof inputs !== "object" || Array.isArray(inputs)) fail("inputs must be an object of name → relative path");
@@ -118,11 +125,12 @@ export async function build(modulePath, { embedSource = false } = {}) {
   if (embedSource) {
     const files = Object.fromEntries(Object.entries(inputs).map(([name, value]) => {
       const path = localPath(moduleDir, value, `inputs.${name}`, "page module");
+      containedInput(moduleDir, path, `inputs.${name}`);
       return [value, readFileSync(path, "utf8")];
     }));
     const payload = { kitVersion: kit.version, module: { name: basename(file), source: readFileSync(file, "utf8") }, inputs: files };
     const json = JSON.stringify(payload).replace(/</g, "\\u003c");
-    result = result.replace("</body>", `<script type="${SOURCE_TYPE}">${json}</script>\n</body>`);
+    result = replaceLiteral(result, "</body>", `<script type="${SOURCE_TYPE}">${json}</script>\n</body>`);
   }
   return result;
 }
@@ -167,10 +175,17 @@ if (invokedDirectly) {
       extract(args[1], args[3]);
     } else {
       const embedSource = args.includes("--embed-source");
+      const check = args.includes('--check');
       const modulePath = args[0];
-      const valid = args.every((value, index) => index === 0 || index === outIndex || index === outIndex + 1 || value === "--embed-source");
-      if (!modulePath || !out || outIndex < 1 || args.length !== (embedSource ? 4 : 3) || !valid) fail("usage: node scripts/build.mjs <page.mjs> --out <page.html> [--embed-source]");
+      const valid = args.every((value, index) => index === 0 || index === outIndex || index === outIndex + 1 || value === "--embed-source" || value === '--check');
+      if (!modulePath || !out || outIndex < 1 || args.length !== 3 + Number(embedSource) + Number(check) || !valid) fail("usage: node scripts/build.mjs <page.mjs> --out <page.html> [--embed-source] [--check]");
       writeFileSync(out, await build(modulePath, { embedSource }));
+      if (check) {
+        const capture = join(dirname(fileURLToPath(import.meta.url)), 'capture-artifact.mjs');
+        const result = spawnSync(process.execPath, [capture, '--in', resolve(out), '--out-dir', `${resolve(out)}.capture`], { stdio: 'inherit' });
+        if (result.error) throw result.error;
+        if (result.status !== 0) fail(`render check failed; see ${resolve(out)}.capture/report.json`);
+      }
     }
   } catch (error) {
     console.error(error.message);

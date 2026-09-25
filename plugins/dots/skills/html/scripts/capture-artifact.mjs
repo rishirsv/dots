@@ -33,6 +33,7 @@ function normalizedVisibleText(html) {
 }
 
 
+let failureReport = null;
 try {
   const input = arg("--in");
   const outputDir = arg("--out-dir");
@@ -47,10 +48,13 @@ try {
   const chrome = chromeCandidates.find(existsSync);
   if (!chrome) fail("Chrome was not found; set CHROME_BIN to a Chromium-based browser");
   mkdirSync(outputDir, { recursive: true });
+  failureReport = { out: resolve(outputDir), artifact: basename(artifact), states: [], findings: [] };
 
   const browser = await launchChrome(chrome);
   const states = [];
   const findings = [];
+  failureReport.states = states;
+  failureReport.findings = findings;
   const sheetItems = [];
   let baselineText = "";
   async function capture(name, width, options, firstFrame = false) {
@@ -96,5 +100,9 @@ try {
   }
 } catch (error) {
   console.error(error.message);
+  if (failureReport) {
+    failureReport.findings.push({ state: "capture", rule: "capture-error", section: null, component: null, index: null, message: error.message });
+    writeFileSync(join(failureReport.out, "report.json"), JSON.stringify({ artifact: failureReport.artifact, states: failureReport.states, findings: failureReport.findings }, null, 2) + "\n");
+  }
   process.exitCode = 1;
 }

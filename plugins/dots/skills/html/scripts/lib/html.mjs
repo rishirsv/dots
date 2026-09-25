@@ -10,6 +10,11 @@ const ESCAPES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&
 
 export const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ESCAPES[char]);
 
+/** Insert text literally; String.replace otherwise expands $&, $', and $` in its replacement. */
+export function replaceLiteral(source, search, value) {
+  return typeof search === 'string' ? source.replaceAll(search, () => value) : source.replace(search, () => value);
+}
+
 export class SafeHtml {
   constructor(markup, kind = "") {
     this.__html = markup;

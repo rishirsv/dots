@@ -19,7 +19,8 @@ import {
 } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, posix, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { escapeHtml as escapeText } from "./lib/html.mjs";
+import { escapeHtml as escapeText, replaceLiteral } from "./lib/html.mjs";
+import { rules } from "./kits/report.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const registryRoot = join(root, "assets", "registry");
@@ -147,14 +148,15 @@ function withToc(body, toc) {
 export function checkPage(bodyHtml) {
   const markup = structuralMarkup(bodyHtml, { keepCode: true });
   const findings = [];
-  if (componentsIn(bodyHtml).filter((name) => name === "recommendation").length > 1)
-    findings.push("at most one recommendation is allowed");
+  const recommendations = [];
   const ids = new Set();
   let depth = 0;
   let current = null;
-  for (const match of markup.matchAll(/<(\/?)section\b([^>]*)>|<h2\b[^>]*>/gi)) {
+  for (const match of markup.matchAll(/<(\/?)section\b([^>]*)>|<h2\b[^>]*>|<[^>]*\bdata-component\s*=\s*(["'])recommendation\3[^>]*>/gi)) {
     if (match[0].toLowerCase().startsWith("<h2")) {
       if (depth === 1 && current) current.hasH2 = true;
+    } else if (match[3]) {
+      recommendations.push(current?.id || "(outside section)");
     } else if (match[1]) {
       if (depth === 1 && current && !current.hasH2) findings.push(`top-level section "${current.id || "(no id)"}" needs an h2`);
       depth = Math.max(0, depth - 1);
@@ -169,6 +171,8 @@ export function checkPage(bodyHtml) {
       if (depth === 1) current = { id, hasH2: false };
     }
   }
+  if (depth > 0 && current && !current.hasH2) findings.push(`top-level section "${current.id || "(no id)"}" needs an h2`);
+  if (recommendations.length > 1) findings.push(`${rules.page.recommendation} (sections: ${recommendations.map((id) => `"${id}"`).join(", ")})`);
   return findings;
 }
 
@@ -192,14 +196,13 @@ function pageShell({ title, context, contextMarkup, dek, footer, body, layout })
     context ? `<p class="context-line${contextMarkup ? " sequence-page-context" : ""}">${escapeText(context)}</p>` : "",
   ].filter(Boolean).join("\n    ");
 
-  shell = shell
-    .replace('data-layout="article"', () => `data-layout="${layout}"`)
-    .replace(/<p class="context-line">[\s\S]*?<\/p>/, () => renderedContext)
-    .replace(/<h1>[\s\S]*?<\/h1>/, () => `<h1>${escapeText(title)}</h1>`)
-    .replace(/<p class="dek">[\s\S]*?<\/p>/, () => dek ? `<p class="dek">${escapeText(dek)}</p>` : "")
-    .replace(/\s*<!-- slot: toc-rail[^\n]*-->/, "")
-    .replace(/\s*<!-- slot: sections[^\n]*-->/, () => `\n\n  ${body.trim()}`)
-    .replace(/\s*<footer class="sources">[\s\S]*?<\/footer>/, () => footer ? `\n\n  <footer class="sources">${footer}</footer>` : "");
+  shell = replaceLiteral(shell, 'data-layout="article"', `data-layout="${layout}"`);
+  shell = replaceLiteral(shell, /<p class="context-line">[\s\S]*?<\/p>/, renderedContext);
+  shell = replaceLiteral(shell, /<h1>[\s\S]*?<\/h1>/, `<h1>${escapeText(title)}</h1>`);
+  shell = replaceLiteral(shell, /<p class="dek">[\s\S]*?<\/p>/, dek ? `<p class="dek">${escapeText(dek)}</p>` : "");
+  shell = replaceLiteral(shell, /\s*<!-- slot: toc-rail[^\n]*-->/, "");
+  shell = replaceLiteral(shell, /\s*<!-- slot: sections[^\n]*-->/, `\n\n  ${body.trim()}`);
+  shell = replaceLiteral(shell, /\s*<footer class="sources">[\s\S]*?<\/footer>/, footer ? `\n\n  <footer class="sources">${footer}</footer>` : "");
 
   return shell;
 }
@@ -494,9 +497,9 @@ export function assembleSet({ manifest, manifestRoot }) {
       assetRoot: dirname(page.bodyPath),
       components: [...new Set([...(page.components ?? []), ...(chapterIndex ? ["chapter-index"] : []), "sequence-nav"])],
     });
-    rendered.set(page.output, html
-      .replace("<body>", () => `<body class="has-sequence-nav">\n${markup.top}`)
-      .replace("</body>", () => `${markup.controls}\n</body>`));
+    rendered.set(page.output, replaceLiteral(
+      replaceLiteral(html, "<body>", `<body class="has-sequence-nav">\n${markup.top}`),
+      "</body>", `${markup.controls}\n</body>`));
   });
   return rendered;
 }

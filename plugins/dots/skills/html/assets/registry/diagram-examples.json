@@ -1,0 +1,117 @@
+[
+  {
+    "id": "architecture",
+    "title": "Architecture",
+    "use": "System components and their principal connections.",
+    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 180\" aria-hidden=\"true\">\n        <defs><marker id=\"architecture-arrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0 10 5 0 10Z\" fill=\"var(--a40)\"/></marker></defs>\n        <path class=\"diagram-edge\" d=\"M76 90H116M204 90H244M160 68V42\" marker-end=\"url(#architecture-arrow)\"/>\n        <rect class=\"diagram-node\" x=\"16\" y=\"68\" width=\"60\" height=\"44\" rx=\"6\"/><text class=\"diagram-label\" x=\"46\" y=\"90\">client</text>\n        <rect class=\"diagram-node is-focal\" x=\"116\" y=\"68\" width=\"88\" height=\"44\" rx=\"6\"/><text class=\"diagram-label\" x=\"160\" y=\"90\">service</text>\n        <rect class=\"diagram-node\" x=\"244\" y=\"68\" width=\"60\" height=\"44\" rx=\"6\"/><text class=\"diagram-label\" x=\"274\" y=\"90\">store</text>\n        <rect class=\"diagram-node\" x=\"122\" y=\"10\" width=\"76\" height=\"32\" rx=\"6\"/><text class=\"diagram-label is-small\" x=\"160\" y=\"26\">policy</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">The client enters one focal service, which reads the store under a policy boundary.</figcaption>"
+  },
+  {
+    "id": "architecture-board",
+    "title": "Architecture board",
+    "use": "A full-system panorama with layers, path, and ownership.",
+    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 220\" aria-hidden=\"true\">\n        <rect class=\"diagram-node\" x=\"14\" y=\"14\" width=\"292\" height=\"34\" rx=\"5\"/><text class=\"diagram-label\" x=\"160\" y=\"31\">roles · operators · consumers</text>\n        <rect class=\"diagram-node\" x=\"14\" y=\"58\" width=\"292\" height=\"52\" rx=\"5\"/><line class=\"diagram-gridline\" x1=\"111\" y1=\"58\" x2=\"111\" y2=\"110\"/><line class=\"diagram-gridline\" x1=\"209\" y1=\"58\" x2=\"209\" y2=\"110\"/><text class=\"diagram-label\" x=\"62\" y=\"84\">surface</text><text class=\"diagram-label\" x=\"160\" y=\"84\">runtime</text><text class=\"diagram-label\" x=\"258\" y=\"84\">control</text>\n        <rect class=\"diagram-node is-focal\" x=\"14\" y=\"120\" width=\"292\" height=\"36\" rx=\"5\"/><text class=\"diagram-label\" x=\"160\" y=\"138\">primary execution path</text>\n        <rect class=\"diagram-node\" x=\"14\" y=\"166\" width=\"292\" height=\"40\" rx=\"5\"/><text class=\"diagram-label\" x=\"160\" y=\"186\">owners · proof · next intervention</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">Four bands separate who uses the system, what runs, the main path, and who owns the next change.</figcaption>"
+  },
+  {
+    "id": "flowchart",
+    "title": "Flowchart",
+    "use": "A decision branch where each edge changes the outcome.",
+    "helper": "flow"
+  },
+  {
+    "id": "quadrant",
+    "title": "Quadrant",
+    "use": "Position items against two independent criteria.",
+    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 180\" aria-hidden=\"true\">\n        <line class=\"diagram-gridline\" x1=\"42\" y1=\"144\" x2=\"298\" y2=\"144\"/><line class=\"diagram-gridline\" x1=\"42\" y1=\"144\" x2=\"42\" y2=\"18\"/>\n        <line class=\"diagram-gridline\" x1=\"170\" y1=\"18\" x2=\"170\" y2=\"144\"/><line class=\"diagram-gridline\" x1=\"42\" y1=\"81\" x2=\"298\" y2=\"81\"/>\n        <circle cx=\"236\" cy=\"48\" r=\"9\" fill=\"var(--accent)\"/><text class=\"diagram-label is-small\" x=\"236\" y=\"30\">A</text>\n        <circle cx=\"112\" cy=\"62\" r=\"7\" fill=\"var(--a40)\"/><text class=\"diagram-label is-small\" x=\"112\" y=\"44\">B</text>\n        <circle cx=\"220\" cy=\"116\" r=\"7\" fill=\"var(--a40)\"/><text class=\"diagram-label is-small\" x=\"220\" y=\"98\">C</text>\n        <text class=\"diagram-label is-small\" x=\"170\" y=\"164\">effort →</text><text class=\"diagram-label is-small\" transform=\"translate(18 82) rotate(-90)\">impact →</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">Option A combines the highest impact with above-average effort.</figcaption>"
+  },
+  {
+    "id": "bar-chart",
+    "title": "Bar chart",
+    "use": "Compare category magnitudes with one meaningful emphasis.",
+    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 180\" aria-hidden=\"true\">\n        <text class=\"diagram-label is-small\" x=\"48\" y=\"38\">alpha</text><rect x=\"82\" y=\"26\" width=\"154\" height=\"20\" rx=\"3\" fill=\"var(--a20)\"/><text class=\"diagram-value\" x=\"254\" y=\"41\">68</text>\n        <text class=\"diagram-label is-small\" x=\"48\" y=\"78\">beta</text><rect x=\"82\" y=\"66\" width=\"202\" height=\"20\" rx=\"3\" fill=\"var(--accent)\"/><text class=\"diagram-value\" x=\"298\" y=\"81\">89</text>\n        <text class=\"diagram-label is-small\" x=\"48\" y=\"118\">gamma</text><rect x=\"82\" y=\"106\" width=\"118\" height=\"20\" rx=\"3\" fill=\"var(--a20)\"/><text class=\"diagram-value\" x=\"218\" y=\"121\">52</text>\n        <text class=\"diagram-label is-small\" x=\"48\" y=\"158\">delta</text><rect x=\"82\" y=\"146\" width=\"78\" height=\"20\" rx=\"3\" fill=\"var(--a20)\"/><text class=\"diagram-value\" x=\"178\" y=\"161\">34</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">Beta leads the four supplied categories at 89.</figcaption>"
+  },
+  {
+    "id": "line-chart",
+    "title": "Line chart",
+    "use": "Show a time series whose direction and inflections matter.",
+    "helper": "line"
+  },
+  {
+    "id": "stacked-chart",
+    "title": "Stacked chart",
+    "use": "Compare the composition of totals across categories.",
+    "helper": "stacked"
+  },
+  {
+    "id": "donut-chart",
+    "title": "Donut chart",
+    "use": "Show a whole divided into a few clearly labeled parts.",
+    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 180\" aria-hidden=\"true\">\n        <circle cx=\"98\" cy=\"90\" r=\"52\" fill=\"none\" stroke=\"var(--a12)\" stroke-width=\"24\"/>\n        <circle cx=\"98\" cy=\"90\" r=\"52\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"24\" stroke-dasharray=\"171.5 155.2\" transform=\"rotate(-90 98 90)\"/>\n        <circle cx=\"98\" cy=\"90\" r=\"52\" fill=\"none\" stroke=\"var(--a40)\" stroke-width=\"24\" stroke-dasharray=\"98 228.7\" stroke-dashoffset=\"-171.5\" transform=\"rotate(-90 98 90)\"/>\n        <text class=\"diagram-value\" x=\"98\" y=\"94\">core 52%</text>\n        <rect x=\"182\" y=\"46\" width=\"12\" height=\"12\" rx=\"2\" fill=\"var(--accent)\"/><text class=\"diagram-label is-small\" x=\"240\" y=\"52\">core · 52%</text>\n        <rect x=\"182\" y=\"82\" width=\"12\" height=\"12\" rx=\"2\" fill=\"var(--a40)\"/><text class=\"diagram-label is-small\" x=\"240\" y=\"88\">support · 30%</text>\n        <rect x=\"182\" y=\"118\" width=\"12\" height=\"12\" rx=\"2\" fill=\"var(--a12)\"/><text class=\"diagram-label is-small\" x=\"240\" y=\"124\">other · 18%</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">Core work accounts for 52% of the supplied total, followed by support at 30%.</figcaption>"
+  },
+  {
+    "id": "state-machine",
+    "title": "State machine",
+    "use": "Finite states and the events that transition between them.",
+    "helper": "state"
+  },
+  {
+    "id": "timeline",
+    "title": "Timeline",
+    "use": "Milestones where order and elapsed time carry meaning.",
+    "helper": "timeline",
+    "example": "timeline({ events: [{ title: \"detect\", date: \"09:10\" }, { title: \"contain\", date: \"09:18\" }, { title: \"repair\", date: \"09:31\" }, { title: \"close\", date: \"09:42\" }], summary: \"Detection led to containment, repair, and closure.\" })"
+  },
+  {
+    "id": "swimlane",
+    "title": "Swimlane",
+    "use": "A process crossing responsibilities or system boundaries.",
+    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 220\" aria-hidden=\"true\">\n        <defs><marker id=\"swimlane-arrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0 10 5 0 10Z\" fill=\"var(--a40)\"/></marker></defs>\n        <rect class=\"diagram-node\" x=\"10\" y=\"12\" width=\"300\" height=\"58\" rx=\"5\"/><rect class=\"diagram-node\" x=\"10\" y=\"80\" width=\"300\" height=\"58\" rx=\"5\"/><rect class=\"diagram-node\" x=\"10\" y=\"148\" width=\"300\" height=\"58\" rx=\"5\"/>\n        <text class=\"diagram-label is-small\" x=\"46\" y=\"41\">author</text><text class=\"diagram-label is-small\" x=\"46\" y=\"109\">CI</text><text class=\"diagram-label is-small\" x=\"46\" y=\"177\">release</text>\n        <rect class=\"diagram-node\" x=\"86\" y=\"24\" width=\"66\" height=\"34\" rx=\"5\"/><text class=\"diagram-label is-small\" x=\"119\" y=\"41\">commit</text>\n        <rect class=\"diagram-node is-focal\" x=\"150\" y=\"92\" width=\"70\" height=\"34\" rx=\"5\"/><text class=\"diagram-label is-small\" x=\"185\" y=\"109\">verify</text>\n        <rect class=\"diagram-node\" x=\"220\" y=\"160\" width=\"70\" height=\"34\" rx=\"5\"/><text class=\"diagram-label is-small\" x=\"255\" y=\"177\">publish</text>\n        <path class=\"diagram-edge\" d=\"M152 41 C176 41 164 78 176 88M220 109 C248 109 238 144 248 156\" marker-end=\"url(#swimlane-arrow)\"/>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">The author commits, CI owns verification, and release owns publication.</figcaption>"
+  },
+  {
+    "id": "tree",
+    "title": "Tree",
+    "use": "Parent-child hierarchy such as modules, teams, or directories.",
+    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 200\" aria-hidden=\"true\">\n        <path class=\"diagram-edge\" d=\"M160 52V78M64 78H256M64 78V104M160 78V104M256 78V104M64 138V160M256 138V160\"/>\n        <rect class=\"diagram-node is-focal\" x=\"120\" y=\"18\" width=\"80\" height=\"34\" rx=\"5\"/><text class=\"diagram-label\" x=\"160\" y=\"35\">root</text>\n        <rect class=\"diagram-node\" x=\"24\" y=\"104\" width=\"80\" height=\"34\" rx=\"5\"/><text class=\"diagram-label\" x=\"64\" y=\"121\">surface</text>\n        <rect class=\"diagram-node\" x=\"120\" y=\"104\" width=\"80\" height=\"34\" rx=\"5\"/><text class=\"diagram-label\" x=\"160\" y=\"121\">runtime</text>\n        <rect class=\"diagram-node\" x=\"216\" y=\"104\" width=\"80\" height=\"34\" rx=\"5\"/><text class=\"diagram-label\" x=\"256\" y=\"121\">proof</text>\n        <text class=\"diagram-label is-small\" x=\"64\" y=\"178\">web · app</text><text class=\"diagram-label is-small\" x=\"256\" y=\"178\">tests · logs</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">The root separates the surface, runtime, and proof domains.</figcaption>"
+  },
+  {
+    "id": "layer-stack",
+    "title": "Layer stack",
+    "use": "Vertically ordered layers and the contracts between them.",
+    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 220\" aria-hidden=\"true\">\n        <rect class=\"diagram-node\" x=\"42\" y=\"18\" width=\"236\" height=\"34\" rx=\"5\"/><text class=\"diagram-label\" x=\"160\" y=\"35\">experience</text>\n        <rect class=\"diagram-node\" x=\"54\" y=\"60\" width=\"212\" height=\"34\" rx=\"5\"/><text class=\"diagram-label\" x=\"160\" y=\"77\">application</text>\n        <rect class=\"diagram-node is-focal\" x=\"66\" y=\"102\" width=\"188\" height=\"34\" rx=\"5\"/><text class=\"diagram-label\" x=\"160\" y=\"119\">domain</text>\n        <rect class=\"diagram-node\" x=\"78\" y=\"144\" width=\"164\" height=\"34\" rx=\"5\"/><text class=\"diagram-label\" x=\"160\" y=\"161\">data</text>\n        <rect class=\"diagram-node\" x=\"90\" y=\"186\" width=\"140\" height=\"24\" rx=\"5\"/><text class=\"diagram-label is-small\" x=\"160\" y=\"198\">infrastructure</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">Experience depends on application and domain layers, which sit above data and infrastructure.</figcaption>"
+  },
+  {
+    "id": "venn",
+    "title": "Venn",
+    "use": "Meaningful overlap among two or three bounded sets.",
+    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 180\" aria-hidden=\"true\">\n        <circle cx=\"128\" cy=\"86\" r=\"58\" fill=\"var(--accent)\" fill-opacity=\".10\" stroke=\"var(--accent)\" stroke-width=\"2\"/>\n        <circle cx=\"192\" cy=\"86\" r=\"58\" fill=\"var(--a20)\" stroke=\"var(--a40)\" stroke-width=\"2\"/>\n        <text class=\"diagram-label\" x=\"104\" y=\"82\">speed</text><text class=\"diagram-label\" x=\"216\" y=\"82\">proof</text><text class=\"diagram-label is-small\" x=\"160\" y=\"104\">release</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">The release path is the overlap between fast execution and durable proof.</figcaption>"
+  },
+  {
+    "id": "candlestick",
+    "title": "Candlestick",
+    "use": "Open-high-low-close movement where ranges matter.",
+    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 180\" aria-hidden=\"true\">\n        <line class=\"diagram-gridline\" x1=\"28\" y1=\"146\" x2=\"300\" y2=\"146\"/><line class=\"diagram-gridline\" x1=\"28\" y1=\"28\" x2=\"28\" y2=\"146\"/>\n        <g stroke-width=\"2\"><line x1=\"66\" y1=\"46\" x2=\"66\" y2=\"126\" stroke=\"var(--a40)\"/><rect x=\"56\" y=\"68\" width=\"20\" height=\"34\" fill=\"var(--background)\" stroke=\"var(--a40)\"/>\n        <line x1=\"112\" y1=\"54\" x2=\"112\" y2=\"138\" stroke=\"var(--accent)\"/><rect x=\"102\" y=\"84\" width=\"20\" height=\"30\" fill=\"var(--accent)\" stroke=\"var(--accent)\"/>\n        <line x1=\"158\" y1=\"34\" x2=\"158\" y2=\"118\" stroke=\"var(--a40)\"/><rect x=\"148\" y=\"54\" width=\"20\" height=\"38\" fill=\"var(--background)\" stroke=\"var(--a40)\"/>\n        <line x1=\"204\" y1=\"60\" x2=\"204\" y2=\"142\" stroke=\"var(--accent)\"/><rect x=\"194\" y=\"84\" width=\"20\" height=\"34\" fill=\"var(--accent)\" stroke=\"var(--accent)\"/>\n        <line x1=\"250\" y1=\"28\" x2=\"250\" y2=\"110\" stroke=\"var(--a40)\"/><rect x=\"240\" y=\"48\" width=\"20\" height=\"36\" fill=\"var(--background)\" stroke=\"var(--a40)\"/></g>\n        <text class=\"diagram-label is-small\" x=\"160\" y=\"164\">five periods</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">The five-period series alternates down and up closes while the overall high moves upward.</figcaption>"
+  },
+  {
+    "id": "waterfall",
+    "title": "Waterfall",
+    "use": "Explain how additions and deductions bridge two totals.",
+    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 180\" aria-hidden=\"true\">\n        <line class=\"diagram-gridline\" x1=\"24\" y1=\"146\" x2=\"302\" y2=\"146\"/>\n        <rect x=\"34\" y=\"86\" width=\"42\" height=\"60\" fill=\"var(--a40)\"/><text class=\"diagram-value\" x=\"55\" y=\"78\">100</text>\n        <rect x=\"88\" y=\"58\" width=\"42\" height=\"28\" fill=\"var(--accent)\"/><line class=\"diagram-gridline\" x1=\"76\" y1=\"86\" x2=\"88\" y2=\"86\"/><text class=\"diagram-value\" x=\"109\" y=\"50\">+24</text>\n        <rect x=\"142\" y=\"58\" width=\"42\" height=\"18\" fill=\"var(--a20)\"/><line class=\"diagram-gridline\" x1=\"130\" y1=\"58\" x2=\"142\" y2=\"58\"/><text class=\"diagram-value\" x=\"163\" y=\"92\">−18</text>\n        <rect x=\"196\" y=\"40\" width=\"42\" height=\"36\" fill=\"var(--accent)\"/><line class=\"diagram-gridline\" x1=\"184\" y1=\"76\" x2=\"196\" y2=\"76\"/><text class=\"diagram-value\" x=\"217\" y=\"32\">+32</text>\n        <rect x=\"250\" y=\"40\" width=\"42\" height=\"106\" fill=\"var(--foreground)\"/><text class=\"diagram-value\" x=\"271\" y=\"30\">138</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">A starting value of 100 reaches 138 after additions of 24 and 32 offset an 18-point deduction.</figcaption>"
+  },
+  {
+    "id": "sequence",
+    "title": "Sequence",
+    "use": "Messages among participants ordered from top to bottom.",
+    "helper": "sequence"
+  },
+  {
+    "id": "class",
+    "title": "Class",
+    "use": "Types, their fields and methods, and inheritance.",
+    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 220\" aria-hidden=\"true\">\n        <defs><marker id=\"class-arrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"8\" markerHeight=\"8\" orient=\"auto\"><path d=\"M0 5 10 0 10 10Z\" fill=\"var(--background)\" stroke=\"var(--a40)\"/></marker></defs>\n        <rect class=\"diagram-node is-focal\" x=\"104\" y=\"14\" width=\"112\" height=\"76\" rx=\"4\"/><line class=\"diagram-gridline\" x1=\"104\" y1=\"42\" x2=\"216\" y2=\"42\"/><line class=\"diagram-gridline\" x1=\"104\" y1=\"66\" x2=\"216\" y2=\"66\"/><text class=\"diagram-label\" x=\"160\" y=\"28\">Artifact</text><text class=\"diagram-label is-small\" x=\"160\" y=\"54\">title: string</text><text class=\"diagram-label is-small\" x=\"160\" y=\"78\">render()</text>\n        <rect class=\"diagram-node\" x=\"24\" y=\"138\" width=\"112\" height=\"62\" rx=\"4\"/><line class=\"diagram-gridline\" x1=\"24\" y1=\"166\" x2=\"136\" y2=\"166\"/><text class=\"diagram-label\" x=\"80\" y=\"152\">Page</text><text class=\"diagram-label is-small\" x=\"80\" y=\"182\">layout: width</text>\n        <rect class=\"diagram-node\" x=\"184\" y=\"138\" width=\"112\" height=\"62\" rx=\"4\"/><line class=\"diagram-gridline\" x1=\"184\" y1=\"166\" x2=\"296\" y2=\"166\"/><text class=\"diagram-label\" x=\"240\" y=\"152\">Fragment</text><text class=\"diagram-label is-small\" x=\"240\" y=\"182\">scope: host</text>\n        <path class=\"diagram-edge\" d=\"M80 138V114H144V94\" marker-end=\"url(#class-arrow)\"/><path class=\"diagram-edge\" d=\"M240 138V114H176V94\" marker-end=\"url(#class-arrow)\"/>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">Page and Fragment inherit the shared Artifact contract while adding their own fields.</figcaption>"
+  },
+  {
+    "id": "entity-relationship",
+    "title": "Entity relationship",
+    "use": "Records, keys, and the cardinality between them.",
+    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 220\" aria-hidden=\"true\">\n        <rect class=\"diagram-node is-focal\" x=\"18\" y=\"42\" width=\"108\" height=\"120\" rx=\"4\"/><line class=\"diagram-gridline\" x1=\"18\" y1=\"72\" x2=\"126\" y2=\"72\"/><text class=\"diagram-label\" x=\"72\" y=\"57\">Outcome</text><text class=\"diagram-label is-small\" x=\"72\" y=\"90\">id · primary</text><text class=\"diagram-label is-small\" x=\"72\" y=\"116\">title</text><text class=\"diagram-label is-small\" x=\"72\" y=\"142\">layout</text>\n        <rect class=\"diagram-node\" x=\"194\" y=\"42\" width=\"108\" height=\"120\" rx=\"4\"/><line class=\"diagram-gridline\" x1=\"194\" y1=\"72\" x2=\"302\" y2=\"72\"/><text class=\"diagram-label\" x=\"248\" y=\"57\">Section</text><text class=\"diagram-label is-small\" x=\"248\" y=\"90\">id · primary</text><text class=\"diagram-label is-small\" x=\"248\" y=\"116\">outcome_id</text><text class=\"diagram-label is-small\" x=\"248\" y=\"142\">position</text>\n        <line class=\"diagram-edge\" x1=\"126\" y1=\"102\" x2=\"194\" y2=\"102\"/><text class=\"diagram-label\" x=\"142\" y=\"92\">1</text><text class=\"diagram-label\" x=\"178\" y=\"92\">N</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">One Outcome owns many ordered Sections through the outcome identifier.</figcaption>"
+  }
+]

@@ -1,5 +1,5 @@
 /**
- * Report kit: helpers that emit the registry fragments' anatomy for pages
+ * Report helpers that emit the registry fragments' anatomy for pages
  * built as modules. Registry fragments stay the source of anatomy and CSS;
  * the skeleton test keeps each helper aligned with its fragment.
  *
@@ -9,8 +9,10 @@
  */
 
 import { chart } from "../chart.mjs";
-import { SafeHtml, escapeHtml, html, raw, svg, tagged } from "../lib/html.mjs";
+import { SafeHtml, escapeHtml, html, raw, replaceLiteral, svg, tagged } from "../lib/html.mjs";
 import { layeredGraph, sequenceLayout, timelineLayout } from "../lib/layout.mjs";
+import { rules, ruleDescriptions } from "../lib/contracts.mjs";
+export { rules, ruleDescriptions } from "../lib/contracts.mjs";
 
 export const version = "1.0.0";
 
@@ -26,10 +28,14 @@ export class ContractError extends Error {
     this.helper = helper;
   }
 }
-function fail(helper, message) { throw new ContractError(helper, message); }
+function fail(helper, message) {
+  const rule = rules[helper]?.[message] ?? message;
+  const guidance = ruleDescriptions(helper);
+  throw new ContractError(helper, guidance && !guidance.includes(rule) ? `${rule} (${guidance})` : rule);
+}
 
 function required(helper, name, value) {
-  if (value == null || value === "" || (Array.isArray(value) && value.length === 0)) fail(helper, `${name} is required`);
+  if (value == null || value === "" || (Array.isArray(value) && value.length === 0)) fail(helper, rules[helper]?.[name] ? name : `${name} is required`);
   return value;
 }
 
@@ -58,9 +64,9 @@ function paragraphs(lead, body) {
 }
 
 function withSource(markup, component, source, helper) {
-  required(helper, "source (or \"illustrative\")", source);
+  if (source == null || source === '') fail(helper, 'source');
   const attribute = ` data-source="${escapeHtml(source)}"`;
-  return raw(markup.replace(`data-component="${component}"`, (match) => match + attribute));
+  return raw(replaceLiteral(markup, `data-component="${component}"`, `data-component="${component}"${attribute}`));
 }
 
 // ---------- page structure ----------
@@ -90,7 +96,7 @@ function section(id, title, children) {
   return html`<section id="${id}"><h2>${title}</h2>${blocks(children ?? [])}</section>`;
 }
 
-const readingColumn = (children) => html`<div class="reading-column">${blocks(children)}</div>`;
+const readingColumn = (children) => html`<div class="reading-column">${blocks(required('readingColumn', 'children', children))}</div>`;
 
 // ---------- prose and emphasis ----------
 
@@ -125,7 +131,7 @@ function disclosure(summary, children, { plain = false } = {}) {
 
 function stats(items, { source } = {}) {
   list("stats", "items", items);
-  if (items.length > 5) fail("stats", "use two to five tiles");
+  if (items.length < 2 || items.length > 5) fail("stats", "count");
   const markup = html`<div data-component="stat-tiles" class="kpi-grid">${items.map(({ value, label, note }) =>
     html`<div class="kpi-tile"><div class="kpi-value">${required("stats", "value", value)}</div><div class="kpi-label">${required("stats", "label", label)}</div>${note != null ? html`<div class="kpi-note">${note}</div>` : ""}</div>`)}</div>`;
   return withSource(markup.__html, "stat-tiles", source, "stats");
@@ -135,7 +141,10 @@ function table({ columns, rows, stacked = false, labelFirst = false }) {
   list("table", "columns", columns);
   list("table", "rows", rows);
   const cols = columns.map((column) => (typeof column === "object" && !(column instanceof SafeHtml) ? column : { label: column }));
-  const labelText = (column) => (column.label instanceof SafeHtml ? column.label.__html.replace(/<[^>]+>/g, "") : String(column.label));
+  const labelText = (column) => {
+    const text = column.label instanceof SafeHtml ? column.label.__html.replace(/<[^>]+>/g, "") : String(column.label);
+    return text.replace(/&(amp|lt|gt|quot|#39);/g, (_, name) => ({ amp: "&", lt: "<", gt: ">", quot: '"', "#39": "'" })[name]);
+  };
   const cell = (row, index) => (Array.isArray(row) ? row[index] : row[cols[index].key ?? labelText(cols[index])]);
   const cellClass = (column, index) => [index === 0 && labelFirst ? "cell-label" : "", column.numeric ? "col-num" : ""].filter(Boolean).join(" ");
   const attrs = (column, index) => {
@@ -163,6 +172,7 @@ function sparkline(data, { value, source } = {}) {
 
 function steps(items) {
   list("steps", "items", items);
+  if (items.length < 2 || items.length > 6) fail('steps', 'count');
   return html`<ol data-component="process-steps" class="process-steps">${items.map(({ title, detail, current }, index) =>
     html`<li class="${current ? "process-step is-current" : "process-step"}"><span class="process-marker">${index + 1}</span><div class="process-title">${required("steps", "title", title)}</div>${detail != null ? html`<p class="process-detail">${detail}</p>` : ""}</li>`)}</ol>`;
 }
@@ -170,6 +180,7 @@ function steps(items) {
 function timeline(items) {
   if (!Array.isArray(items)) return timelineFigure(items);
   list("timeline", "items", items);
+  if (items.length > 12) fail('timeline', 'count');
   return html`<ol data-component="timeline" class="timeline">${items.map(({ title, date, detail, state }) => {
     if (state != null && !["current", "pending"].includes(state)) fail("timeline", "state must be current or pending");
     return html`<li class="${state ? `milestone is-${state}` : "milestone"}"><span class="milestone-marker" aria-hidden="true"></span><div class="milestone-body"><div class="milestone-head"><span class="milestone-title">${required("timeline", "title", title)}</span>${date != null ? html`<span class="milestone-date">${date}</span>` : ""}</div>${detail != null ? html`<p class="milestone-detail">${detail}</p>` : ""}</div></li>`;
@@ -177,7 +188,7 @@ function timeline(items) {
 }
 
 function finding({ severity, title, evidence, consequence, action }) {
-  if (!SEVERITIES.includes(severity)) fail("finding", "severity must be high, medium, or low");
+  if (!SEVERITIES.includes(severity)) fail("finding", "severity");
   required("finding", "title", title);
   const label = severity[0].toUpperCase() + severity.slice(1);
   return tagged("finding", html`<li class="finding" data-severity="${severity}"><div class="finding-severity">${label}</div><div><h3>${title}</h3>${evidence != null ? html`<p><strong>Evidence.</strong> ${evidence}</p>` : ""}${consequence != null ? html`<p><strong>Consequence.</strong> ${consequence}</p>` : ""}${action != null ? html`<p class="finding-action"><strong>Action.</strong> ${action}</p>` : ""}</div></li>`);
@@ -187,20 +198,21 @@ for (const severity of SEVERITIES) finding[severity] = (fields) => finding({ ...
 function findings(items) {
   list("findings", "items", items);
   const rendered = items.map((item) => (item instanceof SafeHtml ? item : finding(item)));
-  if (rendered.some((item) => item.kind !== "finding")) fail("findings", "items must be finding() results or finding fields");
+  if (rendered.some((item) => item.kind !== "finding")) fail("findings", "items");
   return html`<ol data-component="finding-list" class="finding-list">${rendered}</ol>`;
 }
 
 function fileMap(items) {
   list("fileMap", "items", items);
   return html`<ul data-component="file-map" class="file-map">${items.map(({ path, lead, role }) =>
-    html`<li class="file-map-item"><div class="file-path">${required("fileMap", "path", path)}</div><div class="file-role">${lead ? html`<strong>${lead}</strong> ` : ""}${role}</div></li>`)}</ul>`;
+    html`<li class="file-map-item"><div class="file-path">${required("fileMap", "path", path)}</div><div class="file-role">${lead ? html`<strong>${lead}</strong> ` : ""}${required('fileMap', 'role', role)}</div></li>`)}</ul>`;
 }
 
 function comparison(options, { columns = options?.length } = {}) {
   list("comparison", "options", options);
-  if (options.length < 2 || options.length > 4) fail("comparison", "use two to four options");
-  if (columns !== options.length) fail("comparison", "option count must match columns");
+  if (options.length < 2 || options.length > 4) fail("comparison", "count");
+  if (columns !== options.length) fail("comparison", "columns");
+  if (options.filter((option) => option.recommended).length > 1) fail('comparison', 'recommendation');
   return html`<div data-component="comparison-grid" class="comparison-grid" data-columns="${options.length}">${options.map(({ title, body, bestFor, recommended }) =>
     html`<div class="${recommended ? "option-card recommended" : "option-card"}"><h3>${required("comparison", "title", title)}</h3><p>${recommended ? html`<span class="recommend-mark">Recommended.</span> ` : ""}${body}</p>${bestFor != null ? html`<div class="best-for">best for: ${bestFor}</div>` : ""}</div>`)}</div>`;
 }
@@ -247,7 +259,7 @@ function figure({ caption, contained = false, ...content }) {
 
 function gallery(items) {
   list("gallery", "items", items);
-  if (items.length > 4) fail("gallery", "use two to four items");
+  if (items.length < 2 || items.length > 4) fail("gallery", "count");
   return html`<div data-component="evidence-gallery" class="evidence-gallery">${items.map(({ featured, caption, ...content }) =>
     html`<figure class="${featured ? "evidence-item is-featured" : "evidence-item"}">${visual("gallery", content)}${caption != null ? html`<figcaption>${leadText(caption)}</figcaption>` : ""}</figure>`)}</div>`;
 }
@@ -264,13 +276,14 @@ function flowDiagram({ viewBox, content, caption, notes, minWidth, emphasis = []
   return html`<div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="${viewBox}"${style} aria-hidden="true">${content}</svg></div>${description}`;
 }
 
-function computedSvg(kind, markup, width, height, summary) {
+function computedSvg(kind, markup, width, height, summary, compact = false) {
   required(kind, "summary", summary);
-  return html`<div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="0 0 ${width} ${height}" style="min-width:${Math.max(width, 560)}px" aria-hidden="true">${raw(markup)}</svg></div><p class="flow-caption">${summary}</p>`;
+  return html`<div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="0 0 ${width} ${height}" style="${compact ? `min-width:0;max-width:${width}px;margin-inline:auto` : `min-width:${Math.max(width, 560)}px`}" aria-hidden="true">${raw(markup)}</svg></div><p class="flow-caption">${summary}</p>`;
 }
 
 function flow({ nodes, edges, summary, emphasis = [] }, kind = "flow") {
   list(kind, "nodes", nodes);
+  if (nodes.length > 12) fail(kind, 'nodes');
   if (!Array.isArray(edges)) fail(kind, "edges must be an array");
   const selected = Array.isArray(emphasis) ? emphasis : [emphasis];
   if (selected.length > 2) fail(kind, "at most two nodes may be emphasized");
@@ -279,7 +292,7 @@ function flow({ nodes, edges, summary, emphasis = [] }, kind = "flow") {
   const marker = `${prefix}-arrow`;
   const lines = layout.edges.map((edge) => `<path class="flow-edge" d="${edge.path}" marker-end="url(#${marker})"/>${edge.label ? `<text class="flow-edge-label" x="${edge.labelX}" y="${edge.labelY}">${escapeHtml(edge.label)}</text>` : ""}`).join("");
   const boxes = layout.nodes.map((node) => `<rect class="flow-node-rect${selected.includes(node.id) ? " is-emphasized" : ""}" x="${node.x}" y="${node.y}" width="${node.width}" height="${node.height}" rx="8"/><text class="flow-node-label" x="${node.x + node.width / 2}" y="${node.y + node.height / 2}">${escapeHtml(node.label)}</text>`).join("");
-  return computedSvg(kind, `<defs><marker id="${marker}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs>${lines}${boxes}`, layout.width, layout.height, summary);
+  return computedSvg(kind, `<defs><marker id="${marker}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs>${lines}${boxes}`, layout.width, layout.height, summary, layout.orientation === "vertical");
 }
 
 function state(spec) { return flow(spec, "state"); }
@@ -290,23 +303,26 @@ function sequence({ actors, events, summary }) {
   const layout = sequenceLayout(actors, events);
   const prefix = `dots-sequence-${++figureSerial}`;
   const marker = `${prefix}-arrow`;
-  const lines = layout.actors.map((actor) => `<text class="flow-node-label" x="${actor.x}" y="35">${escapeHtml(actor.label)}</text><path class="flow-edge" d="M${actor.x},52 V${layout.height - 20}" stroke-dasharray="4 4"/>`).join("");
+  const lines = layout.orientation === 'vertical' ? '' : layout.actors.map((actor) => `<text class="flow-node-label" x="${actor.x}" y="35">${escapeHtml(actor.label)}</text><path class="flow-edge" d="M${actor.x},52 V${layout.height - 20}" stroke-dasharray="4 4"/>`).join("");
   const arrows = layout.events.map((event) => {
     const from = layout.actors.find((actor) => actor.label === event.from);
     const to = layout.actors.find((actor) => actor.label === event.to);
     if (!from || !to) fail("sequence", "event references an unknown actor");
+    if (layout.orientation === 'vertical') return `<text class="flow-node-label" x="${layout.left}" y="${event.y}">${escapeHtml(event.from)}</text><path class="flow-edge" d="M${layout.left + layout.actorWidth / 2},${event.y} H${layout.right - layout.actorWidth / 2 - 6}" marker-end="url(#${marker})"/><text class="flow-edge-label" x="${layout.width / 2}" y="${event.y - 10}">${escapeHtml(event.label ?? "")}</text><text class="flow-node-label" x="${layout.right}" y="${event.y}">${escapeHtml(event.to)}</text>`;
     const mid = (from.x + to.x) / 2;
     return `<path class="flow-edge" d="M${from.x},${event.y} H${to.x + (from.x < to.x ? -6 : 6)}" marker-end="url(#${marker})"/><text class="flow-edge-label" x="${mid}" y="${event.y - 9}">${escapeHtml(event.label ?? "")}</text>`;
   }).join("");
-  return computedSvg("sequence", `<defs><marker id="${marker}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs>${lines}${arrows}`, layout.width, layout.height, summary);
+  return computedSvg("sequence", `<defs><marker id="${marker}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--a40)"/></marker></defs>${lines}${arrows}`, layout.width, layout.height, summary, layout.orientation === 'vertical');
 }
 
 function timelineFigure({ events, summary }) {
   list("timeline", "events", events);
   const layout = timelineLayout(events);
-  const line = `<path class="flow-edge" d="M40,90 H${layout.width - 40}"/>`;
-  const points = layout.events.map((event, index) => `<circle cx="${event.x}" cy="90" r="5" fill="${index === layout.events.length - 1 ? "var(--accent)" : "var(--foreground)"}"/><text class="flow-edge-label" x="${event.x}" y="65">${escapeHtml(event.date ?? "")}</text><text class="flow-node-label" x="${event.x}" y="120">${escapeHtml(event.title ?? event.label)}</text>`).join("");
-  return computedSvg("timeline", line + points, layout.width, layout.height, summary);
+  const line = layout.orientation === 'vertical' ? `<path class="flow-edge" d="M40,60 V${layout.events.at(-1).y}"/>` : `<path class="flow-edge" d="M40,90 H${layout.width - 40}"/>`;
+  const points = layout.events.map((event, index) => layout.orientation === 'vertical'
+    ? `<circle cx="40" cy="${event.y}" r="5" fill="${index === layout.events.length - 1 ? "var(--accent)" : "var(--foreground)"}"/><text class="flow-edge-label" x="90" y="${event.y - 9}" style="text-anchor:start">${escapeHtml(event.date ?? "")}</text><text class="flow-node-label" x="90" y="${event.y + 14}" style="text-anchor:start">${escapeHtml(event.title ?? event.label)}</text>`
+    : `<circle cx="${event.x}" cy="90" r="5" fill="${index === layout.events.length - 1 ? "var(--accent)" : "var(--foreground)"}"/><text class="flow-edge-label" x="${event.x}" y="65">${escapeHtml(event.date ?? "")}</text><text class="flow-node-label" x="${event.x}" y="120">${escapeHtml(event.title ?? event.label)}</text>`).join("");
+  return computedSvg("timeline", line + points, layout.width, layout.height, summary, layout.orientation === 'vertical');
 }
 
 function line(data, { title, source, ...options } = {}) {
@@ -344,15 +360,15 @@ export const meta = Object.freeze({
   recommendation: { component: "recommendation", summary: "The one committing conclusion, near the end.", params: "recommendation(lead, ...paragraphs)", example: `recommendation("Ship the migration in Q3.", "The vendor shuts the legacy endpoint in September.", "Freeze unrelated auth changes around cutover.")` },
   quote: { component: "pull-quote", summary: "One thesis line worth isolating.", params: "quote(text, attribution?)", example: `quote("The migration is safe because callers observe nothing until v3.", "Migration plan")` },
   disclosure: { component: "disclosure", summary: "Progressive detail: sources, raw data, appendix.", params: "disclosure(summary, children, { plain? })", example: `[disclosure("Raw latency samples", ["p50 88ms, p99 640ms."]), disclosure("Sources", ["Incident report."], { plain: true })]` },
-  stats: { component: "stat-tiles", summary: "Two to five supplied headline measures.", params: "stats([{ value, label, note? }], { source })", rules: "Source is required; use 'illustrative' only for example data.", example: `stats([{ value: "14", label: "PRs merged", note: "+3 vs last week" }, { value: "6", label: "deploys" }], { source: "GitHub, week 38" })` },
+  stats: { component: "stat-tiles", summary: "Two to five supplied headline measures.", params: "stats([{ value, label, note? }], { source })", example: `stats([{ value: "14", label: "PRs merged", note: "+3 vs last week" }, { value: "6", label: "deploys" }], { source: "GitHub, week 38" })` },
   table: { component: "data-table", summary: "Rows compared line by line. Columns may be labels or { label, key?, numeric? }; rows arrays or objects.", params: "table({ columns, rows, stacked?, labelFirst? })", example: `table({ columns: ["Risk", "Owner", { label: "Exposure", numeric: true }], rows: [["Vendor SSO", "Priya", "$180k"]], stacked: true, labelFirst: true })` },
-  bars: { component: "bar-chart", summary: "Ranked magnitudes with one emphasized row (via chart.mjs).", params: "bars(rows, { title, emphasis?, sort?, limit?, source })", rules: "Source is required; values must be non-negative.", example: `bars([["checkout", 412], ["search", 255], ["auth", 104]], { title: "p95 latency, ms", emphasis: "checkout", source: "APM, last 7 days" })` },
+  bars: { component: "bar-chart", summary: "Ranked magnitudes with one emphasized row (via chart.mjs).", params: "bars(rows, { title, emphasis?, sort?, limit?, source })", example: `bars([["checkout", 412], ["search", 255], ["auth", 104]], { title: "p95 latency, ms", emphasis: "checkout", source: "APM, last 7 days" })` },
   line: { component: "line-chart", summary: "A sourced trend with ordered points.", params: "line([[label, value], ...], { title, source })", example: `line([["W1", 100], ["W2", 120], ["W3", 140]], { title: "Latency by week", source: "APM" })` },
   stacked: { component: "stacked-chart", summary: "Sourced totals split into named segments.", params: "stacked([[label, ...values]], { title, series, source })", example: `stacked([["Search", 5, 2]], { title: "Work", series: ["Done", "Pending"], source: "Tracker" })` },
-  sparkline: { component: "sparkline", summary: "An inline trend with visible value text.", params: "sparkline(numbers, { value, source })", rules: "Source and visible value text are required.", example: `sparkline([96, 120, 180, 260, 312], { value: "312/wk", source: "APM, last 7 days" })` },
+  sparkline: { component: "sparkline", summary: "An inline trend with visible value text.", params: "sparkline(numbers, { value, source })", example: `sparkline([96, 120, 180, 260, 312], { value: "312/wk", source: "APM, last 7 days" })` },
   steps: { component: "process-steps", summary: "A linear sequence of two to six stages.", params: "steps([{ title, detail?, current? }])", example: `steps([{ title: "Collect evidence", detail: "Record current behavior." }, { title: "Verify", detail: "Run focused checks.", current: true }])` },
-  timeline: { component: "timeline", summary: "Milestones in order; pass {events,summary} for a computed diagram.", params: "timeline(items | { events, summary })", rules: "Computed diagrams require a text summary and allow at most 12 events.", example: `timeline([{ title: "Detected", date: "14:02", detail: "Alert fired." }, { title: "Rollback", date: "14:24", state: "current" }, { title: "Postmortem", date: "pending", state: "pending" }])` },
-  finding: { component: "finding-list", summary: "One evidence-backed finding: finding.high, finding.medium, finding.low. Place inside findings().", params: "finding.high({ title, evidence?, consequence?, action? })", rules: "Severity must be high, medium, or low; title is required.", example: `findings([finding.high({ title: "Candidates differ", evidence: "The upload rebuilds.", consequence: "A pass proves nothing shipped.", action: "Upload the verified path." })])` },
+  timeline: { component: "timeline", summary: "Milestones in order; pass {events,summary} for a computed diagram.", params: "timeline(items | { events, summary })", example: `timeline([{ title: "Detected", date: "14:02", detail: "Alert fired." }, { title: "Rollback", date: "14:24", state: "current" }, { title: "Postmortem", date: "pending", state: "pending" }])` },
+  finding: { component: "finding-list", summary: "One evidence-backed finding: finding.high, finding.medium, finding.low. Place inside findings().", params: "finding.high({ title, evidence?, consequence?, action? })", example: `findings([finding.high({ title: "Candidates differ", evidence: "The upload rebuilds.", consequence: "A pass proves nothing shipped.", action: "Upload the verified path." })])` },
   findings: { component: "finding-list", summary: "The list that holds finding() items or finding field objects.", params: "findings([finding.high({...}) | { severity, title, ... }])", example: `findings([finding.medium({ title: "Receipt omits the stage", action: "Record the stage name." }), { severity: "low", title: "Log noise", action: "Drop debug lines." }])` },
   fileMap: { component: "file-map", summary: "The few files responsible for a behavior.", params: "fileMap([{ path, lead?, role }])", example: `fileMap([{ path: "src/release/candidate.ts", lead: "Owns candidate identity.", role: "Creates the immutable reference." }])` },
   comparison: { component: "comparison-grid", summary: "Two to four options side by side.", params: "comparison([{ title, body, bestFor?, recommended? }])", example: `comparison([{ title: "Managed queue", body: "Hosted broker.", bestFor: "small teams" }, { title: "Worker pool", body: "Our retry logic.", bestFor: "this migration", recommended: true }])` },

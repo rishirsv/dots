@@ -1,14 +1,16 @@
 // node --test scripts/build.test.mjs
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { assemble, checkPage } from "./assemble.mjs";
 import { build, extract, parseCsv } from "./build.mjs";
-import { html, raw, SafeHtml, svg } from "./lib/html.mjs";
+import { html, raw, replaceLiteral, SafeHtml, svg } from "./lib/html.mjs";
 import { ContractError, helpers, meta } from "./kits/report.mjs";
+import { rules, ruleDescriptions } from './lib/contracts.mjs';
+import { execFileSync } from 'node:child_process';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const registry = JSON.parse(readFileSync(join(root, "assets", "registry", "registry.json"), "utf8"));
@@ -73,6 +75,22 @@ test("html escapes interpolations and passes SafeHtml through", () => {
 
 test("dollar patterns in interpolations stay literal", () => {
   assert.equal(String(html`<p>${"Cost $& more $' $`"}</p>`), "<p>Cost $&amp; more $&#39; $`</p>");
+  assert.equal(replaceLiteral("before SLOT after", "SLOT", "$& $' $` $$"), "before $& $' $` $$ after");
+});
+
+test('scripts never pass interpolated text as a plain String.replace replacement', () => {
+  const unsafeInterpolation = /\.replace\(\s*[^,\n]+,\s*`[^`\n]*\$\{/;
+  const unsafeVariable = /\.replace\(\s*[^,\n]+,\s*[a-zA-Z_$][\w$]*\s*\)/;
+  assert.match('.replace("</body>", `<script>${payload}</script>`)', unsafeInterpolation);
+  assert.match('.replace("__SLOT__", theme)', unsafeVariable);
+  const scripts = join(root, 'scripts');
+  const files = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
+    entry.isDirectory() ? files(join(dir, entry.name)) : entry.name.endsWith('.mjs') && !entry.name.endsWith('.test.mjs') ? [join(dir, entry.name)] : []);
+  for (const file of files(scripts)) {
+    const source = readFileSync(file, 'utf8');
+    assert.doesNotMatch(source, unsafeInterpolation, file);
+    assert.doesNotMatch(source, unsafeVariable, file);
+  }
 });
 
 // ---------- kits/report.mjs ----------
@@ -81,6 +99,18 @@ test("every content component in the registry has a report helper", () => {
   const covered = new Set(Object.values(meta).map((entry) => entry.component));
   const missing = registry.items.map((item) => item.name).filter((name) => !NOT_CONTENT.has(name) && !covered.has(name));
   assert.deepEqual(missing, []);
+});
+
+test('every catalog helper prints its specific contract rules', () => {
+  const catalog = join(root, 'scripts', 'catalog.mjs');
+  for (const name of Object.keys(meta)) {
+    assert.ok(Object.keys(rules[name] ?? {}).length, `${name} needs rules`);
+    const help = execFileSync(process.execPath, [catalog, '--help', name], { encoding: 'utf8' });
+    assert.ok(help.includes(`Rules: ${ruleDescriptions(name)}`), name);
+    assert.doesNotMatch(help, /Pass required fields/);
+  }
+  assert.throws(() => helpers.comparison([{ title: 'A', recommended: true }, { title: 'B', recommended: true }]), (error) => error.message.includes(rules.comparison.recommendation));
+  assert.throws(() => helpers.flow({ nodes: Array.from({ length: 13 }, (_, i) => `n${i}`), edges: [], summary: 'Many nodes.' }), (error) => error.message.includes(rules.flow.nodes));
 });
 
 test("each helper example matches its registry fragment's element and class skeleton", () => {
@@ -150,6 +180,18 @@ test("build rejects inputs outside the module directory and a missing kit", () =
   await assert.rejects(build(join(dir, "wrong.mjs")), /must return/);
 }));
 
+test("build rejects symlinked inputs outside the module folder", () => withTempDir(async (dir) => {
+  const external = join(dirname(dir), `${basename(dir)}-secret.txt`);
+  writeFileSync(external, "private input");
+  try {
+    symlinkSync(external, join(dir, "facts.txt"));
+    const file = join(dir, "page.mjs");
+    writeFileSync(file, 'export const kit="report"; export const inputs={facts:"facts.txt"}; export default ({page,section}, {facts}) => page({title:"x"}, [section("facts","Facts",[facts])]);');
+    await assert.rejects(build(file), /inside the page module directory/);
+    await assert.rejects(build(file, { embedSource: true }), /inside the page module directory/);
+  } finally { rmSync(external, { force: true }); }
+}));
+
 test("build reloads an edited module instead of using the ESM cache", () => withTempDir(async (dir) => {
   const file = join(dir, "page.mjs");
   const write = (title) => writeFileSync(file, `export const kit = "report"; export default ({ page }) => page({ title: ${JSON.stringify(title)} }, []);`);
@@ -204,12 +246,12 @@ test('report contracts name the helper and rule', () => {
     [() => helpers.figure({ src: 'image.png' }), /alt is required/],
     [() => helpers.comparison([{ title: 'A' }, { title: 'B' }], { columns: 3 }), /option count must match columns/],
     [() => helpers.flowDiagram({ viewBox: '0 0 100 100', content: svg`<rect/>`, caption: 'Flow', emphasis: ['a', 'b', 'c'] }), /at most two nodes/],
-    [() => helpers.stats([{ value: 1, label: 'Count' }]), /source/],
+    [() => helpers.stats([{ value: 1, label: 'Count' }, { value: 2, label: 'Other' }]), /source/],
     [() => helpers.bars([['a', 1]], { title: 'Count' }), /source/],
     [() => helpers.sparkline([1, 2], { value: '2' }), /source/],
   ];
   for (const [call, rule] of invalid) assert.throws(call, (error) => error instanceof ContractError && rule.test(error.message) && /^report\.[a-zA-Z]+:/.test(error.message));
-  assert.match(String(helpers.stats([{ value: 1, label: 'Count' }], { source: 'illustrative' })), /data-source="illustrative"/);
+  assert.match(String(helpers.stats([{ value: 1, label: 'Count' }, { value: 2, label: 'Other' }], { source: 'illustrative' })), /data-source="illustrative"/);
 });
 
 test('page checks one recommendation, unique ids, and top-level h2s', () => {
@@ -217,6 +259,14 @@ test('page checks one recommendation, unique ids, and top-level h2s', () => {
   assert.match(checkPage('<div data-component="recommendation"></div><div data-component="recommendation"></div>').join(' '), /at most one recommendation/);
   assert.match(checkPage('<section id="a"><h2>A</h2></section><section id="a"><h2>B</h2></section>').join(' '), /duplicate section id/);
   assert.match(checkPage('<section id="a"><p>Missing heading</p></section>').join(' '), /needs an h2/);
+  assert.match(checkPage('<section id="unfinished"><p>Missing heading</p>').join(' '), /unfinished.*needs an h2/);
+  assert.match(checkPage('<section id="first"><h2>First</h2><div data-component="recommendation"></div></section><section id="second"><h2>Second</h2><div data-component="recommendation"></div></section>').join(' '), /sections: "first", "second"/);
+});
+
+test('table accepts rich labels for object keys and responsive labels', () => {
+  const markup = String(helpers.table({ columns: [{ label: html`<strong>Cost &amp; fees</strong>` }], rows: [{ 'Cost & fees': '$5' }], stacked: true }));
+  assert.match(markup, /<th><strong>Cost &amp; fees<\/strong><\/th>/);
+  assert.match(markup, /data-label="Cost &amp; fees">\$5<\/td>/);
 });
 
 test('sources are collected once and remain legible beside a footer', () => {
@@ -261,6 +311,20 @@ test('embedded source extracts and rebuilds byte-identically', () => withTempDir
   writeFileSync(join(target, '.dots-source.json'), '{"kitVersion":"2.0.0"}\n');
   writeFileSync(extractedModule, 'throw new Error("executed before version check")');
   await assert.rejects(build(extractedModule), /matching major version/);
+}));
+
+test('embedded source preserves replacement metacharacters in module and inputs', () => withTempDir(async (dir) => {
+  const file = join(dir, 'dollars.page.mjs');
+  const source = 'export const kit="report"; export const inputs={facts:"facts.txt"}; export default ({page,section},{facts}) => page({title:"Dollars"}, [section("facts","Facts",[facts, `Cost $${5} and $& more`, "$` and $\' and $$"])]);\n';
+  const input = 'Price $& $` $\' $$ ${5}';
+  writeFileSync(file, source);
+  writeFileSync(join(dir, 'facts.txt'), input);
+  const page = join(dir, 'page.html');
+  writeFileSync(page, await build(file, { embedSource: true }));
+  const extracted = extract(page, join(dir, 'restored'));
+  assert.equal(readFileSync(extracted, 'utf8'), source);
+  assert.equal(readFileSync(join(dir, 'restored', 'facts.txt'), 'utf8'), input);
+  assert.equal(await build(extracted, { embedSource: true }), readFileSync(page, 'utf8'));
 }));
 
 test('extract rejects path traversal without running embedded code', () => withTempDir((dir) => {

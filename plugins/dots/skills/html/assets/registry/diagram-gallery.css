@@ -1,0 +1,75 @@
+.diagram-intro { margin-bottom: var(--section); }
+    .diagram-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .diagram-card {
+      min-width: 0;
+      margin: 0;
+      padding: 18px;
+      border: 1px solid var(--a12);
+      border-radius: var(--r-card);
+      background: var(--background);
+    }
+    .diagram-card h2 { font-size: 18px; line-height: 24px; margin-bottom: 4px; }
+    .diagram-use { color: var(--text-muted); font-size: 13px; margin-bottom: 14px; }
+    .diagram-scroll { overflow-x: auto; overscroll-behavior-inline: contain; }
+    .diagram-canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-width: 320px;
+      border: 1px solid var(--a8);
+      border-radius: var(--r-card);
+      background: var(--a4);
+    }
+    .diagram-node { fill: var(--background); stroke: var(--a40); stroke-width: 1.5; }
+    .diagram-node.is-focal { fill: var(--a4); stroke: var(--accent); stroke-width: 2; }
+    .diagram-edge { fill: none; stroke: var(--a40); stroke-width: 1.5; }
+    .diagram-edge.is-focal { stroke: var(--accent); stroke-width: 2; }
+    .diagram-gridline { stroke: var(--a12); stroke-width: 1; }
+    .diagram-label {
+      fill: var(--foreground);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+    .diagram-label.is-small { fill: var(--text-muted); font-size: 12px; }
+    .diagram-value {
+      fill: var(--foreground);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      text-anchor: middle;
+    }
+    .diagram-summary {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.55;
+      margin: 12px 0 0;
+    }
+    @media (max-width: 760px) {
+      .diagram-grid { grid-template-columns: 1fr; }
+    }
+
+
+  .chart-scroll { overflow-x: auto; }
+  .chart-scroll svg { display: block; width: 100%; height: auto; }
+  .chart-scroll svg text { fill: var(--text-muted); font: 12px var(--font-sans); }
+  .line-series { fill: none; stroke: var(--accent); stroke-width: 2; }
+  .line-point { fill: var(--accent); }
+
+
+  .stacked-row { display:grid; grid-template-columns:120px minmax(0,1fr) 48px; gap:12px; align-items:center; margin:0 0 12px; font-size:13px; }
+  .stacked-track { display:flex; height:18px; background:var(--a4); border-radius:4px; overflow:hidden; }
+  .stacked-segment { display:block; height:100%; }
+  .series-0 { background:var(--accent); }
+  .series-1 { background:var(--a40); }
+  .series-2 { background:var(--a20); }
+  .series-3 { background:var(--a12); }
+  .stacked-legend { display:flex; flex-wrap:wrap; gap:12px; font-size:12px; color:var(--text-muted); }
+  .stacked-legend span { display:inline-flex; align-items:center; gap:5px; }
+  .stacked-legend i { display:inline-block; width:10px; height:10px; }
+
+.diagram-card .chart-card{border:0;padding:0;margin:0}.diagram-card .flow-diagram-wrap{margin:0}.diagram-card:is([data-diagram="flowchart"],[data-diagram="state-machine"],[data-diagram="sequence"],[data-diagram="timeline"],[data-diagram="line-chart"]){grid-column:1/-1}
