@@ -36,10 +36,11 @@ four when they are short, independent, and easy to answer together. Ask one
 when it unlocks what follows or deserves focused deliberation. A question that
 depends on another question in the current round belongs in a later round.
 
-Number each question and give a recommended answer. Keep the common case
-compact. Use one meaningful emoji in the question heading and one in the
-recommendation label when they improve scanning; otherwise leave them out. Let
-the subject choose the emojis rather than using a fixed vocabulary.
+Number each question and give a recommended answer. Use the text format below
+when prose is enough; adapt the presentation when the choice needs an exhibit.
+Keep the common case compact. Use one meaningful emoji in the question heading
+and one in the recommendation label when they improve scanning; otherwise leave
+them out. Let the subject choose the emojis rather than using a fixed vocabulary.
 
 ```md
 <question emoji> **Q1 · <plain-language decision>**
@@ -102,11 +103,40 @@ Match the question to the work:
 - **Knowledge or analytical work:** focus on the decision the result supports,
   its audience, definitions, evidence, assumptions, and required output.
 
+Before asking, check whether the user can reasonably answer from what is shown.
+Choose the smallest representation that lets the user judge the consequential
+difference:
+
+- **Appearance:** show labeled alternatives in context. For a border-gray
+  choice, show the same component on the same background with only the border
+  changed; color names or hex values alone are insufficient.
+- **Structure:** show a small architecture, data-flow, or state diagram when
+  relationships are hard to follow in prose.
+- **Behavior:** provide a tiny interactive example when clicking, timing, or
+  transitions determine the answer. Use a static comparison when it suffices.
+
+Keep the question, exhibit, and recommendation together, with matching option
+labels so the user can answer “B, but subtler.” Confirm the exhibit renders in
+the available surface before asking for a judgment. If it cannot be shown,
+explain the limitation and defer the visual choice or ask about the intended
+effect; do not treat that answer as approval of an unseen design.
+
+Keep this cheap: reuse existing artifacts and rendering tools, build only for
+the current frontier, and vary only what the question tests. Use inline text,
+tables, or diagrams where sufficient; load visual tooling only when needed.
+Keep artifact source outside the conversation and carry forward the choice,
+rationale, and artifact link instead of repeating previews or the full history.
+Leave incidental styling to later design work unless it changes the direction
+or the user explicitly wants to settle it now.
+
 After each reply, record the newly settled decisions, preserve unanswered
 questions, and recompute the frontier. If the user answers only part of a
 round, resurface each skipped consequential question when it returns to the
 frontier or keep it open in the Idea Snapshot. Reopen an earlier choice only
 when new evidence changes or contradicts it.
+
+As the interview grows, briefly name the consequential choices still open so
+the user can see what remains. Do not repeat the whole decision tree each round.
 
 ## Use research and prototypes when they settle a choice
 
