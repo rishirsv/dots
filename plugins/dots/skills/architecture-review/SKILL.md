@@ -12,6 +12,7 @@ except where persisted data or an external contract requires compatibility.
 
 ## References
 
+- Read [harness-audit.md](references/harness-audit.md) when reviewing an AI agent harness or a subsystem that assembles model requests, exposes tools, manages context, or coordinates agents. It adds cost and reliability checks to the candidate review; ordinary codebases without these components do not need it.
 - Read [architecture-language.md](references/architecture-language.md) when terminology would clarify a structural finding or a candidate proposes deleting an abstraction. Preserve the repository's established vocabulary.
 - Read [architecture-ownership.md](references/architecture-ownership.md) when a finding involves code placement, runtime ownership, duplicate policy, or canonical long-term ownership.
 - Read [duplicate-ownership.md](../../references/duplicate-ownership.md) when a finding involves a second source of truth, copied policy, normalization, or competing rule owners.
