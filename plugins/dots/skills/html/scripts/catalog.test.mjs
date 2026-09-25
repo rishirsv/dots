@@ -14,7 +14,7 @@ test('catalog list and help expose signatures, rules, and examples', () => {
   const help = execFileSync(process.execPath, [catalog.pathname, '--help', 'finding'], { encoding: 'utf8' });
   assert.match(list, /^flow: flow\(/m);
   assert.match(help, /Signature: finding\.high/);
-  assert.match(help, /Rules: Severity must be high/);
+  assert.match(help, /Rules: severity must be high/);
   assert.match(help, /Example: findings\(/);
   assert.ok(help.split('\n').length <= 30);
 });
@@ -31,7 +31,7 @@ test('catalog check rejects an edited gallery example', () => withCatalogFiles((
   const options = { assetsDir: dir, howDir: join(dir, 'absent') };
   assert.deepEqual(checkGalleries(options), []);
   const atlas = join(dir, 'atlas.html');
-  writeFileSync(atlas, readFileSync(atlas, 'utf8').replace('GENERATED from report meta by catalog.mjs', 'hand edited'));
+  writeFileSync(atlas, readFileSync(atlas, 'utf8').replace('id="stat-tiles"', 'id="hand-edited"'));
   assert.ok(checkGalleries(options).includes(atlas));
 }));
 

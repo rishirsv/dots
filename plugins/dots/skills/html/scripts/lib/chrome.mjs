@@ -41,10 +41,33 @@ function layoutDiagnostic() {
   const contrast = (a, b) => (Math.max(luminance(a), luminance(b)) + .05) / (Math.min(luminance(a), luminance(b)) + .05);
   const background = (element) => {
     let color = [255, 255, 255];
+    let unassessed = false;
     const layers = [];
     for (let node = element; node; node = node.parentElement) layers.push(node);
     for (const node of layers.reverse()) color = composite(channels(getComputedStyle(node).backgroundColor), color);
-    return color;
+    if (element instanceof SVGTextElement) {
+      const box = element.getBoundingClientRect();
+      const shapes = [...element.ownerSVGElement.querySelectorAll('rect,circle,ellipse,path,polygon')];
+      for (const shape of shapes) {
+        if (shape.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING) {
+          const paint = channels(getComputedStyle(shape).fill);
+          paint.alpha *= Number(getComputedStyle(shape).fillOpacity) * Number(getComputedStyle(shape).opacity);
+          if (paint.rgb.length !== 3 || paint.alpha === 0) continue;
+          const area = shape.getBoundingClientRect();
+          if (!intersects(area, box)) continue;
+          let covers = shape.tagName.toLowerCase() === 'rect' && contains(area, box);
+          if (['circle', 'ellipse'].includes(shape.tagName.toLowerCase())) {
+            const cx = (area.left + area.right) / 2, cy = (area.top + area.bottom) / 2;
+            const rx = area.width / 2, ry = area.height / 2;
+            covers = [[box.left, box.top], [box.right, box.top], [box.left, box.bottom], [box.right, box.bottom]]
+              .every(([x, y]) => ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1);
+          }
+          if (covers) { color = composite(paint, color); if (paint.alpha >= .99) unassessed = false; }
+          else unassessed = true;
+        }
+      }
+    }
+    return { color, unassessed };
   };
 
   if (document.documentElement.scrollWidth > viewport + 1 || document.body.scrollWidth > viewport + 1)
@@ -102,9 +125,10 @@ function layoutDiagnostic() {
     const style = getComputedStyle(element);
     const fg = channels(element instanceof SVGElement ? style.fill : style.color);
     if (fg.rgb.length !== 3) return;
-    const bg = background(element);
+    const { color: bg, unassessed } = background(element);
+    if (unassessed) { add('contrast-unassessed', element, `"${element.textContent.trim().slice(0, 40)}" overlaps a painted SVG shape whose background cannot be measured`); return; }
     const ratio = contrast(composite(fg, bg), bg);
-    if (ratio < 4.5) add("contrast", element, `text contrast is ${ratio.toFixed(2)}:1; minimum is 4.5:1`);
+    if (ratio < 4.5) add("contrast", element, `"${element.textContent.trim().slice(0, 40)}" contrast is ${ratio.toFixed(2)}:1; minimum is 4.5:1`);
   });
   document.querySelectorAll(".comparison-grid").forEach((grid) => {
     const cards = [...grid.children].filter((child) => child.classList.contains("option-card"));

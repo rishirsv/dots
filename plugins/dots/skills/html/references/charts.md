@@ -23,6 +23,10 @@ Forms: `bar` for ranked magnitudes; `line` for ordered `[label, value]` points;
 for an inline trend with visible `value` text. Bar spec keys include `emphasis`,
 `sort`, and `limit`. Bar and stacked values must be non-negative. Use the
 catalog's `--help` for the exact helper signatures.
+Line and stacked fragments print every value in adjacent text so readers can
+recover exact numbers without hovering over marks. A `source` supplied through
+the report helper is also stored in the embedded spec, so regenerating the
+chart preserves its provenance.
 
 To edit a generated chart, change its `chart-spec` comment and run
 `node scripts/chart.mjs --from-fragment

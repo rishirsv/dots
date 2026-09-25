@@ -63,15 +63,13 @@ export function layeredGraph(nodes, edges, budget = 672) {
     bottom = Math.max(...placed.map((node) => node.y + boxHeight));
   } else {
     if (boxWidth + pad * 2 > budget) throw new Error('layout: node label exceeds the diagram width budget');
-    const columnGap = 24;
-    const columns = Math.max(1, Math.floor((budget - pad * 2 + columnGap) / (boxWidth + columnGap)));
     let y = pad;
     placed = buckets.flatMap((bucket, layer) => {
       const items = bucket.map((node, index) => ({ ...node,
-        x: pad + index % columns * (boxWidth + columnGap),
-        y: y + Math.floor(index / columns) * (boxHeight + gapY),
+        x: pad,
+        y: y + index * (boxHeight + gapY),
         width: boxWidth, height: boxHeight, layer }));
-      y += Math.ceil(bucket.length / columns) * (boxHeight + gapY) + 52;
+      y += bucket.length * (boxHeight + gapY) + 52;
       return items;
     });
     width = Math.max(...placed.map((node) => node.x + boxWidth)) + pad;
@@ -82,10 +80,15 @@ export function layeredGraph(nodes, edges, budget = 672) {
     width = fittedWidth;
   }
   const positions = new Map(placed.map((node) => [node.id, node]));
-  let returns = 0;
+  const crossesNode = (points, from, to) => placed.some((node) => node !== from && node !== to && points.slice(1).some((point, index) => {
+    const prior = points[index];
+    if (prior.x === point.x) return prior.x > node.x && prior.x < node.x + node.width && Math.min(prior.y, point.y) < node.y + node.height && Math.max(prior.y, point.y) > node.y;
+    return prior.y > node.y && prior.y < node.y + node.height && Math.min(prior.x, point.x) < node.x + node.width && Math.max(prior.x, point.x) > node.x;
+  }));
+  let laneCount = 0;
   const routed = links.map((edge) => {
     const from = positions.get(edge.from), to = positions.get(edge.to);
-    if (forward.has(edge) && from.layer < to.layer) {
+    if (forward.has(edge) && to.layer === from.layer + 1) {
       if (orientation === 'horizontal') {
         const x0 = from.x + boxWidth, x1 = to.x;
         const y0 = from.y + boxHeight / 2, y1 = to.y + boxHeight / 2;
@@ -95,18 +98,26 @@ export function layeredGraph(nodes, edges, budget = 672) {
       const x0 = from.x + boxWidth / 2, x1 = to.x + boxWidth / 2;
       const y0 = from.y + boxHeight, y1 = to.y;
       const mid = (y0 + y1) / 2;
-      return { ...edge, path: `M${x0},${y0} V${mid} H${x1} V${y1 - 6}`, labelX: (x0 + x1) / 2, labelY: mid - 8 };
+      if (!crossesNode([{ x: x0, y: y0 }, { x: x0, y: mid }, { x: x1, y: mid }, { x: x1, y: y1 - 6 }], from, to))
+        return { ...edge, path: `M${x0},${y0} V${mid} H${x1} V${y1 - 6}`, labelX: (x0 + x1) / 2, labelY: mid - 8 };
     }
-    const lane = ++returns;
+    const lane = ++laneCount;
     if (orientation === 'horizontal') {
       const y = bottom + lane * 24;
-      return { ...edge, path: `M${from.x + boxWidth / 2},${from.y + boxHeight} V${y} H${to.x + boxWidth / 2} V${to.y + boxHeight + 6}`, labelX: (from.x + to.x + boxWidth) / 2, labelY: y - 8 };
+      const rightward = to.layer > from.layer;
+      const sourceX = from.x + (rightward ? boxWidth : 0);
+      const targetX = to.x + (rightward ? 0 : boxWidth);
+      const sourceLane = sourceX + (rightward ? 12 : -12);
+      const targetLane = targetX + (rightward ? -12 : 12);
+      const sourceY = from.y + boxHeight / 2, targetY = to.y + boxHeight / 2;
+      return { ...edge, path: `M${sourceX},${sourceY} H${sourceLane} V${y} H${targetLane} V${targetY} H${targetX + (rightward ? -6 : 6)}`, labelX: (sourceLane + targetLane) / 2, labelY: y - 8 };
     }
-    const x = Math.min(budget - 12, width + lane * 18);
+    const x = width - pad + lane * 18;
     return { ...edge, path: `M${from.x + boxWidth},${from.y + boxHeight / 2} H${x} V${to.y + boxHeight / 2} H${to.x + boxWidth + 6}`, labelX: x - 20, labelY: (from.y + to.y + boxHeight) / 2 - 8 };
   });
-  const height = bottom + pad + (orientation === 'horizontal' ? returns * 24 : 0);
-  if (orientation === 'vertical' && returns) width = Math.max(width, Math.min(budget, width + returns * 18 + 12));
+  const height = bottom + pad + (orientation === 'horizontal' ? laneCount * 24 : 0);
+  if (orientation === 'vertical' && laneCount) width += laneCount * 18;
+  if (width > budget) throw new Error('layout: edge routing exceeds the diagram width budget');
   return { nodes: placed, edges: routed, width, height, orientation };
 }
 export function sequenceLayout(actors, events, budget = 672) {
@@ -125,10 +136,12 @@ export function sequenceLayout(actors, events, budget = 672) {
 
 export function timelineLayout(events, budget = 672) {
   if (events.length > 12) throw new Error(`layout: ${rules.timeline.count}`);
-  const gap = Math.max(150, ...events.map((event) => textWidth(event.title ?? event.label ?? '', 13) + 40));
-  const horizontalWidth = 80 + Math.max(0, events.length - 1) * gap;
-  if (horizontalWidth <= budget) return { events: events.map((event, index) => ({ ...event, x: 40 + index * gap })), width: horizontalWidth, height: 180, orientation: 'horizontal' };
-  const labelWidth = Math.max(...events.map((event) => textWidth(event.title ?? event.label ?? '', 13)), ...events.map((event) => textWidth(event.date ?? '', 13)));
+  const widths = events.map((event) => Math.max(textWidth(event.title ?? event.label ?? '', 13, 'mono'), textWidth(event.date ?? '', 13)));
+  const centers = [];
+  widths.forEach((width, index) => centers.push(index === 0 ? 24 + width / 2 : centers[index - 1] + Math.max(150, widths[index - 1] / 2 + width / 2 + 24)));
+  const horizontalWidth = Math.ceil(centers.at(-1) + widths.at(-1) / 2 + 24);
+  if (horizontalWidth <= budget) return { events: events.map((event, index) => ({ ...event, x: centers[index] })), width: horizontalWidth, height: 180, orientation: 'horizontal' };
+  const labelWidth = Math.max(...widths);
   const verticalWidth = Math.max(272, Math.ceil(labelWidth + 120));
   if (verticalWidth > budget) throw new Error('layout: timeline label exceeds the diagram width budget');
   return { events: events.map((event, index) => ({ ...event, x: 40, y: 60 + index * 76 })), width: verticalWidth, height: 110 + (events.length - 1) * 76, orientation: 'vertical' };

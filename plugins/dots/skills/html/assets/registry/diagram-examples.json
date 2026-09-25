@@ -82,7 +82,7 @@
     "id": "venn",
     "title": "Venn",
     "use": "Meaningful overlap among two or three bounded sets.",
-    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 180\" aria-hidden=\"true\">\n        <circle cx=\"128\" cy=\"86\" r=\"58\" fill=\"var(--accent)\" fill-opacity=\".10\" stroke=\"var(--accent)\" stroke-width=\"2\"/>\n        <circle cx=\"192\" cy=\"86\" r=\"58\" fill=\"var(--a20)\" stroke=\"var(--a40)\" stroke-width=\"2\"/>\n        <text class=\"diagram-label\" x=\"104\" y=\"82\">speed</text><text class=\"diagram-label\" x=\"216\" y=\"82\">proof</text><text class=\"diagram-label is-small\" x=\"160\" y=\"104\">release</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">The release path is the overlap between fast execution and durable proof.</figcaption>"
+    "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 180\" aria-hidden=\"true\">\n        <circle cx=\"128\" cy=\"86\" r=\"58\" fill=\"var(--accent)\" fill-opacity=\".10\" stroke=\"var(--accent)\" stroke-width=\"2\"/>\n        <circle cx=\"192\" cy=\"86\" r=\"58\" fill=\"var(--a20)\" stroke=\"var(--a40)\" stroke-width=\"2\"/>\n        <text class=\"diagram-label\" x=\"104\" y=\"82\">speed</text><text class=\"diagram-label\" x=\"216\" y=\"82\">proof</text><rect x=\"126\" y=\"92\" width=\"68\" height=\"24\" rx=\"5\" fill=\"var(--background)\" stroke=\"var(--a40)\"/><text class=\"diagram-label\" x=\"160\" y=\"104\">release</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">The release path is the overlap between fast execution and durable proof.</figcaption>"
   },
   {
     "id": "candlestick",

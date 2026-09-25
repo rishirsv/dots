@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { chart, parseSpec, normalizeSpec, linearScale } from "./chart.mjs";
+import { chart, parseSpec, normalizeSpec, linearScale, regenerateCharts } from "./chart.mjs";
 
 const BAR = {
   title: "Spend by team, $k",
@@ -44,7 +44,9 @@ test("invalid specs fail loudly", () => {
   assert.throws(() => normalizeSpec("bar", { data: [["a", 1]] }), /title is required/);
   assert.throws(() => normalizeSpec("bar", { title: "x -- y", data: [["a", 1]] }), /--/);
   assert.throws(() => normalizeSpec("bar", { title: "t", data: [["a--b", 1]] }), /--/);
-  assert.throws(() => normalizeSpec("sparkline", { data: [1], value: "v" }), /2\+/);
+  assert.throws(() => normalizeSpec("sparkline", { data: [1], value: "v" }), /at least two/);
+  assert.throws(() => normalizeSpec("stacked", { title: 't', series: ['Done', 'Done'], data: [['A', 2, 5]] }), /distinct series/);
+  assert.throws(() => normalizeSpec("stacked", { title: 't', series: ['label', 'Done'], data: [['A', 2, 5]] }), /reserved/);
 });
 
 // ---------- fragment contracts ----------
@@ -93,6 +95,28 @@ test("sparkline: one point per datum, dot on the last point, visible value", () 
   const [lastX, lastY] = points[points.length - 1].split(",");
   assert.match(out, new RegExp(`cx="${lastX}" cy="${lastY}"`));
   assert.match(out, />312\/wk</);
+});
+
+test('line and stacked charts print all values and preserve source on regeneration', () => {
+  for (const [type, spec, value] of [
+    ['line', { title: 'Trend', data: [['W1', 1], ['W2', 3]], source: 'APM' }, 'W2: 3'],
+    ['stacked', { title: 'Work', series: ['Done', 'Open'], data: [['Search', 5, 2]], source: 'Tracker' }, 'Search: Done 5, Open 2'],
+  ]) {
+    const output = chart(type, spec);
+    assert.match(output, /data-source="/);
+    assert.ok(output.includes(`<li>${value}</li>`));
+    assert.equal(regenerateCharts(output), output);
+    assert.equal(parseSpec(output).source, spec.source);
+  }
+});
+
+test('regeneration migrates provenance from older chart roots into their spec', () => {
+  const older = chart('line', { title: 'Trend', data: [['W1', 1], ['W2', 3]] })
+    .replace('data-component="line-chart"', 'data-component="line-chart" data-source="APM &amp; logs"');
+  const updated = regenerateCharts(older);
+  assert.equal(parseSpec(updated).source, 'APM & logs');
+  assert.match(updated, /data-source="APM &amp; logs"/);
+  assert.equal(regenerateCharts(updated), updated);
 });
 
 test("labels with markup characters are escaped everywhere except the inert spec comment", () => {

@@ -50,7 +50,7 @@ function toRows(data, keys) {
   if (!Array.isArray(data) || data.length === 0) fail("spec.data must be a non-empty array");
   return data.map((row, i) => {
     const values = Array.isArray(row) ? row : keys.map((k) => row[k]);
-    const out = {};
+    const out = Object.create(null);
     keys.forEach((k, j) => (out[k] = values[j]));
     if (typeof out.label !== "string" || !out.label.length) fail(`row ${i}: label must be a non-empty string`);
     if (out.label.includes("--")) fail(`row ${i}: labels must not contain "--" (breaks the chart-spec comment)`);
@@ -69,26 +69,30 @@ export function normalizeSpec(type, spec) {
   if (type !== "sparkline" && !spec.title) fail(`spec.title is required for ${type}`);
 
   const norm = { type, title: spec.title ?? "" };
+  if (spec.source != null) {
+    if (typeof spec.source !== 'string' || !spec.source || spec.source.includes('--')) fail('spec.source must be non-empty text without "--"');
+    norm.source = spec.source;
+  }
 
   if (type === "sparkline") {
     if (!Array.isArray(spec.data) || spec.data.length < 2 || !spec.data.every(Number.isFinite)) {
-      fail("sparkline spec.data must be 2+ finite numbers");
+      fail(rules.sparkline.data);
     }
-    if (typeof spec.value !== "string" || !spec.value.length) fail(rules.sparkline.source);
+    if (typeof spec.value !== "string" || !spec.value.length) fail(rules.sparkline.value);
     if (spec.value.includes("--")) fail('spec.value must not contain "--"');
     return { ...norm, data: spec.data.slice(), value: spec.value };
   }
 
   if (type === "stacked") {
-    if (!Array.isArray(spec.series) || spec.series.length < 2 || spec.series.some((name) => typeof name !== "string" || !name || name.includes("--"))) fail(rules.stacked.source);
+    if (!Array.isArray(spec.series) || spec.series.length < 2 || new Set(spec.series).size !== spec.series.length || spec.series.some((name) => typeof name !== "string" || !name || name === 'label' || name.includes("--"))) fail(rules.stacked.series);
     const rows = toRows(spec.data, ["label", ...spec.series]);
-    if (rows.some((row) => spec.series.some((name) => row[name] < 0))) fail("stacked values must be non-negative");
+    if (rows.some((row) => spec.series.some((name) => row[name] < 0))) fail(rules.stacked.values);
     return { ...norm, series: spec.series.slice(), data: rows.map((row) => [row.label, ...spec.series.map((name) => row[name])]) };
   }
 
   const keys = ["label", "value"];
   let rows = toRows(spec.data, keys);
-  if (type === "bar" && rows.some((row) => row.value < 0)) fail(rules.bars.source);
+  if (type === "bar" && rows.some((row) => row.value < 0)) fail(rules.bars.values);
 
   const sort = spec.sort ?? (type === "bar" ? "desc" : "none");
   if (!["desc", "asc", "none"].includes(sort)) fail('spec.sort must be "desc", "asc", or "none"');
@@ -115,7 +119,7 @@ const specComment = (norm) => `<!-- chart-spec ${JSON.stringify(norm)} -->`;
 
 function chartCard(norm, body) {
   return [
-    `<div data-component="${norm.type}-chart" class="chart-card reveal">`,
+    `<div data-component="${norm.type}-chart"${norm.source ? ` data-source="${escapeHtml(norm.source)}"` : ''} class="chart-card reveal">`,
     specComment(norm),
     `  <div class="chart-title">${escapeHtml(norm.title)}</div>`,
     body,
@@ -130,7 +134,8 @@ function lineFragment(norm) {
   const y = (value) => hi === lo ? 110 : 190 - (value - lo) / (hi - lo) * 150;
   const points = values.map((value, i) => `${round(x(i))},${round(y(value))}`).join(' ');
   const labels = norm.data.map(([label], i) => `<text x="${round(x(i))}" y="230" text-anchor="middle">${escapeHtml(label)}</text>`).join('');
-  const body = `  <div class="chart-scroll"><svg viewBox="0 0 640 250" style="min-width:640px" aria-hidden="true"><polyline class="line-series" points="${points}"/>${values.map((value, i) => `<circle class="line-point" cx="${round(x(i))}" cy="${round(y(value))}" r="4"/>`).join('')}${labels}</svg></div>`;
+  const data = `  <ul class="chart-data">${norm.data.map(([label, value]) => `<li>${escapeHtml(label)}: ${value}</li>`).join('')}</ul>`;
+  const body = `  <div class="chart-scroll"><svg viewBox="0 0 640 250" style="min-width:640px" aria-hidden="true"><polyline class="line-series" points="${points}"/>${values.map((value, i) => `<circle class="line-point" cx="${round(x(i))}" cy="${round(y(value))}" r="4"/>`).join('')}${labels}</svg></div>\n${data}`;
   return chartCard(norm, body);
 }
 
@@ -140,7 +145,8 @@ function stackedFragment(norm) {
   if (max <= 0) fail('stacked chart needs at least one positive total');
   const body = norm.data.map(([label, ...values], row) => `  <div class="stacked-row"><span>${escapeHtml(label)}</span><div class="stacked-track">${values.map((value, index) => `<span class="stacked-segment series-${index % 4}" style="width:${round(value / max * 100)}%" title="${escapeHtml(norm.series[index])}: ${value}"></span>`).join('')}</div><span>${totals[row]}</span></div>`).join('\n');
   const legend = `<div class="stacked-legend">${norm.series.map((name, index) => `<span><i class="series-${index % 4}"></i>${escapeHtml(name)}</span>`).join('')}</div>`;
-  return chartCard(norm, body + '\n' + legend);
+  const data = `<ul class="chart-data">${norm.data.map(([label, ...values]) => `<li>${escapeHtml(label)}: ${values.map((value, index) => `${escapeHtml(norm.series[index])} ${value}`).join(', ')}</li>`).join('')}</ul>`;
+  return chartCard(norm, body + '\n' + legend + '\n' + data);
 }
 
 // ---------- presets ----------
@@ -174,7 +180,7 @@ function sparklineFragment(norm) {
   const points = d.map((v, i) => `${round(xs(i))},${round(ys(v))}`).join(" ");
   const last = d[d.length - 1];
   return [
-    `<span data-component="sparkline" class="sparkline-row">`,
+    `<span data-component="sparkline"${norm.source ? ` data-source="${escapeHtml(norm.source)}"` : ''} class="sparkline-row">`,
     specComment(norm),
     `  <svg class="sparkline" viewBox="0 0 ${W} ${H}" aria-hidden="true">`,
     `    <polyline class="sparkline-line" points="${points}" />`,
@@ -208,6 +214,8 @@ export function regenerateCharts(html) {
   for (const match of html.matchAll(roots)) {
     const tag = match[1];
     const spec = JSON.parse(match[2]);
+    const legacySource = match[0].match(/\bdata-source="([^"]*)"/)?.[1];
+    if (spec.source == null && legacySource) spec.source = legacySource.replace(/&(?:amp|lt|gt|quot|#39);/g, (entity) => ({ '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'" })[entity]);
     const tags = new RegExp(`<\\/?${tag}\\b[^>]*>`, "gi");
     tags.lastIndex = match.index;
     let depth = 0;

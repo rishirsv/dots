@@ -514,6 +514,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
   .chart-scroll svg text { fill: var(--text-muted); font: 12px var(--font-sans); }
   .line-series { fill: none; stroke: var(--accent); stroke-width: 2; }
   .line-point { fill: var(--accent); }
+  .chart-data { display:flex; flex-wrap:wrap; gap:4px 16px; margin:10px 0 0; padding:0; list-style:none; color:var(--text-muted); font-size:12px; }
 
 
   .stacked-row { display:grid; grid-template-columns:120px minmax(0,1fr) 48px; gap:12px; align-items:center; margin:0 0 12px; font-size:13px; }
@@ -526,6 +527,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
   .stacked-legend { display:flex; flex-wrap:wrap; gap:12px; font-size:12px; color:var(--text-muted); }
   .stacked-legend span { display:inline-flex; align-items:center; gap:5px; }
   .stacked-legend i { display:inline-block; width:10px; height:10px; }
+  .chart-data { display:flex; flex-wrap:wrap; gap:4px 16px; margin:10px 0 0; padding:0; list-style:none; color:var(--text-muted); font-size:12px; }
 
 .diagram-card .chart-card{border:0;padding:0;margin:0}.diagram-card .flow-diagram-wrap{margin:0}.diagram-card:is([data-diagram="flowchart"],[data-diagram="state-machine"],[data-diagram="sequence"],[data-diagram="timeline"],[data-diagram="line-chart"]){grid-column:1/-1}</style>
 
@@ -588,18 +590,20 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
 
     <figure id="line-chart" class="diagram-card" data-diagram="line-chart"><h2>Line chart</h2><p class="diagram-use">Show a time series whose direction and inflections matter.</p>
       <div data-component="line-chart" data-source="APM" class="chart-card reveal">
-<!-- chart-spec {"type":"line","title":"Latency by week","data":[["W1",100],["W2",120],["W3",140]],"sort":"none"} -->
+<!-- chart-spec {"type":"line","title":"Latency by week","source":"APM","data":[["W1",100],["W2",120],["W3",140]],"sort":"none"} -->
   <div class="chart-title">Latency by week</div>
   <div class="chart-scroll"><svg viewBox="0 0 640 250" style="min-width:640px" aria-hidden="true"><polyline class="line-series" points="44,190 324,115 604,40"/><circle class="line-point" cx="44" cy="190" r="4"/><circle class="line-point" cx="324" cy="115" r="4"/><circle class="line-point" cx="604" cy="40" r="4"/><text x="44" y="230" text-anchor="middle">W1</text><text x="324" y="230" text-anchor="middle">W2</text><text x="604" y="230" text-anchor="middle">W3</text></svg></div>
+  <ul class="chart-data"><li>W1: 100</li><li>W2: 120</li><li>W3: 140</li></ul>
 </div>
     </figure>
 
     <figure id="stacked-chart" class="diagram-card" data-diagram="stacked-chart"><h2>Stacked chart</h2><p class="diagram-use">Compare the composition of totals across categories.</p>
       <div data-component="stacked-chart" data-source="Tracker" class="chart-card reveal">
-<!-- chart-spec {"type":"stacked","title":"Work","series":["Done","Pending"],"data":[["Search",5,2]]} -->
+<!-- chart-spec {"type":"stacked","title":"Work","source":"Tracker","series":["Done","Pending"],"data":[["Search",5,2]]} -->
   <div class="chart-title">Work</div>
   <div class="stacked-row"><span>Search</span><div class="stacked-track"><span class="stacked-segment series-0" style="width:71.43%" title="Done: 5"></span><span class="stacked-segment series-1" style="width:28.57%" title="Pending: 2"></span></div><span>7</span></div>
 <div class="stacked-legend"><span><i class="series-0"></i>Done</span><span><i class="series-1"></i>Pending</span></div>
+<ul class="chart-data"><li>Search: Done 5, Pending 2</li></ul>
 </div>
     </figure>
 
@@ -621,7 +625,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
     </figure>
 
     <figure id="timeline" class="diagram-card" data-diagram="timeline"><h2>Timeline</h2><p class="diagram-use">Milestones where order and elapsed time carry meaning.</p>
-      <div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="0 0 530 180" style="min-width:560px" aria-hidden="true"><path class="flow-edge" d="M40,90 H490"/><circle cx="40" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="40" y="65">09:10</text><text class="flow-node-label" x="40" y="120">detect</text><circle cx="190" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="190" y="65">09:18</text><text class="flow-node-label" x="190" y="120">contain</text><circle cx="340" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="340" y="65">09:31</text><text class="flow-node-label" x="340" y="120">repair</text><circle cx="490" cy="90" r="5" fill="var(--accent)"/><text class="flow-edge-label" x="490" y="65">09:42</text><text class="flow-node-label" x="490" y="120">close</text></svg></div><p class="flow-caption">Detection led to containment, repair, and closure.</p>
+      <div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="0 0 541 180" style="min-width:560px" aria-hidden="true"><path class="flow-edge" d="M48.18000000000001,90 H498.18"/><circle cx="48.18000000000001" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="48.18000000000001" y="65">09:10</text><text class="flow-node-label" x="48.18000000000001" y="120">detect</text><circle cx="198.18" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="198.18" y="65">09:18</text><text class="flow-node-label" x="198.18" y="120">contain</text><circle cx="348.18" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="348.18" y="65">09:31</text><text class="flow-node-label" x="348.18" y="120">repair</text><circle cx="498.18" cy="90" r="5" fill="var(--accent)"/><text class="flow-edge-label" x="498.18" y="65">09:42</text><text class="flow-node-label" x="498.18" y="120">close</text></svg></div><p class="flow-caption">Detection led to containment, repair, and closure.</p>
     </figure>
 
     <figure id="swimlane" class="diagram-card" data-diagram="swimlane"><h2>Swimlane</h2><p class="diagram-use">A process crossing responsibilities or system boundaries.</p>
@@ -664,7 +668,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
       <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
         <circle cx="128" cy="86" r="58" fill="var(--accent)" fill-opacity=".10" stroke="var(--accent)" stroke-width="2"/>
         <circle cx="192" cy="86" r="58" fill="var(--a20)" stroke="var(--a40)" stroke-width="2"/>
-        <text class="diagram-label" x="104" y="82">speed</text><text class="diagram-label" x="216" y="82">proof</text><text class="diagram-label is-small" x="160" y="104">release</text>
+        <text class="diagram-label" x="104" y="82">speed</text><text class="diagram-label" x="216" y="82">proof</text><rect x="126" y="92" width="68" height="24" rx="5" fill="var(--background)" stroke="var(--a40)"/><text class="diagram-label" x="160" y="104">release</text>
       </svg></div>
       <figcaption class="diagram-summary">The release path is the overlap between fast execution and durable proof.</figcaption>
     </figure>

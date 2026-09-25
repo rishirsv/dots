@@ -794,6 +794,7 @@ gotchas: The context line is a quiet breadcrumb, never an uppercase
   .chart-scroll svg text { fill: var(--text-muted); font: 12px var(--font-sans); }
   .line-series { fill: none; stroke: var(--accent); stroke-width: 2; }
   .line-point { fill: var(--accent); }
+  .chart-data { display:flex; flex-wrap:wrap; gap:4px 16px; margin:10px 0 0; padding:0; list-style:none; color:var(--text-muted); font-size:12px; }
 
 
   .stacked-row { display:grid; grid-template-columns:120px minmax(0,1fr) 48px; gap:12px; align-items:center; margin:0 0 12px; font-size:13px; }
@@ -806,6 +807,7 @@ gotchas: The context line is a quiet breadcrumb, never an uppercase
   .stacked-legend { display:flex; flex-wrap:wrap; gap:12px; font-size:12px; color:var(--text-muted); }
   .stacked-legend span { display:inline-flex; align-items:center; gap:5px; }
   .stacked-legend i { display:inline-block; width:10px; height:10px; }
+  .chart-data { display:flex; flex-wrap:wrap; gap:4px 16px; margin:10px 0 0; padding:0; list-style:none; color:var(--text-muted); font-size:12px; }
 
 
   .sparkline-row {
@@ -1556,18 +1558,20 @@ gotchas: The context line is a quiet breadcrumb, never an uppercase
 
     <figure id="diagram-template-line-chart" class="diagram-card" data-diagram="line-chart"><h2>Line chart</h2><p class="diagram-use">Show a time series whose direction and inflections matter.</p>
       <div data-component="line-chart" data-source="APM" class="chart-card reveal">
-<!-- chart-spec {"type":"line","title":"Latency by week","data":[["W1",100],["W2",120],["W3",140]],"sort":"none"} -->
+<!-- chart-spec {"type":"line","title":"Latency by week","source":"APM","data":[["W1",100],["W2",120],["W3",140]],"sort":"none"} -->
   <div class="chart-title">Latency by week</div>
   <div class="chart-scroll"><svg viewBox="0 0 640 250" style="min-width:640px" aria-hidden="true"><polyline class="line-series" points="44,190 324,115 604,40"/><circle class="line-point" cx="44" cy="190" r="4"/><circle class="line-point" cx="324" cy="115" r="4"/><circle class="line-point" cx="604" cy="40" r="4"/><text x="44" y="230" text-anchor="middle">W1</text><text x="324" y="230" text-anchor="middle">W2</text><text x="604" y="230" text-anchor="middle">W3</text></svg></div>
+  <ul class="chart-data"><li>W1: 100</li><li>W2: 120</li><li>W3: 140</li></ul>
 </div>
     </figure>
 
     <figure id="diagram-template-stacked-chart" class="diagram-card" data-diagram="stacked-chart"><h2>Stacked chart</h2><p class="diagram-use">Compare the composition of totals across categories.</p>
       <div data-component="stacked-chart" data-source="Tracker" class="chart-card reveal">
-<!-- chart-spec {"type":"stacked","title":"Work","series":["Done","Pending"],"data":[["Search",5,2]]} -->
+<!-- chart-spec {"type":"stacked","title":"Work","source":"Tracker","series":["Done","Pending"],"data":[["Search",5,2]]} -->
   <div class="chart-title">Work</div>
   <div class="stacked-row"><span>Search</span><div class="stacked-track"><span class="stacked-segment series-0" style="width:71.43%" title="Done: 5"></span><span class="stacked-segment series-1" style="width:28.57%" title="Pending: 2"></span></div><span>7</span></div>
 <div class="stacked-legend"><span><i class="series-0"></i>Done</span><span><i class="series-1"></i>Pending</span></div>
+<ul class="chart-data"><li>Search: Done 5, Pending 2</li></ul>
 </div>
     </figure>
 
@@ -1589,7 +1593,7 @@ gotchas: The context line is a quiet breadcrumb, never an uppercase
     </figure>
 
     <figure id="diagram-template-timeline" class="diagram-card" data-diagram="timeline"><h2>Timeline</h2><p class="diagram-use">Milestones where order and elapsed time carry meaning.</p>
-      <div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="0 0 530 180" style="min-width:560px" aria-hidden="true"><path class="flow-edge" d="M40,90 H490"/><circle cx="40" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="40" y="65">09:10</text><text class="flow-node-label" x="40" y="120">detect</text><circle cx="190" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="190" y="65">09:18</text><text class="flow-node-label" x="190" y="120">contain</text><circle cx="340" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="340" y="65">09:31</text><text class="flow-node-label" x="340" y="120">repair</text><circle cx="490" cy="90" r="5" fill="var(--accent)"/><text class="flow-edge-label" x="490" y="65">09:42</text><text class="flow-node-label" x="490" y="120">close</text></svg></div><p class="flow-caption">Detection led to containment, repair, and closure.</p>
+      <div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="0 0 541 180" style="min-width:560px" aria-hidden="true"><path class="flow-edge" d="M48.18000000000001,90 H498.18"/><circle cx="48.18000000000001" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="48.18000000000001" y="65">09:10</text><text class="flow-node-label" x="48.18000000000001" y="120">detect</text><circle cx="198.18" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="198.18" y="65">09:18</text><text class="flow-node-label" x="198.18" y="120">contain</text><circle cx="348.18" cy="90" r="5" fill="var(--foreground)"/><text class="flow-edge-label" x="348.18" y="65">09:31</text><text class="flow-node-label" x="348.18" y="120">repair</text><circle cx="498.18" cy="90" r="5" fill="var(--accent)"/><text class="flow-edge-label" x="498.18" y="65">09:42</text><text class="flow-node-label" x="498.18" y="120">close</text></svg></div><p class="flow-caption">Detection led to containment, repair, and closure.</p>
     </figure>
 
     <figure id="diagram-template-swimlane" class="diagram-card" data-diagram="swimlane"><h2>Swimlane</h2><p class="diagram-use">A process crossing responsibilities or system boundaries.</p>
@@ -1632,7 +1636,7 @@ gotchas: The context line is a quiet breadcrumb, never an uppercase
       <div class="diagram-scroll"><svg class="diagram-canvas" viewBox="0 0 320 180" aria-hidden="true">
         <circle cx="128" cy="86" r="58" fill="var(--accent)" fill-opacity=".10" stroke="var(--accent)" stroke-width="2"/>
         <circle cx="192" cy="86" r="58" fill="var(--a20)" stroke="var(--a40)" stroke-width="2"/>
-        <text class="diagram-label" x="104" y="82">speed</text><text class="diagram-label" x="216" y="82">proof</text><text class="diagram-label is-small" x="160" y="104">release</text>
+        <text class="diagram-label" x="104" y="82">speed</text><text class="diagram-label" x="216" y="82">proof</text><rect x="126" y="92" width="68" height="24" rx="5" fill="var(--background)" stroke="var(--a40)"/><text class="diagram-label" x="160" y="104">release</text>
       </svg></div>
       <figcaption class="diagram-summary">The release path is the overlap between fast execution and durable proof.</figcaption>
     </figure>
@@ -1696,10 +1700,10 @@ gotchas: The context line is a quiet breadcrumb, never an uppercase
       <span class="sequence-time">10:00–11:15</span>
     </div>
     <div class="sequence-links">
-      <a href="index.html"><span class="sequence-index">01</span>Introduction</a>
-      <a href="build.html" aria-current="page"><span class="sequence-index">02</span>Build</a>
-      <a href="debug.html"><span class="sequence-index">03</span>Debug</a>
-      <a href="wrap-up.html"><span class="sequence-index">04</span>Wrap-up</a>
+      <a aria-disabled="true"><span class="sequence-index">01</span>Introduction</a>
+      <a aria-disabled="true" aria-current="page"><span class="sequence-index">02</span>Build</a>
+      <a aria-disabled="true"><span class="sequence-index">03</span>Debug</a>
+      <a aria-disabled="true"><span class="sequence-index">04</span>Wrap-up</a>
     </div>
   </div>
   <div class="sequence-reading-progress" role="progressbar" aria-label="Page reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -1707,19 +1711,19 @@ gotchas: The context line is a quiet breadcrumb, never an uppercase
   </div>
 </nav>
 <nav class="sequence-controls" aria-label="Previous and next page">
-  <a href="index.html" rel="prev" aria-label="Previous page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11.75 4.75 6.5 10l5.25 5.25M7 10h7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <a aria-disabled="true" rel="prev" aria-label="Previous page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11.75 4.75 6.5 10l5.25 5.25M7 10h7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   <span class="sequence-controls-position">02 / 04</span>
-  <a href="debug.html" rel="next" aria-label="Next page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m8.25 4.75 5.25 5.25-5.25 5.25M13 10H6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <a aria-disabled="true" rel="next" aria-label="Next page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m8.25 4.75 5.25 5.25-5.25 5.25M13 10H6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
 </nav>
 </section>
 <section id="chapter-index"><h2>Chapter index</h2><p class="reading-column">A hierarchical linked page set needs a generated contents or chapter curriculum with child links and short descriptions.</p>
 <section id="curriculum" data-component="chapter-index" class="chapter-index">
   <div class="chapter-index-heading"><h2>Chapters</h2><span>2 chapters</span></div>
   <div class="chapter-index-group">
-    <a href="foundations/index.html"><span class="chapter-index-number">1</span><span class="chapter-index-copy"><strong>Foundations</strong><small>Build a reliable model of the system.</small></span><span class="chapter-index-arrow" aria-hidden="true">↗</span></a>
+    <a aria-disabled="true"><span class="chapter-index-number">1</span><span class="chapter-index-copy"><strong>Foundations</strong><small>Build a reliable model of the system.</small></span><span class="chapter-index-arrow" aria-hidden="true">↗</span></a>
     <ol>
-      <li><a href="foundations/mental-model.html"><span class="chapter-index-number">1.1</span><span class="chapter-index-copy"><strong>A useful mental model</strong><small>Name the loop and its responsibilities.</small></span><span class="chapter-index-arrow" aria-hidden="true">↗</span></a></li>
-      <li><a href="foundations/boundaries.html"><span class="chapter-index-number">1.2</span><span class="chapter-index-copy"><strong>Boundaries and ownership</strong><small>Give each decision and side effect one owner.</small></span><span class="chapter-index-arrow" aria-hidden="true">↗</span></a></li>
+      <li><a aria-disabled="true"><span class="chapter-index-number">1.1</span><span class="chapter-index-copy"><strong>A useful mental model</strong><small>Name the loop and its responsibilities.</small></span><span class="chapter-index-arrow" aria-hidden="true">↗</span></a></li>
+      <li><a aria-disabled="true"><span class="chapter-index-number">1.2</span><span class="chapter-index-copy"><strong>Boundaries and ownership</strong><small>Give each decision and side effect one owner.</small></span><span class="chapter-index-arrow" aria-hidden="true">↗</span></a></li>
     </ol>
   </div>
 </section>
@@ -1764,7 +1768,7 @@ gotchas: The context line is a quiet breadcrumb, never an uppercase
 </section>
 <section id="bar-chart"><h2>Bar chart</h2><p class="reading-column">Compare magnitudes across up to ~8 items. Horizontal bars, one emphasized; page-behavior optionally adds a one-time grow reveal.</p>
 <div data-component="bar-chart" data-source="APM, last 7 days" class="chart-card reveal">
-<!-- chart-spec {"type":"bar","title":"p95 latency, ms","emphasis":"checkout","data":[["checkout",412],["search",255],["auth",104]],"sort":"desc"} -->
+<!-- chart-spec {"type":"bar","title":"p95 latency, ms","source":"APM, last 7 days","emphasis":"checkout","data":[["checkout",412],["search",255],["auth",104]],"sort":"desc"} -->
   <div class="chart-title">p95 latency, ms</div>
   <div class="bar-row">
     <div class="bar-name">checkout</div>
@@ -1785,22 +1789,24 @@ gotchas: The context line is a quiet breadcrumb, never an uppercase
 </section>
 <section id="line-chart"><h2>Line chart</h2><p class="reading-column">Show a sourced trend across ordered observations.</p>
 <div data-component="line-chart" data-source="APM" class="chart-card reveal">
-<!-- chart-spec {"type":"line","title":"Latency by week","data":[["W1",100],["W2",120],["W3",140]],"sort":"none"} -->
+<!-- chart-spec {"type":"line","title":"Latency by week","source":"APM","data":[["W1",100],["W2",120],["W3",140]],"sort":"none"} -->
   <div class="chart-title">Latency by week</div>
   <div class="chart-scroll"><svg viewBox="0 0 640 250" style="min-width:640px" aria-hidden="true"><polyline class="line-series" points="44,190 324,115 604,40"/><circle class="line-point" cx="44" cy="190" r="4"/><circle class="line-point" cx="324" cy="115" r="4"/><circle class="line-point" cx="604" cy="40" r="4"/><text x="44" y="230" text-anchor="middle">W1</text><text x="324" y="230" text-anchor="middle">W2</text><text x="604" y="230" text-anchor="middle">W3</text></svg></div>
+  <ul class="chart-data"><li>W1: 100</li><li>W2: 120</li><li>W3: 140</li></ul>
 </div>
 </section>
 <section id="stacked-chart"><h2>Stacked chart</h2><p class="reading-column">Compare totals and their composition across categories.</p>
 <div data-component="stacked-chart" data-source="Tracker" class="chart-card reveal">
-<!-- chart-spec {"type":"stacked","title":"Work","series":["Done","Pending"],"data":[["Search",5,2]]} -->
+<!-- chart-spec {"type":"stacked","title":"Work","source":"Tracker","series":["Done","Pending"],"data":[["Search",5,2]]} -->
   <div class="chart-title">Work</div>
   <div class="stacked-row"><span>Search</span><div class="stacked-track"><span class="stacked-segment series-0" style="width:71.43%" title="Done: 5"></span><span class="stacked-segment series-1" style="width:28.57%" title="Pending: 2"></span></div><span>7</span></div>
 <div class="stacked-legend"><span><i class="series-0"></i>Done</span><span><i class="series-1"></i>Pending</span></div>
+<ul class="chart-data"><li>Search: Done 5, Pending 2</li></ul>
 </div>
 </section>
 <section id="sparkline"><h2>Sparkline</h2><p class="reading-column">A trend inline with text or inside a stat tile; no axes, one emphasized endpoint.</p>
 <span data-component="sparkline" data-source="APM, last 7 days" class="sparkline-row">
-<!-- chart-spec {"type":"sparkline","title":"","data":[96,120,180,260,312],"value":"312/wk"} -->
+<!-- chart-spec {"type":"sparkline","title":"","source":"APM, last 7 days","data":[96,120,180,260,312],"value":"312/wk"} -->
   <svg class="sparkline" viewBox="0 0 120 28" aria-hidden="true">
     <polyline class="sparkline-line" points="0,26 30,23.33 60,16.67 90,7.78 120,2" />
     <circle class="sparkline-dot" cx="120" cy="2" r="2.5" />

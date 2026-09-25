@@ -68,6 +68,10 @@ function withSource(markup, component, source, helper) {
   const attribute = ` data-source="${escapeHtml(source)}"`;
   return raw(replaceLiteral(markup, `data-component="${component}"`, `data-component="${component}"${attribute}`));
 }
+function sourcedChart(type, spec, source, helper) {
+  if (source == null || source === '') fail(helper, 'source');
+  return raw(chart(type, { ...spec, source }));
+}
 
 // ---------- page structure ----------
 
@@ -161,11 +165,11 @@ function bars(data, { title, emphasis, sort, limit, source } = {}) {
   if (emphasis != null) spec.emphasis = emphasis;
   if (sort != null) spec.sort = sort;
   if (limit != null) spec.limit = limit;
-  return withSource(chart("bar", spec), "bar-chart", source, "bars");
+  return sourcedChart("bar", spec, source, "bars");
 }
 
 function sparkline(data, { value, source } = {}) {
-  return withSource(chart("sparkline", { data, value }), "sparkline", source, "sparkline");
+  return sourcedChart("sparkline", { data, value }, source, "sparkline");
 }
 
 // ---------- sequences and structure ----------
@@ -278,7 +282,7 @@ function flowDiagram({ viewBox, content, caption, notes, minWidth, emphasis = []
 
 function computedSvg(kind, markup, width, height, summary, compact = false) {
   required(kind, "summary", summary);
-  return html`<div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="0 0 ${width} ${height}" style="${compact ? `min-width:0;max-width:${width}px;margin-inline:auto` : `min-width:${Math.max(width, 560)}px`}" aria-hidden="true">${raw(markup)}</svg></div><p class="flow-caption">${summary}</p>`;
+  return html`<div data-component="flow-diagram" class="flow-diagram-wrap"><svg class="flow-diagram" viewBox="0 0 ${width} ${height}" style="${compact ? `min-width:${width}px;max-width:${width}px;margin-inline:auto` : `min-width:${Math.max(width, 560)}px`}" aria-hidden="true">${raw(markup)}</svg></div><p class="flow-caption">${summary}</p>`;
 }
 
 function flow({ nodes, edges, summary, emphasis = [] }, kind = "flow") {
@@ -318,7 +322,7 @@ function sequence({ actors, events, summary }) {
 function timelineFigure({ events, summary }) {
   list("timeline", "events", events);
   const layout = timelineLayout(events);
-  const line = layout.orientation === 'vertical' ? `<path class="flow-edge" d="M40,60 V${layout.events.at(-1).y}"/>` : `<path class="flow-edge" d="M40,90 H${layout.width - 40}"/>`;
+  const line = layout.orientation === 'vertical' ? `<path class="flow-edge" d="M40,60 V${layout.events.at(-1).y}"/>` : `<path class="flow-edge" d="M${layout.events[0].x},90 H${layout.events.at(-1).x}"/>`;
   const points = layout.events.map((event, index) => layout.orientation === 'vertical'
     ? `<circle cx="40" cy="${event.y}" r="5" fill="${index === layout.events.length - 1 ? "var(--accent)" : "var(--foreground)"}"/><text class="flow-edge-label" x="90" y="${event.y - 9}" style="text-anchor:start">${escapeHtml(event.date ?? "")}</text><text class="flow-node-label" x="90" y="${event.y + 14}" style="text-anchor:start">${escapeHtml(event.title ?? event.label)}</text>`
     : `<circle cx="${event.x}" cy="90" r="5" fill="${index === layout.events.length - 1 ? "var(--accent)" : "var(--foreground)"}"/><text class="flow-edge-label" x="${event.x}" y="65">${escapeHtml(event.date ?? "")}</text><text class="flow-node-label" x="${event.x}" y="120">${escapeHtml(event.title ?? event.label)}</text>`).join("");
@@ -326,11 +330,11 @@ function timelineFigure({ events, summary }) {
 }
 
 function line(data, { title, source, ...options } = {}) {
-  return withSource(chart("line", { title, data, ...options }), "line-chart", source, "line");
+  return sourcedChart("line", { title, data, ...options }, source, "line");
 }
 
 function stacked(data, { title, source, ...options } = {}) {
-  return withSource(chart("stacked", { title, data, ...options }), "stacked-chart", source, "stacked");
+  return sourcedChart("stacked", { title, data, ...options }, source, "stacked");
 }
 
 const MOCKUP_SKELETON = html`<div class="mockup-toolbar" aria-hidden="true"><span></span><span></span><span></span></div><div class="mockup-layout" aria-hidden="true"><div class="mockup-nav"><div class="mockup-line is-accent"></div><div class="mockup-line"></div><div class="mockup-line"></div><div class="mockup-line"></div></div><div class="mockup-main"><div class="mockup-line is-strong"></div><div class="mockup-line"></div><div class="mockup-line is-short"></div><div class="mockup-block"></div></div></div>`;

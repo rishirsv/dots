@@ -32,6 +32,60 @@ test('flow layout follows edges, separates branch labels, and fits a long chain'
   assert.ok(loop.height > Math.max(...loop.nodes.map((node) => node.y + node.height)) + 20);
 });
 
+test('skip-layer edges route outside intermediate nodes', () => {
+  for (const budget of [672, 400]) {
+    const graph = layeredGraph(['a', 'b', 'c'], [['a', 'b'], ['b', 'c'], ['a', 'c']], budget);
+    const skip = graph.edges.find((edge) => edge.from === 'a' && edge.to === 'c');
+    const middle = graph.nodes.find((node) => node.id === 'b');
+    const lane = graph.orientation === 'horizontal' ? Number(skip.path.match(/ V([\d.]+) H/)?.[1]) : Number(skip.path.match(/ H([\d.]+) V/)?.[1]);
+    assert.ok(graph.orientation === 'horizontal' ? lane > middle.y + middle.height : lane > middle.x + middle.width);
+    assert.ok(graph.width <= budget);
+  }
+});
+
+test('every vertical edge segment avoids unrelated nodes', () => {
+  const graph = layeredGraph(['a', 'b', 'c', 'd'], [['a', 'b'], ['a', 'c'], ['b', 'd'], ['c', 'd'], ['a', 'd']], 400);
+  assert.equal(graph.orientation, 'vertical');
+  for (const edge of graph.edges) {
+    let current;
+    const points = [];
+    for (const [, command, number, y] of edge.path.matchAll(/([MHV])([\d.]+)(?:,([\d.]+))?/g)) {
+      current = command === 'M' ? { x: Number(number), y: Number(y) } : command === 'H' ? { ...current, x: Number(number) } : { ...current, y: Number(number) };
+      points.push(current);
+    }
+    for (const node of graph.nodes.filter((item) => item.id !== edge.from && item.id !== edge.to)) {
+      for (let i = 1; i < points.length; i++) {
+        const a = points[i - 1], b = points[i];
+        const crossing = a.x === b.x
+          ? a.x > node.x && a.x < node.x + node.width && Math.min(a.y, b.y) < node.y + node.height && Math.max(a.y, b.y) > node.y
+          : a.y > node.y && a.y < node.y + node.height && Math.min(a.x, b.x) < node.x + node.width && Math.max(a.x, b.x) > node.x;
+        assert.equal(crossing, false, `${edge.from}→${edge.to} crosses ${node.id}: ${edge.path}`);
+      }
+    }
+  }
+});
+
+test('horizontal return connectors avoid other nodes in their columns', () => {
+  const graph = layeredGraph(['a', 'b', 'c', 'd'], [['a', 'b'], ['a', 'c'], ['b', 'd'], ['c', 'd'], ['b', 'a']]);
+  assert.equal(graph.orientation, 'horizontal');
+  const edge = graph.edges.find((item) => item.from === 'b' && item.to === 'a');
+  let current;
+  const points = [];
+  for (const [, command, number, y] of edge.path.matchAll(/([MHV])([\d.]+)(?:,([\d.]+))?/g)) {
+    current = command === 'M' ? { x: Number(number), y: Number(y) } : command === 'H' ? { ...current, x: Number(number) } : { ...current, y: Number(number) };
+    points.push(current);
+  }
+  for (const node of graph.nodes.filter((item) => item.id !== edge.from && item.id !== edge.to)) {
+    for (let i = 1; i < points.length; i++) {
+      const a = points[i - 1], b = points[i];
+      const crossing = a.x === b.x
+        ? a.x > node.x && a.x < node.x + node.width && Math.min(a.y, b.y) < node.y + node.height && Math.max(a.y, b.y) > node.y
+        : a.y > node.y && a.y < node.y + node.height && Math.min(a.x, b.x) < node.x + node.width && Math.max(a.x, b.x) > node.x;
+      assert.equal(crossing, false, `${edge.from}→${edge.to} crosses ${node.id}: ${edge.path}`);
+    }
+  }
+});
+
 test('three computed flow figures have unique marker ids and text summaries', () => {
   resetFigureIds();
   const markup = [1, 2, 3].map(() => helpers.flow({ nodes: ['build', 'ship'], edges: [['build', 'ship']], summary: 'Build leads to shipment.' })).join('');
@@ -70,6 +124,18 @@ test('long sequences and timelines switch to vertical layouts within the width b
   assert.equal(timeline.orientation, 'vertical');
   assert.ok(timeline.width <= 672);
   assert.match(String(helpers.timeline({ events: moments, summary: 'Five events.' })), /step 4/);
+});
+
+test('timeline endpoint labels fit and compact diagrams retain readable width', () => {
+  const title = 'A particularly long final milestone';
+  const layout = timelineLayout([{ title: 'Start' }, { title }]);
+  if (layout.orientation === 'horizontal') {
+    const last = layout.events.at(-1);
+    assert.ok(last.x + textWidth(title, 13, 'mono') / 2 <= layout.width - 20);
+  } else assert.ok(layout.width >= textWidth(title, 13, 'mono') + 120);
+  const markup = String(helpers.timeline({ events: [{ title: 'Start' }, { title }], summary: 'Two milestones.' }));
+  assert.doesNotMatch(markup, /min-width:0/);
+  assert.match(markup, /min-width:\d+px/);
 });
 
 test('line and stacked charts render named, sourced forms', () => {

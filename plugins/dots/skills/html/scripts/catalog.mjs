@@ -20,7 +20,11 @@ function slot(source, marker, content) {
 
 function fragment(item) {
   const source = readFileSync(join(assets, 'registry', item.file), 'utf8');
-  return source.slice(source.lastIndexOf('</style>') + 8).trim();
+  return source.slice(source.lastIndexOf('</style>') + 8).trim().replace(/\s+href=(["'])([^"']+)\1/g, (attribute, _quote, target) => {
+    if (target.startsWith('#') || /^[a-z]+:/i.test(target) || existsSync(resolve(assets, target))) return attribute;
+    // A component fragment can show a linked-page shape without shipping its sample pages.
+    return ' aria-disabled="true"';
+  });
 }
 
 export function renderAtlas(source) {

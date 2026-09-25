@@ -11,8 +11,10 @@ gotchas: Keep category labels visible; the plot scrolls on narrow screens.
   .chart-scroll svg text { fill: var(--text-muted); font: 12px var(--font-sans); }
   .line-series { fill: none; stroke: var(--accent); stroke-width: 2; }
   .line-point { fill: var(--accent); }
+  .chart-data { display:flex; flex-wrap:wrap; gap:4px 16px; margin:10px 0 0; padding:0; list-style:none; color:var(--text-muted); font-size:12px; }
 </style>
 <div data-component="line-chart" class="chart-card reveal">
   <div class="chart-title">Latency over five weeks</div>
   <div class="chart-scroll"><svg viewBox="0 0 640 250" style="min-width:640px" aria-hidden="true"><polyline class="line-series" points="44,190 184,152.5 324,115 464,77.5 604,40"/><circle class="line-point" cx="44" cy="190" r="4"/><circle class="line-point" cx="184" cy="152.5" r="4"/><circle class="line-point" cx="324" cy="115" r="4"/><circle class="line-point" cx="464" cy="77.5" r="4"/><circle class="line-point" cx="604" cy="40" r="4"/><text x="44" y="230" text-anchor="middle">W1</text><text x="184" y="230" text-anchor="middle">W2</text><text x="324" y="230" text-anchor="middle">W3</text><text x="464" y="230" text-anchor="middle">W4</text><text x="604" y="230" text-anchor="middle">W5</text></svg></div>
+  <ul class="chart-data"><li>W1: 100</li><li>W2: 120</li><li>W3: 140</li><li>W4: 160</li><li>W5: 180</li></ul>
 </div>

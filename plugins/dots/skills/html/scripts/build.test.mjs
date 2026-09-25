@@ -78,18 +78,97 @@ test("dollar patterns in interpolations stay literal", () => {
   assert.equal(replaceLiteral("before SLOT after", "SLOT", "$& $' $` $$"), "before $& $' $` $$ after");
 });
 
-test('scripts never pass interpolated text as a plain String.replace replacement', () => {
-  const unsafeInterpolation = /\.replace\(\s*[^,\n]+,\s*`[^`\n]*\$\{/;
-  const unsafeVariable = /\.replace\(\s*[^,\n]+,\s*[a-zA-Z_$][\w$]*\s*\)/;
-  assert.match('.replace("</body>", `<script>${payload}</script>`)', unsafeInterpolation);
-  assert.match('.replace("__SLOT__", theme)', unsafeVariable);
+function unsafeReplacements(source) {
+  const tokens = [];
+  const failures = [];
+  for (let i = 0; i < source.length;) {
+    const start = i, char = source[i];
+    if (/\s/.test(char)) { i++; continue; }
+    if (source.startsWith('//', i)) { i = source.indexOf('\n', i + 2); if (i < 0) break; continue; }
+    if (source.startsWith('/*', i)) { i = source.indexOf('*/', i + 2) + 2; if (i < 2) break; continue; }
+    if ('"\'`'.includes(char)) {
+      const quote = char; i++;
+      while (i < source.length) {
+        if (source[i] === '\\') { i += 2; continue; }
+        if (quote === '`' && source.startsWith('${', i)) {
+          const expressionStart = i + 2;
+          i = expressionStart;
+          let braces = 1;
+          while (i < source.length && braces) {
+            if (source[i] === '\\') { i += 2; continue; }
+            if (source[i] === '{') braces++;
+            if (source[i] === '}') braces--;
+            i++;
+          }
+          failures.push(...unsafeReplacements(source.slice(expressionStart, i - 1)));
+          continue;
+        }
+        if (source[i++] === quote) break;
+      }
+      tokens.push({ value: source.slice(start, i), start }); continue;
+    }
+    if (char === '/' && ['(', ',', '=', ':', 'return', '=>'].includes(tokens.at(-1)?.value)) {
+      i++; let inClass = false;
+      while (i < source.length) {
+        if (source[i] === '\\') { i += 2; continue; }
+        if (source[i] === '[') inClass = true;
+        if (source[i] === ']') inClass = false;
+        if (source[i++] === '/' && !inClass) break;
+      }
+      while (/[a-z]/i.test(source[i] ?? '')) i++;
+      tokens.push({ value: source.slice(start, i), start }); continue;
+    }
+    if (/[\w$]/.test(char)) { i++; while (/[\w$]/.test(source[i] ?? '')) i++; }
+    else i++;
+    tokens.push({ value: source.slice(start, i), start });
+  }
+  for (let i = 0; i < tokens.length - 3; i++) {
+    if (tokens[i].value !== '.' || !['replace', 'replaceAll'].includes(tokens[i + 1].value) || tokens[i + 2].value !== '(') continue;
+    let depth = 0, comma = -1, close = -1;
+    for (let j = i + 3; j < tokens.length; j++) {
+      const value = tokens[j].value;
+      if (value === '(' || value === '[' || value === '{') depth++;
+      if (value === ')' || value === ']' || value === '}') {
+        if (depth === 0 && value === ')') { close = j; break; }
+        depth--;
+      }
+      if (value === ',' && depth === 0 && comma < 0) comma = j;
+    }
+    if (comma < 0 || close < 0) continue;
+    const replacement = tokens.slice(comma + 1, close);
+    const first = replacement[0]?.value ?? '';
+    const literal = replacement.length === 1 && (first.startsWith('"') || first.startsWith("'")) || replacement.length === 1 && first.startsWith('`') && !first.includes('${');
+    let nesting = 0, arrow = -1;
+    replacement.forEach((token, index) => {
+      if (['(', '[', '{'].includes(token.value)) nesting++;
+      if ([')', ']', '}'].includes(token.value)) nesting--;
+      if (nesting === 0 && token.value === '=' && replacement[index + 1]?.value === '>') arrow = index;
+    });
+    const prefix = replacement.slice(0, arrow).map((token) => token.value);
+    const arrowParams = arrow >= 0 && (prefix.length === 1 && /^[\w$]+$/.test(prefix[0]) || prefix[0] === '(' && prefix.at(-1) === ')' && prefix.slice(1, -1).every((value) => /^[\w$]+$/.test(value) || value === ','));
+    const callback = arrowParams || first === 'function' && replacement.at(-1)?.value === '}';
+    if (!literal && !callback) failures.push(source.slice(tokens[i].start, tokens[close].start + 1));
+  }
+  return failures;
+}
+
+test('scripts never pass dynamic text as a plain replace or replaceAll replacement', () => {
+  for (const sample of [
+    '.replace("</body>", `<script>${payload}</script>`)',
+    '.replace(/a{1,2}/,\n payload)',
+    '.replaceAll("__SLOT__", theme)',
+    '`render ${source.replace(/a{1,2}/, payload)}`',
+    'text.replace("x", values.map(x => x).join(""))',
+    'text.replace("x", function () { return payload; }())',
+    'text.replace("x", condition ? value => value : payload)',
+  ]) assert.equal(unsafeReplacements(sample).length, 1, sample);
+  assert.deepEqual(unsafeReplacements('.replace(/a{1,2}/, () => payload)'), []);
   const scripts = join(root, 'scripts');
   const files = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
     entry.isDirectory() ? files(join(dir, entry.name)) : entry.name.endsWith('.mjs') && !entry.name.endsWith('.test.mjs') ? [join(dir, entry.name)] : []);
   for (const file of files(scripts)) {
     const source = readFileSync(file, 'utf8');
-    assert.doesNotMatch(source, unsafeInterpolation, file);
-    assert.doesNotMatch(source, unsafeVariable, file);
+    assert.deepEqual(unsafeReplacements(source), [], file);
   }
 });
 
