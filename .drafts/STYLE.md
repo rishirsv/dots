@@ -14,13 +14,15 @@ Give the reader a better way to see a need, decision, or change. Show why the si
 - Separate what happened, what is inferred, and what may happen next. A sweeping imaginative proposal needs clear boundaries; a reported or advisory piece also needs evidence.
 - End by adding a decision, a sharper question, a consequence, or a transformed view of the opening. Do not recap the sections and call it a payoff.
 
-## Structural moves to favor
+## Examples of structural moves
 
-- Reframe a familiar activity so the reader sees why the problem matters.
-- Let a fair opposing case lead to a more precise definition.
-- Show decisions and their consequences before asking readers to believe a plan.
-- Name what an experiment can reveal and what it cannot.
-- Explain the hidden input or mechanism behind an impressive result.
+| Excerpt | What to learn |
+|---|---|
+| “Note taking is building a relationship with a future version of yourself.” | Reframe a familiar activity so the reader sees why the problem matters. |
+| “the one who knows which questions to ask in the first place” | Let a fair opposing case lead to a more precise definition. |
+| “The world started to bend around the decision” | Show decisions and their consequences before asking readers to believe a plan. |
+| “mirrors to show us our own faces in a slightly different light” | Name what an experiment can reveal and what it cannot. |
+| “It’s only as powerful as its starting point.” | Explain the hidden input or mechanism behind an impressive result. |
 
 ## Choose a shape that fits
 
