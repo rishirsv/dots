@@ -1,0 +1,1 @@
+A public service can ask, “What are you trying to do?” or “Which program do you need?” The first lets someone start with the problem they have; the second asks them to know how the service is organized.

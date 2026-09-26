@@ -1,6 +1,6 @@
 # Writing style guide — v2 trial
 
-The user's [agency passage](examples/agency-passage.md) is the primary source for what matters to this writing home. Twelve [Dan Shipper articles](examples/dan-shipper-reading-list.md) supply structural and editorial techniques to test across subjects and lengths. They do not establish the user's views, biography, or topic boundaries. This guide is provisional until the writer compares v1 and v2 outputs.
+The user's [agency passage](../../examples/agency-passage.md) is the primary source for what matters to this writing home. Twelve [Dan Shipper articles](../../examples/dan-shipper-reading-list.md) supply structural and editorial techniques to test across subjects and lengths. They do not establish the user's views, biography, or topic boundaries. This guide is provisional until the writer compares v1 and v2 outputs.
 
 ## Reader promise
 

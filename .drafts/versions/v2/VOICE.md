@@ -1,6 +1,6 @@
 # Voice guide — v2 trial
 
-This guide combines the user's agency passage (`examples/agency-passage.md`) with techniques observed across 12 [Dan Shipper essays](examples/dan-shipper-reading-list.md). The user's passage remains the evidence for the user's voice. The Every essays are an external reference for moves to test, not a request to imitate Dan's wording or assume his life, views, or experiences. Keep assignment-specific instructions above this guide. This version is unconfirmed until the writer reviews the v2 drafts.
+This guide combines the user's agency passage (`../../examples/agency-passage.md`) with techniques observed across 12 [Dan Shipper essays](../../examples/dan-shipper-reading-list.md). The user's passage remains the evidence for the user's voice. The Every essays are an external reference for moves to test, not a request to imitate Dan's wording or assume his life, views, or experiences. Keep assignment-specific instructions above this guide. This version is unconfirmed until the writer reviews the v2 drafts.
 
 ## Core sound
 

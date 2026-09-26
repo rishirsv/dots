@@ -1,0 +1,1 @@
+A checklist can become a comfortable waiting room. When the next step is obvious, an AI assistant should help carry it through: prepare the application, pick a time, press submit. The point is a finished task, not a tidier plan.
