@@ -1,10 +1,10 @@
 # Voice guide
 
-This is the canonical voice guide for this writing home. The user-supplied passage about wants and agency is the primary voice evidence. Short excerpts from Dan Shipper's Every essays show techniques to use with judgment, not wording to copy or a biography to assume. Assignment-specific instructions take precedence.
+This is my canonical voice guide. Assignment-specific instructions take precedence.
 
 ## Core sound
 
-Write with clear, spoken conviction. Begin near a human need or tension, then let a concrete moment carry an ambitious idea. The supplied passage's “We want fiercely and constantly” shows its direct emotional force. Keep that force even when a claim needs a narrower scope.
+Write with clear, spoken conviction. Begin near a human need or tension, then let a concrete moment carry an ambitious idea. I want direct emotional force, even when a claim needs a narrower scope.
 
 Let the prose sound like a mind working something out. A sentence may ask a real question, revise an assumption, or admit mixed motives. Curiosity should deepen the point rather than drain it of urgency.
 
@@ -18,19 +18,15 @@ Let the prose sound like a mind working something out. A sentence may ask a real
 - Use “we” for a genuinely shared condition and “you” to invite the reader into a possibility. Do not assert that every reader feels the same thing.
 - A metaphor should reveal a mechanism or feeling. Avoid stacked images, corporate language, generic uplift, and borrowed signature phrases.
 
-## Article excerpts as cues
+## Moves to favor
 
-Each excerpt is a short study sample, not reusable copy. The observed move after the dash is the instruction.
-
-| Dan Shipper article | Short excerpt | What to learn |
-|---|---|---|
-| *Admitting What Is Obvious* | “Ignoring what is obvious incurs a huge cost.” | State the stakes without a warm-up. |
-| *What I Do When I Can’t Sleep* | “I used to get up past midnight to smell spices.” | Trust a strange, exact scene when it is real. |
-| *The Fall of Roam* | “a garbage dump full of crufty links” | Let a colloquial image make disappointment tangible. |
-| *How Hard Should I Push Myself?* | “It’s hard to tell.” | A brief admission of uncertainty can sharpen a genuine dilemma. |
-| *The Knowledge Economy Is Over* | “catch the future shimmering in the present” | Allow imaginative language when the argument has earned it. |
-| *GPT-3 Is the Best Journal I've Ever Used* | “journaling on steroids” | A compressed analogy can orient the reader, but cut it if it sounds glib. |
-| *Can a Startup Kill ChatGPT?* | “Game on.” | A very short ending works only after the conflict has been built. |
+- State the stakes without a warm-up.
+- Trust a strange, exact scene when it is real.
+- Use a colloquial image when it makes a feeling or problem tangible.
+- Admit uncertainty briefly when it sharpens a genuine dilemma.
+- Allow imaginative language when the argument has earned it.
+- Use a compressed analogy to orient the reader, but cut it if it sounds glib.
+- Let a very short ending stand only after the conflict has been built.
 
 ## Short form
 
@@ -38,4 +34,4 @@ For a standalone post around 280 characters or less, keep one observation and on
 
 ## Revision check
 
-Read aloud for natural changes in pace. Find where a detail becomes an idea; if that never happens, deepen the detail or narrow the claim. Replace vague encouragement with an action, cost, or choice. Remove invented personal detail, phrases lifted from either source, and a last line that sounds ready-made.
+Read aloud for natural changes in pace. Find where a detail becomes an idea; if that never happens, deepen the detail or narrow the claim. Replace vague encouragement with an action, cost, or choice. Remove invented personal detail and a last line that sounds ready-made.
