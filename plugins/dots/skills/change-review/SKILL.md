@@ -33,19 +33,19 @@ only, report findings without editing files.
 Use this section only when coordinating the review. A delegated reviewer skips
 it and follows **Review the assigned change** directly.
 
-1. Decide whether an independent reviewer can add meaningful coverage. Use one
-   for a consequential boundary, a broad or cross-cutting diff, an explicitly
-   requested independent review, or a change authored in the active context
-   where a second reading could change the result. Review a narrow, local diff
-   inline when it does not meet that bar.
+1. After implementation in the active task, use an independent reviewer even
+   for a narrow, local diff. For other reviews, use one for a consequential
+   boundary, a broad or cross-cutting diff, or an explicitly requested
+   independent review; otherwise review inline.
 2. When using an independent reviewer, spawn one fresh, read-only adversarial
    reviewer. Use an adversary or reviewer role when one is available; otherwise
    use a fresh subagent and have it load this skill. An agent that implemented
    any part of the change must not serve as its independent reviewer.
 3. Give the reviewer the fixed target, intended behavior, any review focus the
    user requested, applicable repository instructions, and changed paths. Use
-   the smallest sufficient context and default to no inherited conversation
-   history.
+   the smallest sufficient context without inherited conversation history.
+   Let the reviewer inspect the changes directly rather than sending the
+   implementer's reasoning or conclusions.
 4. Fan out only when the user asks, the change has distinct subsystems or
    execution paths, or a high-risk boundary needs separate coverage. Use the
    requested count; otherwise use up to three.
