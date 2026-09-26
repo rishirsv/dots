@@ -1,6 +1,6 @@
 ---
 name: change-review
-description: "Review completed code changes before merging for correctness, readability, simplicity, and maintainability. Reviews and repairs supported in-scope findings by default; reports without edits when the user requests review only."
+description: "Review completed code changes before merging for correctness, readability, simplicity, and maintainability, including a ChatGPT Pro handoff when requested. Reviews and repairs supported in-scope findings by default; reports without edits when the user requests review only."
 ---
 
 # Change Review
@@ -32,6 +32,11 @@ only, report findings without editing files.
 
 Use this section only when coordinating the review. A delegated reviewer skips
 it and follows **Review the assigned change** directly.
+
+When the user requests ChatGPT Web or ChatGPT Pro as the reviewer, follow
+[ChatGPT review handoff](references/chatgpt-review.md) instead of spawning a
+local reviewer. Then resume synthesis and repair here. Otherwise use the local
+reviewer workflow below.
 
 1. After implementation in the active task, use an independent reviewer even
    for a narrow, local diff. For other reviews, use one for a consequential
