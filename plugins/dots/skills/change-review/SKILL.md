@@ -6,8 +6,10 @@ description: "Review completed code changes before merging for correctness, read
 # Change Review
 
 Review a completed change against its intended behavior and repository
-constraints. Repair supported in-scope findings by default after review. When
-the user requests review only, report findings without editing files.
+constraints. When run after implementation, the implementing agent owns repair
+of supported in-scope findings as part of the original task. Complete repairs
+and affected checks before the final response. When the user requests review
+only, report findings without editing files.
 
 ## Fix the review target
 
@@ -186,10 +188,28 @@ discussion. Then inspect current checks and unresolved threads. The coordinating
 agent posts findings only when the user explicitly asks; otherwise report them
 locally.
 
-## Report and repair
+## Repair before reporting
 
-Present findings first, ordered by severity. Use one entry per issue in this
-form:
+Unless the user requested review only, the coordinating agent repairs the
+complete retained in-scope set sequentially after synthesis. After an
+implementation, this is the implementing agent's responsibility; a delegated
+reviewer's findings are input to that work, not the final user response. Choose
+the smallest supported repair within the original task and continue without
+asking the user to approve the findings, choose routine implementation details,
+or authorize fixes already covered by the task. Do not end the turn with a list
+of proposed fixes or an offer to implement them.
+
+Do not repair a finding that requires new authority or expands the original
+task; report it unresolved and complete the other in-scope repairs. Run affected
+checks and inspect the final diff before reporting the result. Do not start
+another review after ordinary repairs. Start a new review only when the user
+asks or the repairs materially change the original review scope.
+
+## Report the result
+
+Present findings first, ordered by severity, marking each as repaired or
+unresolved when repairs were requested or applied by default. Use one entry per
+issue in this form:
 
 `[P1] Imperative finding title — path/to/file.rs:line`
 
@@ -209,11 +229,5 @@ to fill the result. After the findings, add a brief overall assessment and
 mention any material test gaps or residual risks. Omit rejected candidates,
 reviewer process, clean-area summaries, and praise.
 
-Unless the user requested review only, the coordinating agent repairs the
-complete retained in-scope set sequentially after synthesis, without pausing
-for confirmation. Do not repair a finding that requires new authority or
-expands the original task; report it unresolved.
-Run affected checks, inspect the final diff, and report repairs, unresolved
-findings, proof, and remaining risk. Do not start another review after ordinary
-repairs. Start a new review only when the user asks or the repairs materially
-change the original review scope.
+For repaired findings, summarize the applied fix and checks run. For unresolved
+findings, state the blocker or decision needed from the user.
