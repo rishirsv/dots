@@ -1,1 +1,0 @@
-Imagine the bakery application asks what the space still needs. It's an unglamorous question, but answering it may surface a problem while there's time to fix it. The form won't make opening day feel closer. It can help make the room ready.

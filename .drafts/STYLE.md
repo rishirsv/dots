@@ -1,46 +1,43 @@
-# Writing style guide — v2 trial
+# Writing style guide
 
-The user's [agency passage](examples/agency-passage.md) is the primary source for what matters to this writing home. Twelve [Dan Shipper articles](examples/dan-shipper-reading-list.md) supply structural and editorial techniques to test across subjects and lengths. They do not establish the user's views, biography, or topic boundaries. This guide is provisional until the writer compares v1 and v2 outputs.
+This is the canonical guide for argument, evidence, structure, and readiness. It draws first on the user's passage about wants and agency, then on structural moves observed in Dan Shipper's Every essays. The article excerpts below are evidence for the rules, not claims that the user shares the author's experiences or views. Sentence sound belongs in `VOICE.md`.
 
 ## Reader promise
 
-Give the reader a better way to see a need, decision, or change. Make the idea useful by showing its mechanism, consequence, or test—not by adding a generic action item. Some pieces should help someone act; others should help someone name a truth or ask a better question.
+Give the reader a better way to see a need, decision, or change. Show why the situation persists and what might follow. Some pieces should help a person act; others should help them name a truth or ask a better question. A practical step is useful only when it addresses the obstacle the piece actually described.
 
-## Building an argument
+## Build the thought
 
-- Start near the tension: a concrete scene, a candid question, a surprising observation, or a clear claim. Explain the stakes soon enough that the reader knows why to continue.
-- Move from observation to mechanism to implication. The user's passage moves from unspoken wants through everyday obstacles to a larger possibility. [The End of Organizing](https://every.to/chain-of-thought/the-end-of-organizing) similarly explains why a familiar practice fails before describing an alternative.
-- Let an example do argumentative work. It should show how a system or choice operates, not merely make the page vivid.
-- When a serious objection exists, state it fairly and use it to sharpen the thesis. [Why Generalists Own the Future](https://every.to/chain-of-thought/why-generalists-own-the-future) is a reference for granting the opposing case before changing the definition at issue.
-- Let a bold thesis coexist with a clear boundary. An essay may look forward, but readers should know what was observed, what is inferred, and what remains uncertain.
+- Start near the tension: an observable scene, a candid question, a surprising claim, or a genuine conflict. Explain the stakes early.
+- Move from observation to mechanism to implication. An example should reveal how a choice or system works, not merely decorate the page.
+- A bold thesis can coexist with a fair counterpoint. State a serious objection in its strongest useful form, then show what it changes in the claim.
+- Separate what happened, what is inferred, and what may happen next. The user's passage makes a sweeping imaginative proposal; a reported or advisory piece needs evidence and clear boundaries for claims of that scale.
+- End by adding a decision, a sharper question, a consequence, or a transformed view of the opening. Do not recap the sections and call it a payoff.
 
-## Useful shapes, not required formulas
+## Article excerpts as structural cues
 
-### Reflective essay
+Each excerpt is short source evidence. Learn the move; do not transplant the author's phrase or article-specific claim.
 
-An honest tension or particular scene → what the writer noticed or admitted → why that change matters → an ending that transforms the opening. Use only real first-person material the writer supplies. [Admitting What Is Obvious](https://every.to/chain-of-thought/admitting-what-is-obvious) and [What I Do When I Can’t Sleep](https://every.to/chain-of-thought/what-i-do-when-i-can-t-sleep) show different ways to make the turn felt.
+| Dan Shipper article | Short excerpt | What to learn |
+|---|---|---|
+| *The End of Organizing* | “Note taking is building a relationship with a future version of yourself.” | Reframe a familiar activity so the reader sees why the problem matters. |
+| *Why Generalists Own the Future* | “the one who knows which questions to ask in the first place” | Let a fair opposing case lead to a more precise definition. |
+| *Every’s Master Plan* | “The world started to bend around the decision” | Show decisions and their consequences before asking readers to believe a plan. |
+| *Can GPT-3 Explain My Past and Tell My Future?* | “mirrors to show us our own faces in a slightly different light” | Name what an experiment can reveal and what it cannot. |
+| *GPT-4 Is a Reasoning Engine* | “It’s only as powerful as its starting point.” | Explain the hidden input or mechanism behind an impressive result. |
 
-### Experiment or product essay
+## Choose a shape that fits
 
-The question or unmet need → what was tried → what happened → limits or surprise → what follows. Keep observations tied to an actual test or mark the scenario as hypothetical. [GPT-3 Is the Best Journal I've Ever Used](https://every.to/chain-of-thought/gpt-3-is-the-best-journal-you-ve-ever-used) and [Can GPT-3 Explain My Past and Tell My Future?](https://every.to/chain-of-thought/can-gpt-3-explain-my-past-and-tell-me-my-future) use this shape.
+- **Reflective essay:** a real tension or scene → what the writer noticed or admitted → why it matters → an ending that changes the opening. Use only first-person material the writer supplies.
+- **Experiment or product essay:** the question → what was actually tried → what happened → limits or surprise → what follows. Label imagined scenarios as hypothetical.
+- **Explanatory or future-facing essay:** accessible example → mechanism or distinction → consequences → serious objection or adoption limit → implication the reader can inspect. Do not coin a new label merely to sound original.
+- **Short post:** one claim or question, one grounding detail or turn, and a clean landing. It need not be a miniature essay or a call to action.
 
-### Explanatory or future-facing essay
+## Evidence and readiness
 
-An accessible example → a named distinction or mechanism → consequences in specific work or life → an objection or adoption limit → an implication the reader can inspect. [The Knowledge Economy Is Over](https://every.to/chain-of-thought/the-knowledge-economy-is-over-welcome-to-the-allocation-economy) and [GPT-4 Is a Reasoning Engine](https://every.to/chain-of-thought/gpt-4-is-a-reasoning-engine) demonstrate it. Do not force a new label onto every idea.
+- Keep personal experience, reported fact, hypothetical illustration, and forecast distinct. Never invent an anecdote or test result for the writer.
+- Source consequential numbers, historical and scientific claims, and claims about actual products or institutions. Check that each source supports the exact statement.
+- A personal experiment is evidence of that person's experience; it does not by itself prove a general rule. State the limit where it affects the argument.
+- Health, mental-health, financial, and legal claims need appropriate sourcing and review before publication.
 
-### Short post
-
-One claim or question, one concrete grounding detail or turn, and a clean landing. It may stand alone as an insight; it need not be a miniature essay with a prescribed call to action. Keep the scope honest.
-
-## Evidence and provenance
-
-- Separate the writer's supplied experience, a reported source, a hypothetical illustration, and a forecast. Do not invent a personal anecdote or report a trial that did not happen.
-- Link or name sources for consequential numbers, historical claims, scientific explanations, and claims about actual products or institutions. Check that the cited source supports the precise claim.
-- A writer's experiment can be valuable evidence about that writer's experience without proving a universal rule. State the limit when it matters.
-- For health, mental-health, financial, or legal subjects, avoid presenting an essay's practical suggestion as expert guidance without appropriate sourcing and review.
-
-## Endings and readiness
-
-An ending should add a decision, sharpen the question, reveal the consequence, or return to an earlier image with changed meaning. The endings of [The Fall of Roam](https://every.to/superorganizers/the-fall-of-roam) and [Every’s Master Plan](https://every.to/on-every/every-s-master-plan) point forward from the body rather than merely recapping it. A short final sentence is earned by the preceding work; it is not a requirement.
-
-A piece is ready for the writer's review when its central point is clear; its examples support that point; any proposed answer addresses the named obstacle; real-world claims have provenance; the opposing case is considered where material; and the ending moves the thought forward. Check its language against `VOICE.md` without borrowing the external writer's distinctive phrasing.
+A piece is ready for the writer's review when the central point is clear; examples support it; the proposed answer addresses the named obstacle; consequential claims have provenance; material objections have been considered; and the ending moves the thought forward. Check its language against `VOICE.md` without copying either source.

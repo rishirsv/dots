@@ -1,41 +1,41 @@
-# Voice guide — v2 trial
+# Voice guide
 
-This guide combines the user's agency passage (`examples/agency-passage.md`) with techniques observed across 12 [Dan Shipper essays](examples/dan-shipper-reading-list.md). The user's passage remains the evidence for the user's voice. The Every essays are an external reference for moves to test, not a request to imitate Dan's wording or assume his life, views, or experiences. Keep assignment-specific instructions above this guide. This version is unconfirmed until the writer reviews the v2 drafts.
+This is the canonical voice guide for this writing home. The user-supplied passage about wants and agency is the primary voice evidence. Short excerpts from Dan Shipper's Every essays show techniques to use with judgment, not wording to copy or a biography to assume. Assignment-specific instructions take precedence.
 
 ## Core sound
 
-Say the human point plainly, then let the sentence earn a bigger idea. The user's sample is emotionally direct and moves from small private wants to a large possibility. V2 allows more curiosity, first-person discovery, and intellectual play on the way there. It should sound like someone thinking in public, with conviction that can still change its mind.
+Write with clear, spoken conviction. Begin near a human need or tension, then let a concrete moment carry an ambitious idea. The supplied passage's “We want fiercely and constantly” shows its direct emotional force. Keep that force even when a claim needs a narrower scope.
 
-## Sentence rhythm and diction
+Let the prose sound like a mind working something out. A sentence may ask a real question, revise an assumption, or admit mixed motives. Curiosity should deepen the point rather than drain it of urgency.
 
-- Begin a paragraph with a clean claim, an honest question, or a particular scene. Do not preface the point with generic context. The user's opening states a tension immediately; [Admitting What Is Obvious](https://every.to/chain-of-thought/admitting-what-is-obvious) makes a personal admission do the same job.
-- Vary a longer sentence that gathers cases, qualifications, or implications with a short sentence that turns or lands. A short line needs a genuine discovery behind it. Avoid mechanically alternating lengths.
-- Prefer everyday verbs and objects even when naming a broad concept. Move between the concrete and the abstract, as [The Knowledge Economy Is Over](https://every.to/chain-of-thought/the-knowledge-economy-is-over-welcome-to-the-allocation-economy) moves from a workflow and a tailor to an economic thesis.
-- Use an unexpected, precise detail when it clarifies a real experience. [What I Do When I Can’t Sleep](https://every.to/chain-of-thought/what-i-do-when-i-can-t-sleep) shows the value of a particular scene; do not fabricate autobiographical scenes to get this effect.
-- Let colloquial language and a little self-awareness relieve an earnest stretch. A parenthetical or aside should reveal a thought, not signal cleverness. The user's sample is more earnest than much of the external reference, so keep wit optional.
-- Use rhetorical questions to expose a real decision or contradiction. Answer them through the piece. Avoid questions whose only job is to manufacture suspense.
+## Sentence behavior
 
-## Point of view and emotional register
+- Start with a plain claim, a particular scene, or a question that matters. Skip generic setup.
+- Mix longer sentences that gather examples or consequences with short sentences that land a turn. Do not alternate lengths mechanically or turn every paragraph into a punch line.
+- Prefer familiar verbs and objects when explaining a large concept. Move from the concrete to the abstract and back so the reader can see what the idea changes.
+- Use a precise, surprising detail when it belongs to a real scene. Do not invent first-person memories or claim the writer performed an experiment they did not perform.
+- Let an occasional aside or dry observation interrupt earnestness. Keep wit subordinate to the thought; avoid a glib voice in vulnerable material.
+- Use “we” for a genuinely shared condition and “you” to invite the reader into a possibility. Do not assert that every reader feels the same thing.
+- A metaphor should reveal a mechanism or feeling. Avoid stacked images, corporate language, generic uplift, and borrowed signature phrases.
 
-- Use “I” for actual experience supplied by the writer or clearly framed as the writer's provisional view. For invented scenarios, stay outside a claimed personal history.
-- Use “we” when the piece has earned a genuinely shared condition; use “you” to invite a reader into a possibility, not to tell every reader what they feel.
-- Be willing to admit mixed motives, uncertainty, or a changed mind. The articles on [stress](https://every.to/superorganizers/how-hard-should-i-push-myself), [journaling](https://every.to/chain-of-thought/gpt-3-is-the-best-journal-you-ve-ever-used), and [Roam](https://every.to/superorganizers/the-fall-of-roam) make thinking more credible by showing its friction.
-- Keep the emotional stakes visible. Do not file the edge off a moral claim until only helpful advice remains. Where the evidence is limited, qualify the scope of the claim rather than flattening its force.
+## Article excerpts as cues
 
-## Moves to use deliberately
+Each excerpt is a short study sample, not reusable copy. The observed move after the dash is the instruction.
 
-| Move | Job | Failure to watch for |
+| Dan Shipper article | Short excerpt | What to learn |
 |---|---|---|
-| Small observation to large possibility | Lets the reader see why an intimate moment matters beyond itself | A universal claim that outruns the observation |
-| Apparent contradiction | Gives both sides of a real tension room before resolving it | A formulaic “not X, but Y” turn in every piece |
-| Concrete image or action | Makes a mechanism legible and memorable | Decorative metaphor detached from the argument |
-| Self-correction or aside | Shows a mind at work rather than a polished press release | A performed quirk that does not belong to the writer |
-| Brief release | Ends a built sequence with one direct sentence | A slogan replacing the earned payoff |
+| *Admitting What Is Obvious* | “Ignoring what is obvious incurs a huge cost.” | State the stakes without a warm-up. |
+| *What I Do When I Can’t Sleep* | “I used to get up past midnight to smell spices.” | Trust a strange, exact scene when it is real. |
+| *The Fall of Roam* | “a garbage dump full of crufty links” | Let a colloquial image make disappointment tangible. |
+| *How Hard Should I Push Myself?* | “It’s hard to tell.” | A brief admission of uncertainty can sharpen a genuine dilemma. |
+| *The Knowledge Economy Is Over* | “catch the future shimmering in the present” | Allow imaginative language when the argument has earned it. |
+| *GPT-3 Is the Best Journal I've Ever Used* | “journaling on steroids” | A compressed analogy can orient the reader, but cut it if it sounds glib. |
+| *Can a Startup Kill ChatGPT?* | “Game on.” | A very short ending works only after the conflict has been built. |
 
 ## Short form
 
-For a post of roughly 280 characters, keep one observation and one turn. A concrete detail can carry a larger idea. Cut throat-clearing, hashtags used as scaffolding, thread bait, and summary lines. Do not compress a claim so far that it becomes false or grandiose.
+For a standalone post around 280 characters or less, keep one observation and one turn. A detail can imply the larger point. Cut thread bait, automatic hashtags, throat-clearing, and the final sentence that only repeats the first. Do not compress the claim until it becomes false.
 
 ## Revision check
 
-Read aloud for natural changes in pace. Find the sentence where a detail becomes an idea; if it does not happen, either deepen the observation or narrow the claim. Replace generic uplift with a real action, cost, or choice. Remove copied turns of phrase, borrowed metaphors, invented personal details, and a glib last line. In short form, ask whether one reader could understand the whole thought without a follow-up thread.
+Read aloud for natural changes in pace. Find where a detail becomes an idea; if that never happens, deepen the detail or narrow the claim. Replace vague encouragement with an action, cost, or choice. Remove invented personal detail, phrases lifted from either source, and a last line that sounds ready-made.

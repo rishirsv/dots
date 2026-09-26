@@ -1,1 +1,0 @@
-Imagine a bakery owner facing a form about the space. It may not feel like progress. But answering carefully can reveal what needs work before customers arrive. Paperwork isn't romantic; when it helps make a place safe, it's part of the work.

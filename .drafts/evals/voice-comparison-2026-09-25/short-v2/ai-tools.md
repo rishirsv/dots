@@ -1,1 +1,0 @@
-An assistant can produce a beautiful plan for a neighborhood book swap. The useful question comes when the invite is ready: send it, wait for your say-so, or help choose a date? Planning ends where a decision can move something.

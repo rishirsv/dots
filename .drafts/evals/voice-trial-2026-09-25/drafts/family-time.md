@@ -1,7 +1,0 @@
-A family can want more time together and still leave the calendar untouched. The agreement lives in a sentence—“We should do this more”—while the week is filled with named obligations. Work ends at six; someone needs a ride; groceries run out; a message arrives that seems to need an answer now. The wish has to compete with each thing separately, and no one has yet decided what can give.
-
-Sometimes “more time” also means different things to different people. One person pictures dinner without phones; another wants an unhurried morning; a child may only want someone to watch the whole thing they are building on the floor. Without asking, a family may mistake shared affection for a shared plan. People may mean yes, then wait for someone else to choose what yes looks like.
-
-A useful first step is a question at the table: “What’s one hour this week we’d like to keep for us?” Let each person answer. Pick a time that exists, put it on the calendar, and say what has to move for that hour to happen. If a shift, practice, chore, or tired evening gets in the way, say so plainly. The plan may need to change. Finding that out does not make the wish foolish.
-
-An hour will not settle every pressure on a household, and it may not suit everyone. Afterward, the family can decide whether the hour felt worthwhile, what got in the way, and whether to try another time. A wish for more time is hard to plan around until someone asks what it means. One hour lets a family answer with a real evening, a real morning, or a reason the plan needs to wait.
