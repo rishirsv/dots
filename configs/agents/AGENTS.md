@@ -14,9 +14,14 @@ Do not modify unrelated change made by other agents.
 
 Browser-use default: In-app browser > Chrome.
 
-To view local HTML, use its absolute path only when the browser can access that
-filesystem. Otherwise use an available supported preview or serving route.
-Confirm that the page opened before claiming visual inspection.
+To view local HTML, prefer an existing HTTP preview. If none exists and the
+browser can reach this machine, serve the artifact directory on loopback
+(for example, `python3 -m http.server <port> --bind 127.0.0.1 --directory <directory>`)
+and open `http://127.0.0.1:<port>/<filename>`. Keep the server running while the
+preview is needed. For a remote browser, use its supported forwarded preview URL.
+Use a filesystem path only when the browser explicitly supports local-file
+navigation; an HTTP(S)-only restriction calls for an HTTP preview, not abandoning
+the preview. Confirm that the page opened before claiming visual inspection.
 
 ## Commits and pull requests
 
