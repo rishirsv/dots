@@ -126,6 +126,17 @@ def remove_root(document: Mapping[str, Any], key: str, changed: list[KeyPath]) -
 def apply_compatibility_rules(
     source: Mapping[str, Any], live: Mapping[str, Any], changed: list[KeyPath]
 ) -> None:
+    # Earlier local CLIProxy setups used this unsupported provider field.
+    if "cliproxyapi" in source.get("model_providers", {}):
+        provider = live.get("model_providers", {}).get("cliproxyapi", {})
+        if "model_catalog_url" in provider:
+            del provider["model_catalog_url"]
+            changed.append(("model_providers", "cliproxyapi", "model_catalog_url"))
+        features = live.get("features", {})
+        if "api_key_model_discovery" in features:
+            del features["api_key_model_discovery"]
+            changed.append(("features", "api_key_model_discovery"))
+
     if "sandbox_mode" in source:
         remove_root(live, "default_permissions", changed)
         remove_root(live, "permissions", changed)
@@ -230,7 +241,7 @@ def atomic_write(path: Path, data: bytes, mode: int) -> None:
             os.unlink(temporary_name)
 
 
-def validate_codex_schema(text: str) -> None:
+def validate_codex_schema(text: str, source: Path) -> None:
     executable = shutil.which("codex")
     if executable is None:
         raise ConfigError("cannot validate config because codex is not installed")
@@ -240,6 +251,11 @@ def validate_codex_schema(text: str) -> None:
         config = home / "config.toml"
         config.write_text(text, encoding="utf-8")
         config.chmod(0o600)
+        catalog_name = unwrapped(parse_document(text, "merged config").get("model_catalog_json"))
+        if catalog_name and not Path(catalog_name).is_absolute():
+            catalog_source = source.parent / catalog_name
+            if catalog_source.is_file():
+                shutil.copy2(catalog_source, home / catalog_name)
         environment = os.environ.copy()
         environment["CODEX_HOME"] = str(home)
         result = subprocess.run(
@@ -266,7 +282,7 @@ def sync_config(
     dry_run: bool = False,
 ) -> int:
     plan = plan_config(source, target)
-    validate_codex_schema(plan.after.decode("utf-8"))
+    validate_codex_schema(plan.after.decode("utf-8"), source)
 
     problems = []
     if plan.changed_paths:

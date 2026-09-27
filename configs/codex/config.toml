@@ -7,7 +7,9 @@
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 web_search = "live"
-model = "gpt-6-astra"
+model = "claude-opus-5-5"
+model_provider = "cliproxyapi"
+model_catalog_json = "cliproxy-models.json"
 model_reasoning_effort = "medium"
 [features]
 context_management = true
@@ -16,11 +18,20 @@ context_management = true
 name = "Vercel AI Gateway"
 base_url = "https://ai-gateway.vercel.sh/v1"
 wire_api = "responses"
-requires_openai_auth = false
 
 [model_providers.vercel-ai-gateway.auth]
 command = "/usr/bin/security"
 args = ["find-generic-password", "-s", "com.openai.codex.vercel-ai-gateway", "-w"]
+
+[model_providers.cliproxyapi]
+name = "CLIProxyAPI"
+base_url = "http://127.0.0.1:8317/v1"
+wire_api = "responses"
+supports_websockets = false
+
+[model_providers.cliproxyapi.auth]
+command = "/usr/bin/security"
+args = ["find-generic-password", "-s", "cliproxyapi-local-client", "-w"]
 
 [apps._default]
 default_tools_approval_mode = "approve"

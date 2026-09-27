@@ -304,7 +304,12 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             config = home / ".codex" / "config.toml"
             self.assertTrue(config.is_file())
             self.assertEqual(stat.S_IMODE(config.stat().st_mode), 0o600)
-            self.assertIn('model = "gpt-6-astra"', config.read_text())
+            self.assertIn('model = "claude-opus-5-5"', config.read_text())
+            self.assertIn('model_provider = "cliproxyapi"', config.read_text())
+            self.assertEqual(
+                (home / ".codex" / "cliproxy-models.json").read_bytes(),
+                (ROOT / "configs" / "codex" / "cliproxy-models.json").read_bytes(),
+            )
             self.assertEqual(
                 (home / ".codex" / "AGENTS.md").read_bytes(),
                 (ROOT / "configs" / "agents" / "AGENTS.md").read_bytes(),

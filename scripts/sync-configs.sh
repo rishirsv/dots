@@ -234,6 +234,7 @@ sync_codex_profile() {
     STATUS=1
   fi
   install_file "$ROOT/configs/codex/keybindings.json" "$codex_home/keybindings.json"
+  install_file "$ROOT/configs/codex/cliproxy-models.json" "$codex_home/cliproxy-models.json"
   install_file "$ROOT/configs/codex/muse.config.toml" "$codex_home/muse.config.toml"
   install_file "$ROOT/configs/codex/muse-models.json" "$codex_home/muse-models.json"
   install_tree "$ROOT/plugins/dots/agents" "$codex_home/agents"
