@@ -7,8 +7,9 @@
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 web_search = "live"
-model = "gpt-6-astra"
-model_provider = "openai"
+model = "claude-opus-5-5"
+model_provider = "cliproxyapi"
+model_catalog_json = "cliproxy-models.json"
 model_reasoning_effort = "medium"
 [features]
 context_management = true

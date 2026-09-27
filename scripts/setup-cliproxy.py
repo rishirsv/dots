@@ -19,6 +19,14 @@ import urllib.request
 ROOT = Path(__file__).resolve().parent.parent
 OPENROUTER_SERVICE = "com.openai.codex.openrouter"
 CLIENT_SERVICE = "cliproxyapi-local-client"
+MUSE_MODELS = (
+    "meta/muse-spark-1.3-contributor",
+    "meta/muse-spark-1.3",
+    "meta/muse-spark-1.2-contributor",
+    "meta/muse-spark-1.2",
+    "meta/muse-spark-1.1",
+    "meta/muse-glimmer-30b",
+)
 
 
 def run(*args):
@@ -123,12 +131,17 @@ def main():
             "      keys:",
             "        - api-key: " + json.dumps(openrouter_key),
             "      models:",
-            '        - name: "meta/muse-spark-1.3-contributor"',
-            '          alias: "meta/muse-spark-1.3-contributor"',
-            '          display-name: "Muse Spark 1.3 Contributor (OpenRouter)"',
-            "          max-context-length: 1048576",
-            "          thinking:",
-            '            levels: ["low", "medium", "high", "xhigh"]',
+            *(
+                line
+                for model in MUSE_MODELS
+                for line in (
+                    "        - name: " + json.dumps(model),
+                    "          alias: " + json.dumps(model),
+                    "          max-context-length: " + ("131072" if "glimmer" in model else "1048576"),
+                    "          thinking:",
+                    '            levels: ["low", "medium", "high", "xhigh"]',
+                )
+            ),
             "",
         ]
     ).encode()
@@ -162,22 +175,36 @@ def main():
         "http://127.0.0.1:8317/v1/models",
         headers={"Authorization": "Bearer " + client_key},
     )
-    for attempt in range(20):
-        try:
-            with urllib.request.urlopen(request, timeout=2) as response:
-                models = {item["id"] for item in json.load(response)["data"]}
-            break
-        except urllib.error.URLError:
-            if attempt == 19:
-                raise SystemExit("CLIProxyAPI did not become ready on 127.0.0.1:8317")
-            time.sleep(0.5)
-    required = {"meta/muse-spark-1.3-contributor", "claude-opus-5-5"}
-    if not required <= models:
-        raise SystemExit("CLIProxyAPI started, but Muse or Claude is missing from its catalog")
+
+    def available_models():
+        for attempt in range(20):
+            try:
+                with urllib.request.urlopen(request, timeout=2) as response:
+                    return {item["id"] for item in json.load(response)["data"]}
+            except urllib.error.URLError:
+                if attempt == 19:
+                    raise SystemExit("CLIProxyAPI did not become ready on 127.0.0.1:8317")
+                time.sleep(0.5)
+
+    models = available_models()
+    if not any(model.startswith("gpt-") for model in models):
+        print("Authorize CLIProxyAPI with your ChatGPT Codex account using the URL below.", flush=True)
+        subprocess.run(
+            ["cliproxyapi", "-config", str(config), "-codex-login", "-no-browser"],
+            check=True,
+        )
+        run("brew", "services", "restart", "cliproxyapi")
+        models = available_models()
+
+    catalog = json.loads((ROOT / "configs" / "codex" / "cliproxy-models.json").read_text())
+    required = {model["slug"] for model in catalog["models"]}
+    missing = required - models
+    if missing:
+        raise SystemExit("CLIProxyAPI is missing models from the picker catalog: " + ", ".join(sorted(missing)))
 
     run(str(ROOT / "scripts" / "sync-configs.sh"), "--codex")
-    print("CLIProxyAPI is ready. Native GPT remains the Codex default.")
-    print("For a new Claude/Muse chat, run: uv run --script scripts/select-codex-provider.py proxy")
+    print("CLIProxyAPI is ready with GPT, Claude, and Muse in one picker for new chats.")
+    print("Restart the Codex desktop app if it still shows the old picker.")
 
 
 if __name__ == "__main__":

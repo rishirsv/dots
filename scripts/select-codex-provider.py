@@ -38,10 +38,9 @@ def main():
         document["model_provider"] = "openai"
         document.pop("model_catalog_json", None)
         document["service_tier"] = "fast" if args.fast else "default"
-        if args.fast:
-            if "features" not in document:
-                document["features"] = tomlkit.table()
-            document["features"]["fast_mode"] = True
+    if "features" not in document:
+        document["features"] = tomlkit.table()
+    document["features"]["fast_mode"] = True
 
     descriptor, temporary_name = tempfile.mkstemp(prefix=".config-", dir=home)
     try:
