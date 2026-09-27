@@ -176,7 +176,8 @@ def main():
         raise SystemExit("CLIProxyAPI started, but Muse or Claude is missing from its catalog")
 
     run(str(ROOT / "scripts" / "sync-configs.sh"), "--codex")
-    print("CLIProxyAPI and Codex are configured. Start a new local Codex chat to use the models.")
+    print("CLIProxyAPI is ready. Native GPT remains the Codex default.")
+    print("For a new Claude/Muse chat, run: uv run --script scripts/select-codex-provider.py proxy")
 
 
 if __name__ == "__main__":

@@ -31,9 +31,6 @@
       "visibility": "list",
       "supported_in_api": true,
       "priority": 1643,
-      "additional_speed_tiers": [
-        "fast"
-      ],
       "service_tiers": [],
       "available_access_programs": {
         "cyber": [
@@ -107,9 +104,6 @@
       "visibility": "list",
       "supported_in_api": true,
       "priority": 1043,
-      "additional_speed_tiers": [
-        "fast"
-      ],
       "service_tiers": [],
       "available_access_programs": {
         "cyber": [
@@ -183,9 +177,6 @@
       "visibility": "list",
       "supported_in_api": true,
       "priority": 1843,
-      "additional_speed_tiers": [
-        "fast"
-      ],
       "service_tiers": [],
       "available_access_programs": {
         "cyber": [
