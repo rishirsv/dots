@@ -1,6 +1,7 @@
 # Use Muse and Claude in the desktop Codex model picker
 
-This Mac setup runs CLIProxyAPI on `127.0.0.1:8317`. It routes GPT through your
+This Mac setup runs a local image guard on `127.0.0.1:8317` in front of
+CLIProxyAPI on `127.0.0.1:8318`. It routes GPT through your
 ChatGPT Codex sign-in, Muse through OpenRouter, and Claude through the current
 Claude Code access token in this Mac's Keychain. One CLIProxyAPI provider and one
 model catalog put the available GPT, Claude, and Muse models in the desktop
@@ -14,7 +15,7 @@ picker. The desktop Fast control is absent in this custom-provider picker.
    OpenRouter key already stored for `codex -p muse`, or prompts for one and
    stores it in Keychain. It installs CLIProxyAPI, writes a local private proxy
    config, copies Claude Code's current access token, starts the service and
-   token-sync job, and asks you to complete a ChatGPT Codex device sign-in for
+   token-sync job and image guard, and asks you to complete a ChatGPT Codex device sign-in for
    CLIProxyAPI if it has not signed in already. Its OAuth record stays on this
    Mac.
 4. Restart the desktop app, start a **new local Codex chat**, and choose a
@@ -40,6 +41,12 @@ OAuth record stay on each Mac. The repo contains no credentials. The proxy binds
 Claude sync job checks Keychain every five minutes but cannot refresh Claude
 Code's token itself. Run Claude Code when its token expires. The sync file never
 copies Claude Code's refresh token.
+
+The image guard caps base64 images in Claude requests at 2,000 pixels per edge.
+Anthropic applies this limit to every image in a request with more than 20 images,
+including images from earlier turns. This allows an existing image-heavy Claude
+chat to continue without changing its provider or deleting its history. The guard
+passes GPT and Muse request bodies through unchanged.
 
 Anthropic [describes subscription access as intended for its native apps and
 recommends API keys for third-party tools](https://support.claude.com/en/articles/13189465-log-in-to-your-claude-account).

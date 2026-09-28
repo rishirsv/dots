@@ -89,6 +89,8 @@ def main():
         raise SystemExit("This setup targets the macOS dots profile")
     if not shutil.which("brew"):
         raise SystemExit("Install Homebrew first")
+    if not shutil.which("uv"):
+        raise SystemExit("Install uv first")
     if not shutil.which("codex"):
         raise SystemExit("Install Codex first")
     if not keychain_get("Claude Code-credentials"):
@@ -118,7 +120,7 @@ def main():
             "config-version: 8",
             "server:",
             '  host: "127.0.0.1"',
-            "  port: 8317",
+            "  port: 8318",
             "access:",
             "  api-keys:",
             "    - " + json.dumps(client_key),
@@ -152,6 +154,10 @@ def main():
     helper.chmod(0o700)
     run(sys.executable, str(helper))
 
+    image_guard = Path.home() / ".local" / "bin" / "cliproxy-image-guard.py"
+    guard_changed = replace_private(image_guard, (ROOT / "scripts" / "cliproxy-image-guard.py").read_bytes())
+    image_guard.chmod(0o700)
+
     agent = Path.home() / "Library" / "LaunchAgents" / "com.dots.cliproxy-claude-sync.plist"
     plist = {
         "Label": "com.dots.cliproxy-claude-sync",
@@ -171,6 +177,19 @@ def main():
     else:
         run("brew", "services", "start", "cliproxyapi")
 
+    guard_agent = Path.home() / "Library" / "LaunchAgents" / "com.dots.cliproxy-image-guard.plist"
+    guard_plist = {
+        "Label": "com.dots.cliproxy-image-guard",
+        "ProgramArguments": [shutil.which("uv"), "run", "--quiet", "--script", str(image_guard)],
+        "RunAtLoad": True,
+        "KeepAlive": True,
+        "StandardErrorPath": str(auth_dir / "image-guard.err"),
+    }
+    guard_agent_changed = replace_private(guard_agent, plistlib.dumps(guard_plist))
+    if guard_agent_changed or guard_changed:
+        subprocess.run(["launchctl", "bootout", "gui/" + str(os.getuid()), str(guard_agent)], capture_output=True)
+        run("launchctl", "bootstrap", "gui/" + str(os.getuid()), str(guard_agent))
+
     request = urllib.request.Request(
         "http://127.0.0.1:8317/v1/models",
         headers={"Authorization": "Bearer " + client_key},
@@ -183,7 +202,7 @@ def main():
                     return {item["id"] for item in json.load(response)["data"]}
             except urllib.error.URLError:
                 if attempt == 19:
-                    raise SystemExit("CLIProxyAPI did not become ready on 127.0.0.1:8317")
+                    raise SystemExit("CLIProxyAPI image guard did not become ready on 127.0.0.1:8317")
                 time.sleep(0.5)
 
     models = available_models()
