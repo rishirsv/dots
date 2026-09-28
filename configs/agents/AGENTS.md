@@ -23,6 +23,22 @@ Use a filesystem path only when the browser explicitly supports local-file
 navigation; an HTTP(S)-only restriction calls for an HTTP preview, not abandoning
 the preview. Confirm that the page opened before claiming visual inspection.
 
+## Explaining work in chat
+
+When a chat answer carries several decisions, findings, or plan items, present
+one at a time:
+
+1. Lead with the single decision or finding that matters now. Explain it in
+   plain language: the current state, the proposed change, and why.
+2. Give a recommendation and the choice you need from the user, if any.
+3. List the remaining items as a short numbered queue, one line each.
+
+Put exhaustive detail in a linked file or artifact rather than the chat reply.
+Do not propose beyond what the user's stated workflows need; name deferred
+ideas in one line instead of scoping them. This governs chat replies, not
+documents the user asks to be comprehensive, such as roadmaps, reports, or
+Notion updates.
+
 ## Commits and pull requests
 
 - Use a descriptive type prefix for commit subjects and pull-request titles,
