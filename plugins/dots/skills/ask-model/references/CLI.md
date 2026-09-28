@@ -15,10 +15,26 @@ outside the repository and pass it on stdin.
 | Luna | Codex: `gpt-6-luna` | `low`, `medium`, `high`, `xhigh`, `max` |
 | Muse Spark | Codex profile `muse`; model `meta/muse-spark-1.3-contributor` | `none`, `minimal`, `low`, `medium`, `high`, `xhigh` |
 
-For other models or changed availability, check CLI help and local
-configuration. Claude accepts aliases and full model IDs; its settings live in
-`~/.claude/settings.json`. Codex model catalogs expose a model `slug` and
-`supported_reasoning_levels`. Do not silently substitute a model or effort.
+For other models or changed availability, read the catalog instead of
+launching a probe run. `codex debug models` prints the configured Codex catalog
+as JSON, with each model's `slug` and `supported_reasoning_levels`; the Muse
+profile's catalog is `$CODEX_HOME/muse-models.json`. Claude accepts aliases and
+full model IDs; check `claude --help` and `~/.claude/settings.json`. Do not
+silently substitute a model or effort.
+
+## Session lifecycle
+
+Every persisted Codex run appears as a task in the Codex app, so choose
+persistence before launching:
+
+- **Review and consultation:** run without persistence by default. Add
+  `--ephemeral` after `exec` for Codex, or `--no-session-persistence` for
+  Claude. An ephemeral run cannot be resumed. Persist it only when a follow-up
+  in the same session is already expected.
+- **Implementation:** persist the session so corrections can resume it.
+- **Cleanup:** once the caller has accepted a persisted Codex run's final
+  output, archive it with `codex archive <session-id>` using the launch's `-p`
+  profile and `CODEX_HOME`. Claude sessions do not appear in the Codex app.
 
 ## Claude
 
@@ -29,7 +45,8 @@ claude -p --model fable --effort medium --dangerously-skip-permissions \
 ```
 
 The bypass flag grants broad access. For a read-only run, replace it with
-`--tools 'Read,Glob,Grep'`; this restricts tools but is not an OS sandbox.
+`--tools 'Read,Glob,Grep' --no-session-persistence`; the tool list restricts
+tools but is not an OS sandbox.
 The JSON result contains the exact `session_id` and the final response in
 `result`. Record the ID for any follow-up.
 
@@ -41,8 +58,8 @@ codex exec -C /absolute/path/to/repo -m gpt-6-astra \
   --sandbox workspace-write --json "<self-contained prompt>"
 ```
 
-Use `--sandbox read-only` for review and consultation. For unrestricted
-execution, replace the sandbox and approval settings with
+Use `--sandbox read-only --ephemeral` for review and consultation. For
+unrestricted execution, replace the sandbox and approval settings with
 `--dangerously-bypass-approvals-and-sandbox` and disclose the broader access.
 The `thread.started.thread_id` event contains the exact session ID; the final
 response is the `agent_message` item. Resume it explicitly and restate the
@@ -65,27 +82,27 @@ profile supplies valid disabled MCP transports, so no extra `-c mcp_servers.*`
 flags are needed.
 
 ```sh
-codex -p muse exec -C /absolute/path/to/repo \
+codex -p muse exec --ephemeral -C /absolute/path/to/repo \
   -c 'model_reasoning_effort="xhigh"' -c 'approval_policy="never"' \
   --sandbox read-only --json "<self-contained prompt>"
 ```
 
-Record `thread.started.thread_id` from the launch. Because `exec resume` does
-not accept `-C`, change to the same repository and invoke the same profile under
-the same `CODEX_HOME` with that explicit ID:
+For implementation, drop `--ephemeral` and change `--sandbox` to
+`workspace-write`. Record `thread.started.thread_id` from the launch. Because
+`exec resume` does not accept `-C`, change to the same repository and invoke the
+same profile under the same `CODEX_HOME` with that explicit ID:
 
 ```sh
 cd /absolute/path/to/repo
 codex -p muse exec resume \
   -c 'model_reasoning_effort="xhigh"' -c 'approval_policy="never"' \
-  -c 'sandbox_mode="read-only"' --json <session-id> \
+  -c 'sandbox_mode="workspace-write"' --json <session-id> \
   "<focused follow-up prompt>"
 ```
 
 Keep `-p muse` before `exec` and do not use `--last`. A successful resume emits
-the requested ID again in `thread.started.thread_id`. For implementation, change
-the launch's `--sandbox` to `workspace-write` and the resume's `sandbox_mode`
-to `workspace-write`.
+the requested ID again in `thread.started.thread_id`. Archive it when done with
+`codex -p muse archive <session-id>`.
 
 ## Prompt files
 
@@ -104,5 +121,5 @@ claude -p --resume <session-id> --model fable --effort medium \
   "<focused follow-up prompt>"
 ```
 
-For a read-only Claude run, repeat its original `--tools` restriction instead
-of the bypass flag.
+A persisted read-only Claude run repeats its original `--tools` restriction
+instead of the bypass flag.
