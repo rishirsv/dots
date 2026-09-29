@@ -126,22 +126,13 @@ def remove_root(document: Mapping[str, Any], key: str, changed: list[KeyPath]) -
 def apply_compatibility_rules(
     source: Mapping[str, Any], live: Mapping[str, Any], changed: list[KeyPath]
 ) -> None:
-    if (
-        unwrapped(source.get("model_provider")) == "openai"
-        and unwrapped(live.get("model_catalog_json")) == "cliproxy-models.json"
-    ):
-        remove_root(live, "model_catalog_json", changed)
-
-    # Earlier local CLIProxy setups used this unsupported provider field.
-    if "cliproxyapi" in source.get("model_providers", {}):
-        provider = live.get("model_providers", {}).get("cliproxyapi", {})
-        if "model_catalog_url" in provider:
-            del provider["model_catalog_url"]
-            changed.append(("model_providers", "cliproxyapi", "model_catalog_url"))
-        features = live.get("features", {})
-        if "api_key_model_discovery" in features:
-            del features["api_key_model_discovery"]
-            changed.append(("features", "api_key_model_discovery"))
+    if unwrapped(source.get("model_provider")) == "openai":
+        if unwrapped(live.get("model_catalog_json")) == "cliproxy-models.json":
+            remove_root(live, "model_catalog_json", changed)
+        providers = live.get("model_providers", {})
+        if "cliproxyapi" in providers:
+            del providers["cliproxyapi"]
+            changed.append(("model_providers", "cliproxyapi"))
 
     if "sandbox_mode" in source:
         remove_root(live, "default_permissions", changed)

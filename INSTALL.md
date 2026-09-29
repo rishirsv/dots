@@ -52,11 +52,6 @@ Plugin installation alone does not start a tunnel or authorize any folder.
 
 ## Restore machine configuration
 
-For Codex on a new Mac, first run `python3 scripts/setup-cliproxy.py`. It
-provisions the local Muse and Claude model routes before the tracked Codex
-config selects them. See the [CLIProxy setup guide](configs/codex/CLIPROXY.md)
-for credentials, verification, and limitations.
-
 Choose the targets needed on this Mac. Run `scripts/sync-configs.sh --help` to
 see the authoritative target list.
 

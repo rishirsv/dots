@@ -12,7 +12,6 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 HELPER = ROOT / "scripts" / "sync-codex-config.py"
 SYNC = ROOT / "scripts" / "sync-configs.sh"
-SELECT_PROVIDER = ROOT / "scripts" / "select-codex-provider.py"
 
 PORTABLE = """\
 approval_policy = "never"
@@ -95,6 +94,7 @@ class CodexConfigHelperTests(unittest.TestCase):
             live = target.read_text()
             self.assertIn('model_provider = "openai"', live)
             self.assertNotIn("model_catalog_json", live)
+            self.assertNotIn("cliproxyapi", live)
 
     def test_apply_overlays_managed_keys_and_preserves_unmanaged_state(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -313,6 +313,9 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as home_directory:
             environment = os.environ.copy()
             environment["HOME"] = home_directory
+            old_catalog = Path(home_directory) / ".codex" / "cliproxy-models.json"
+            old_catalog.parent.mkdir()
+            old_catalog.write_text('{"models": []}\n')
 
             apply_result = subprocess.run(
                 ["zsh", str(SYNC), "--codex"],
@@ -327,14 +330,11 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             config = home / ".codex" / "config.toml"
             self.assertTrue(config.is_file())
             self.assertEqual(stat.S_IMODE(config.stat().st_mode), 0o600)
-            self.assertIn('model = "claude-opus-5-5"', config.read_text())
-            self.assertIn('model_provider = "cliproxyapi"', config.read_text())
-            self.assertIn('model_catalog_json = "cliproxy-models.json"', config.read_text())
+            self.assertIn('model = "gpt-6-astra"', config.read_text())
+            self.assertIn('model_provider = "openai"', config.read_text())
+            self.assertNotIn('cliproxyapi', config.read_text())
             self.assertIn('fast_mode = true', config.read_text())
-            self.assertEqual(
-                (home / ".codex" / "cliproxy-models.json").read_bytes(),
-                (ROOT / "configs" / "codex" / "cliproxy-models.json").read_bytes(),
-            )
+            self.assertFalse((home / ".codex" / "cliproxy-models.json").exists())
             self.assertEqual(
                 (home / ".codex" / "AGENTS.md").read_bytes(),
                 (ROOT / "configs" / "agents" / "AGENTS.md").read_bytes(),
@@ -411,35 +411,6 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
                 target.read_bytes(),
                 (ROOT / "configs" / "ghostty" / "config.ghostty").read_bytes(),
             )
-
-    def test_switch_provider_keeps_model_and_catalog_aligned(self):
-        with tempfile.TemporaryDirectory() as directory:
-            home = Path(directory)
-            config = home / "config.toml"
-            config.write_text(
-                'model = "gpt-6-astra"\nmodel_provider = "openai"\n'
-                '[model_providers.cliproxyapi]\n'
-                'base_url = "http://127.0.0.1:8317/v1"\n'
-            )
-            (home / "cliproxy-models.json").write_text('{"models": []}\n')
-            environment = os.environ.copy()
-            environment["CODEX_HOME"] = str(home)
-
-            for arguments, expected in (
-                (("proxy",), ('model_provider = "cliproxyapi"', 'model_catalog_json = "cliproxy-models.json"')),
-                (("openai", "--fast"), ('model_provider = "openai"', 'service_tier = "fast"')),
-            ):
-                result = subprocess.run(
-                    ["uv", "run", "--quiet", "--script", str(SELECT_PROVIDER), *arguments],
-                    cwd=ROOT,
-                    env=environment,
-                    text=True,
-                    capture_output=True,
-                )
-                self.assertEqual(result.returncode, 0, result.stderr)
-                for value in expected:
-                    self.assertIn(value, config.read_text())
-            self.assertNotIn("model_catalog_json", config.read_text())
 
 
 if __name__ == "__main__":

@@ -234,7 +234,18 @@ sync_codex_profile() {
     STATUS=1
   fi
   install_file "$ROOT/configs/codex/keybindings.json" "$codex_home/keybindings.json"
-  install_file "$ROOT/configs/codex/cliproxy-models.json" "$codex_home/cliproxy-models.json"
+  local old_catalog="$codex_home/cliproxy-models.json"
+  if [[ -e "$old_catalog" ]]; then
+    if [[ "$MODE" == "status" ]]; then
+      log "Drift $old_catalog: obsolete proxy catalog"
+      STATUS=1
+    elif (( DRY_RUN )); then
+      log "Would remove $old_catalog"
+    else
+      rm "$old_catalog"
+      log "Removed $old_catalog"
+    fi
+  fi
   install_file "$ROOT/configs/codex/muse.config.toml" "$codex_home/muse.config.toml"
   install_file "$ROOT/configs/codex/muse-models.json" "$codex_home/muse-models.json"
   install_tree "$ROOT/plugins/dots/agents" "$codex_home/agents"
