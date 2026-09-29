@@ -96,6 +96,8 @@ to any lifecycle command. Credentials and saved profiles remain separate.
 
 Start reuses a healthy runtime without restarting it. If stopped, it uses the
 saved command, tunnel, and credential-file reference, then verifies readiness.
+If a plugin update removed the saved command's cached server version, start
+substitutes this installed plugin's `server.py` and keeps every other argument.
 Missing setup or an unhealthy running process is reported, not silently replaced.
 The helper serializes concurrent invocations and prints only compact status.
 

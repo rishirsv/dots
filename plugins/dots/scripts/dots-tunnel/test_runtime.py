@@ -43,6 +43,29 @@ class LifecycleTests(unittest.TestCase):
         self.assertTrue(connect[connect.index("--runtime-api-key") + 1].startswith("file:"))
         self.assertEqual(self.calls[2][2], "status")
 
+    def test_removed_plugin_version_uses_installed_server(self):
+        cache = self.root / "cache/dots/dots"
+        server = cache / "0.2.2/scripts/dots-tunnel/server.py"
+        server.parent.mkdir(parents=True)
+        server.touch()
+        old = cache / "0.2.1/scripts/dots-tunnel/server.py"
+        self.saved["target_value"] = f"/venv/python {old} --mount Code=/code --exec"
+        manage("start", self.root, self.runner([
+            {"process": self.saved}, {}, {"ready": True}]), server=server)
+        connect = self.calls[1]
+        self.assertEqual(connect[connect.index("--mcp-command") + 1],
+                         f"/venv/python {server} --mount Code=/code --exec")
+
+    def test_missing_server_elsewhere_is_not_replaced(self):
+        server = self.root / "cache/dots/dots/0.2.2/scripts/dots-tunnel/server.py"
+        server.parent.mkdir(parents=True)
+        server.touch()
+        self.saved["target_value"] = "/venv/python /other/0.2.1/scripts/dots-tunnel/server.py --exec"
+        manage("start", self.root, self.runner([
+            {"process": self.saved}, {}, {"ready": True}]), server=server)
+        connect = self.calls[1]
+        self.assertEqual(connect[connect.index("--mcp-command") + 1], self.saved["target_value"])
+
     def test_unhealthy_running_process_is_not_restarted(self):
         with self.assertRaisesRegex(RuntimeError, "leaving it untouched"):
             manage("start", self.root, self.runner([{"process_running": True}]))

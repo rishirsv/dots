@@ -3,11 +3,29 @@ import argparse
 import fcntl
 import json
 from pathlib import Path
+import shlex
 import subprocess
 import time
 
 
-def manage(action, directory, run=subprocess.run, alias="dots-tunnel"):
+SERVER = Path(__file__).resolve().with_name("server.py")
+
+
+def current_command(command, server=SERVER):
+    """Point a saved command at the installed plugin after a version update."""
+    args = shlex.split(command)
+    for index, arg in enumerate(args):
+        old = Path(arg)
+        # Only swap another version of this same installed plugin, never a new location.
+        if (old.name == server.name and not old.exists() and server.is_file()
+                and old.parts[-3:-1] == server.parts[-3:-1]
+                and old.parents[3] == server.parents[3]):
+            args[index] = str(server)
+            return shlex.join(args)
+    return command
+
+
+def manage(action, directory, run=subprocess.run, alias="dots-tunnel", server=SERVER):
     keys = {"dots-tunnel": "tunnel-runtime.key", "dots-tunnel-second": "second-runtime.key"}
     if alias not in keys:
         raise ValueError("Unknown saved tunnel alias")
@@ -45,7 +63,8 @@ def manage(action, directory, run=subprocess.run, alias="dots-tunnel"):
                 raise RuntimeError("Saved dots-tunnel setup is missing or mismatched; do not create a replacement automatically.")
             call("connect", "--alias", alias, "--profile", alias,
                  "--profile-dir", str(profile_dir), "--tunnel-id", saved["tunnel_id"],
-                 "--runtime-api-key", "file:" + str(key), "--mcp-command", saved["target_value"])
+                 "--runtime-api-key", "file:" + str(key),
+                 "--mcp-command", current_command(saved["target_value"], server))
             for attempt in range(6):
                 state = call("status", alias)
                 if state.get("ready"):
