@@ -77,7 +77,7 @@ class MountedTests(unittest.TestCase):
             MountedWorkspace({}, self.state)
 
     def test_actual_stdio_named_roots(self):
-        wire = Wire(None, self.state, mounts=self.roots)
+        wire = Wire(self.roots, self.state)
         self.addCleanup(wire.close)
         def call(name, **args):
             return wire.send("tools/call", {"name": name, "arguments": args})["result"]
@@ -117,16 +117,15 @@ class MountedTests(unittest.TestCase):
             with self.assertRaises(OSError):
                 os.fstat(fd)
 
-    def test_cli_mount_scope_does_not_inherit_environment_root(self):
-        with patch.dict(os.environ, {"DOTS_TUNNEL_ROOT": str(self.base)}):
-            wire = Wire(None, self.state, mounts=self.roots)
-            try:
-                result = wire.send('tools/call', {"name": "list_files", "arguments": {}})['result']['structuredContent']
-                self.assertEqual([e['path'] for e in result['entries']], ['Code', 'Desktop'])
-            finally:
-                wire.close()
+    def test_cli_lists_only_mounts_and_requires_unique_mounts(self):
+        wire = Wire(self.roots, self.state)
+        try:
+            result = wire.send('tools/call', {"name": "list_files", "arguments": {}})['result']['structuredContent']
+            self.assertEqual([e['path'] for e in result['entries']], ['Code', 'Desktop'])
+        finally:
+            wire.close()
         command = [sys.executable, str(Path(__file__).with_name('server.py')), '--state', str(self.state)]
-        for scope in (['--root', str(self.base), '--mount', 'Code=' + str(self.roots['Code'])],
+        for scope in ([], ['--root', str(self.base)],
                       ['--mount', 'Code=' + str(self.roots['Code']), '--mount', 'Code=' + str(self.roots['Desktop'])]):
             result = subprocess.run(command + scope, capture_output=True, timeout=10)
             self.assertNotEqual(result.returncode, 0)

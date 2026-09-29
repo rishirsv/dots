@@ -1,7 +1,6 @@
 """dots-tunnel's stdio MCP entrypoint. The secure tunnel owns remote authentication."""
 import argparse
 from contextlib import asynccontextmanager
-import os
 from pathlib import Path
 from typing import Any, Literal
 import anyio
@@ -13,7 +12,7 @@ from mcp.server.mcpserver.resources.types import TextResource
 from mcp.shared.exceptions import MCPError
 from mcp_types import CacheableResult, RequestParams, ToolAnnotations
 
-from files import MountedWorkspace, Workspace, revision
+from files import MountedWorkspace, revision
 
 SKILL_URI = "skill://dots/dots-tunnel/SKILL.md"
 SKILL_PATH = Path(__file__).resolve().parents[2] / "skills/dots-tunnel/SKILL.md"
@@ -75,7 +74,7 @@ class Skills(Extension):
                 MethodBinding("skills/get", GetSkillParams, getting, versions)]
 
 
-def create_server(workspace: Workspace | MountedWorkspace, execution=None) -> MCPServer:
+def create_server(workspace: MountedWorkspace, execution=None) -> MCPServer:
     @asynccontextmanager
     async def lifespan(server):
         try:
@@ -87,8 +86,8 @@ def create_server(workspace: Workspace | MountedWorkspace, execution=None) -> MC
 
     server = MCPServer(
         "Dots Tunnel", version="0.2.0", extensions=[Skills()], log_level="WARNING", lifespan=lifespan,
-        instructions="Read and edit locally authorized folders. List '.' to discover paths; when named mounts are present, "
-                     "include their prefix in all paths and patch headers, and search one mount at a time. "
+        instructions="Read and edit locally authorized folders. List '.' to discover the named mounts; "
+                     "include the mount prefix in all paths and patch headers, and search one mount at a time. "
                      "Workflow: skill://dots/dots-tunnel/SKILL.md. "
                      "Read before updating; pass the revision to apply_patch. "
                      "Call get_workflow for tool usage and configured paths. No model routing.",
@@ -126,8 +125,7 @@ def create_server(workspace: Workspace | MountedWorkspace, execution=None) -> MC
     @server.tool(annotations=read)
     def get_workflow() -> dict[str, Any]:
         """Get the packaged dots-tunnel skill, execution availability, and authorized absolute shell paths. Read once before local work; also available via MCP skills/list and resources/read."""
-        roots = ({name: str(item.root) for name, item in workspace.workspaces.items()}
-                 if isinstance(workspace, MountedWorkspace) else {".": str(workspace.root)})
+        roots = {name: str(item.root) for name, item in workspace.workspaces.items()}
         return {"skill": SKILL_PATH.read_text(), "roots": roots, "execution_enabled": execution is not None}
 
     if execution:
@@ -159,31 +157,24 @@ def create_server(workspace: Workspace | MountedWorkspace, execution=None) -> MC
 
 
 def main():
-    parser = argparse.ArgumentParser(description="dots-tunnel: project-scoped file MCP over stdio (macOS/Linux)")
-    scope = parser.add_mutually_exclusive_group()
-    scope.add_argument("--root")
-    scope.add_argument("--mount", action="append", metavar="NAME=PATH", help="Explicit named folder; repeat for multiple folders")
-    parser.add_argument("--state", default=os.environ.get("DOTS_TUNNEL_STATE", str(Path.home() / ".local/state/dots-tunnel")))
+    parser = argparse.ArgumentParser(description="dots-tunnel: folder-scoped file MCP over stdio (macOS/Linux)")
+    parser.add_argument("--mount", action="append", required=True, metavar="NAME=PATH",
+                        help="Explicit named folder; repeat for multiple folders")
+    parser.add_argument("--state", default=str(Path.home() / ".local/state/dots-tunnel"))
     parser.add_argument("--exec", action="store_true", help="Opt in to native Codex sandboxed commands; requires a deployed copy outside all mounts")
     args = parser.parse_args()
-    root = args.root or (None if args.mount else os.environ.get("DOTS_TUNNEL_ROOT"))
-    if not root and not args.mount:
-        parser.error("--root, --mount, or DOTS_TUNNEL_ROOT is required; no implicit filesystem access")
-    if args.mount:
-        mounts = {}
-        for value in args.mount:
-            name, separator, path = value.partition('=')
-            if not separator or not path or name in mounts:
-                parser.error("Use unique --mount NAME=PATH entries")
-            mounts[name] = path
-        workspace = MountedWorkspace(mounts, args.state)
-    else:
-        workspace = Workspace(root, args.state)
+    mounts = {}
+    for value in args.mount:
+        name, separator, path = value.partition("=")
+        if not separator or not path or name in mounts:
+            parser.error("Use unique --mount NAME=PATH entries")
+        mounts[name] = path
+    workspace = MountedWorkspace(mounts, args.state)
     try:
         execution = None
         if args.exec:
             from execution import Execution
-            roots = [item.root for item in workspace.workspaces.values()] if args.mount else [workspace.root]
+            roots = [item.root for item in workspace.workspaces.values()]
             source = Path(__file__).resolve()
             if any(source == root or root in source.parents for root in roots):
                 parser.error("Deploy the server outside remotely writable roots before enabling --exec")

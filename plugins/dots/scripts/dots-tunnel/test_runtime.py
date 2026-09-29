@@ -1,11 +1,14 @@
 """Lifecycle decisions without account traffic or real process termination."""
 import json
 from pathlib import Path
+import shlex
 import subprocess
 import tempfile
 import unittest
 
 from runtime import manage
+
+TOOLS = {"jsonrpc": "2.0", "id": 2, "result": {"tools": [{"name": "read_file"}]}}
 
 
 class LifecycleTests(unittest.TestCase):
@@ -13,83 +16,82 @@ class LifecycleTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        for name in ("bin/tunnel-client", "profiles/dots-tunnel.yaml", "secrets/tunnel-runtime.key"):
+        for name in ("bin/tunnel-client", "secrets/tunnel-runtime.key"):
             path = self.root / name
             path.parent.mkdir(exist_ok=True)
             path.touch()
-        self.saved = {"target_kind": "command", "target_value": 'python server.py --root "test project"',
-                      "tunnel_id": "test-tunnel", "profile_dir": str(self.root / "profiles"),
-                      "profile_name": "dots-tunnel"}
+        self.config = {"tunnel_id": "test-tunnel", "python": "/venv/python",
+                       "mounts": {"Code": "/test code"}, "state": "/state", "exec": False}
+        (self.root / "config.json").write_text(json.dumps(self.config))
+        self.server = self.root / "plugin/scripts/dots-tunnel/server.py"
         self.calls = []
 
-    def runner(self, replies):
+    def runner(self, replies, preflight=TOOLS, preflight_code=0):
         def run(args, **kwargs):
             self.calls.append(args)
+            if args[0] == "/venv/python":
+                return subprocess.CompletedProcess(args, preflight_code, json.dumps(preflight) + "\n",
+                                                   "can't open file server.py")
             return subprocess.CompletedProcess(args, 0, json.dumps(replies.pop(0)), "")
         return run
 
+    def start(self, replies, **kwargs):
+        return manage("start", self.root, self.runner(replies, **kwargs), server=self.server, wait=0)
+
     def test_ready_is_reused_without_connect(self):
-        self.assertTrue(manage("start", self.root, self.runner([
-            {"ready": True, "process_running": True}]))["ready"])
+        self.assertTrue(self.start([{"ready": True, "process_running": True}])["ready"])
         self.assertEqual(len(self.calls), 1)
 
-    def test_stopped_uses_saved_scope_and_verifies(self):
-        result = manage("start", self.root, self.runner([
-            {"process": self.saved}, {}, {"ready": True, "process_running": True}]))
-        self.assertTrue(result["ready"])
-        connect = self.calls[1]
-        self.assertEqual(connect[connect.index("--mcp-command") + 1], self.saved["target_value"])
+    def test_connect_is_built_from_config_and_current_server(self):
+        self.assertTrue(self.start([{}, {}, {"ready": True, "process_running": True}])["ready"])
+        preflight, connect = self.calls[1], self.calls[2]
+        expected = ["/venv/python", str(self.server), "--mount", "Code=/test code", "--state", "/state"]
+        self.assertEqual(preflight, expected)
+        self.assertEqual(shlex.split(connect[connect.index("--mcp-command") + 1]), expected)
         self.assertEqual(connect[connect.index("--tunnel-id") + 1], "test-tunnel")
-        self.assertTrue(connect[connect.index("--runtime-api-key") + 1].startswith("file:"))
-        self.assertEqual(self.calls[2][2], "status")
+        self.assertEqual(connect[connect.index("--runtime-api-key") + 1],
+                         "file:" + str(self.root / "secrets/tunnel-runtime.key"))
 
-    def test_removed_plugin_version_uses_installed_server(self):
-        cache = self.root / "cache/dots/dots"
-        server = cache / "0.2.2/scripts/dots-tunnel/server.py"
-        server.parent.mkdir(parents=True)
-        server.touch()
-        old = cache / "0.2.1/scripts/dots-tunnel/server.py"
-        self.saved["target_value"] = f"/venv/python {old} --mount Code=/code --exec"
-        manage("start", self.root, self.runner([
-            {"process": self.saved}, {}, {"ready": True}]), server=server)
-        connect = self.calls[1]
-        self.assertEqual(connect[connect.index("--mcp-command") + 1],
-                         f"/venv/python {server} --mount Code=/code --exec")
+    def test_broken_server_is_reported_before_connecting(self):
+        with self.assertRaisesRegex(RuntimeError, "exit 2.*can't open file"):
+            self.start([{}], preflight={}, preflight_code=2)
+        self.assertNotIn("connect", [call[2] for call in self.calls if len(call) > 2])
 
-    def test_missing_server_elsewhere_is_not_replaced(self):
-        server = self.root / "cache/dots/dots/0.2.2/scripts/dots-tunnel/server.py"
-        server.parent.mkdir(parents=True)
-        server.touch()
-        self.saved["target_value"] = "/venv/python /other/0.2.1/scripts/dots-tunnel/server.py --exec"
-        manage("start", self.root, self.runner([
-            {"process": self.saved}, {}, {"ready": True}]), server=server)
-        connect = self.calls[1]
-        self.assertEqual(connect[connect.index("--mcp-command") + 1], self.saved["target_value"])
+    def test_exec_config_requires_command_tools(self):
+        self.config["exec"] = True
+        (self.root / "config.json").write_text(json.dumps(self.config))
+        with self.assertRaisesRegex(RuntimeError, "command tools"):
+            self.start([{}])
+
+    def test_server_exit_after_connect_is_named(self):
+        log = self.root / "tunnel.log"
+        log.write_text(json.dumps({"time": "2999-01-01T00:00:00", "msg": "stdio MCP command exited",
+                                   "error": "exit status 2"}) + "\n")
+        stopped = {"process_running": False, "process": {"log_path": str(log)}}
+        with self.assertRaisesRegex(RuntimeError, "server exited: exit status 2"):
+            self.start([{}, {}, stopped, stopped])
 
     def test_unhealthy_running_process_is_not_restarted(self):
         with self.assertRaisesRegex(RuntimeError, "leaving it untouched"):
-            manage("start", self.root, self.runner([{"process_running": True}]))
+            self.start([{"process_running": True}])
         self.assertEqual(len(self.calls), 1)
 
-    def test_missing_setup_does_not_create_connection(self):
+    def test_missing_config_does_not_create_connection(self):
+        (self.root / "config.json").unlink()
         with self.assertRaisesRegex(RuntimeError, "setup is missing"):
-            manage("start", self.root, self.runner([{}]))
+            self.start([{}])
         self.assertEqual(len(self.calls), 1)
+
+    def test_relative_mount_is_rejected(self):
+        self.config["mounts"] = {"Code": "Code"}
+        (self.root / "config.json").write_text(json.dumps(self.config))
+        with self.assertRaisesRegex(RuntimeError, "absolute"):
+            self.start([{}])
 
     def test_stop_verifies_process_exit(self):
         self.assertFalse(manage("stop", self.root, self.runner([
             {"ready": True, "process_running": True}, {}, {"runtime_state": "stopped"}]))["running"])
         self.assertEqual([call[2] for call in self.calls], ["status", "stop", "status"])
-
-    def test_second_account_keeps_its_saved_profile_and_key(self):
-        (self.root / "profiles/dots-tunnel-second.yaml").touch()
-        (self.root / "secrets/second-runtime.key").touch()
-        self.saved["profile_name"] = "dots-tunnel-second"
-        result = manage("start", self.root, self.runner([
-            {"process": self.saved}, {}, {"ready": True}]), alias="dots-tunnel-second")
-        self.assertEqual(result["alias"], "dots-tunnel-second")
-        self.assertIn("dots-tunnel-second", self.calls[1])
-        self.assertIn("file:" + str(self.root / "secrets/second-runtime.key"), self.calls[1])
 
     def test_client_failure_does_not_leak_diagnostics_or_retry(self):
         def fail(args, **kwargs):
@@ -99,3 +101,7 @@ class LifecycleTests(unittest.TestCase):
             manage("start", self.root, fail)
         self.assertNotIn("sensitive", str(error.exception))
         self.assertEqual(len(self.calls), 1)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -53,27 +53,30 @@ UV_PROJECT_ENVIRONMENT="$HOME/.cache/dots-tunnel-venv" \
 
 "$HOME/.cache/dots-tunnel-venv/bin/python" \
   plugins/dots/scripts/dots-tunnel/server.py \
-  --root /absolute/authorized-project \
+  --mount Code=/absolute/Code --mount Desktop=/absolute/Desktop \
   --state /absolute/private-recovery-directory
 ```
 
-The second command speaks stdio MCP; it does not open an HTTP port. Configure
-the official tunnel client's managed runtime with the same executable, script,
-root, and state as its MCP command, using absolute paths. Keep its restricted
-runtime credential outside the repository. That credential authenticates the
-tunnel, not model requests.
-
-For multiple folders, replace `--root` with repeated explicit mounts:
-
-```sh
---mount Code=/absolute/Code --mount Desktop=/absolute/Desktop
-```
-
+The second command speaks stdio MCP; it does not open an HTTP port. Every
+authorized folder is an explicit named mount; repeat `--mount` for more.
 `list_files(".")` lists only these names. Use paths such as
 `Code/project/src/main.py` or `Desktop/notes.txt`, including the prefix in patch
 headers. Search one named folder at a time. The shared parent is never exposed;
 each mount retains the same file protections and a separate recovery directory.
-Mounts override `DOTS_TUNNEL_ROOT`; `--root` and `--mount` cannot be combined.
+
+The lifecycle helper owns the tunnel command. Record the connection once in
+`~/.local/share/dots-tunnel/config.json` (no secrets; absolute paths):
+
+```json
+{"tunnel_id": "tunnel_...", "python": "/Users/you/.cache/dots-tunnel-venv/bin/python",
+ "mounts": {"Code": "/Users/you/Code"}, "state": "/Users/you/.local/state/dots-tunnel",
+ "exec": false}
+```
+
+Put the restricted runtime credential in
+`~/.local/share/dots-tunnel/secrets/tunnel-runtime.key`, outside the repository.
+It authenticates the tunnel, not model requests. Place the official
+`tunnel-client` at `~/.local/share/dots-tunnel/bin/tunnel-client`.
 
 Register the tunnel in ChatGPT developer mode as the Dots connection. The
 repository's `.app.json` points to the maintainer's registered app; installing
@@ -91,14 +94,14 @@ python3 plugins/dots/scripts/dots-tunnel/runtime.py status
 python3 plugins/dots/scripts/dots-tunnel/runtime.py stop
 ```
 
-For the separately configured second account, append `--alias dots-tunnel-second`
-to any lifecycle command. Credentials and saved profiles remain separate.
-
-Start reuses a healthy runtime without restarting it. If stopped, it uses the
-saved command, tunnel, and credential-file reference, then verifies readiness.
-If a plugin update removed the saved command's cached server version, start
-substitutes this installed plugin's `server.py` and keeps every other argument.
-Missing setup or an unhealthy running process is reported, not silently replaced.
+Start reuses a healthy runtime without restarting it. If stopped, it builds the
+server command from `config.json` and this installed plugin's `server.py`, so
+plugin updates cannot leave a stale path. It first runs that exact command
+locally through an MCP handshake and refuses to connect if the server cannot
+start, naming the error. After connecting it verifies readiness; if the server
+exits, it reports the exit recorded in the tunnel log. Missing setup or an
+unhealthy running process is reported, not silently replaced. There is one
+connection and one credential.
 The helper serializes concurrent invocations and prints only compact status.
 
 The runtime stays in the background after a chat or terminal closes. Stop it
@@ -109,11 +112,11 @@ the skill in Codex on the Mac first, then mention `@Dots` in ChatGPT.
 
 Lifecycle commands are local operator actions, not remotely exposed MCP tools.
 They do not authorize new folders. Stop the runtime before changing the
-authorized root; never expose a home directory.
+authorized folders; never expose a home directory.
 
 ## Optional native execution
 
-Add `--exec` to the saved server command to expose command tools. Requires Codex
+Set `"exec": true` in `config.json` to expose command tools. Requires Codex
 CLI 0.154.0 or later with native permission profiles; unsupported policy/API
 versions fail rather than run unsandboxed. macOS is the validated execution
 platform. Keep execution disabled elsewhere until its sandbox tests pass.
@@ -122,8 +125,8 @@ Run a reviewed, deployed copy of the complete Dots plugin outside every writable
 mount (for example the installed plugin cache), with Python dependencies and
 Codex installed outside those mounts too. The server rejects `--exec` when its
 entrypoint is inside a mount. Do not automatically reload remotely edited source
-into the trusted installation. Changing the saved command requires a local stop
-and reconnect; stopping cancels active native jobs and loses their handles.
+into the trusted installation. Changing `config.json` takes effect after a local stop
+and start; stopping cancels active native jobs and loses their handles.
 
 The adapter uses [Codex app-server command execution](https://learn.chatgpt.com/docs/app-server)
 over private stdio. It lazily starts one owned child and reuses it. There are no

@@ -15,9 +15,8 @@ from server import SKILL_PATH, SKILL_URI
 
 
 class Wire:
-    def __init__(self, root, state, mounts=None, execution=False):
-        scope = ([arg for name, path in mounts.items() for arg in ("--mount", f"{name}={path}")]
-                 if mounts else ["--root", str(root)])
+    def __init__(self, mounts, state, execution=False):
+        scope = [arg for name, path in mounts.items() for arg in ("--mount", f"{name}={path}")]
         self.process = subprocess.Popen(
             [sys.executable, str(Path(__file__).with_name("server.py")), *scope, "--state", str(state),
              *(["--exec"] if execution else [])],
@@ -62,7 +61,7 @@ class ProtocolTests(unittest.TestCase):
         self.root = Path(self.temp.name) / "project"
         self.root.mkdir()
         self.state = Path(self.temp.name) / "state"
-        self.wire = Wire(self.root, self.state)
+        self.wire = Wire({"P": self.root}, self.state)
 
     def tearDown(self):
         self.wire.close()
@@ -100,27 +99,27 @@ class ProtocolTests(unittest.TestCase):
         (self.root / ".agents").mkdir()
         (self.root / ".agents/AGENTS.md").write_text("guidance\n")
         (self.root / "note.txt").write_text("note\n")
-        results = self.tool("read_files", {"paths": [".agents/AGENTS.md", ".env", "note.txt"]})["structuredContent"]["results"]
+        results = self.tool("read_files", {"paths": ["P/.agents/AGENTS.md", "P/.env", "P/note.txt"]})["structuredContent"]["results"]
         self.assertEqual(results[0]["content"], "guidance\n")
         self.assertIn("error", results[1])
         self.assertEqual(results[2]["content"], "note\n")
 
     def test_two_turn_file_workflow_and_restart(self):
         (self.root / "canary.txt").write_text("unknown-" + os.urandom(8).hex() + "\n")
-        first = self.tool("read_file", {"path": "canary.txt"})["structuredContent"]
-        patch = "*** Begin Patch\n*** Update File: canary.txt\n@@\n-" + first["content"].rstrip("\n") + "\n+first-edit\n*** End Patch"
+        first = self.tool("read_file", {"path": "P/canary.txt"})["structuredContent"]
+        patch = "*** Begin Patch\n*** Update File: P/canary.txt\n@@\n-" + first["content"].rstrip("\n") + "\n+first-edit\n*** End Patch"
         updated = self.tool("apply_patch", {"input": patch, "expected_revision": first["revision"]})
         self.assertFalse(updated.get("isError", False), updated)
         self.assertEqual((self.root / "canary.txt").read_text(), "first-edit\n")
         denied = self.tool("apply_patch", {"input": patch, "expected_revision": first["revision"]})
         self.assertTrue(denied["isError"])
         self.wire.close()
-        self.wire = Wire(self.root, self.state)
-        second = self.tool("read_file", {"path": "canary.txt"})["structuredContent"]
-        patch2 = "*** Begin Patch\n*** Update File: canary.txt\n@@\n-first-edit\n+second-edit\n*** End Patch"
+        self.wire = Wire({"P": self.root}, self.state)
+        second = self.tool("read_file", {"path": "P/canary.txt"})["structuredContent"]
+        patch2 = "*** Begin Patch\n*** Update File: P/canary.txt\n@@\n-first-edit\n+second-edit\n*** End Patch"
         self.assertFalse(self.tool("apply_patch", {"input": patch2, "expected_revision": second["revision"]}).get("isError", False))
         self.assertEqual((self.root / "canary.txt").read_text(), "second-edit\n")
-        self.assertTrue(self.tool("read_file", {"path": "../outside"})["isError"])
+        self.assertTrue(self.tool("read_file", {"path": "P/../outside"})["isError"])
 
     def test_legacy_tunnel_compatibility(self):
         init = self.wire.send("initialize", {"protocolVersion": "2025-11-25", "capabilities": {},
@@ -134,7 +133,7 @@ class ProtocolTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("codex"), "Native Codex required")
     def test_native_tools_over_stateless_mcp(self):
         self.wire.close()
-        self.wire = Wire(self.root, self.state, execution=True)
+        self.wire = Wire({"P": self.root}, self.state, execution=True)
         tools = self.wire.send("tools/list")["result"]["tools"]
         schemas = {tool["name"]: tool["inputSchema"] for tool in tools}
         self.assertEqual(set(schemas["exec_command"]["properties"]), {

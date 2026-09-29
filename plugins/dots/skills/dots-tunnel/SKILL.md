@@ -14,9 +14,6 @@ The helper reuses a ready runtime, or starts the saved connection and checks
 readiness. It never chooses a new folder or creates credentials. For a status
 question use `status` instead; for an explicit stop request use `stop` instead.
 Do not start the service merely to explain it.
-For the separately configured second account, add `--alias dots-tunnel-second`
-to the helper command. The default alias is `dots-tunnel`; never substitute one
-account's connection or credential for another.
 
 If setup is missing or the runtime is unhealthy, report that result; do not
 reconfigure, repeatedly restart, or broaden access. After successful startup,
