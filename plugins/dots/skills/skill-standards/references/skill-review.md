@@ -73,6 +73,8 @@ Inspect for:
   versions, or flags;
 - a single example the agent will copy as a template, or numeric length limits
   that no reader or consumer requires;
+- behavioral guidance in bare lists that drop each rule's reason or hide
+  which rules take priority;
 - a menu of equal alternatives where one default would do, and scoring
   language that describes a grader instead of stating the requirement;
 - deterministic work left to the agent, such as lookup tables, point systems,

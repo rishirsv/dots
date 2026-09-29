@@ -129,6 +129,12 @@ examples are illustrations, not required wording for generated skills.
   instead of offering a menu of equal alternatives.
 - **State the requirement, not the grader.** Replace “you will be graded on”
   with each requirement the grader checks.
+- **Keep reasons attached to rules.** Write behavioral guidance so each rule
+  carries its reason and its priority is clear. A bare list of rules flattens
+  priority and separates rules from why, and the list's format tends to
+  reappear in the output. Use lists and tables for reference data, parallel
+  options, and checks. A bullet is fine for behavior when it states the rule
+  and its reason together.
 - **Explain why when it changes judgment.** Keep the reason when it helps the
   agent choose between plausible actions, understand a non-obvious constraint,
   or remember the method. Do not add reasons that merely advertise the value
