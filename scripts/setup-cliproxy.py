@@ -93,6 +93,8 @@ def main():
         raise SystemExit("Install uv first")
     if not shutil.which("codex"):
         raise SystemExit("Install Codex first")
+    if not shutil.which("claude"):
+        raise SystemExit("Install Claude Code first")
     if not keychain_get("Claude Code-credentials"):
         raise SystemExit("Sign in to Claude Code on this Mac first")
 
@@ -152,7 +154,7 @@ def main():
     helper = Path.home() / ".local" / "bin" / "cliproxy-sync-claude-token"
     replace_private(helper, (ROOT / "scripts" / "cliproxy-sync-claude-token.py").read_bytes())
     helper.chmod(0o700)
-    run(sys.executable, str(helper))
+    run(sys.executable, str(helper), "--refresh")
 
     image_guard = Path.home() / ".local" / "bin" / "cliproxy-image-guard.py"
     guard_changed = replace_private(image_guard, (ROOT / "scripts" / "cliproxy-image-guard.py").read_bytes())
@@ -181,6 +183,7 @@ def main():
     guard_plist = {
         "Label": "com.dots.cliproxy-image-guard",
         "ProgramArguments": [shutil.which("uv"), "run", "--quiet", "--script", str(image_guard)],
+        "EnvironmentVariables": {"CLAUDE_CLI": shutil.which("claude")},
         "RunAtLoad": True,
         "KeepAlive": True,
         "StandardErrorPath": str(auth_dir / "image-guard.err"),

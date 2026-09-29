@@ -37,10 +37,13 @@ chat. Run `uv run --script scripts/select-codex-provider.py proxy` to restore
 the combined GPT, Claude, and Muse picker for new chats.
 
 The OpenRouter key, CLIProxyAPI client key, Claude access token, and ChatGPT
-OAuth record stay on each Mac. The repo contains no credentials. The proxy binds only to loopback. The
-Claude sync job checks Keychain every five minutes but cannot refresh Claude
-Code's token itself. Run Claude Code when its token expires. The sync file never
-copies Claude Code's refresh token.
+OAuth record stay on each Mac. The repo contains no credentials. The proxy binds
+only to loopback. The sync job copies Claude Code's current access token from
+Keychain every five minutes. If it has expired when a Claude request arrives,
+the image guard runs one small Claude Code Haiku request so Claude Code renews
+its credential, then copies the new access token before forwarding. This uses
+some Claude quota only when renewal is needed. The sync file never copies
+Claude Code's refresh token.
 
 The image guard caps base64 images in Claude requests at 2,000 pixels per edge.
 Anthropic applies this limit to every image in a request with more than 20 images,

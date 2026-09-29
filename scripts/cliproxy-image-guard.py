@@ -7,9 +7,14 @@
 
 import argparse
 import base64
+from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from io import BytesIO
 import json
+from pathlib import Path
+import subprocess
+import sys
+from threading import Lock
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -18,6 +23,32 @@ from PIL import Image
 
 MAX_EDGE = 2000
 HOP_HEADERS = {"connection", "content-length", "host", "transfer-encoding", "accept-encoding"}
+CLAUDE_AUTH_LOCK = Lock()
+
+
+def claude_token_expiring():
+    path = Path.home() / ".cli-proxy-api" / "claude-from-cli.json"
+    try:
+        expiry = json.loads(path.read_text())["expired"]
+        return datetime.fromisoformat(expiry.replace("Z", "+00:00")) <= datetime.now(timezone.utc) + timedelta(minutes=5)
+    except (OSError, KeyError, ValueError):
+        return True
+
+
+def ensure_claude_auth():
+    if not claude_token_expiring():
+        return
+    with CLAUDE_AUTH_LOCK:
+        if not claude_token_expiring():
+            return
+        helper = Path.home() / ".local" / "bin" / "cliproxy-sync-claude-token"
+        subprocess.run(
+            [sys.executable, str(helper), "--refresh"],
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=100,
+        )
 
 
 def resize_data_url(value):
@@ -71,6 +102,11 @@ class GuardHandler(BaseHTTPRequestHandler):
         body = self.rfile.read(length) if length else None
         try:
             if body is not None:
+                is_claude = self.path.split("?", 1)[0] == "/v1/responses" and str(
+                    json.loads(body).get("model", "")
+                ).startswith("claude-")
+                if is_claude:
+                    ensure_claude_auth()
                 body = prepare_body(body, self.path)
             headers = {key: value for key, value in self.headers.items() if key.lower() not in HOP_HEADERS}
             headers["Accept-Encoding"] = "identity"
@@ -95,7 +131,7 @@ class GuardHandler(BaseHTTPRequestHandler):
                     self.wfile.flush()
         except (BrokenPipeError, ConnectionResetError):
             pass
-        except (URLError, ValueError) as error:
+        except (OSError, URLError, ValueError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
             self.send_error(502, "Local model proxy error")
             print(f"Image guard request failed: {type(error).__name__}", flush=True)
 
