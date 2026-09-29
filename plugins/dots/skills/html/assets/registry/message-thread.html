@@ -1,0 +1,140 @@
+<!-- component: message-thread
+title: Message thread
+type: ui
+when: Real chat or text messages the reader needs to see as a conversation —
+  a quoted exchange, or a before/after comparison of what was sent and what
+  would work better (reply coaching, support-ticket reviews, copy rewrites).
+deps: theme.css
+variants: thread (default — one conversation) | compare (`is-compare`: the
+  prompting messages, then "sent" and "suggested" columns side by side,
+  collapsing to one column under 680px).
+gotchas: Alignment and color alone never identify the speaker — every bubble
+  carries a visually hidden `.thread-who` name. Solid accent bubbles are the
+  reader's own messages; in a compare, the sent column is muted and the
+  suggested column is accent; in a plain thread, a suggested message uses the
+  dashed `is-suggested` outline. Quote messages verbatim; label drafts as
+  suggestions, never as sent.
+-->
+<style>
+  .message-thread { margin: 0 0 var(--section); }
+  .message-thread.is-compare {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    padding: 20px;
+  }
+  .thread-title { margin: 0 0 4px; }
+  .thread-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    margin: 0 0 10px;
+  }
+  .thread-stack { display: flex; flex-direction: column; gap: 4px; }
+  .is-compare > .thread-stack {
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px dashed var(--a20);
+  }
+  .thread-row { display: flex; }
+  .thread-row.is-me { justify-content: flex-end; }
+  .thread-row .bubble {
+    max-width: 82%;
+    margin: 0;
+    padding: 9px 14px;
+    border-radius: var(--r-bubble);
+    font-size: 15px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+  .thread-row.is-them .bubble {
+    background: var(--a8);
+    border-bottom-left-radius: 6px;
+  }
+  .thread-row.is-me .bubble {
+    background: var(--accent);
+    color: var(--background);
+    border-bottom-right-radius: 6px;
+  }
+  .thread-row.is-me.is-suggested .bubble {
+    background: transparent;
+    color: var(--foreground);
+    box-shadow: inset 0 0 0 1.5px var(--accent);
+  }
+  .thread-who {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .thread-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  @media (max-width: 680px) { .thread-columns { grid-template-columns: 1fr; } }
+  .thread-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin: 0 0 8px;
+  }
+  .thread-column.is-suggested .thread-label { color: var(--accent-deep); }
+  .thread-column.is-sent .thread-row.is-me .bubble {
+    background: var(--a20);
+    color: var(--foreground);
+  }
+  .thread-column.is-suggested .thread-row.is-me.is-suggested .bubble {
+    background: var(--accent);
+    color: var(--background);
+    box-shadow: none;
+  }
+  .thread-note {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-muted);
+    margin: 10px 0 0;
+  }
+  .thread-why {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 16px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--a12);
+  }
+</style>
+
+<div data-component="message-thread" class="message-thread">
+  <p class="thread-meta">Tue · 9:12 PM</p>
+  <div class="thread-stack">
+    <div class="thread-row is-them"><p class="bubble"><span class="thread-who">Maya: </span>the demo crashed in front of the whole team 😩</p></div>
+    <div class="thread-row is-me"><p class="bubble"><span class="thread-who">You: </span>oh no. that's brutal</p></div>
+    <div class="thread-row is-me is-suggested"><p class="bubble"><span class="thread-who">You (suggested): </span>want to vent tonight? i'm free after 8</p></div>
+  </div>
+  <p class="thread-note">The last message is a suggestion, not something that was sent.</p>
+</div>
+
+<div data-component="message-thread" class="message-thread is-compare">
+  <h3 class="thread-title">The demo that crashed</h3>
+  <p class="thread-meta">Tue · 9:12 PM</p>
+  <div class="thread-stack">
+    <div class="thread-row is-them"><p class="bubble"><span class="thread-who">Maya: </span>the demo crashed in front of the whole team 😩</p></div>
+  </div>
+  <div class="thread-columns">
+    <div class="thread-column is-sent">
+      <p class="thread-label">What was sent</p>
+      <div class="thread-stack">
+        <div class="thread-row is-me"><p class="bubble"><span class="thread-who">You: </span>did you check the logs?</p></div>
+      </div>
+      <p class="thread-note">Her reply: “not really what i needed rn”</p>
+    </div>
+    <div class="thread-column is-suggested">
+      <p class="thread-label">Suggested</p>
+      <div class="thread-stack">
+        <div class="thread-row is-me is-suggested"><p class="bubble"><span class="thread-who">You (suggested): </span>oh no, in front of everyone? that's brutal. want to vent tonight?</p></div>
+      </div>
+    </div>
+  </div>
+  <p class="thread-why"><strong>Why.</strong> Acknowledge the feeling first; debugging can come once she asks for it.</p>
+</div>

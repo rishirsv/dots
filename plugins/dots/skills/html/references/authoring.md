@@ -50,6 +50,12 @@ the reader understand a point or make the requested decision.
   choice. If filtering, simulation, or mutable form state is the page's main
   purpose, use a product-UI workflow.
 - Prefer one visual that explains the claim over several versions of it.
+- Show real chat or text messages with `thread()`, and a sent-versus-suggested
+  reply with `exchange()`, rather than quoting them as prose; bubble layout
+  lets the reader compare replies at a glance.
+- Set `tone` on `page()` (or `--tone` for the assembler, `tone` in a set
+  manifest) only when the subject calls for a register other than the default
+  `report`; see [DESIGN.md](DESIGN.md#tones).
 
 ## Hand-written body fallback
 
@@ -107,6 +113,7 @@ for extra components such as `page-behavior` when needed. Add `--footer` only
 when the content calls for it. `--layout` accepts `article`, `wide`, or `canvas`
 and defaults to `article`. The assembler packages chosen CSS and behavior; it
 does not select examples, components, content, or section order.
+`--tone` accepts `report` (the default) or `personal`.
 
 ### Working source and finished page
 
@@ -165,6 +172,7 @@ split it merely to imitate a website.
    `id`, `label`, `title`, `body`, and `output` are required per page. Optional
    page fields are `time`, `context`, `dek`, `footer`, `layout`, `components`,
    `parent`, and `number`.
+   An optional top-level `tone` applies one tone to every page in the set.
 
    For a learning site, give the manifest one root contents page, set each
    chapter's `parent` to that root id, and set each lesson's `parent` to its

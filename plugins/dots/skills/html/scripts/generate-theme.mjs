@@ -10,8 +10,8 @@
  *          --check exits 1 if the committed theme.css is stale.
  *
  * DESIGN.md is the source; never edit theme.css by hand. The x-dark,
- * x-alpha-steps, and x-motion keys are generator-owned extensions beyond the
- * design.md alpha spec.
+ * x-alpha-steps, x-motion, x-chart, and x-tones keys are generator-owned
+ * extensions beyond the design.md alpha spec.
  */
 
 import { readFileSync, writeFileSync } from "node:fs";
@@ -94,6 +94,7 @@ const dark = design["x-dark"];
 const steps = design["x-alpha-steps"];
 const motion = design["x-motion"];
 const chart = design["x-chart"];
+const tones = design["x-tones"] ?? {};
 const t = (role, prop) => typography[role][prop];
 
 // x-chart values are var() references into base tokens, so one :root block
@@ -101,6 +102,42 @@ const t = (role, prop) => typography[role][prop];
 const chartVars = Object.entries(chart)
   .map(([k, v]) => `  --chart-${k}: ${v};`)
   .join("\n");
+
+// A tone overrides only the tokens it lists. Its dark block uses a compound
+// selector so it outranks the base [data-theme="dark"] block regardless of order.
+const indent = (text) => text.replace(/^ {2}/gm, "    ");
+function toneVars(tone, palette, light) {
+  const lines = [colorVars(palette), alphaLadder(palette.foreground, steps)];
+  if (light) {
+    if (tone["display-font"]) lines.push(`  --font-display: ${tone["display-font"]};`);
+    if (tone["display-tracking"] != null) lines.push(`  --display-tracking: ${tone["display-tracking"]};`);
+    if (tone["card-radius"]) lines.push(`  --r-card: ${tone["card-radius"]};`);
+    if (tone["text-muted-step"] != null) {
+      if (!steps.includes(Number(tone["text-muted-step"]))) throw new Error(`text-muted-step must be one of ${steps.join(", ")}`);
+      lines.push(`  --text-muted: var(--a${tone["text-muted-step"]});`);
+    }
+  }
+  return lines.join("\n");
+}
+const toneCss = Object.entries(tones).map(([name, tone]) => {
+  if (!tone.colors?.foreground || !tone.dark?.foreground) throw new Error(`x-tones.${name} needs colors.foreground and dark.foreground`);
+  const light = { ...colors, ...tone.colors };
+  const darkPalette = { ...dark, ...tone.dark };
+  return `/* tone: ${name} */
+[data-tone="${name}"] {
+${toneVars(tone, light, true)}
+}
+
+[data-tone="${name}"][data-theme="dark"] {
+${toneVars(tone, darkPalette, false)}
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-tone="${name}"]:not([data-theme]) {
+${indent(toneVars(tone, darkPalette, false))}
+  }
+}`;
+}).join("\n\n");
 
 const css = `/* GENERATED from DESIGN.md by scripts/generate-theme.mjs — do not edit.
  * Tokens + base document styles for dots HTML artifacts. Inline this file
@@ -112,6 +149,8 @@ ${alphaLadder(colors.foreground, steps)}
   --text-muted: var(--a60);
   --font-sans: ${t("body", "fontFamily")};
   --font-mono: ${t("mono", "fontFamily")};
+  --font-display: ${t("display", "fontFamily")};
+  --display-tracking: ${t("display", "tracking")};
   --article: ${spacing.article};
   --wide: ${spacing.wide};
   --canvas: ${spacing.canvas};
@@ -121,6 +160,7 @@ ${alphaLadder(colors.foreground, steps)}
   --r-code: ${rounded.code};
   --r-inline: ${rounded.inline};
   --r-pill: ${rounded.pill};
+  --r-bubble: ${rounded.bubble};
   --dur-fast: ${motion["duration-fast"]};
   --dur-reveal: ${motion["duration-reveal"]};
   --ease: ${motion["ease"]};
@@ -139,7 +179,7 @@ ${colorVars(dark).replace(/^ {2}/gm, "    ")}
 ${alphaLadder(dark.foreground, steps).replace(/^ {2}/gm, "    ")}
   }
 }
-
+${toneCss ? `\n${toneCss}\n` : ""}
 /* ---------- base ---------- */
 
 * { box-sizing: border-box; }
@@ -167,9 +207,10 @@ a:hover { text-decoration: underline; }
 ::selection { background: var(--a12); }
 
 h1 {
+  font-family: var(--font-display);
   font-size: ${t("h1", "fontSize")};
   line-height: ${t("h1", "lineHeight")};
-  letter-spacing: ${t("h1", "letterSpacing")};
+  letter-spacing: calc(${t("h1", "letterSpacing")} * var(--display-tracking));
   font-weight: ${t("h1", "fontWeight")};
   margin: 0;
   text-wrap: balance;
@@ -179,23 +220,25 @@ h1 {
   h1 {
     font-size: ${t("h1", "mobileFontSize")};
     line-height: ${t("h1", "mobileLineHeight")};
-    letter-spacing: ${t("h1", "mobileLetterSpacing")};
+    letter-spacing: calc(${t("h1", "mobileLetterSpacing")} * var(--display-tracking));
   }
 }
 
 h2 {
+  font-family: var(--font-display);
   font-size: ${t("h2", "fontSize")};
   line-height: ${t("h2", "lineHeight")};
-  letter-spacing: ${t("h2", "letterSpacing")};
+  letter-spacing: calc(${t("h2", "letterSpacing")} * var(--display-tracking));
   font-weight: ${t("h2", "fontWeight")};
   margin: 0 0 16px;
   text-wrap: balance;
 }
 
 h3 {
+  font-family: var(--font-display);
   font-size: ${t("h3", "fontSize")};
   line-height: ${t("h3", "lineHeight")};
-  letter-spacing: ${t("h3", "letterSpacing")};
+  letter-spacing: calc(${t("h3", "letterSpacing")} * var(--display-tracking));
   font-weight: ${t("h3", "fontWeight")};
   margin: 0 0 12px;
 }

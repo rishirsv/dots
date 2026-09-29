@@ -14,6 +14,9 @@ must be embedded elsewhere.
 1. Use the reader's question and supplied material to decide what the page
    needs. Carry through the source's claims and decisions; use
    `recommendation()` only when the request or material supports a decision.
+   Keep the default `report` tone for work artifacts; choose `personal` when
+   the page is private or relational material written to one person, as
+   described in [DESIGN.md](references/DESIGN.md#tones).
 2. Find the needed report helpers with `node scripts/catalog.mjs --list` and
    `--help <helper>`. Write a `.page.mjs` module and build the HTML with
    `scripts/build.mjs`. The exact commands and source format are in

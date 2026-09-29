@@ -1,12 +1,14 @@
 /** One source for helper guidance and the corresponding validation errors. */
 export const rules = Object.freeze({
-  page: { title: 'title is required; layout must be article, wide, or canvas.', recommendation: 'at most one recommendation is allowed' },
+  page: { title: 'title is required; layout must be article, wide, or canvas; tone must be report or personal.', recommendation: 'at most one recommendation is allowed' },
   section: { id: 'id must be a lowercase slug; title is required.' },
   readingColumn: { children: 'children are required; text and helper output stay at article width.' },
   callout: { variant: 'variant must be note, warn, or danger; body is required.' },
   calloutStack: { items: 'items must be a non-empty array of callouts.' },
   recommendation: { lead: 'lead is required; a page allows at most one recommendation.' },
   quote: { text: 'text is required; attribution is optional.' },
+  thread: { messages: 'messages must be a non-empty array; each needs from ("them" or "me") and text; only "me" messages can be suggested.', names: 'names must be an object with optional them and me labels.' },
+  exchange: { parts: 'context, sent, and suggested must each be non-empty arrays; context items need from ("them" or "me") and text; sent and suggested are your message strings.', names: 'names must be an object with optional them and me labels.' },
   disclosure: { summary: 'summary is required; children are the expandable detail.' },
   stats: { count: 'use two to five tiles', value: 'each tile needs a value.', label: 'each tile needs a label.', source: 'source is required for the supplied numbers; use "illustrative" only for examples.' },
   table: { data: 'columns and rows must each be non-empty arrays; object rows use column keys or plain-text labels.' },

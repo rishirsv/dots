@@ -207,10 +207,13 @@ function pageShell({ title, context, contextMarkup, dek, footer, body, layout })
   return shell;
 }
 
-export function assemble({ title, context = "", contextMarkup = "", dek = "", footer = "", body, components = [], lang = "en", assetRoot, layout = "article", toc = false, sources = false }) {
+const TONES = ["report", "personal"];
+
+export function assemble({ title, context = "", contextMarkup = "", dek = "", footer = "", body, components = [], lang = "en", assetRoot, layout = "article", tone = "report", toc = false, sources = false }) {
   if (!title) fail("title is required");
   if (body == null) fail("body is required");
   if (!["article", "wide", "canvas"].includes(layout)) fail(`unknown layout "${layout}"`);
+  if (!TONES.includes(tone)) fail(`unknown tone "${tone}"; use ${TONES.join(" or ")}`);
   if (![false, true, "auto"].includes(toc)) fail(`toc must be false, true, or "auto"`);
   if (![false, "collect"].includes(sources)) fail(`sources must be false or "collect"`);
 
@@ -230,7 +233,7 @@ export function assemble({ title, context = "", contextMarkup = "", dek = "", fo
   const shell = pageShell({ title, context, contextMarkup, dek, footer: renderedFooter, body: embedLocalImages(body, assetRoot), layout });
 
   return `<!doctype html>
-<html lang="${escapeText(lang)}">
+<html lang="${escapeText(lang)}"${tone === "report" ? "" : ` data-tone="${tone}"`}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -297,6 +300,7 @@ export function validateManifest(manifest, manifestRoot) {
   if (typeof manifest.title !== "string" || !manifest.title.trim()) fail("manifest.title is required");
   if (manifest.lang != null && (typeof manifest.lang !== "string" || !manifest.lang.trim())) fail("manifest.lang must be a non-empty string");
   if (manifest.navigationLabel != null && typeof manifest.navigationLabel !== "string") fail("manifest.navigationLabel must be a string");
+  if (manifest.tone != null && !TONES.includes(manifest.tone)) fail(`manifest.tone must be ${TONES.join(" or ")}`);
   if (!Array.isArray(manifest.pages) || manifest.pages.length === 0) fail("manifest.pages must contain at least one page");
   const pages = manifest.pages.map((page, index) => readManifestPage(page, index, manifestRoot));
   const ids = new Set();
@@ -493,6 +497,7 @@ export function assembleSet({ manifest, manifestRoot }) {
       footer: page.footer ?? "",
       lang: validated.lang,
       layout: page.layout ?? "article",
+      tone: validated.tone ?? "report",
       body: [readFileSync(page.bodyPath, "utf8"), chapterIndex].filter(Boolean).join("\n\n"),
       assetRoot: dirname(page.bodyPath),
       components: [...new Set([...(page.components ?? []), ...(chapterIndex ? ["chapter-index"] : []), "sequence-nav"])],
@@ -559,6 +564,7 @@ if (invokedDirectly) {
       footer: args.footer,
       lang: args.lang,
       layout: args.layout,
+      tone: args.tone,
       body,
       assetRoot: dirname(resolve(args.body)),
       components: (args.components ?? "").split(",").map((name) => name.trim()).filter(Boolean),

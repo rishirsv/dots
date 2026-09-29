@@ -17,6 +17,7 @@ export { rules, ruleDescriptions } from "../lib/contracts.mjs";
 export const version = "1.0.0";
 
 const LAYOUTS = ["article", "wide", "canvas"];
+const TONES = ["report", "personal"];
 const SEVERITIES = ["high", "medium", "low"];
 let figureSerial = 0;
 export function resetFigureIds(start = 0) { figureSerial = start; }
@@ -80,6 +81,8 @@ function page(meta, children) {
   required("page", "title", meta.title);
   const layout = meta.layout ?? "article";
   if (!LAYOUTS.includes(layout)) fail("page", `layout must be one of ${LAYOUTS.join(", ")}`);
+  const tone = meta.tone ?? "report";
+  if (!TONES.includes(tone)) fail("page", `tone must be one of ${TONES.join(", ")}`);
   return Object.freeze({
     kit: "report",
     title: String(meta.title),
@@ -87,6 +90,7 @@ function page(meta, children) {
     dek: meta.dek ?? "",
     footer: meta.footer ?? "",
     layout,
+    tone,
     toc: meta.toc ?? "auto",
     sources: "collect",
     components: meta.behavior ? ["page-behavior"] : [],
@@ -337,6 +341,40 @@ function stacked(data, { title, source, ...options } = {}) {
   return sourcedChart("stacked", { title, data, ...options }, source, "stacked");
 }
 
+// ---------- conversations ----------
+
+const SPEAKERS = ["them", "me"];
+
+function bubble(helper, message, names, suggested = false) {
+  const rule = rules[helper].messages ? "messages" : "parts";
+  if (!message || typeof message !== "object" || !SPEAKERS.includes(message.from)) fail(helper, rule);
+  required(helper, rule, message.text);
+  const draft = suggested || message.suggested === true;
+  if (draft && message.from !== "me") fail(helper, rule);
+  const who = message.from === "me" ? (draft ? `${names.me} (suggested)` : names.me) : names.them;
+  return html`<div class="thread-row is-${message.from}${draft ? " is-suggested" : ""}"><p class="bubble"><span class="thread-who">${who}: </span>${message.text}</p></div>`;
+}
+
+function speakerNames(helper, names = {}) {
+  if (typeof names !== "object" || Array.isArray(names)) fail(helper, "names");
+  return { them: names.them ?? "Them", me: names.me ?? "You" };
+}
+
+function thread(messages, { meta, note, names } = {}) {
+  list("thread", "messages", messages);
+  const who = speakerNames("thread", names);
+  return html`<div data-component="message-thread" class="message-thread">${meta ? html`<p class="thread-meta">${meta}</p>` : ""}<div class="thread-stack">${messages.map((message) => bubble("thread", message, who))}</div>${note ? html`<p class="thread-note">${note}</p>` : ""}</div>`;
+}
+
+function exchange({ title, meta, context, sent, suggested, outcome, why, names, labels = {} } = {}) {
+  for (const [name, value] of [["context", context], ["sent", sent], ["suggested", suggested]]) {
+    if (!Array.isArray(value) || value.length === 0) fail("exchange", "parts");
+  }
+  const who = speakerNames("exchange", names);
+  const mine = (text) => ({ from: "me", text });
+  return html`<div data-component="message-thread" class="message-thread is-compare">${title ? html`<h3 class="thread-title">${title}</h3>` : ""}${meta ? html`<p class="thread-meta">${meta}</p>` : ""}<div class="thread-stack">${context.map((message) => bubble("exchange", message, who))}</div><div class="thread-columns"><div class="thread-column is-sent"><p class="thread-label">${labels.sent ?? "What was sent"}</p><div class="thread-stack">${sent.map((text) => bubble("exchange", mine(text), who))}</div>${outcome ? html`<p class="thread-note">${outcome}</p>` : ""}</div><div class="thread-column is-suggested"><p class="thread-label">${labels.suggested ?? "Suggested"}</p><div class="thread-stack">${suggested.map((text) => bubble("exchange", mine(text), who, true))}</div></div></div>${why ? html`<p class="thread-why"><strong>Why.</strong> ${why}</p>` : ""}</div>`;
+}
+
 const MOCKUP_SKELETON = html`<div class="mockup-toolbar" aria-hidden="true"><span></span><span></span><span></span></div><div class="mockup-layout" aria-hidden="true"><div class="mockup-nav"><div class="mockup-line is-accent"></div><div class="mockup-line"></div><div class="mockup-line"></div><div class="mockup-line"></div></div><div class="mockup-main"><div class="mockup-line is-strong"></div><div class="mockup-line"></div><div class="mockup-line is-short"></div><div class="mockup-block"></div></div></div>`;
 
 function mockup({ label, caption, content }) {
@@ -349,6 +387,7 @@ export const helpers = Object.freeze({
   html, svg, raw,
   page, section, readingColumn,
   callout, calloutStack, recommendation, quote, disclosure,
+  thread, exchange,
   stats, table, bars, sparkline, line, stacked,
   steps, timeline, finding, findings, fileMap, comparison,
   code, diff,
@@ -356,13 +395,15 @@ export const helpers = Object.freeze({
 });
 
 export const meta = Object.freeze({
-  page: { component: "page-shell", summary: "The page: title, context line, dek, footer, layout, and body. Returns a PageSpec for build.mjs.", params: "page({ title, context?, dek?, footer?, layout?: 'article'|'wide'|'canvas', toc?: 'auto'|true|false, behavior?: boolean }, children)", example: `page({ title: "Release status", context: "dots / release" }, [section("state", "Current state", ["One candidate passed verification."])])` },
+  page: { component: "page-shell", summary: "The page: title, context line, dek, footer, layout, tone, and body. Returns a PageSpec for build.mjs.", params: "page({ title, context?, dek?, footer?, layout?: 'article'|'wide'|'canvas', tone?: 'report'|'personal', toc?: 'auto'|true|false, behavior?: boolean }, children)", example: `page({ title: "Release status", context: "dots / release" }, [section("state", "Current state", ["One candidate passed verification."])])` },
   section: { component: "page-shell", summary: "A top-level section with a stable id and an h2. Strings become paragraphs.", params: "section(id, title, children)", example: `section("state", "Current state", ["One candidate passed verification."])` },
   readingColumn: { component: "page-shell", summary: "Keeps prose at article width inside a wide or canvas page.", params: "readingColumn(children)", example: `readingColumn([section("frame", "The decision", ["Choose one release boundary."])])` },
   callout: { component: "callout", summary: "A fact the reader must not scroll past. callout.note, callout.warn, callout.danger.", params: "callout.note(lead, body) | callout.warn(lead, body) | callout.danger(lead, body)", example: `calloutStack([callout.note("Note.", "Old configs keep working through v3."), callout.warn("Alpha spec.", "The schema may change."), callout.danger("Blocked.", "Staging credentials expired.")])` },
   calloutStack: { component: "callout", summary: "Stacks several callouts with consistent spacing.", params: "calloutStack(callouts)", example: `calloutStack([callout.note("Note.", "One."), callout.warn("Caution.", "Two.")])` },
   recommendation: { component: "recommendation", summary: "The one committing conclusion, near the end.", params: "recommendation(lead, ...paragraphs)", example: `recommendation("Ship the migration in Q3.", "The vendor shuts the legacy endpoint in September.", "Freeze unrelated auth changes around cutover.")` },
   quote: { component: "pull-quote", summary: "One thesis line worth isolating.", params: "quote(text, attribution?)", example: `quote("The migration is safe because callers observe nothing until v3.", "Migration plan")` },
+  thread: { component: "message-thread", summary: "Quoted chat messages as a conversation; mark drafts with suggested: true.", params: "thread([{ from: 'them'|'me', text, suggested? }], { meta?, note?, names?: { them?, me? } })", example: `thread([{ from: "them", text: "the demo crashed in front of the whole team 😩" }, { from: "me", text: "oh no. that's brutal" }, { from: "me", text: "want to vent tonight?", suggested: true }], { meta: "Tue · 9:12 PM", names: { them: "Maya" }, note: "The last message is a suggestion." })` },
+  exchange: { component: "message-thread", summary: "The prompting messages, then what was sent beside a suggested reply.", params: "exchange({ title?, meta?, context: [{ from, text }], sent: [text], suggested: [text], outcome?, why?, names?, labels?: { sent?, suggested? } })", example: `exchange({ title: "The demo that crashed", meta: "Tue · 9:12 PM", names: { them: "Maya" }, context: [{ from: "them", text: "the demo crashed in front of the whole team 😩" }], sent: ["did you check the logs?"], suggested: ["oh no, in front of everyone? want to vent tonight?"], outcome: "Her reply: “not really what i needed rn”", why: "Acknowledge the feeling first." })` },
   disclosure: { component: "disclosure", summary: "Progressive detail: sources, raw data, appendix.", params: "disclosure(summary, children, { plain? })", example: `[disclosure("Raw latency samples", ["p50 88ms, p99 640ms."]), disclosure("Sources", ["Incident report."], { plain: true })]` },
   stats: { component: "stat-tiles", summary: "Two to five supplied headline measures.", params: "stats([{ value, label, note? }], { source })", example: `stats([{ value: "14", label: "PRs merged", note: "+3 vs last week" }, { value: "6", label: "deploys" }], { source: "GitHub, week 38" })` },
   table: { component: "data-table", summary: "Rows compared line by line. Columns may be labels or { label, key?, numeric? }; rows arrays or objects.", params: "table({ columns, rows, stacked?, labelFirst? })", example: `table({ columns: ["Risk", "Owner", { label: "Exposure", numeric: true }], rows: [["Vendor SSO", "Priya", "$180k"]], stacked: true, labelFirst: true })` },

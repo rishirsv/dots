@@ -215,6 +215,18 @@ test("page() is pure and returns a PageSpec; strings become paragraphs", () => {
   assert.throws(() => helpers.section("Not A Slug", "x", []), /slug/);
 });
 
+test("message threads name every speaker and reject drafts attributed to the other person", () => {
+  const output = String(helpers.exchange({ names: { them: "Maya" }, context: [{ from: "them", text: "rough day" }], sent: ["lol"], suggested: ["want to talk?"] }));
+  assert.match(output, /<span class="thread-who">Maya: <\/span>rough day/);
+  assert.match(output, /<span class="thread-who">You: <\/span>lol/);
+  assert.match(output, /is-me is-suggested"><p class="bubble"><span class="thread-who">You \(suggested\): <\/span>want to talk\?/);
+  assert.throws(() => helpers.thread([{ from: "them", text: "hi", suggested: true }]), /report\.thread: .*only "me"/);
+  assert.throws(() => helpers.thread([{ from: "someone", text: "hi" }]), /report\.thread/);
+  assert.throws(() => helpers.exchange({ context: [{ from: "them", text: "hi" }], sent: [], suggested: ["x"] }), /report\.exchange/);
+  assert.equal(helpers.page({ title: "T", tone: "personal" }, []).tone, "personal");
+  assert.throws(() => helpers.page({ title: "T", tone: "neon" }, []), /tone/);
+});
+
 test("helpers reject invalid arguments with the helper name", () => {
   assert.throws(() => helpers.finding({ severity: "urgent", title: "x" }), /report\.finding: severity/);
   assert.throws(() => helpers.findings([html`<li>x</li>`]), /report\.findings/);

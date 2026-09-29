@@ -42,6 +42,9 @@ typography:
     fontSize: 15px
     fontWeight: 400
     lineHeight: 1.7
+  display:
+    fontFamily: -apple-system, Helvetica Neue, Arial, sans-serif
+    tracking: 1
   mono:
     fontFamily: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace
     fontSize: 13px
@@ -59,6 +62,7 @@ rounded:
   code: 6px
   inline: 4px
   pill: 6px
+  bubble: 18px
 x-dark:
   background: "#0f0f0e"
   foreground: "#f5f5f4"
@@ -73,6 +77,28 @@ x-dark:
   code-surface: "#161615"
   code-ink: "#ededed"
 x-alpha-steps: [4, 8, 12, 20, 40, 55, 60, 70]
+x-tones:
+  personal:
+    colors:
+      background: "#f7f2ec"
+      foreground: "#2b2320"
+      accent: "#0866d6"
+      accent-deep: "#0a4fa3"
+      danger-ink: "#9c3148"
+      danger-line: "rgba(180,72,93,0.30)"
+      danger-bg: "rgba(180,72,93,0.06)"
+    dark:
+      background: "#171412"
+      foreground: "#f2ebe4"
+      accent: "#4ea1ff"
+      accent-deep: "#a9d0ff"
+      danger-ink: "#ea8a9b"
+      danger-line: "rgba(234,138,155,0.30)"
+      danger-bg: "rgba(234,138,155,0.08)"
+    display-font: New York, Iowan Old Style, ui-serif, Georgia, serif
+    display-tracking: 0.35
+    card-radius: 14px
+    text-muted-step: 70
 x-chart:
   emphasis: var(--accent)
   value-emphasis: var(--accent-deep)
@@ -94,13 +120,37 @@ x-motion:
 
 ## Overview
 
-Cool and technical. One flat page background, warm-white in light mode and
-near-black in dark, carrying confident grotesque type with tight negative
-tracking. Hierarchy comes from weight, size, and an ink-alpha ladder — not
-from boxes, tints, or decoration. A single desaturated blue is the only
-voice of emphasis; amber and red speak only when something is genuinely
-wrong. The page should feel like a precise instrument: generous air, hairline
-rules, numbers that line up, motion that happens once and gets out of the way.
+Cool and technical in the default tone. One flat page background, warm-white
+in light mode and near-black in dark, carrying confident grotesque type with
+tight negative tracking. Hierarchy comes from weight, size, and an ink-alpha
+ladder — not from boxes, tints, or decoration. A single desaturated blue is
+the only voice of emphasis; amber and red speak only when something is
+genuinely wrong. The page should feel like a precise instrument: generous
+air, hairline rules, numbers that line up, motion that happens once and gets
+out of the way.
+
+## Tones
+
+The default tone is `report`: the cool, technical page described here. It
+fits reviews, status, plans, incidents, and other work artifacts. Choose a
+different tone when the subject or audience would find that register wrong,
+not for novelty. A tone changes token values only: every component, layout,
+and rule below still applies, so a toned page stays structurally identical.
+
+- `personal` suits letters, relationship or coaching reflections, personal
+  reviews, and other private material written to one person. It uses warm
+  paper and ink colors, serif display headings with lighter tracking, and a
+  softer card radius. Its accent still plays the single emphasis role, and
+  `danger-*` stays semantic.
+
+Tones live under `x-tones` in the front-matter. Each lists only the tokens it
+changes: `colors` and `dark` override the matching base roles (the alpha
+ladder is recomputed from the tone's foreground), `display-font`,
+`display-tracking`, and `card-radius` set headings and card shape, and
+`text-muted-step` raises muted text to a stronger alpha step when the tone's
+light palette would otherwise fall below 4.5:1. Add a tone
+there when a recurring kind of content needs it; do not restyle one page with
+inline colors instead.
 
 ## Colors
 
@@ -122,7 +172,9 @@ The `x-dark` block redefines the same semantic roles for dark mode.
 
 ## Typography
 
-Use the system grotesque stack; no webfonts. Headings are semibold with
+Use the system grotesque stack; no webfonts. Headings and pull quotes use the
+display font, which matches the body stack by default and changes only with
+the tone. Headings are semibold with
 negative tracking that scales with size — the tracking values in the
 front-matter are per-size absolutes, not a ratio. H1 steps down to its mobile
 size at 380px so a long title does not consume the whole first viewport. Body

@@ -28,6 +28,7 @@
     { "name": "wide-figure", "title": "Wide figure", "type": "ui", "file": "wide-figure.html", "deps": ["page-shell"], "when": "One screenshot, diagram, or evidence image needs more room than the article column." },
     { "name": "evidence-gallery", "title": "Evidence gallery", "type": "ui", "file": "evidence-gallery.html", "deps": [], "when": "Two to four screenshots or figures need readable, point-specific captions and an optional focal image." },
     { "name": "pull-quote", "title": "Pull quote", "type": "ui", "file": "pull-quote.html", "deps": [], "when": "One thesis line worth isolating per document. Typographic emphasis only — no accent bar." },
+    { "name": "message-thread", "title": "Message thread", "type": "ui", "file": "message-thread.html", "deps": [], "when": "Real chat messages shown as a conversation, or a sent-versus-suggested reply comparison. Every bubble carries a hidden speaker name." },
     { "name": "theme-toggle", "title": "Theme toggle", "type": "ui", "file": "theme-toggle.html", "deps": ["page-behavior"], "when": "Reader-facing light/dark switch; page-behavior wires it. Optional — prefers-color-scheme works without it." }
   ]
 }

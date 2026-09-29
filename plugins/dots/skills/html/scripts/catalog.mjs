@@ -11,7 +11,7 @@ const skillRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const assets = join(skillRoot, 'assets');
 const templates = join(skillRoot, 'scripts', 'templates');
 const registry = JSON.parse(readFileSync(join(assets, 'registry', 'registry.json'), 'utf8'));
-const preferred = { 'finding-list': 'findings', 'flow-diagram': 'flow' };
+const preferred = { 'finding-list': 'findings', 'flow-diagram': 'flow', 'message-thread': 'exchange' };
 
 function slot(source, marker, content) {
   if (!source.includes(marker)) throw new Error(`gallery template has no ${marker} slot`);

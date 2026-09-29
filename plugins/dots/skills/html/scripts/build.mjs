@@ -116,6 +116,7 @@ export async function build(modulePath, { embedSource = false } = {}) {
     dek: spec.dek,
     footer: spec.footer,
     layout: spec.layout,
+    tone: spec.tone,
     toc: spec.toc,
     sources: spec.sources,
     components: spec.components,

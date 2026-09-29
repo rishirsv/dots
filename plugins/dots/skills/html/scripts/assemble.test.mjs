@@ -26,6 +26,19 @@ test("includes body components and dependencies, and rejects unknown names", () 
   assert.throws(() => assemble({ title: "Bad", body: '<div data-component="missing"></div>' }), /unknown component "missing"/);
 });
 
+test("a tone marks the document root and keeps the default page unmarked", () => {
+  assert.match(assemble({ title: "T", body: "<p>x</p>" }), /<html lang="en">/);
+  assert.match(assemble({ title: "T", body: "<p>x</p>", tone: "personal" }), /<html lang="en" data-tone="personal">/);
+  assert.throws(() => assemble({ title: "T", body: "<p>x</p>", tone: "neon" }), /unknown tone "neon"/);
+});
+
+test("tone dark tokens outrank the base dark theme", () => {
+  const theme = readFileSync(fileURLToPath(new URL("../assets/theme.css", import.meta.url)), "utf8");
+  assert.match(theme, /\[data-tone="personal"\]\[data-theme="dark"\] \{/);
+  assert.match(theme, /:root\[data-tone="personal"\]:not\(\[data-theme\]\) \{/);
+  assert.ok(theme.indexOf('[data-tone="personal"] {') > theme.indexOf('[data-theme="dark"] {'), "tone light block must follow the base dark block");
+});
+
 test("extracts every registry style and script block", () => {
   const registryRoot = fileURLToPath(new URL("../assets/registry/", import.meta.url));
   const registry = JSON.parse(readFileSync(join(registryRoot, "registry.json"), "utf8"));
