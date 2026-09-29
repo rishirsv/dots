@@ -12,8 +12,26 @@
     ]
   },
   "scope": "<review scope>",
+  "assumptions": [],
+  "inventory": [],
   "verdict": "<verdict>",
-  "findings": [],
+  "findings": [
+    {
+      "location": "<path:line>",
+      "evidence": "<exact quoted text>",
+      "pattern": "<matched pattern>",
+      "consequence": "<likely consequence>",
+      "confidence": "<high|medium|low>",
+      "action": "<remove|rewrite|move|add|flag>",
+      "verification": "<check that could verify the correction>"
+    }
+  ],
+  "proposed_edits": [
+    {
+      "finding": "<finding location>",
+      "diff": "<diff hunk>"
+    }
+  ],
   "open_questions": [],
   "limitations": []
 }

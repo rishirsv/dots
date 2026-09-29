@@ -70,8 +70,7 @@ For a skill that authors and reviews other skills:
   operates on a supplied template.”
 
 A description edit can proceed without loading those unrelated methods. These
-examples adapt the principles in the linked OpenAI sources; they are not
-required wording for generated skills.
+examples are illustrations, not required wording for generated skills.
 
 ### Write instructions that change behavior
 
@@ -82,6 +81,9 @@ required wording for generated skills.
 - **Specify output needs.** When tone, length, or format affects usefulness,
   describe the audience and required result. Avoid imposing elaborate headings
   or recurring phrases on every response.
+- **Frame length by the reader.** Prefer “answer only what the reader asked”
+  to word counts. Keep an exact limit only when the deliverable or a consumer
+  sets one.
 - **Make delegation conditional.** When parallel work benefits the recurring
   job, state which independent work can be delegated and who integrates it.
   Respect the host's available agents and authorization; keep simple work local.
@@ -113,6 +115,20 @@ required wording for generated skills.
   as a substitute for naming the method.
 - **State the positive behavior.** Use prohibitions for real guardrails and
   pair them with what the agent should do instead.
+- **Write at normal volume.** State requirements plainly. Reserve capitals,
+  `CRITICAL`, or stacked `must` for an instruction that an observed failure
+  shows is underweighted, and put the reason beside it. When several lines are
+  all marked critical, the markers stop carrying information. Write a real
+  requirement as a requirement: `try to`, `if possible`, and `ideally` read as
+  permission to skip it.
+- **Keep examples from becoming templates.** The target copies an example's
+  length, tone, and structure. When an example teaches judgment, show
+  contrasting cases and label them illustrative. Use a single exact example
+  only when it pins a required format.
+- **Give one default.** Name the default path and when to depart from it
+  instead of offering a menu of equal alternatives.
+- **State the requirement, not the grader.** Replace “you will be graded on”
+  with each requirement the grader checks.
 - **Explain why when it changes judgment.** Keep the reason when it helps the
   agent choose between plausible actions, understand a non-obvious constraint,
   or remember the method. Do not add reasons that merely advertise the value
@@ -134,6 +150,18 @@ required wording for generated skills.
   constrain useful judgment. Preserve operational invariants; treat uncertain
   behavioral benefits as hypotheses. Use a focused trial only when it would
   materially change the decision and the active workflow permits it.
+- **Keep context only the author has.** Audience, environment facts, tool and
+  script contracts, the quality bar, hard judgment calls, and the reasons
+  behind constraints are not pruning targets. Prune restatements of what the
+  agent already does unprompted.
+- **Write current rules, not history.** Remove incident IDs, PR numbers,
+  past-tense narratives, and relative phrasing such as “now”, “no longer”, or
+  “also counts”; the agent never saw the earlier version. Keep a pinned
+  version, path, or flag only when the job depends on it, and check it against
+  the current environment.
+- **Generalize accreted patches.** When several narrow conditionals each answer
+  one past incident, replace them with the principle they share or supply the
+  missing context. Then check that the original cases still behave correctly.
 - **Delete whole no-ops.** Do not trim an unnecessary sentence into a shorter
   but more abstract version.
 - **Preserve the method while pruning.** Keep the actions, artifacts, decision
@@ -180,6 +208,10 @@ required wording for generated skills.
   failure is usually a hypothesis, not a universal rule.
 - **Generalize only as far as the evidence allows.** Keep a narrow correction
   narrow until repeated evidence supports a broader standard.
+- **Enforce checkable rules with checks.** When a script, schema, or validator
+  can enforce a rule, prefer it to prose; keep the prose for why and when.
+  Put lookups, scoring arithmetic, and fixed formatting in data files or
+  scripts, and leave the agent the judgment.
 - **Let checks reject something plausible.** A validation step is useful when a
   bad result can fail it and that failure changes the workflow or final status.
 
@@ -228,6 +260,10 @@ metadata-only edit does not need the whole domain workflow:
 - **Account for every removal.** Before finishing, compare old and new source
   and identify every removed mode, branch, decision rule, example, output field,
   and accepted passage.
+- **Remove dependents with the text.** When removing an instruction, mode, or
+  name, search the package and repository for references to it, including
+  tests, evaluations, docs, other skills, and scripts that match its wording.
+  Update or remove each one.
 - **Do not use line count as evidence.** A shorter file is not better unless it
   preserves or improves capability, judgment, and writing quality.
 - **Do not paraphrase for uniformity.** Leave clear prose alone when the edit
@@ -266,6 +302,10 @@ metadata-only edit does not need the whole domain workflow:
   user has authorized the remaining work.
 - **Do not present structural validation as behavioral proof.** Syntax, file
   existence, and schema checks prove structure only.
+- **Do not treat self-report as evidence.** Asking a model whether it needs an
+  instruction does not show what the instruction does. Use a behavioral trial
+  when a removal's effect is contested. If a removal regresses, restore the
+  minimal form rather than the verbose original.
 - **Test meaningful failures when they matter.** Run valid and failing inputs
   for scripts or workflows whose failure handling is part of the contract.
 - **Consume validation results.** A failed check must change the workflow or
@@ -284,11 +324,3 @@ metadata-only edit does not need the whole domain workflow:
   an authorized assumption.
 - **Inspect the actual deliverable.** Check content and non-visible structure.
   Render and inspect visual artifacts when layout affects correctness.
-
-## Source guidance
-
-These authoring criteria incorporate OpenAI’s
-[Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)
-and [model guidance](https://developers.openai.com/api/docs/guides/latest-model),
-reviewed September 12, 2026. Recheck model-specific assumptions when retargeting
-a skill; these sources are rationale, not mandatory reading on every run.

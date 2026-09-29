@@ -15,9 +15,10 @@ compare the changed source against those before finishing. Check that the
 resulting skill applies the relevant authoring criteria in `standards.md`,
 including what future runs load, decide, delegate, return, and count as done.
 
-For static review, read [skill-review.md](references/skill-review.md). Return an
-evidence-backed diagnosis. Review-only requests leave source unchanged; when
-the user also requests fixes, complete the update and its relevant checks.
+For static review, read [skill-review.md](references/skill-review.md). Return
+evidence-backed findings and proposed edits. Review-only requests leave source unchanged; when
+the user also requests fixes, apply the supported edits and run their relevant
+checks.
 
 When examples, transcripts, accepted outputs, source packs, or user corrections
 must become reusable behavior, read
@@ -28,5 +29,6 @@ the current or a named Codex task turned into a new or updated skill, read
 Plugin scaffolding, manifests, packaging, marketplace entries, installation,
 and cache updates belong to the environment's default `plugin-creator`.
 
-Return the changed source or review verdict, the checks that support it, and
-any uncertainty that still affects use.
+Return the changed source, or the review verdict with its findings and
+proposed edits, plus the checks that support it and any uncertainty that still
+affects use.
