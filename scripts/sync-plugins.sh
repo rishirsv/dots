@@ -10,7 +10,8 @@ usage() {
 Usage: scripts/sync-plugins.sh [--all|--codex|--claude] [--allow-dirty]
 
 Refreshes repo-owned plugins and verifies their installed versions. Codex also
-syncs ~/.codex-personal when it exists. Defaults to --all. Refuses uncommitted
+syncs ~/.codex-personal when it exists and preserves disabled local plugins.
+Defaults to --all. Refuses uncommitted
 plugin source unless --allow-dirty is passed for development testing.
 EOF
 }
@@ -91,11 +92,21 @@ codex_for() {
 
 sync_codex_home() {
   local label="$1" home="$2" profile_home agent_source agent_target backup spec name version installed stale
+  local -a active_specs
   [[ -z "$home" || -d "$home" ]] || { echo "Skipping $label: $home does not exist"; return; }
 
   echo "Syncing $label"
   codex_for "$home" plugin marketplace add "$ROOT" >/dev/null
-  for spec in "${CODEX_SPECS[@]}"; do
+  installed="$(codex_for "$home" plugin list --json)"
+  active_specs=("${(@f)$(python3 -c '
+import json, sys
+disabled = {p["pluginId"] for p in json.load(sys.stdin)["installed"] if p.get("enabled") is False}
+for spec in sys.argv[1:]:
+    if spec.split("\t", 1)[0] + "@dots" not in disabled:
+        print(spec)
+' "${CODEX_SPECS[@]}" <<< "$installed")}")
+  for spec in "${active_specs[@]}"; do
+    [[ -n "$spec" ]] || continue
     IFS=$'\t' read -r name version <<< "$spec"
     codex_for "$home" plugin add "$name@dots" >/dev/null
   done
@@ -107,11 +118,11 @@ sync_codex_home() {
   installed="$(codex_for "$home" plugin list --json)"
   python3 -c '
 import json, sys
-expected = dict(item.split("\t", 1) for item in sys.argv[1:])
+expected = dict(item.split("\t", 1) for item in sys.argv[1:] if item)
 installed = {p["pluginId"]: p["version"] for p in json.load(sys.stdin)["installed"]}
 errors = ["%s@dots: expected %s, got %s" % (name, version, installed.get(name + "@dots", "not installed")) for name, version in expected.items() if installed.get(name + "@dots") != version]
 if errors: raise SystemExit("Codex verification failed:\n  " + "\n  ".join(errors))
-' "${CODEX_SPECS[@]}" <<< "$installed"
+' "${active_specs[@]}" <<< "$installed"
 
   profile_home="${home:-$HOME/.codex}"
   agent_source="$ROOT/plugins/dots/agents"

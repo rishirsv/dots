@@ -1,4 +1,5 @@
 {
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "dots",
   "version": "0.2.233",
   "description": "Focused workflows for planning, building, reviewing, and shipping software.",
@@ -10,8 +11,25 @@
     "workflow",
     "skills"
   ],
-  "category": "Productivity",
-  "assets": "./assets",
-  "references": "./references",
-  "skills": "./skills"
+  "extensions": {
+    "com.openai": {
+      "apps": "./.app.json",
+      "interface": {
+        "displayName": "Dots",
+        "shortDescription": "Plan, build, review, and ship.",
+        "longDescription": "Focused skills and agent workflows for software development. Turn a request into a clear plan, implement the change, review the result, and ship it.",
+        "developerName": "Rishi",
+        "category": "Productivity",
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
+        "defaultPrompt": "Use Dots to choose the smallest workflow for this task and carry it through.",
+        "brandColor": "#FF4B0A",
+        "composerIcon": "./assets/icon.png",
+        "logo": "./assets/logo.png",
+        "screenshots": []
+      }
+    }
+  }
 }

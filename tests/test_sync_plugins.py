@@ -12,6 +12,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class SyncPluginsTests(unittest.TestCase):
     def test_codex_sync_replaces_stale_agent_profiles_and_keeps_backup(self):
+        self.run_codex_sync(disabled=False)
+
+    def test_codex_sync_preserves_disabled_local_plugin(self):
+        self.run_codex_sync(disabled=True)
+
+    def run_codex_sync(self, *, disabled):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "scripts").mkdir()
@@ -45,10 +51,17 @@ class SyncPluginsTests(unittest.TestCase):
             git.write_text("#!/bin/sh\nexit 0\n")
             git.chmod(0o755)
             codex = bin_dir / "codex"
+            installed = {"installed": [{
+                "pluginId": "dots@dots",
+                "version": "0.9.0" if disabled else "1.0.0",
+                "enabled": not disabled,
+            }]}
+            calls = root / "codex-calls"
             codex.write_text(
                 "#!/bin/sh\n"
+                f"printf '%s\\n' \"$*\" >> '{calls}'\n"
                 "if [ \"$1 $2\" = \"plugin list\" ]; then\n"
-                "  printf '%s\\n' '{\"installed\":[{\"pluginId\":\"dots@dots\",\"version\":\"1.0.0\"}]}'\n"
+                f"  printf '%s\\n' '{json.dumps(installed)}'\n"
                 "fi\n"
             )
             codex.chmod(0o755)
@@ -65,6 +78,10 @@ class SyncPluginsTests(unittest.TestCase):
             )
 
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            if disabled:
+                self.assertNotIn("plugin add dots@dots", calls.read_text())
+            else:
+                self.assertIn("plugin add dots@dots", calls.read_text())
             self.assertEqual(
                 sorted(path.name for path in installed_agents.iterdir()),
                 ["advisor.md", "advisor.toml"],

@@ -1,4 +1,5 @@
 {
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "drafts",
   "version": "0.1.2",
   "description": "Writing workflows for developing ideas, drafting, and revising prose while preserving your voice.",
@@ -10,7 +11,31 @@
     "books",
     "drafting"
   ],
-  "category": "Productivity",
-  "assets": "./assets",
-  "skills": "./skills"
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Drafts",
+        "shortDescription": "From first idea to finished prose, in your voice.",
+        "longDescription": "Develop an idea, shape an outline, draft in your voice, and revise with focused editorial passes. Start with Scribe or choose a writing skill directly. Keep voice and style guidance in your own writing workspace.",
+        "developerName": "Rishi",
+        "category": "Productivity",
+        "capabilities": [
+          "Interactive",
+          "Read",
+          "Write"
+        ],
+        "defaultPrompt": [
+          "Use $scribe to help me develop an idea into a draft.",
+          "Use $reader to give my draft a fresh-eyes review.",
+          "Use $setup-project to set up my writing workspace."
+        ],
+        "brandColor": "#7B5E45",
+        "composerIcon": "./assets/icon.png",
+        "logo": "./assets/logo.png",
+        "screenshots": [],
+        "websiteURL": "https://github.com/rishirsv/dots/tree/main/plugins/drafts",
+        "logoDark": "./assets/logo-dark.png"
+      }
+    }
+  }
 }
