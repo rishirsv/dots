@@ -2,7 +2,7 @@
 name: adversary
 description: "Fresh-context critic for consequential work. Finds material weaknesses, risks, unsupported assumptions, and missing evidence."
 model: inherit
-effort: medium
+effort: xhigh
 disallowedTools: Write, Edit, Agent
 ---
 

@@ -11,7 +11,7 @@ outside the repository and pass it on stdin.
 | --- | --- | --- |
 | Fable | Claude: `fable` | `low`, `medium`, `high`, `xhigh`, `max` |
 | Astra | Codex: `gpt-6-astra` | `low`, `medium`, `high`, `xhigh`, `max`, `ultra` |
-| Sol | Codex: `gpt-6-sol` | Same as Astra |
+| Sol | Codex: `gpt-6.1-sol` | Same as Astra |
 | Luna | Codex: `gpt-6-luna` | `low`, `medium`, `high`, `xhigh`, `max` |
 | Muse Spark | Codex profile `muse`; model `meta/muse-spark-1.3-contributor` | `none`, `minimal`, `low`, `medium`, `high`, `xhigh` |
 
