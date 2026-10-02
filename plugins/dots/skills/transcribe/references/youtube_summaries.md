@@ -12,16 +12,16 @@ explicit request for brevity, detail, study notes, or exhaustive coverage
 controls. Otherwise infer depth from the reader's decision, the video's
 information density, and the cost of missing nuance.
 
-- **Glance:** Use for orientation or a narrow question. Lead with the direct
-  answer or thesis, then only the few points needed to understand it.
+- **Glance:** Use for a quick introduction or a narrow question. Lead with the
+  direct answer or thesis, then only the few points needed to understand it.
 - **Working:** Use by default for a general summary. Give the thesis, grouped
   ideas, the strongest examples or reasoning, and practical implications.
-- **Deep:** Use for learning, consequential decisions, dense technical
-  material, or a request for detailed notes. Preserve the argument or process,
-  evidence and examples, caveats, and connections between sections.
+- **Deep:** Use for learning, consequential decisions, dense technical material,
+  or a request for detailed notes. Preserve the argument or process, evidence
+  and examples, caveats, and connections between sections.
 - **Reference:** Use when the result must substitute for watching the video.
-  Build a navigable chapter map with comprehensive notes, important details,
-  and timestamps that make each section recoverable.
+  Build a navigable chapter map with comprehensive notes, important details, and
+  timestamps that make each section recoverable.
 
 Increase depth when the video introduces several dependent ideas, makes claims
 whose support matters, teaches a process, or will guide action. Decrease it
@@ -45,8 +45,8 @@ help with the current task:
 - For an **interview, meeting, or conversation**, group themes and attribute
   views only when the transcript identifies speakers reliably; surface
   decisions, disagreements, commitments, and open questions when present.
-- For a **narrative or commentary**, preserve the central arc, turning points,
-  illustrative stories, and conclusion without retelling every beat.
+- For a **narrative or commentary**, preserve the main sequence, turning points,
+  illustrative stories, and conclusion without retelling every event.
 
 Use timestamps at major claims, transitions, demonstrations, and action steps.
 Do not timestamp every bullet when a section-level timestamp is enough.
@@ -80,8 +80,8 @@ Read the draft against the user's task and the transcript:
 4. Check that source-derived points and agent-designed application are visibly
    distinct.
 5. Check that important statements remain traceable to useful timestamps.
-6. Stop when another layer of detail would add retrieval material rather than
-   improve the reader's decision, learning, or action.
+6. Stop when additional detail would only make later lookup easier and would not
+   help the reader decide, learn, or act.
 
 The summary is complete when it answers the user's actual task, preserves the
 video's material reasoning at the chosen depth, and can be used without first

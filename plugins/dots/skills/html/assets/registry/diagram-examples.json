@@ -8,7 +8,7 @@
   {
     "id": "architecture-board",
     "title": "Architecture board",
-    "use": "A full-system panorama with layers, path, and ownership.",
+    "use": "Show the full system, its layers, runtime path, and responsibilities.",
     "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 220\" aria-hidden=\"true\">\n        <rect class=\"diagram-node\" x=\"14\" y=\"14\" width=\"292\" height=\"34\" rx=\"5\"/><text class=\"diagram-label\" x=\"160\" y=\"31\">roles · operators · consumers</text>\n        <rect class=\"diagram-node\" x=\"14\" y=\"58\" width=\"292\" height=\"52\" rx=\"5\"/><line class=\"diagram-gridline\" x1=\"111\" y1=\"58\" x2=\"111\" y2=\"110\"/><line class=\"diagram-gridline\" x1=\"209\" y1=\"58\" x2=\"209\" y2=\"110\"/><text class=\"diagram-label\" x=\"62\" y=\"84\">surface</text><text class=\"diagram-label\" x=\"160\" y=\"84\">runtime</text><text class=\"diagram-label\" x=\"258\" y=\"84\">control</text>\n        <rect class=\"diagram-node is-focal\" x=\"14\" y=\"120\" width=\"292\" height=\"36\" rx=\"5\"/><text class=\"diagram-label\" x=\"160\" y=\"138\">primary execution path</text>\n        <rect class=\"diagram-node\" x=\"14\" y=\"166\" width=\"292\" height=\"40\" rx=\"5\"/><text class=\"diagram-label\" x=\"160\" y=\"186\">owners · proof · next intervention</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">Four bands separate who uses the system, what runs, the main path, and who owns the next change.</figcaption>"
   },
   {
@@ -93,7 +93,7 @@
   {
     "id": "waterfall",
     "title": "Waterfall",
-    "use": "Explain how additions and deductions bridge two totals.",
+    "use": "Show how additions and deductions change the starting total into the ending total.",
     "markup": "<div class=\"diagram-scroll\"><svg class=\"diagram-canvas\" viewBox=\"0 0 320 180\" aria-hidden=\"true\">\n        <line class=\"diagram-gridline\" x1=\"24\" y1=\"146\" x2=\"302\" y2=\"146\"/>\n        <rect x=\"34\" y=\"86\" width=\"42\" height=\"60\" fill=\"var(--a40)\"/><text class=\"diagram-value\" x=\"55\" y=\"78\">100</text>\n        <rect x=\"88\" y=\"58\" width=\"42\" height=\"28\" fill=\"var(--accent)\"/><line class=\"diagram-gridline\" x1=\"76\" y1=\"86\" x2=\"88\" y2=\"86\"/><text class=\"diagram-value\" x=\"109\" y=\"50\">+24</text>\n        <rect x=\"142\" y=\"58\" width=\"42\" height=\"18\" fill=\"var(--a20)\"/><line class=\"diagram-gridline\" x1=\"130\" y1=\"58\" x2=\"142\" y2=\"58\"/><text class=\"diagram-value\" x=\"163\" y=\"92\">−18</text>\n        <rect x=\"196\" y=\"40\" width=\"42\" height=\"36\" fill=\"var(--accent)\"/><line class=\"diagram-gridline\" x1=\"184\" y1=\"76\" x2=\"196\" y2=\"76\"/><text class=\"diagram-value\" x=\"217\" y=\"32\">+32</text>\n        <rect x=\"250\" y=\"40\" width=\"42\" height=\"106\" fill=\"var(--foreground)\"/><text class=\"diagram-value\" x=\"271\" y=\"30\">138</text>\n      </svg></div>\n      <figcaption class=\"diagram-summary\">A starting value of 100 reaches 138 after additions of 24 and 32 offset an 18-point deduction.</figcaption>"
   },
   {

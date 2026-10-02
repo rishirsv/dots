@@ -10,8 +10,8 @@ gotchas: Generate with scripts/chart.mjs (spec: data numbers + visible
   value text) rather than plotting points by hand. No axes, no grid, no
   tick labels — it is a shape, not a chart.
   Stroke is currentColor at --a40 so it inherits surrounding text color; only
-  the final point gets a dot in --accent, marking "where we are now." The SVG
-  is aria-hidden="true" — the accessible number always lives in adjacent
+  the final point gets a dot in --accent, marking "the final observation." The SVG
+  is aria-hidden="true" — the accessible number must appear in adjacent
   visible text, never only in the graphic.
 -->
 <style>

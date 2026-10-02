@@ -1,12 +1,12 @@
 # Configure Web Fonts
 
-Use the project’s styling system. Tune example values to the actual font, content
-and supported browsers.
+Use the project’s styling system. Tune example values to the actual font,
+content and supported browsers.
 
 ## Load A Variable Font
 
 Replace the asset path and weight range with those supplied by the font. Declare
-italic separately when used. A static font needs a face declaration per weight.
+italic separately when used. For a static font, declare one face per weight.
 
 ```css
 @font-face {
@@ -22,10 +22,11 @@ body {
 }
 ```
 
-`swap` keeps fallback text visible but can change wrapping when the font arrives.
-If that shift is disruptive, measure the fallback and consider `size-adjust`,
-`ascent-override`, `descent-override`, and `line-gap-override` on a fallback face.
-These values are specific to the font pair. Preload only fonts needed immediately.
+`swap` keeps fallback text visible but can change wrapping when the font
+arrives. If that shift is disruptive, measure the fallback and consider
+`size-adjust`, `ascent-override`, `descent-override`, and `line-gap-override` on
+a fallback face. These values are specific to the font pair. Preload only fonts
+needed immediately.
 
 ## Optical Sizing And Features
 
@@ -44,6 +45,7 @@ These values are specific to the font pair. Preload only fonts needed immediatel
 }
 ```
 
-Check that the font supplies the feature. Tabular digits stabilize changing values
-and aligned columns; they do not replace decimal alignment or appropriate layout.
-Reserve `font-variation-settings` for axes without a suitable standard property.
+Check that the font supplies the feature. Tabular digits keep widths stable for
+changing values and aligned columns; they do not replace decimal alignment or
+appropriate layout. Reserve `font-variation-settings` for axes without a
+suitable standard property.

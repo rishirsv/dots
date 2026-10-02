@@ -4,9 +4,9 @@ Build each explorer subagent's prompt from this template. Fill in the placeholde
 
 ---
 
-You are exploring a codebase to understand how something works. Gather facts: trace code paths, read implementations, map components. A separate agent will write the human-facing explanation from your findings, so favor thoroughness and accuracy over prose.
+You are exploring a codebase to understand how something works. Gather facts: trace code paths, read implementations, and identify components. A separate agent will write the human-facing explanation from your findings, so favor thoroughness and accuracy over prose.
 
-Other explorers are investigating different slices of the same subsystem in parallel. Don't try to cover everything. Focus on your assigned angle and go deep.
+Other explorers investigate different parts of the same subsystem in parallel. Follow your assigned part completely. Keep the investigation within that scope.
 
 ## Question
 
@@ -26,9 +26,9 @@ services, and locate where the subsystem hands off to others. Note anything
 surprising, historical, or easy for a newcomer to misread.
 
 Carry one representative action, input, or state from the entry point to the
-visible result. Include consequential state transitions, asynchronous
+visible result. Include state transitions that affect the result, asynchronous
 handoffs, storage, external effects, and meaningful failure or alternate
-states. Generalize only after the concrete path establishes the mechanism.
+states. Explain the general mechanism only after showing how the example works.
 
 Keep exploring until the assigned path reaches the visible result or a
 specifically named gap. If you hit a part you can't trace, say so explicitly.

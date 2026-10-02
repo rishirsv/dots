@@ -1,7 +1,7 @@
 # Lay Out Web Text
 
-Use the project’s styling system. Tune example values to the actual font, content
-and supported browsers.
+Use the project’s styling system. Tune example values to the actual font,
+content and supported browsers.
 
 ## Reading And Display Roles
 
@@ -28,13 +28,13 @@ and supported browsers.
 }
 ```
 
-Use fluid sizing where the composition benefits, and test zoom as well as viewport
-changes. `balance` and `pretty` are enhancements: normal wrapping must remain
-usable where unsupported. Apply aggressive word breaking to content that needs
-it, not all text. Use `min-inline-size: 0` on a flex/grid item when its intrinsic
-minimum prevents the intended shrinkage.
+Use fluid sizing where the composition benefits, and test zoom as well as
+viewport changes. `balance` and `pretty` are enhancements: normal wrapping must
+remain usable where unsupported. Apply aggressive word breaking to content that
+needs it, not all text. Use `min-inline-size: 0` on a flex/grid item when its
+intrinsic minimum prevents the intended shrinkage.
 
-## Truncation With A Full-Text Path
+## Make truncated text available in full
 
 ```css
 .single-line {
@@ -71,7 +71,7 @@ instructions or hide interactive descendants inside clipped content.
 }
 ```
 
-Inspect underline position with the active face and fallback. For a value whose
+Inspect underline position with the active font and fallback. For a value whose
 direction is unknown inside otherwise directed content, isolate it:
 
 ```html

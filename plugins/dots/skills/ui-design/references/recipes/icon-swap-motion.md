@@ -1,6 +1,8 @@
 # Motion example
 
-This uses the `motion` package. Where the project has `framer-motion`, import the same APIs from `"framer-motion"`. Never mix an installed package with the other's import path.
+This uses the `motion` package. If the project has `framer-motion`, import the
+same APIs from `"framer-motion"`. Never mix an installed package with the
+other's import path.
 
 ```tsx
 import { AnimatePresence, motion } from "motion/react";
@@ -32,9 +34,9 @@ function IconButton({ isActive, ActiveIcon, InactiveIcon, label }) {
 }
 ```
 
-The examples show presentation; connect the button event to the existing state
-owner. These examples represent a toggle: keep its label stable and expose its
-state with `aria-pressed`. For a changing action such as Play/Pause, name the
-next action and omit `aria-pressed`; for disclosure, use `aria-expanded` instead.
-For reduced motion, render the current glyph without Motion so state changes
-remain immediate.
+The examples show appearance only. Connect the button event to the existing
+component or service that manages state. These examples represent a toggle: keep
+its label stable and expose its state with `aria-pressed`. For a changing action
+such as Play/Pause, name the next action and omit `aria-pressed`; for
+disclosure, use `aria-expanded` instead. For reduced motion, render the current
+glyph without Motion so state changes remain immediate.

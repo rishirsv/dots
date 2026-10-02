@@ -6,7 +6,7 @@ description: "Commits and pushes finished changes, then opens or updates a non-d
 # Publish PR
 
 For commit messages, the pull-request title, and its description, apply
-[Technical writing guidance](../../references/technical-writing-guidance.md)
+[Writing style](../../references/writing-style.md)
 as an editing standard. `$publish-pr` still owns these publishing artifacts.
 
 1. Confirm the GitHub repository and active account. If necessary, run
@@ -21,10 +21,11 @@ as an editing standard. `$publish-pr` still owns these publishing artifacts.
    when base changes affect this work. Reuse the completed task's checks and
    visual evidence. After rebasing or splitting the work, inspect changes to
    code, dependencies and build configuration; rerun only checks whose evidence
-   no longer covers the delivered PR. A clean application of the patch alone
-   does not establish equivalence, and publication alone does not require a new
-   verification pass. Avoid rewriting shared branches without coordination.
-   If a previously pushed branch is rebased, push with `--force-with-lease`.
+   no longer covers the delivered PR. A patch applying without conflicts does
+   not prove that the behavior is unchanged, and publication alone does not
+   require a new verification pass. Avoid rewriting shared branches without
+   coordination. If a previously pushed branch is rebased, push with
+   `--force-with-lease`.
 
 4. Commit and push the requested changes.
 
@@ -90,8 +91,8 @@ Check the applicable `gh pr create --help` or `gh pr edit --help` before using
 `--attach`; availability belongs to the installed CLI, not this example. If it
 is unavailable, use another already-authorized attachment interface when one
 exists. Otherwise preserve the evidence locally and report the attachment gap.
-Do not leave local paths in a published body or call a PR evidence-complete when
-required attachments are missing.
+Remove local paths from the published body. If required attachments are missing,
+report that the pull request lacks that evidence.
 
 When supported, use `gh pr create` or `gh pr edit` with `--attach`. Write the description to a
 Markdown file, reference each image or video where it belongs using its local

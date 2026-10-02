@@ -7,16 +7,16 @@ model to use the same tabs, schedules, methods, or outputs.
 
 ## Define the model's job and operating path
 
-State what the skill owns: for example, an operating forecast, budget,
+State the model or analysis the skill produces: for example, an operating forecast, budget,
 three-statement model, DCF, comparable-company valuation, transaction model,
-LBO, merger analysis, scenario pack, or workbook tie-out. Name adjacent jobs it
-does not own when their boundary would otherwise be unclear. A scenario skill,
+LBO, merger analysis, scenario pack, or workbook tie-out. Name related jobs it
+excludes when the scope would otherwise be unclear. A scenario skill,
 for example, should alter an existing baseline rather than silently rebuild it;
 an audit skill should diagnose a workbook rather than overwrite it.
 
 Choose the artifact from the job and the supplied inputs. A formula workbook is
 normally the source of truth when the user needs to change drivers, trace
-calculations, or retain a reusable model. A controlled values export can suit a
+calculations, or retain a reusable model. An export of verified values can suit a
 fixed analysis. A concise narrative or HTML companion can explain results, but
 should point back to exact workbook cells or ranges when it reports model
 outputs. Do not make raw plans, run logs, ledgers, or intermediate JSON the
@@ -30,15 +30,15 @@ Make the workflow branch on the condition of the input model:
 - If the skill receives partial data, construct only the schedules justified by
   the data and identify what the missing inputs prevent it from calculating.
 - If the baseline contains known formula errors, unstable links, or undefined
-  drivers, stop before presenting scenario outputs as a baseline. Route to a
-  repair or audit path, or label a diagnostic overlay as such.
-- If a deterministic transform is repeated, provide and test a script with a
-  declared input contract, output locations, and a useful failure message.
+  drivers, stop before presenting scenario outputs as a baseline. Use the
+  repair or audit workflow, or label the added diagnostic results clearly.
+- If a deterministic transform is repeated, provide and test a script with specified
+  inputs, output locations, and a useful failure message.
 
 ## Make the model traceable
 
-Tell authors to separate, either by tabs, clearly marked blocks, or structured
-data layers:
+Separate the following content with tabs, clearly marked blocks, or distinct
+data structures:
 
 - source facts and historical actuals;
 - user inputs and explicit assumptions;
@@ -89,8 +89,8 @@ tabs. Examples include:
 
 For circular calculations such as interest and cash sweeps, require the skill
 to document the intended circularity or iterative setting, identify the linked
-cells, and expose a non-circular diagnostic where practical. Do not use opaque
-plugs to force a balance sheet to balance.
+cells, and expose a non-circular diagnostic where practical. Do not insert unexplained
+adjustments merely to force a balance sheet to balance.
 
 ## Assumptions, cases, and scenarios
 
@@ -102,11 +102,10 @@ unavailable, but it should label those assumptions rather than imply they are
 reported facts.
 
 Use scenario analysis only when it answers a concrete model question. Change a
-small set of meaningful drivers, retain the base case, and show absolute
-outputs alongside deltas. For each changed driver, retain the baseline value,
+small set of meaningful drivers, retain the base case, and show output values
+alongside their changes from the base case. For each changed driver, retain the baseline value,
 case value, timing, type of change, reason, source or assumption label, and
-the outputs affected. Keep formula changes out of scenario cases. Do not mix
-market, source, and model dates without surfacing the mismatch.
+the outputs affected. Keep formula changes out of scenario cases. If market, source, and model dates differ, state the mismatch.
 
 Ask the skill to identify useful breakpoints when the model supports them: the
 price, volume, margin, leverage, liquidity, interest-rate, covenant, dilution,
@@ -168,7 +167,7 @@ script tests with the script source. When native recalculation is unavailable,
 require the evaluator to inspect formulas and cached results separately and
 record the limitation.
 
-Keep the runtime compact: put shared modelling methods, schedule-specific
-checks, and sector variations in read-when references; put repeatable workbook
-inspection or generation in scripts; keep only the recurring decision path in
-`SKILL.md`.
+Keep the recurring decisions and workflow in `SKILL.md`. Put shared modelling
+methods, schedule checks, and sector variations in references, with a condition
+for reading each one. Use scripts for repeatable workbook inspection or
+generation.

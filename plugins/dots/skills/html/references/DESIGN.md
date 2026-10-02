@@ -120,27 +120,24 @@ x-motion:
 
 ## Overview
 
-Cool and technical in the default tone. One flat page background, warm-white
-in light mode and near-black in dark, carrying confident grotesque type with
-tight negative tracking. Hierarchy comes from weight, size, and an ink-alpha
-ladder — not from boxes, tints, or decoration. A single desaturated blue is
-the only voice of emphasis; amber and red speak only when something is
-genuinely wrong. The page should feel like a precise instrument: generous
-air, hairline rules, numbers that line up, motion that happens once and gets
-out of the way.
+Use a restrained technical style for the default tone. Use one flat page
+background: warm white in light mode and near black in dark mode. Use
+grotesque type with tight negative tracking. Show hierarchy through font
+weight, size, spacing, and ink opacity. Use one desaturated blue for emphasis.
+Reserve amber and red for warnings and failures. Align numbers, use thin
+rules, and keep motion brief and limited to one occurrence.
 
 ## Tones
 
 The default tone is `report`: the cool, technical page described here. It
 fits reviews, status, plans, incidents, and other work artifacts. Choose a
-different tone when the subject or audience would find that register wrong,
-not for novelty. A tone changes token values only: every component, layout,
+different tone when the subject or audience needs it. A tone changes token values only: every component, layout,
 and rule below still applies, so a toned page stays structurally identical.
 
 - `personal` suits letters, relationship or coaching reflections, personal
   reviews, and other private material written to one person. It uses warm
   paper and ink colors, serif display headings with lighter tracking, and a
-  softer card radius. Its accent still plays the single emphasis role, and
+  softer card radius. Its accent remains the only emphasis color, and
   `danger-*` stays semantic.
 
 Tones live under `x-tones` in the front-matter. Each lists only the tokens it
@@ -157,11 +154,11 @@ inline colors instead.
 `background` and `foreground` define the page colors. All grays use an alpha
 ladder (`--a4` … `--a70`) derived from `foreground` at the `x-alpha-steps`
 opacities, so every border, muted label, and track reads correctly on both
-themes without a second palette. Borders sit at `--a12` (felt, not seen);
+themes without a second palette. Use `--a12` for subtle borders;
 strong rules at `--a20`. Normal-sized secondary text uses the semantic
 `--text-muted` role (`--a60`) so it stays above 4.5:1 in both themes; lower
-alpha steps remain for borders, fills, and non-text marks. Primary-but-quiet
-text may use `--a70`.
+alpha steps remain for borders, fills, and non-text marks. Secondary
+text that needs stronger contrast may use `--a70`.
 
 `accent` is for links, active states, and the one emphasized data point.
 `accent-deep` is its high-contrast partner for small emphasized text.
@@ -178,33 +175,31 @@ the tone. Headings are semibold with
 negative tracking that scales with size — the tracking values in the
 front-matter are per-size absolutes, not a ratio. H1 steps down to its mobile
 size at 380px so a long title does not consume the whole first viewport. Body
-is 15px/1.7 at a ~66ch measure inside a 720px article column. Mono (13px/20px,
-ligatures off) is for code and aligned figures only — never for labels or
-eyebrows. Digits that line up vertically always set `font-variant-numeric:
+is 15px/1.7 at a ~66ch measure inside a 720px article column. Use mono (13px/20px, ligatures off) only for code and aligned figures.
+Use the body font for labels and context lines. Digits that line up vertically always set `font-variant-numeric:
 tabular-nums`. Headings get `text-wrap: balance`.
 
 ## Layout
 
 Pages use one of three maximum widths on the same flat background:
 
-- `article` (`spacing.article`, 720px) for prose-led explanations, status,
+- `article` (`spacing.article`, 720px) for explanations with text and figures, status,
   incidents, and plans.
 - `wide` (`spacing.wide`, 1040px) for comparisons, reviews, file maps, and
-  other pages where parallel evidence is part of the first read.
+  other pages that need evidence shown side by side.
 - `canvas` (`spacing.canvas`, 1440px) for visual references and atlases. Keep
-  prose inside a nested article-width reading column; canvas is room for the
-  visuals, not permission to stretch sentences.
+  prose inside a nested article-width reading column. Use the extra width
+  for visuals.
 
-Sections are separated by `spacing.section` (48px) of air and, at most, a
+Separate sections with `spacing.section` (48px) of space and, at most, a
 hairline rule. The table of contents is a margin rail — sticky, docked left or
 right of the reading column at wide viewports with a scroll-spy active state,
 collapsing to a compact native disclosure on narrow viewports. Linear processes
-reflow into a vertical sequence; branching diagrams and genuinely wide tables
+reflow into a vertical sequence; branching diagrams and wide tables
 stay bounded inside their own containers. The page never scrolls sideways.
 
 The page shell supplies the transition from its header to the first content
-block; do not hang structural spacing from the header's last child. Parallel
-grids declare their item count and may not expose empty tracks.
+block; do not set structural spacing on the header's last child. For parallel grids, declare the item count. Do not leave empty columns.
 
 ## Elevation & Depth
 
@@ -216,7 +211,7 @@ page background or simulated elevation.
 ## Shapes
 
 `rounded.card` (6px) for cards and code panels; `rounded.inline` (4px)
-for inline code and focus rings. Radius is quiet and uniform. Borders are 1px
+for inline code and focus rings. Keep the radius uniform. Borders are 1px
 hairlines from the alpha ladder.
 
 ## Components
@@ -235,12 +230,12 @@ Charts use the `x-chart` roles for structure, marks, labels, values, and the
 single emphasized point. Those roles follow light and dark modes automatically
 and keep chart emphasis independent from links and callouts.
 
-Motion (from `x-motion`): choreographed moments only. A one-time load stagger
+Use motion from `x-motion` only for these interactions: a one-time load stagger
 on header elements (≤400ms total), one-time reveals for figures entering the
 viewport (bars grow once, SVG paths draw once), and micro-interactions
-(hover, focus, TOC active). Zero ambient or looping motion. Everything is
-gated behind `prefers-reduced-motion: no-preference`; with JS off the page
-renders complete and static.
+(hover, focus, TOC active). Do not add ambient or looping motion. Enable motion only under
+`prefers-reduced-motion: no-preference`. With JavaScript off, the page
+must render completely and remain static.
 
 ## Do's and Don'ts
 
@@ -251,7 +246,7 @@ renders complete and static.
   tint. **Don't** put a left-side accent stripe on anything — callouts,
   quotes, recommendations, or the TOC. The active TOC item is weight and
   color alone.
-- **Do** ration chips to at most one status indicator per page ("draft").
+- **Do** limit chips to at most one status indicator per page ("draft").
   **Don't** add label-chips inside callouts or headers — use a bold run-in
   word ("**Note.**").
 - **Do** use one quiet small line of breadcrumb context above the title.

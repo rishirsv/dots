@@ -11,11 +11,11 @@
 - CHANGELOG entries, release notes in the repo
 - Issue/ticket IDs mentioned in commit messages and PR bodies
 
-The most trustworthy source, tied directly to the code, and the most complete. Everything that went through the repo should be here.
+Start with repository history because its records are directly tied to the code. It records changes that passed through the repository; it may not record all motivation.
 
 ## How to search it
 
-Expand the seed commit list:
+Expand the initial commit list:
 
 ```bash
 # Full history of the file through renames
@@ -37,7 +37,8 @@ git show <hash>
 git log <old>..<new> -p -- <file>
 ```
 
-For each substantive commit, pull the PR context:
+For each relevant commit that changes structure, ownership, interfaces, or
+behavior, fetch its PR context:
 
 ```bash
 # Find the PR number from the merge commit or branch
@@ -49,7 +50,7 @@ gh pr view <number> --json title,body,author,createdAt,mergedAt,labels,closingIs
 # The --json reviews and comments fields are where the real signal is
 ```
 
-Look for out-of-band docs:
+Look for additional documents and comments:
 
 ```bash
 # ADRs often live in docs/adr/ or similar
@@ -73,9 +74,9 @@ rg -l '<symbol>' --glob '*test*'
 
 ## Common pitfalls
 
-- **Squash-merge flatlands.** If the repo squashes PRs, individual commits in the branch history are lost. Fall back to PR body and comments.
+- **Squashed history.** If the repo squashes PRs, individual commits in the branch history are lost. Fall back to PR body and comments.
 - **Misleading commit messages.** "Small refactor" sometimes hides an intentional behavior change. Look at the diff, not the message.
-- **Cargo-culted patterns.** The author may have copied a pattern without understanding why. Check if the pattern originated earlier in the codebase and investigate *that* commit.
+- **Copied patterns.** The author may have copied a pattern without understanding why. Check if the pattern originated earlier in the codebase and investigate the originating commit.
 - **Bot commits and auto-merges.** Dependabot, Renovate, and automated backports usually don't carry motivation. Skip them when trying to find intent.
 - **Treating code as evidence of intent.** The code itself isn't evidence for why it exists. Evidence comes from commit messages, PRs, comments, tests, docs. Don't cite "the function is named X" as evidence of intent.
 

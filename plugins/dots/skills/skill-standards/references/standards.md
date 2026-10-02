@@ -1,13 +1,13 @@
 # Skill Standards
 
-This is the shared Dots quality standard for agent skills. `skill-standards`
-uses it when creating, updating, or reviewing skill source. Authoring mechanics
-belong to the environment's default `skill-creator`; this reference adds Dots
-editorial judgment, preservation standards, and domain methods.
+Use this standard to create, update, or review Dots skills. The environment's
+`skill-creator` provides authoring and validation instructions. This reference
+adds requirements for clear prose, behavior preservation, and methods for
+specific kinds of work.
 
-Use the host's validity requirements first. Let the environment's default
-`skill-creator` or `plugin-creator` own schemas, scaffolding, packaging,
-installation, and current validation commands.
+Follow the host's requirements for valid skills. Use its default `skill-creator`
+or `plugin-creator` for schemas, initial files, packaging, installation, and
+validation commands.
 
 ## How to use this reference
 
@@ -28,17 +28,16 @@ This reference is not a fixed template, checklist, or scoring system.
 
 ### Make discovery sound like the request
 
-- **Treat metadata as a context pointer.** Its wording must say what sits behind
-  it and which distinct requests should load it. The target cannot repair a
-  weak pointer because the target is still out of context.
-- **Keep discovery brief and specific.** Name the actual job and its trigger
-  using words people naturally type. Remove adjacent-topic catchalls and
-  repeated capabilities; long descriptions compete for context and may be
-  shortened before selection.
-- **Name the nearest boundary when needed.** Add an exclusion only when it
-  prevents likely misrouting.
-- **Check discovery changes.** Compare a clear trigger with a near miss and a
-  neighboring skill when the description changes.
+- **Describe when the skill applies.** Metadata must identify the work and the
+  requests that should load the skill. The agent cannot use the skill body to
+  correct an unclear description before that body has loaded.
+- **Keep descriptions brief and specific.** Name the job and its trigger in
+  words people naturally use. Remove broad claims about related topics and
+  repeated capabilities. Long descriptions may be shortened before selection.
+- **Distinguish related skills when needed.** Add an exclusion only when it
+  prevents the agent from choosing the wrong skill.
+- **Check description changes.** Compare a request that should select the
+  skill, a similar request that should not, and a request for a related skill.
 - **Follow the host invocation policy.** Let the default skill creator govern
   invocation settings; preserve existing user choices.
 - **Collapse synonyms.** Give each distinct trigger branch one strong phrase
@@ -55,11 +54,11 @@ edits or Git questions.
 
 ### Load only what the task needs
 
-Keep shared purpose, essential constraints, and route selection in `SKILL.md`.
-For multiple substantial modes, link each supporting reference at the condition
-that needs it. A simple skill can stay self-contained. Check the ordinary path
-for unconditional reading of unrelated modes, domain manuals, or repository
-maps; replace that preload with a concrete read-when condition.
+Keep the purpose, essential constraints, and choice of workflow in `SKILL.md`.
+When a skill has several substantial modes, link each reference where its
+content is needed. State when to read it. A simple skill can stay in one file.
+Check whether the common workflow loads unrelated modes, manuals, or repository
+maps. Load those resources only when the task needs them.
 
 For a skill that authors and reviews other skills:
 
@@ -87,20 +86,18 @@ examples are illustrations, not required wording for generated skills.
 - **Make delegation conditional.** When parallel work benefits the recurring
   job, state which independent work can be delegated and who integrates it.
   Respect the host's available agents and authorization; keep simple work local.
-- **Treat prose as part of the mechanism.** Agent-facing text is both
-  instruction and interface. A sentence earns its place when it changes an
-  action, decision, boundary, or useful understanding.
+- **Write for the agent's decisions.** Keep a sentence when it changes an
+  action, clarifies a decision or limit, or provides useful understanding.
 - **Open with the work, not an aspiration.** Name what the agent inspects,
   creates, changes, decides, or verifies. A promise about quality, confidence,
   or impact does not replace the work that produces it.
 - **Make the work concrete before making it shorter.** Write the actions,
   artifacts, roles, and decisions plainly. Then remove repetition without
   replacing those details with umbrella nouns or compressed policy language.
-- **Use normal English.** Prefer concrete actions, objects, and decisions to
-  compressed labels. For example, say which files changed, name the decision
-  the reader faces, or list the tests that failed. Use a specialized term only
-  when it is standard for the audience or clearly defined and used
-  consistently.
+- **Apply the shared prose rules.** Use [Writing style](../../../references/writing-style.md)
+  while drafting, not only after the skill is complete. Keep specialized terms
+  when they express a precise concept the reader needs. Define unfamiliar terms
+  before relying on them.
 - **Say what it does, not how it feels.** Prefer a concrete instruction,
   mechanism, fact, or observable consequence. If a sentence only says that the
   result should be rigorous, trustworthy, useful, or high quality, state what
@@ -129,19 +126,18 @@ examples are illustrations, not required wording for generated skills.
   instead of offering a menu of equal alternatives.
 - **State the requirement, not the grader.** Replace “you will be graded on”
   with each requirement the grader checks.
-- **Keep reasons attached to rules.** Write behavioral guidance so each rule
-  carries its reason and its priority is clear. A bare list of rules flattens
-  priority and separates rules from why, and the list's format tends to
-  reappear in the output. Use lists and tables for reference data, parallel
-  options, and checks. A bullet is fine for behavior when it states the rule
-  and its reason together.
+- **Keep reasons attached to rules.** Explain why a rule matters when the
+  reason affects judgment. Make its priority clear. A bare list can make all
+  rules seem equally important, and its format may be copied into the output.
+  Use lists and tables for reference data, options, and checks. A behavioral
+  rule can use a bullet when the rule and its reason stay together.
 - **Explain why when it changes judgment.** Keep the reason when it helps the
   agent choose between plausible actions, understand a non-obvious constraint,
   or remember the method. Do not add reasons that merely advertise the value
   of following the instruction.
-- **Run the portability test.** If a sentence could appear unchanged in several
-  unrelated skills, check whether it contains any job-specific behavior. Make
-  it concrete or remove it.
+- **Check whether the sentence belongs here.** If it could appear unchanged
+  in unrelated skills, check whether it gives guidance this job needs. Make
+  the guidance specific or remove it when it adds nothing.
 - **Keep a natural voice.** Vary sentence rhythm and use examples for real
   distinctions. Read changed prose aloud. If it sounds like rubric labels,
   product copy, or institutional policy, rewrite the instruction rather than
@@ -149,9 +145,9 @@ examples are illustrations, not required wording for generated skills.
 
 ### Prune without flattening the skill
 
-- **Use a behavioral no-op test.** Ask what the agent would do differently
-  because a sentence exists. Delete it only when the answer is nothing and the
-  skill loses no useful explanation, emphasis, voice, or navigation.
+- **Check what a sentence changes.** Ask what the agent would do differently
+  because it exists. Delete it only when it changes nothing and its removal
+  loses no useful explanation, emphasis, voice, or navigation.
 - **Account for the target model.** A workaround for an older model may now
   constrain useful judgment. Preserve operational invariants; treat uncertain
   behavioral benefits as hypotheses. Use a focused trial only when it would
@@ -165,11 +161,11 @@ examples are illustrations, not required wording for generated skills.
   “also counts”; the agent never saw the earlier version. Keep a pinned
   version, path, or flag only when the job depends on it, and check it against
   the current environment.
-- **Generalize accreted patches.** When several narrow conditionals each answer
-  one past incident, replace them with the principle they share or supply the
-  missing context. Then check that the original cases still behave correctly.
-- **Delete whole no-ops.** Do not trim an unnecessary sentence into a shorter
-  but more abstract version.
+- **Combine rules that address the same cause.** When several conditions each
+  address one past incident, state their shared principle or add the missing
+  context. Check that the revised rule still handles each original case.
+- **Delete unnecessary sentences in full.** Do not replace an unnecessary
+  sentence with a shorter, more abstract version.
 - **Preserve the method while pruning.** Keep the actions, artifacts, decision
   rules, examples, and completion conditions that make the workflow
   executable.
@@ -196,8 +192,9 @@ examples are illustrations, not required wording for generated skills.
 - **Make broad work exhaustive where it matters.** Name the relevant set that
   must be accounted for, such as every selected file, finding, caller, or
   required field.
-- **Name useful failure behavior.** Say whether the skill asks, makes an
-  assumption, preserves partial work, reports a positive-null result, or stops.
+- **State what happens when the task cannot proceed normally.** Say whether
+  the agent asks a question, makes an assumption, preserves partial work,
+  reports that it found nothing, or stops.
 - **Keep authorization concrete.** Continue work already authorized by the
   request and session. Ask only for missing decisions that materially affect
   the result or actions outside that scope; prepare independent work first.
@@ -218,8 +215,8 @@ examples are illustrations, not required wording for generated skills.
   can enforce a rule, prefer it to prose; keep the prose for why and when.
   Put lookups, scoring arithmetic, and fixed formatting in data files or
   scripts, and leave the agent the judgment.
-- **Let checks reject something plausible.** A validation step is useful when a
-  bad result can fail it and that failure changes the workflow or final status.
+- **Use checks that can catch a plausible error.** A failed check must change
+  the next action or the reported status.
 
 ### Write knowledge-worker skills for the deliverable
 
@@ -257,12 +254,36 @@ metadata-only edit does not need the whole domain workflow:
 
 ## Rules
 
+### Write and review clear instructions
+
+Apply [Writing style](../../../references/writing-style.md) to every skill's
+instructions, descriptions, supporting references, and embedded prompts.
+Use its rules for procedures, evidence, explanation, and voice as the content
+requires. Exact meaning and required formats take priority over stylistic
+preferences.
+
+Before completion, review the prose as well as the skill's structure. Identify
+ambiguous actors, conditions, pronouns, term changes, hidden actions, and dense
+noun groups. For each defect, quote the wording, describe the possible
+misreading, and supply a concrete replacement. Do not accept a skill merely
+because it avoids a list of words or uses short sentences.
+
+Compare revised instructions with the originals. Preserve selection criteria,
+permissions, required actions, exceptions, examples, output fields, and
+completion conditions. If the original meaning is unclear, resolve it from
+source or report the uncertainty. Do not create policy through paraphrase.
+
+For a collection-wide rewrite, record every instructional file inspected and
+whether it changed, remained clear, or needs follow-up. Include supporting
+references and prompts outside `SKILL.md`. Keep this coverage record with the
+work's development evidence, outside the shipped skill.
+
 ### Preserve existing skills deliberately
 
 - **Preserve accepted wording.** Keep language the user praised or asked to
   retain exactly unless the requested behavior requires a change.
-- **Modify only the seams.** Keep unrelated behavior, judgment, mental models,
-  examples, output quality, and authorization boundaries unchanged.
+- **Limit edits to the requested change.** Preserve unrelated behavior,
+  judgment, explanations, examples, output quality, and authorization limits.
 - **Account for every removal.** Before finishing, compare old and new source
   and identify every removed mode, branch, decision rule, example, output field,
   and accepted passage.
@@ -277,11 +298,12 @@ metadata-only edit does not need the whole domain workflow:
 
 ### Keep discovery complete
 
-- **Put the whole discovery boundary in metadata.** The body cannot repair a
-  vague or overlapping description because it loads after selection.
-- **Treat description edits as behavior changes.** Recheck triggers, near
-  misses, invocation mode, and neighboring skills whenever discovery text
-  changes.
+- **State the complete selection criteria in metadata.** The skill body
+  loads after selection, so it cannot correct a vague description or one that
+  overlaps another skill.
+- **Treat description edits as behavior changes.** Recheck matching requests,
+  similar requests that should not match, invocation mode, and related skills
+  whenever the description changes.
 - **Use real component names.** Do not document a skill, agent, tool, app, or
   connector that the target package does not provide.
 
@@ -289,11 +311,12 @@ metadata-only edit does not need the whole domain workflow:
 
 - **Do not duplicate authoritative rules.** Link to the owner instead of
   copying a second version that can drift.
-- **Give every resource a caller.** Remove empty folders, placeholder files,
-  dead references, unused scripts, and assets that no runtime path uses.
-- **Keep maintainer material out of runtime.** Plans, research notes, rejected
-  drafts, source packs, run history, and private examples belong in development
-  state, not the portable skill.
+- **Make each resource reachable when needed.** Remove empty folders,
+  placeholder files, broken references, unused scripts, and assets that no
+  workflow uses.
+- **Keep development records outside the shipped skill.** Plans, research
+  notes, rejected drafts, source collections, run history, and private examples
+  belong with the maintainer's working files.
 - **Keep secrets and local state out of skills.** Use the host's supported
   authentication, configuration, or state mechanism.
 - **Describe composition accurately.** Loading another skill adds instructions
@@ -303,9 +326,9 @@ metadata-only edit does not need the whole domain workflow:
 
 ### Prove the result honestly
 
-- **Verify the completion contract.** Creating a file or calling a tool alone
-  does not prove the requested result. Do not stop at a first draft when the
-  user has authorized the remaining work.
+- **Verify the required result.** Creating a file or calling a tool alone
+  does not prove completion. Finish the remaining authorized work before
+  reporting success.
 - **Do not present structural validation as behavioral proof.** Syntax, file
   existence, and schema checks prove structure only.
 - **Do not treat self-report as evidence.** Asking a model whether it needs an
@@ -314,8 +337,8 @@ metadata-only edit does not need the whole domain workflow:
   minimal form rather than the verbose original.
 - **Test meaningful failures when they matter.** Run valid and failing inputs
   for scripts or workflows whose failure handling is part of the contract.
-- **Consume validation results.** A failed check must change the workflow or
-  final status.
+- **Act on validation results.** A failed check must change the next action
+  or the reported status.
 - **State remaining uncertainty.** Do not turn missing evidence into a confident
   success claim.
 

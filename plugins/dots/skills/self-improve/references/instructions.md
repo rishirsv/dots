@@ -5,7 +5,7 @@ authorization in Self-Improve's parent skill: an explicit request to audit and
 implement instruction changes already authorizes supported edits in that scope.
 For proposal-only work, obtain approval of the exact rule and target before editing.
 
-## Choose the platform surface
+## Choose the instruction file for the platform
 
 | Runtime | Project instructions | Personal instructions | Generated memory |
 |---|---|---|---|
@@ -45,7 +45,7 @@ Describe behavior an agent can follow and a reviewer can verify:
 - Strong: `On a failed write, preserve the user's input and show a recoverable
   error; do not clear the form.`
 
-For a non-trivial rule, capture:
+For a rule that needs more explanation, capture:
 
 ```text
 Scope: when and where the rule applies
@@ -70,10 +70,11 @@ For every proposal:
 1. Cite the governing files and any supporting thread clusters. Distinguish a
    source correction from a behavior claim that still needs transcript evidence.
 2. Show the exact rule and target file.
-3. Explain why a check, skill, doc, or memory note is not the stronger home.
-4. Check whether the request already authorizes the rule and target scope.
-   Wait for approval only when that authority is missing or a material decision
+3. Explain why a check, skill, doc, or memory note is not the more suitable
+   place for the rule.
+4. Check whether the request already authorizes the rule and target scope. Wait
+   for approval only when that authority is missing or a material decision
    remains unresolved.
-5. Re-read the current file, apply the smallest edit, and inspect the merged
-   instruction chain for contradictions.
+5. Re-read the current file, apply the smallest edit, and check the combined
+   instructions that the agent will load for contradictions.
 6. Run the relevant repository checks and report what they prove.

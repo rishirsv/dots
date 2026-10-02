@@ -1,8 +1,9 @@
 # Add Grain Deliberately
 
-Use grain when visible gradient bands need softening or texture belongs to the
-chosen material. Compare with the untreated surface first. Keep a plain surface
-when grain only adds visual activity; it is not a default finishing step.
+Use grain when visible gradient bands need softening or texture helps create the
+chosen material appearance. Compare with the untreated surface first. Keep a
+plain surface when grain only adds visual activity; it is not a default
+finishing step.
 
 ## Choose The Rendering Cost
 
@@ -27,8 +28,8 @@ dimensions bound the tile, and `stitchTiles` makes its opposite edges meet:
 ```
 
 Use the actual asset URL below. A raster export is another option when profiling
-shows the SVG image still costs too much. Do not assume an SVG tile is rasterized
-only once in every browser.
+shows the SVG image still costs too much. Do not assume an SVG tile is
+rasterized only once in every browser.
 
 ```css
 .textured-surface {
@@ -52,14 +53,16 @@ only once in every browser.
 ```
 
 Isolation keeps blending local. The negative layer sits above the isolated
-surface's background and below its content, so grain does not coat text or
+surface's background and below its content, so grain does not cover text or
 intercept input. Avoid clipping the entire component just to contain texture:
 that can cut off focus rings and popovers.
 
 Toggle the layer while inspecting the actual surface and theme. Check whether
-bands soften, tile seams repeat, or text loses contrast. Tune scale and opacity
-in context; the values above are starting points. Compare scrolling and repaint
-cost with the layer disabled before keeping a large treatment.
+bands soften, tile edges become visible, or text loses contrast. Tune scale and
+opacity in context; the values above are starting points. Compare scrolling and
+repaint cost with the layer disabled before keeping a large treatment.
 
-References: [SVG turbulence](https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/feTurbulence),
-[blend isolation](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/isolation).
+References: [SVG
+turbulence](https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/feTurbulence),
+[blend
+isolation](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/isolation).

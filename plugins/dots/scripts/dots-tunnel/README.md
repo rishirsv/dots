@@ -8,8 +8,8 @@ depend on an active Codex task.
 ChatGPT → Dots connection → OpenAI secure tunnel → local file server → project
 ```
 
-ChatGPT owns the conversation, model selection, and tool confirmations. The
-local server owns file access, revision checks, and recovery copies. Choose any
+ChatGPT manages the conversation, model selection, and tool confirmations.
+The local server controls file access, revision checks, and recovery copies. Choose any
 Web model that supports the attached tools; availability remains controlled by
 ChatGPT. No model API calls or model billing are added by this server.
 
@@ -36,10 +36,10 @@ The [dots-tunnel skill](../../skills/dots-tunnel/SKILL.md) describes the workflo
 | `write_stdin` | Optional: poll a running command or send terminal input. |
 | `terminate_command` | Optional: stop a command without re-running it. |
 
-Updates require the revision returned by `read_file` or `read_files`;
-creation requires `expected_revision: "absent"`. A stale revision rejects the write. Read back an
-edit before claiming success. On uncertain delivery, read before considering
-another write. Do not retry a denied call through another connection or model.
+To update a file, supply the revision returned by `read_file` or `read_files`.
+To create a file, supply `expected_revision: "absent"`. The server rejects a
+write with a stale revision. Read the file after editing before claiming
+success. If delivery is uncertain, read the file before considering another write. Do not retry a denied call through another connection or model.
 
 ## Local setup
 
@@ -64,7 +64,7 @@ authorized folder is an explicit named mount; repeat `--mount` for more.
 headers. Search one named folder at a time. The shared parent is never exposed;
 each mount retains the same file protections and a separate recovery directory.
 
-The lifecycle helper owns the tunnel command. Record the connection once in
+The lifecycle helper starts and stops the tunnel. Record the connection once in
 `~/.local/share/dots-tunnel/config.json` (no secrets; absolute paths):
 
 ```json
@@ -102,7 +102,7 @@ start, naming the error. After connecting it verifies readiness; if the server
 exits, it reports the exit recorded in the tunnel log. Missing setup or an
 unhealthy running process is reported, not silently replaced. There is one
 connection and one credential.
-The helper serializes concurrent invocations and prints only compact status.
+The helper runs concurrent requests one at a time and prints only a short status.
 
 The runtime stays in the background after a chat or terminal closes. Stop it
 explicitly when finished; logout, reboot, or failure may also stop it. No login
@@ -129,12 +129,12 @@ into the trusted installation. Changing `config.json` takes effect after a local
 and start; stopping cancels active native jobs and loses their handles.
 
 The adapter uses [Codex app-server command execution](https://learn.chatgpt.com/docs/app-server)
-over private stdio. It lazily starts one owned child and reuses it. There are no
+over private stdio. It starts one child process when needed and reuses it. There are no
 model calls, Codex tasks, extra browser windows, or new listening ports.
 `exec_command` and `write_stdin` retain Codex's argument names and familiar
 `output`, `exit_code`/`session_id`, and `wall_time_seconds` result fields.
-This is a native-engine adapter, **not an exact passthrough of a live task's tool
-registry**: only system sh/bash/zsh shells are supported, output is capped at
+The adapter uses the native engine with these limits; it does not expose every
+command option available in a live task: only system sh/bash/zsh shells are supported, output is capped at
 64 KiB, jobs stop after ten minutes, and there are at most eight retained sessions.
 Token output limits use a conservative four-byte approximation. MCP tools use
 structured JSON, including the existing revision-protected patch tool.
@@ -153,8 +153,7 @@ secret detector. Grant only folders whose contents and executable project script
 you trust. Use the file helpers for revision-protected edits when possible.
 
 Session IDs are unguessable capability handles within one tunnel process, **not
-chat-level isolation**. Two chats using the same connection share that trust
-boundary. Separate tunnel processes have separate handles. Output is incremental;
+chat-level isolation**. Two chats using the same connection can use the same handles. Separate tunnel processes have separate handles. Output is incremental;
 concurrent collectors are serialized but should not intentionally share a handle.
 Do not rerun a command after uncertain delivery without checking its effects.
 

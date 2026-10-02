@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render normalized transcript JSON as readable text or subtitle formats."""
+"""Convert transcript JSON to readable text or subtitles."""
 
 from __future__ import annotations
 

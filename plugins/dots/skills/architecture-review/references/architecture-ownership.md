@@ -2,7 +2,8 @@
 
 Read this when a refactor candidate involves where code should live, which layer owns a rule, or how to remove duplicate policy paths.
 
-Focus on long-term canonical ownership, not only the layer where the current bug appears.
+Identify the module that should remain responsible for the rule. The layer where
+a bug appears may have a different responsibility.
 
 ## Required Discovery
 
@@ -48,18 +49,25 @@ recommendation is the canonical owner and the cleanup path to get there.
 ## Layer Map
 
 - `UI layer`
-  - owns visible UI state, navigation, rendering, presentation-oriented derived state, and view composition
+  - owns visible UI state, navigation, rendering, presentation-oriented derived
+    state, and view composition
 - `Platform shell`
-  - owns native shell concerns, OS bridges, local device integrations, filesystem or permission bridges, process or session plumbing, and platform-local persistence helpers
+  - owns native shell concerns, OS bridges, local device integrations,
+    filesystem or permission bridges, process or session setup and
+    communication, and platform-local persistence helpers
 - `Runtime orchestration layer`
-  - owns runtime composition, request dispatch, background coordination, worker management, event publication, and process-level orchestration
+  - owns runtime composition, request dispatch, background coordination, worker
+    management, event publication, and process-level orchestration
   - this is not automatically the `Canonical owner`
 - `Domain or application layer`
-  - owns canonical product workflow, business rules, reusable application services, and cross-interface behavior
+  - owns canonical product workflow, business rules, reusable application
+    services, and cross-interface behavior
 - `Shared core layer`
-  - owns shared types, enums, validation, normalization, capability logic, and pure logic used across runtimes
+  - owns shared types, enums, validation, normalization, capability logic, and
+    pure logic used across runtimes
 - `Adapter or integration layer`
-  - owns concrete protocol, provider, vendor, transport, or API integration behavior
+  - owns concrete protocol, provider, vendor, transport, or API integration
+    behavior
   - does not own cross-provider or cross-integration product policy
 
 Translate these generic layers into the repo's actual module, package, crate, or service names before making a recommendation.

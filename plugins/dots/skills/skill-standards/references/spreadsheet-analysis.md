@@ -5,32 +5,32 @@ changes, cleans, analyzes, or checks spreadsheets. Use the applicable controls
 for the recurring job; do not turn this reference into a fixed workbook layout
 or a substitute for the domain method the spreadsheet supports.
 
-## Define the task and data contract
+## Define the task and data requirements
 
-State whether the skill owns a new workbook, a narrowly scoped edit, data
-cleaning, a reproducible transformation, a workbook audit, or analysis from a
-workbook. Name the boundary when it prevents unsafe work: a cleaning skill
+State whether the skill creates a workbook, makes a specific edit, cleans
+data, performs a repeatable transformation, audits a workbook, or analyzes
+its data. State exclusions when they prevent unsafe work: a cleaning skill
 should not overwrite a formula model; an audit skill should report defects
 without modifying cells unless the user asks for repair; an analysis skill
 should not silently redefine an input metric.
 
 For transformations, analyses, or edits whose correctness depends on schema,
-have the skill determine and record the working contract:
+have the skill determine and record the following data requirements:
 
 - the authoritative source file, sheet, table, or range;
-- what one row represents, its primary identifier, and the intended output
-  grain;
+- what one row represents, its primary identifier, and what one output row
+  should represent (the output grain);
 - period and timezone fields, units, currencies, sign conventions, and
   inclusion or exclusion rules that affect results;
 - source columns, derived columns, editable inputs, and formula outputs; and
 - the requested artifact and whether it must remain usable as a spreadsheet.
 
 For a bounded edit to a known location, require only the authoritative file and
-location, requested change, affected dependencies, and output policy. Expand to
-the full contract only when the edit changes data meaning or structure.
+location, requested change, affected dependencies, and output policy. Record the full set of data requirements only when the edit changes the
+meaning or structure of the data.
 
-If the input is ambiguous at the row-grain, metric-definition, join-key, or
-unit level, inspect enough schema and sample rows to identify the ambiguity.
+If it is unclear what a row, metric, join key, or unit means, inspect the
+schema and sample rows until you can identify the ambiguity.
 Ask for the smallest clarification that changes the transformation, or retain
 the field unchanged and state which result cannot be calculated. Do not
 deduplicate, aggregate, parse dates, or fill missing values based only on a
@@ -68,8 +68,9 @@ and column mapping. Keep rejected, changed, or unmatched rows in a separate
 output or change log when they affect totals, joins, or a user-visible result.
 Do not silently drop rows because a parse or lookup failed.
 
-For joins, state the left and right grain, keys, join type, expected cardinality,
-and how unmatched or multiple matches are handled. Check row counts, distinct
+For a join, state what a row represents in each table, the keys, and the join
+type. State how many matches are expected for each key (cardinality) and how
+to handle missing or multiple matches. Check row counts, distinct
 identifier counts, and key totals before and after the join. Aggregate a source
 to the intended grain before joining when that avoids multiplying facts. Never
 sum an entity-level measure after a one-to-many join without an explicit
@@ -159,7 +160,7 @@ failure behavior rather than checking only that a file exists. Keep
 deterministic script tests with the script source and include failing inputs
 that must preserve the source artifact.
 
-Keep the runtime compact: put file-format APIs, domain-specific mappings, and
-complex chart conventions in read-when references; put recurring parsing,
-validation, rendering, and export work in scripts; keep the ordinary branching
-path in `SKILL.md`.
+Keep the common workflow and its conditions in `SKILL.md`. Put file-format
+APIs, domain mappings, and complex chart conventions in references, with a
+condition for reading each one. Use scripts for recurring parsing, validation,
+rendering, and export work.

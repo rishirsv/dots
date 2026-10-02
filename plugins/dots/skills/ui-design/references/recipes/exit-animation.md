@@ -1,10 +1,12 @@
 # Exit animations
 
 Use this selected web treatment within the established motion system. Keep
-required content and actions usable, and provide an immediate reduced-motion
-branch. Use the project’s existing Motion package and components for the examples.
+required content and actions usable, and for reduced motion, remove the element
+immediately. Use the project’s existing Motion package and components for the
+examples.
 
-Exits are softer and less attention-grabbing than enters. The user's focus is moving to the next thing, so do not fight for it.
+Make exits subtler than entrances. The user is moving to the next task, so avoid
+drawing attention back to the departing element.
 
 ### Subtle exit (recommended)
 

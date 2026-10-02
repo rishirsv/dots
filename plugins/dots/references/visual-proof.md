@@ -1,8 +1,8 @@
 # Visual Proof
 
 Shared checklist for any skill that must verify rendered output: web pages,
-HTML artifacts, app screens, charts, or simulator UI. Verification means
-looking at the real rendered surface, not reasoning about the code.
+HTML artifacts, app screens, charts, or simulator UI. To verify output, inspect the real rendered surface. Reading its source
+does not show how it renders.
 
 ## Tool Order
 
@@ -18,11 +18,14 @@ looking at the real rendered surface, not reasoning about the code.
 
 ## Recurring Failures To Check When Relevant
 
-1. **Local preview access.** Open local HTML with its absolute filesystem path
-   in the in-app browser. If that fails, distinguish a rendering failure from
-   an automation limitation and follow the active browser skill's recovery
-   guidance. If a local server is needed, serve only the artifact directory and
-   bind it to loopback.
+1. **Local preview access.** Prefer an existing HTTP preview. If none exists
+   and the browser can reach this machine, serve only the artifact directory
+   on loopback and open its HTTP URL. For a remote browser, use its supported
+   forwarded preview URL. Use a filesystem path only when the browser
+   explicitly supports local-file navigation. Confirm the page opened before
+   claiming visual inspection. If access fails, distinguish a rendering
+   failure from an automation limitation and follow the documented recovery
+   guidance.
 2. **Wrong tab/window.** Confirm the inspected tab displays the artifact you
    just built. Obtain a fresh tab only when the existing one cannot be
    identified or reused. Screenshotting an unrelated tab is not proof.

@@ -4,13 +4,13 @@ Build the synthesizer's prompt from this template; fill in the placeholders.
 
 ---
 
-You are answering a "why" question about a piece of code by synthesizing findings from multiple investigators who searched different historical sources (source control, issue / ticket tracker, long-form documents, real-time team chat, infrastructure observability, error / exception tracking, product analytics warehouse, and code comments). Produce a confidence-weighted, evidence-cited narrative that honestly communicates what the evidence supports and what it doesn't.
+Answer a "why" question about code. Combine findings from investigators who searched source control, tickets, documents, team chat, observability, error tracking, product analytics, and code comments. Cite the evidence for each claim. State its confidence and identify what remains unknown.
 
 ## The Question
 
 > {QUESTION}
 
-## The Code Anchor
+## The Target Code And Its History
 
 **Target files:** {FILES_WITH_LINE_RANGES}
 
@@ -31,11 +31,11 @@ Follow the framework in `references/epistemics.md`. Read it in full before writi
 ## Instructions
 
 1. **Read all investigator findings.** They gathered raw evidence, not conclusions. You weigh it.
-2. **Reconcile overlapping findings.** Multiple investigators may have cited the same PR, ticket, or doc. Merge into a single, authoritative reference.
-3. **Identify contradictions.** If two items of evidence disagree, don't pick one. Surface both.
+2. **Reconcile overlapping findings.** Multiple investigators may have cited the same PR, ticket, or doc. Combine these findings and cite the original record once.
+3. **Identify contradictions.** If two items of evidence disagree, show both with citations.
 4. **Calibrate confidence.** For each claim, identify the evidence and the tier. State Direct claims plainly with a citation. Hedge Inferred claims and explain the inference. Mark Speculative claims explicitly. Put claims with no evidence in the gaps section.
-5. **Verify citations by spot-checking.** You can read the codebase and query available source tools to verify citations; do not write files, commit, or modify external state. If you're uncertain a cited item exists or says what's claimed, check it. Don't propagate errors.
-6. **Don't overreach.** The user will act on your output. Better to leave an open question open than to fill it with a confident-sounding guess.
+5. **Verify citations by spot-checking.** You can read the codebase and query available source tools to verify citations; do not write files, commit, or modify external state. If you're uncertain a cited item exists or says what's claimed, check it. Correct citation errors before using them.
+6. **Don't overreach.** The user will act on your output. If the evidence does not answer a question, report that gap.
 
 ## Output Format
 
@@ -46,11 +46,11 @@ conditions below do not apply:
 
 ### The Question
 
-Restate the user's question in one or two sentences so the answer is anchored.
+Restate the user's question in one or two sentences so the reader knows what the answer covers.
 
 ### The Code in Question
 
-File paths, line ranges, key symbols. Two or three lines to orient a reader who lands here cold.
+File paths, line ranges, key symbols. Two or three lines to orient a reader without prior context.
 
 ### What We Found
 
@@ -71,7 +71,7 @@ If there's nothing to infer, skip this section.
 
 ### Competing Hypotheses
 
-**If the evidence fits multiple stories, present them.** Don't force a winner when the record doesn't support one. For each hypothesis:
+**If the evidence fits several explanations, present them.** Choose one only when the record supports it. For each hypothesis:
 
 - **Hypothesis:** {one-sentence statement}
 - **Evidence for:** {specific items}
@@ -118,9 +118,9 @@ Before finalizing, review your output against this checklist:
 4. Does the "What We Don't Know" section name each material gap? Omit it when
    the scoped question has no material unanswered gap; do not invent one to
    satisfy the format.
-5. If the user embedded a hypothesis in their question, did you check it against the evidence rather than rubber-stamping it?
-6. Did you cite any code as evidence for its own intent? Remove those. Code is mechanics, not motivation.
-7. Is the overall tone calibrated? A confident-sounding answer with weak evidence is the exact failure mode this skill exists to prevent.
+5. If the user embedded a hypothesis in their question, did you check it against the evidence rather than assuming it is correct?
+6. Did you cite any code as evidence for its own intent? Remove those. Code shows behavior. It does not prove motivation.
+7. Is the overall tone calibrated? Do not state weakly supported claims with confidence.
 
 If any item fails, revise before returning.
 

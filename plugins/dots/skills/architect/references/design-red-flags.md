@@ -1,14 +1,14 @@
 # Design red flags
 
-Screen every candidate before choosing a design. A red flag is a reason to
-revise or reject the shape.
+Check every candidate before choosing a design. If you find one of these
+problems, revise or reject the design.
 
 ## Shallow module
 
 A shallow module exposes a large interface while hiding little complexity.
-Judge depth by the capability and policy hidden behind the public surface
-relative to the size of that surface. Prefer a simple interface backed by
-substantial behavior.
+Compare the behavior and policy that the implementation handles with what
+callers must learn to use the public interface. Prefer a simple interface backed
+by substantial behavior.
 
 Do not confuse a deep module with a deep call chain. A deep call chain scatters
 understanding across layers. A deep module concentrates capability behind one

@@ -1,14 +1,26 @@
 # Size And Protect Hit Areas
 
-WCAG 2.5.8 Level AA requires a 24×24 CSS-pixel target or one of its exceptions. Use larger usability targets where space permits; 44 CSS pixels is a useful web touch starting point, subject to the project’s target-size standard. Smaller controls are not automatic failures. Check the spacing, equivalent-control, inline, user-agent and essential exceptions before reporting one.
+WCAG 2.5.8 Level AA requires a 24×24 CSS-pixel target or one of its exceptions.
+Use larger usability targets where space permits; 44 CSS pixels is a useful web
+touch starting point, subject to the project’s target-size standard. Smaller
+controls are not automatic failures. Check the spacing, equivalent-control,
+inline, user-agent and essential exceptions before reporting one.
 
-Under the spacing exception, an undersized target passes when a 24px circle centered on its bounding box intersects no other target and no other undersized target's circle. In the simple case, 20px targets need a 4px gap.
+Under the spacing exception, an undersized target passes when a 24px circle
+centered on its bounding box intersects no other target and no other undersized
+target's circle. In the simple case, 20px targets need a 4px gap.
 
-The visible element can stay small; the hit area is what must be big. Anything that looks clickable must be clickable across its whole visual extent, with no dead zones. A checkbox and its associated label share one hit target.
+The visible element can stay small if its hit area meets the target-size
+requirement. Anything that looks clickable must be clickable across its whole
+visual extent, with no dead zones. A checkbox and its associated label share one
+hit target.
 
 ## Expanding the hit area
 
-Where the visible element is smaller, say a 20×20 checkbox, extend the hit area with a pseudo-element. Put it on the wrapping `<label>` or `<button>`, never on the `<input>`, because replaced elements don't render `::before`/`::after` reliably.
+Where the visible element is smaller, say a 20×20 checkbox, extend the hit area
+with a pseudo-element. Put it on the wrapping `<label>` or `<button>`, never on
+the `<input>`, because replaced elements don't render `::before`/`::after`
+reliably.
 
 ### CSS example
 
@@ -43,7 +55,9 @@ Where the visible element is smaller, say a 20×20 checkbox, extend the hit area
 
 ### Layout alternative
 
-Where the element can afford real box size, skip the pseudo-element and let the box be the target. That hands the browser real geometry for scrolling and gestures:
+If the layout has enough space, enlarge the element's actual box instead of
+using a pseudo-element. The browser can then use that geometry for scrolling and
+gestures:
 
 ```css
 .icon-button {
@@ -56,13 +70,22 @@ Where the element can afford real box size, skip the pseudo-element and let the 
 
 ## Collision rule
 
-Where the extended hit area overlaps another interactive element, shrink the pseudo-element to the largest size that does not collide. If shrinking loses a needed target size, increase the layout spacing or give the control a real larger box. Verify the edges activate the intended control, including where ancestors clip overflow.
+Where the extended hit area overlaps another interactive element, shrink the
+pseudo-element to the largest size that does not collide. If shrinking loses a
+needed target size, increase the layout spacing or give the control a real
+larger box. Verify the edges activate the intended control, including where
+ancestors clip overflow.
 
 ## Decorative layers
 
-A decorative layer painted over interactive content absorbs every pointer event its box covers: a gradient scrim, a glow, a blurred sheen, a full-bleed `::after`. The control underneath looks live and does nothing, and no hit-area sizing fixes it.
+A decorative layer painted over interactive content can intercept pointer events
+within its box: a gradient scrim, a glow, a blurred sheen, a full-bleed
+`::after`. The control underneath can look available but fail to respond.
+Enlarging its hit area does not fix an overlay that intercepts input.
 
-Give each one `pointer-events: none` (Tailwind `pointer-events-none`) so events reach the control below, plus `aria-hidden="true"` on decorative DOM elements. Pseudo-elements have no HTML attribute to set; keep their content empty:
+Give each one `pointer-events: none` (Tailwind `pointer-events-none`) so events
+reach the control below, plus `aria-hidden="true"` on decorative DOM elements.
+Pseudo-elements have no HTML attribute to set; keep their content empty:
 
 ```css
 .card-glow {
@@ -72,6 +95,9 @@ Give each one `pointer-events: none` (Tailwind `pointer-events-none`) so events 
 }
 ```
 
-Keep pointer events on any layer the user is meant to hit: a modal scrim that dismisses on click is a control, not decoration.
+Keep pointer events on any layer the user is meant to hit: a modal scrim that
+dismisses on click is a control, not decoration.
 
-Check the applicable target-size requirement and exceptions; do not report a small visible glyph as a failed hit target without checking its clickable extent.
+Check the applicable target-size requirement and exceptions; do not report a
+small visible glyph as a failed hit target without checking its clickable
+extent.

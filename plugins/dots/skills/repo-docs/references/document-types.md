@@ -6,7 +6,7 @@ forbidden status, date, ownership, and frontmatter fields.
 
 ## README
 
-Use for the front door to a repo, package, tool, or major component.
+Use as an introduction to a repo, package, tool, or major component.
 
 Include only what helps a new reader decide what the project is and how to take
 the next useful step:
@@ -19,7 +19,7 @@ the next useful step:
 - Current constraints, generated-file boundaries, and important caveats.
 
 Avoid architecture essays, stale roadmaps, and exhaustive API references in a
-README. Link out when the detail is durable but not front-door material.
+README. Link out when the detail is durable but not needed in an introduction.
 
 ## Concept
 
@@ -49,7 +49,7 @@ Recommended shape:
 - Scope and the behavior being traced.
 - Entry points and required state at entry.
 - A high-level flow diagram when it clarifies control or ownership boundaries.
-- An execution trace through the consequential components, branches, and state
+- An execution trace through the important components, branches, and state
   changes.
 - Snapshot or persistence points where state is copied, frozen, or committed.
 - Exit states, outputs, and handoff contracts with adjacent flows.
@@ -199,8 +199,9 @@ Recommended shape:
 - Symptom and affected behavior.
 - Known facts, constraints, and evidence already collected.
 - Competing hypotheses, ordered by likelihood or cost to test when useful.
-- For each hypothesis: supporting and contradicting evidence, the smallest
-  discriminating check, and the expected result if it is true or false.
+- For each hypothesis: supporting and contradicting evidence, the smallest check
+  that distinguishes it from the other hypotheses, and the expected result if it
+  is true or false.
 - Reproduction or evidence-capture procedure.
 - Stop conditions, including what establishes the root cause and what evidence
   would require a new hypothesis.
@@ -213,7 +214,7 @@ evidence arrives.
 ## Validation plan
 
 Use when a change, design, migration, or release needs durable agreement about
-what will be checked and what counts as acceptable. A validation plan defines
+which checks to run and which results are acceptable. A validation plan defines
 coverage and evidence; it does not claim that validation has already passed.
 
 Recommended shape:
@@ -230,10 +231,10 @@ Recommended shape:
   conditions.
 - Known coverage gaps and their consequences.
 
-Tie every check to a requirement, risk, or plausible failure. File existence,
-generic smoke checks, and ignored command output are not substantive evidence.
-Distinguish planned checks from completed checks and record actual results only
-after they have been observed.
+Tie every check to a requirement, risk, or plausible failure. A file existing, a
+generic smoke check passing, or a command running without inspection does not
+prove that the required behavior works. Distinguish planned checks from
+completed checks and record actual results only after they have been observed.
 
 ## ADR or design note
 

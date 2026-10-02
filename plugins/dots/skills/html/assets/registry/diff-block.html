@@ -2,12 +2,12 @@
 title: Diff block
 type: ui
 when: A before/after code change worth showing inline — a fix, a migration
-  step, a config change — where the added/removed lines carry the point.
+  step, a config change — where added or removed lines explain the change.
 deps: code-panel
 variants: default (mixed add/del/context lines) | annotated (line-number gutter
   and an adjacent explanation for one meaningful hunk).
 gotchas: Keep hunks short, ≤15 lines — if the real diff is longer, show the
-  meaningful slice and link to the full diff rather than pasting it all. Marks
+  relevant lines and link to the full diff rather than pasting it all. Marks
   are a background tint plus a +/- glyph in a fixed-width gutter, never a
   left border stripe.
 -->

@@ -1,7 +1,7 @@
 # Apple Platforms
 
-Use this reference for native Apple interfaces. Confirm the target platform,
-OS range, SDK and existing components before choosing an API.
+Use this reference for native Apple interfaces. Confirm the target platform, OS
+range, SDK and existing components before choosing an API.
 
 ## Brand And System Behavior
 
@@ -16,7 +16,8 @@ keep logos from displacing useful content.
 
 ## Resizing And Toolbars
 
-Choose which actions remain visible as a window narrows and which can enter
-overflow. Test actual resizing, not just device categories. Inspect inactive
-windows as well as focused ones. Use current framework facilities where they
-meet the requirement; do not hard-code a snapshot of system geometry.
+Choose which actions remain visible as a window narrows and which can move into
+an overflow menu. Test actual resizing, not just device categories. Inspect
+inactive windows as well as focused ones. Use current framework facilities where
+they meet the requirement; avoid hard-coded dimensions that assume one system
+layout.

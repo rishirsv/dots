@@ -16,6 +16,6 @@ when another tool holds the same kind of record.
 | Error / exception tracking | [`sentry.md`](./sources/sentry.md) | Sentry (adapt for Rollbar, Bugsnag, Airbrake) |
 | Product analytics warehouse | [`databricks.md`](./sources/databricks.md) | Databricks SQL (adapt for Snowflake, BigQuery, ClickHouse, dbt) |
 
-Cross-cutting:
+For defensive code:
 
-- [`incident-postmortem.md`](./sources/incident-postmortem.md). Add this if the target code looks defensive (null checks, retry, timeout, rate limit, feature flag, egress guard, OOM handler).
+- [`incident-postmortem.md`](./sources/incident-postmortem.md). If the target has null checks, retries, timeouts, rate limits, feature flags, egress guards, or OOM handlers, add this playbook to the selected sources.

@@ -5,8 +5,9 @@ description: "Keeps a GitHub pull request moving by watching its latest checks a
 
 # Babysit PR
 
-Keep following the pull request until its latest commit is clean. Keep the
-original goal fixed, and merge only when the user asks.
+Follow the pull request until its latest commit passes required checks and
+reviews and no unresolved issue requires work. Keep the original goal fixed, and
+merge only when the user asks.
 
 ## Start
 
@@ -14,26 +15,27 @@ original goal fixed, and merge only when the user asks.
    pull request link or number; otherwise find the pull request for the current
    branch. Confirm `gh auth status` before relying on command-line GitHub data.
 2. Record the original goal, target branch, latest commit, merge state, checks,
-   and unresolved review discussions. Prefer the GitHub app for pull request
-   and review data. Use `gh` for checks, run logs, and local branch work.
-3. Take one compact starting snapshot. Useful commands are:
+   and unresolved review discussions. Prefer the GitHub app for pull request and
+   review data. Use `gh` for checks, run logs, and local branch work.
+3. Record the starting state once, keeping the record brief. Useful commands
+   are:
 
    ```bash
    gh pr view <pr> --json headRefOid,baseRefName,mergeStateStatus,reviewDecision,state
    gh pr checks <pr> --json name,state,bucket,link
    ```
 
-   Use thread-aware review data when discussion status matters; a flat comment
-   list cannot show whether a discussion is resolved or outdated.
+   When discussion status matters, use data that identifies each review thread;
+   a flat comment list cannot show whether a discussion is resolved or outdated.
 
 ## Watch
 
 Prefer an available native event or check-completion notification while CI or
 review is pending. Otherwise use the host's supported scheduler and cadence;
-five minutes is a default only where supported. State the actual cadence and
-reuse an existing monitor for the same pull request. Do not silently substitute
-a different cadence when the user requested an exact one, or keep the main
-agent in a polling loop.
+five minutes is a default only where supported. State the actual cadence and use
+the existing monitor for the same pull request. Do not silently substitute a
+different cadence when the user requested an exact one, or keep the main agent
+in a polling loop.
 
 When model selection is supported, use the configured lightweight monitoring
 role; otherwise keep the host's supported settings. Do not add a subagent merely
@@ -48,13 +50,14 @@ Keep its work read-only:
   comment bodies only when something changes; retain the last observed state
   between runs.
 - Report failed checks, new actionable feedback, conflicts, readiness to merge,
-  or a merged/closed pull request. Stay silent while state is unchanged or
-  non-actionable. Do not repeatedly notify about an already reported issue.
+  or a merged/closed pull request. Stay silent while state is unchanged or does
+  not require action. Do not repeatedly notify about an already reported issue.
 - When a new commit appears, discard older check results. Identify unresolved
   discussions for the main agent to recheck against current code.
-- Wake the main agent only for action or completion. The main agent owns
-  interpretation, repairs, tests, commits, pushes, and review replies; it does
-  not poll the monitor. After a fix, resume from the new latest commit.
+- Notify the main agent only when work is needed or monitoring is complete. The
+  main agent owns interpretation, repairs, tests, commits, pushes, and review
+  replies; it does not poll the monitor. After a fix, resume from the new latest
+  commit.
 
 Use the host's scheduling and task-notification tools only as supported. If
 persistent scheduling is unavailable, state that limit. Use a bounded native
@@ -70,12 +73,12 @@ rules allow it.
 
 - For a failed GitHub Actions check, inspect only the failed run and relevant
   log lines. Confirm the failure comes from the pull request before changing
-  code. Treat external check providers as report-only when their logs are not
-  available.
+  code. If an external check provider's logs are unavailable, report its failure
+  without changing code.
 - For a review comment, inspect its file, location, discussion, and current
   code. Fix real problems within the original goal. If it is incorrect,
-  outdated, duplicated, or outside that goal, reply with the reason and
-  resolve the discussion.
+  outdated, duplicated, or outside that goal, reply with the reason and resolve
+  the discussion.
 - After a fix, run focused project checks, commit, push, and reply with the
   short commit reference, what changed, and what passed. Then restart the watch
   loop from the new latest commit.

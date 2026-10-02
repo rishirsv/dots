@@ -8,31 +8,33 @@ description: "Creates a continuation brief for the current task, branch, pull re
 Create a practical continuation brief for the current task, branch, PR,
 issue, plan, or conversation.
 
-Default to an inline handoff in chat. Write a file only when the user asks,
-the handoff is too large for chat, or a durable artifact is clearly needed,
-use the requested path, else a clearly named temporary path, and report it.
+Default to an inline handoff in chat. Write a file when the user asks, the brief
+is too large for chat, or the next workflow needs a saved artifact. Use the
+requested path. If no path was supplied, use a clearly named temporary path.
+Report the saved path.
 
 Use a handoff at a phase boundary when the next agent should inherit the work,
 not the whole discussion: research to decision, decision to implementation,
 implementation to verification, one pull request to its dependent, or local
-proof to release. Name the phase that ended and the next atomic objective.
+proof to release. Name the phase that ended and the next objective that can be
+completed as one task.
 
 ## Context
 
-Use the visible conversation and current workspace first: branch, dirty
-files, recent commits, active plans, issue/PR links, and validation already
-run. Reach for prior-session history only when it materially improves the
-handoff, the user asks to continue earlier work, the work spans sessions,
-or the current state is unclear, and prefer a reduced context packet over
-transcript replay. If a source is unavailable, note it under risks and
-continue.
+Use the visible conversation and current workspace first: branch, dirty files,
+recent commits, active plans, issue/PR links, and validation already run. Reach
+for prior-session history only when it materially improves the handoff, the user
+asks to continue earlier work, the work spans sessions, or the current state is
+unclear, and provide the relevant facts rather than reproducing the transcript.
+If a source is unavailable, note it under risks and continue.
 
-Compress by decision relevance. Keep settled decisions that constrain future
-work, current state, reusable proof, live artifacts, unresolved questions, and
-the next execution seam. Omit repeated narration, raw tool logs, superseded
-plans, rejected alternatives that no longer guard a boundary, and unrelated
-project history. Preserve a rejected direction only when repeating it is a
-credible risk; label it as an exclusion rather than retelling the debate.
+Keep the facts that affect the next decisions. Keep settled decisions that
+constrain future work, current state, checks whose results still apply, current
+artifacts, unresolved questions, and the point where work should resume. Omit
+repeated narration, raw tool logs, superseded plans, rejected alternatives that
+no longer explain a constraint, and unrelated project history. Preserve a
+rejected direction only when repeating it is a credible risk; label it as an
+exclusion rather than retelling the debate.
 
 ## Destination
 
@@ -73,12 +75,12 @@ tools.
 
 ## Output
 
-Summarize completed work, current state, decisions, and constraints;
-reference artifacts by path or URL and name what changed since they were
-written, instead of duplicating them; list next actions in execution order;
-name validation run and still needed; call out blockers, assumptions, and
-risks. Use this shape as a field guide, omitting empty or irrelevant sections.
-Preserve material unknowns and the distinction between completed and missing proof:
+Summarize completed work, current state, decisions, and constraints; reference
+artifacts by path or URL and name what changed since they were written, instead
+of duplicating them; list next actions in execution order; name validation run
+and still needed; call out blockers, assumptions, and risks. Use the structure
+below as a guide, omitting empty or irrelevant sections. Keep unknowns that
+could affect the work. Distinguish checks that passed from checks still needed:
 
 ```md
 # Handoff: <task>

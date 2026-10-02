@@ -9,7 +9,7 @@ Read the description, diff, affected source, and the tests, configuration,
 documentation, migrations, or surrounding behavior needed to understand the
 change. A file list or diff summary is not an explanation.
 
-Inventory every meaningful change before writing. Distinguish:
+List every change that affects the explanation before writing. Group them by:
 
 - user-visible behavior, workflows, rules, and affected product areas
 - data, identity, persistence, migrations, and removed behavior
@@ -22,20 +22,21 @@ A meaningful change alters behavior, capability, rules or data people rely on,
 stored facts, responsibility, risk, or future operation. Preserve it in the
 explanation. Account for supporting details compactly unless they carry their
 own consequence. If evidence remains unavailable or inconclusive, name the gap
-instead of smoothing it over.
+and explain its effect on the conclusion.
 
 For a pull request or similarly broad change, completeness means every
 meaningful item is represented. For a narrow change question, explain only the
 parts needed to answer it unless the user asks for the full change.
 
-## Derive The Teaching Story
+## Choose The Explanation Order
 
-Before outlining, identify the former condition, failure, constraint, or
-opportunity; the practical result; included and excluded scope; runtime actors
-and facts that changed; and the evidence gap that matters most. Use this change
-map to choose a reading order instead of following file, commit, or diff order.
+Before outlining, identify the original condition, failure, constraint, or
+opportunity. Identify the practical result and the included and excluded
+scope. Name the actors and facts that changed. Identify the most important
+missing evidence. Use those findings to choose the reading order. Do not
+assume file, commit, or diff order will explain the change.
 
-Useful spines include:
+Useful explanation orders include:
 
 - **User journey:** former problem -> before and after experience -> one
   realistic journey -> important states and boundaries -> proof
@@ -48,8 +49,9 @@ Useful spines include:
 - **Foundation or staged delivery:** capability being enabled -> foundation ->
   what is shipping, prepared, and remaining -> adoption boundary
 
-Combine spines when the change crosses them, and invent a better order when
-needed. Keep the smallest structure that teaches the complete change.
+Combine these orders when the change affects several areas. Choose a
+different order if it explains the change better. Use only the structure
+needed to explain the complete change.
 
 Every complete change explanation covers, without requiring fixed headings:
 
@@ -59,7 +61,7 @@ Every complete change explanation covers, without requiring fixed headings:
 - one concrete action, input, or state moving through the relevant actors and
   facts to its result
 - the important before-and-after difference in behavior, responsibility, or data
-- consequential residual constraints and their user or operating consequence
+- remaining constraints and how they affect the user or operation
 - what evidence proves the behavior and what remains unverified
 
 ## Add Detail When It Matters
@@ -80,8 +82,8 @@ Add detail only when the source calls for it:
 
 ## Preserve Evidence And Limits
 
-Describe what validation proves instead of treating test counts or status as
-the story. Keep these states distinct for staged work:
+Describe what validation proves. Test counts and status alone do not explain
+whether the behavior works. Keep these states distinct for staged work:
 
 - **Shipping:** implemented and active in the resulting system.
 - **Prepared:** foundations exist, but the claimed value is not active.

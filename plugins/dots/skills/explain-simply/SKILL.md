@@ -13,23 +13,23 @@ background needed to answer the question without restarting the whole subject.
 Lead with the answer, then explain the relevant mechanism or distinction and
 provide the context needed to understand it.
 
-Translate rather than restate. Prefer plain words and explain technical terms
-after the behavior. Use an example, analogy, comparison, or compact text diagram
-only when it makes the answer clearer or shorter. If the previous answer did not
-land, explain the missing idea from a different angle instead of summarizing it.
+Explain the idea in familiar words. Describe the behavior before naming
+technical terms. Use an example, analogy, comparison, or compact text diagram
+only when it makes the answer clearer or shorter. If the previous answer was unclear, explain the missing idea with a different
+example or comparison.
 
 When the user asks to see, diagram, or make the explanation visual, read
 [Visual explanations](../../references/visual-explanations.md) and use only its
 lightweight inline forms.
 
-For code-related subjects, plan a logical progression from the problem to the
-important entities, what they represent, who owns what, how they relate, and
-how they behave. Build intuition with generous concrete examples and inline
+For code-related subjects, start with the problem. Introduce the
+important entities and what they represent. Explain who owns each
+responsibility, how the entities relate, and how they behave. Use concrete examples and inline
 diagrams, reading [Visual explanations](../../references/visual-explanations.md)
-as useful. Carry examples through the explanation; for diffs, show the same
-scenario before and after. Build on introduced concepts rather than file order,
-use the available code and context, and scale depth to the subject and requested
-brevity.
+as useful. Use the same example throughout the explanation. For diffs, show the same
+scenario before and after. Explain new concepts through concepts already
+introduced. Use the available code and context. Adjust detail to the subject
+and requested length.
 
 Finish after answering the question, explaining the needed mechanism or
 distinction, and correcting any misconception shown by the context. Include a

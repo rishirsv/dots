@@ -5,24 +5,24 @@ description: "Design and refine web or native app interfaces, write UI copy, str
 
 # UI Design
 
-Make deliberate, opinionated choices about palette, typography, composition,
-and interaction that belong to this brief. Challenge cliché and templated
-solutions; take aesthetic risks when they strengthen the idea, expression,
-or experience. When refining an established product, express that judgment
-through its existing identity. When creating or redesigning, commit to a
-coherent point of view.
+Make deliberate choices about palette, typography, composition, and interaction
+that fit the brief. Challenge clichés and familiar templates. Take aesthetic
+risks when they help express the idea or improve the experience. When refining
+an established product, work within its existing identity. When creating or
+redesigning a product, choose a consistent visual direction.
 
-Establish hierarchy before decorating. Quiet competing elements before making
-a weak focal element larger or louder. Use a restrained vocabulary of type,
-color, spacing, radius and depth; add exceptions for distinct roles or visible
-problems. Preserve the meaning and behavior of conventional controls.
+Establish visual hierarchy before adding decoration. Reduce the prominence of
+competing elements before enlarging or emphasizing the main element. Use a
+small, consistent set of type, color, spacing, radius, and depth values. Add
+exceptions when an element has a distinct role or a visible problem. Preserve
+the meaning and behavior of conventional controls.
 
 ## Choose The Work
 
-Read only references needed for the current decision. Handle focused craft edits
-from the matching craft reference; use a workflow when the task needs its distinct
-outcome. Follow recipe links only when implementing or checking that treatment.
-A link is a read-when condition, not a preload list.
+Read only the references needed for the current decision. For a focused design
+edit, read the reference for that design property. For a task with a distinct
+workflow, read its workflow reference. Read a recipe only when implementing or
+checking the treatment it describes.
 
 | Outcome | Read |
 |---|---|
@@ -55,10 +55,11 @@ A link is a read-when condition, not a preload list.
 
 ## Explain The Result
 
-Lead with the visible result, design decision, or blocker. Ground judgments in
-specific observations—name the element, quote the copy, or describe competing
-visual weights—then connect them to the user's task and a concrete improvement.
-“Four equally prominent actions obscure where to start; give the primary task
-more weight” is more useful than “improve hierarchy.” Distinguish observed
-behavior from assumptions about users' feelings. Name strengths a correction
-could damage, and show relevant previews or evidence when available.
+Lead with the visible result, design decision, or blocker. Support judgments
+with specific observations. Name the element, quote the copy, or describe which
+elements compete for attention. Explain how the observation affects the user's
+task and what change would improve it. “Four equally prominent actions obscure
+where to start; give the primary task more weight” is more useful than “improve
+hierarchy.” Distinguish observed behavior from assumptions about users'
+feelings. Name strengths a correction could damage, and show relevant previews
+or evidence when available.

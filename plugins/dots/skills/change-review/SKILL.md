@@ -1,15 +1,15 @@
 ---
 name: change-review
-description: "Review completed code changes before merging for correctness, readability, simplicity, and maintainability, including a ChatGPT Pro handoff when requested. Reviews and repairs supported in-scope findings by default; reports without edits when the user requests review only."
+description: "Review completed code changes before merging for correctness, readability, simplicity, and maintainability, including a ChatGPT Pro handoff when requested. Reviews and repairs supported findings within the task scope by default; reports without edits when the user requests review only."
 ---
 
 # Change Review
 
 Review a completed change against its intended behavior and repository
-constraints. When run after implementation, the implementing agent owns repair
-of supported in-scope findings as part of the original task. Complete repairs
-and affected checks before the final response. When the user requests review
-only, report findings without editing files.
+constraints. When run after implementation, the implementing agent fixes
+supported findings within the task scope as part of the original task. Complete
+repairs and affected checks before the final response. When the user requests
+review only, report findings without editing files.
 
 ## Fix the review target
 
@@ -35,41 +35,44 @@ it and follows **Review the assigned change** directly.
 
 When the user requests ChatGPT Web or ChatGPT Pro as the reviewer, follow
 [ChatGPT review handoff](references/chatgpt-review.md) instead of spawning a
-local reviewer. Then resume synthesis and repair here. Otherwise use the local
-reviewer workflow below.
+local reviewer. Then combine the findings and repair supported issues here.
+Otherwise use the local reviewer workflow below.
 
-1. After implementation in the active task, use an independent reviewer even
-   for a narrow, local diff. For other reviews, use one for a consequential
+1. After implementation in the active task, use an independent reviewer even for
+   a narrow, local diff. For other reviews, use one for a consequential
    boundary, a broad or cross-cutting diff, or an explicitly requested
-   independent review; otherwise review inline.
+   independent review; otherwise review the change yourself.
 2. When using an independent reviewer, spawn one fresh, read-only adversarial
    reviewer. Use an adversary or reviewer role when one is available; otherwise
    use a fresh subagent and have it load this skill. An agent that implemented
    any part of the change must not serve as its independent reviewer.
 3. Give the reviewer the fixed target, intended behavior, any review focus the
    user requested, applicable repository instructions, and changed paths. Use
-   the smallest sufficient context without inherited conversation history.
-   Let the reviewer inspect the changes directly rather than sending the
+   the smallest sufficient context without inherited conversation history. Let
+   the reviewer inspect the changes directly rather than sending the
    implementer's reasoning or conclusions.
-4. Fan out only when the user asks, the change has distinct subsystems or
-   execution paths, or a high-risk boundary needs separate coverage. Use the
-   requested count; otherwise use up to three.
-5. When fanning out, give every changed path one primary lane. Add an
-   integration lane only when interactions need separate review. A reviewer may
-   inspect outside its lane for context but reports findings only for its lane.
+4. Assign several reviewers only when the user asks, the change has distinct
+   subsystems or execution paths, or a high-risk boundary needs separate
+   coverage. Use the requested count; otherwise use up to three.
+5. When using several reviewers, assign each changed path to one primary
+   reviewer. Add a review assignment for interactions only when those
+   interactions need separate review. A reviewer may inspect outside its
+   assigned paths for context but reports findings only for its assigned paths.
    Do not give every reviewer the same undivided diff.
-6. Wait for every reviewer to finish. Each reviewer returns its complete lane
-   findings in one response before synthesis or repair begins. Merge duplicates
-   and combine related findings without weakening the finding contract. Resolve
-   material disagreement only when needed; do not repeat each reviewer's
-   investigation. The reviewer owns verification of its findings.
-7. Pass retained in-scope findings to the repair path below by default. If the
-   user requested review only, report the synthesized result and stop. Report
-   any finding that needs new authority or expands the original task scope.
+6. Wait for every reviewer to finish. Each reviewer returns all findings for its
+   assignment in one response. Combine findings and begin repairs only after
+   every reviewer has finished. Merge duplicates and combine related findings
+   while preserving the evidence required for each finding. Resolve material
+   disagreement only when needed; do not repeat each reviewer's investigation.
+   The reviewer owns verification of its findings.
+7. By default, repair every supported finding within the task scope as described
+   below. If the user requested review only, report the combined findings and
+   stop. Report any finding that needs new authority or expands the original
+   task scope.
 
-When independent review is not warranted, perform the complete review inline.
+When independent review is not warranted, review the complete change yourself.
 If it was warranted but no fresh reviewer is available, label the result
-`Independent review unavailable.` Do not present an inline review as
+`Independent review unavailable.` Do not describe your own review as
 independent.
 
 ## Review the assigned change
@@ -78,7 +81,7 @@ A delegated reviewer inspects the assigned target directly and returns its
 findings to the coordinating agent. It does not spawn or delegate another
 reviewer, edit files, create commits, push branches, or post review comments.
 
-Inspect the complete diff for the selected target or assigned lane and enough
+Inspect the complete diff for the selected target or assigned portion and enough
 surrounding code, call sites, and tests to understand each changed path.
 Continue through the whole diff after finding an issue. Verify every candidate
 against the available code, callers, tests, results, and repository rules before
@@ -100,35 +103,36 @@ returning it.
 ### Readability, simplicity, and ownership
 
 - Name a simplification finding only when a concrete shorter form preserves the
-  required behavior and ownership. Identify the current maintenance cost and
-  the code to delete or inline, or the existing owner or platform facility that
+  required behavior and ownership. Identify the current maintenance cost and the
+  code to delete or inline, or the existing owner or platform facility that
   replaces it.
 - Prefer descriptive names, direct control flow, and the standard library,
-  platform API, or canonical repository utility. Remove duplication, dead or
-  derivable state, no-op artifacts, and comments that restate the code.
-- Collapse repeated branches when one existing owner can express the policy.
-  Add a helper or model only when it removes duplicated policy rather than
-  renaming it.
+  platform API, or canonical repository utility. Remove duplication, unused
+  state, state that can be calculated from existing data, artifacts that have no
+  effect, and comments that restate the code.
+- Collapse repeated branches when one existing owner can express the policy. Add
+  a helper or model only when it removes duplicated policy rather than renaming
+  it.
 - Flag new indirection or a dependency only when it has no current
   responsibility or required boundary and a concrete alternative reduces
   production concepts without weakening ownership or behavior.
 - Before deleting or inlining code, identify the invariant or constraint it
   serves. Consult history only when current code, tests, and documentation do
   not explain it.
-- Keep logic, policy, and validation in their canonical layer. Flag added
-  coupling, blurred state ownership, circular dependencies, crossed module
-  boundaries, or leaked implementation details when the change causes a
-  concrete maintenance cost.
+- Keep logic, policy, and validation in the layer responsible for them. Flag
+  added coupling, blurred state ownership, circular dependencies, crossed module
+  boundaries, or leaked implementation details when the change causes a concrete
+  maintenance cost.
 - Check whether a new guard, retry, fallback, or cast repairs the responsible
   contract or merely hides its failure.
 - Separate orchestration from low-level detail. Flag unnecessary serialization
   or partial updates when a clearer atomic structure is available.
 - Remove obsolete dual paths when callers can migrate; preserve compatibility
   when persisted data or an external contract requires it.
-- Clean up style in changed lines: names, idioms, comment density, and
-  structure that diverge from the surrounding code or repository conventions,
-  and verbose constructs with a shorter idiomatic form. Skip anything a
-  configured formatter or linter already enforces.
+- Clean up style in changed lines: names, idioms, comment density, and structure
+  that diverge from the surrounding code or repository conventions, and verbose
+  constructs with a shorter idiomatic form. Skip anything a configured formatter
+  or linter already enforces.
 
 ### Tests
 
@@ -137,7 +141,7 @@ returning it.
   during the review.
 - Keep tests that protect material behavior and would fail for a plausible
   regression. Prefer one owning layer, and remove coverage already enforced by
-  types, static checks, or a more truthful existing test.
+  types, static checks, or an existing test that proves the rule more directly.
 - Derive expected results independently of the implementation. Identify a
   plausible broken implementation that the assertion would reject.
 - Treat rendered or manual evidence as proof of the current result, not a
@@ -148,18 +152,19 @@ returning it.
   repository has a product design skill, use it.
 - Prefer real boundaries and durable outputs. A double may configure, record,
   delay, fail, or cancel; it must not calculate production outcomes. Before
-  deleting a mixed suite, identify the privacy, data-integrity, concurrency,
-  retry, lifecycle, persistence, and external-system contracts that need a
-  surviving owner.
+  deleting a suite that checks several kinds of behavior, identify the privacy,
+  data-integrity, concurrency, retry, lifecycle, persistence, and
+  external-system contracts that need a surviving owner.
 
 ### Security and performance
 
-- Trace untrusted data from each boundary to its sinks. Check validation,
-  output handling, authentication and authorization, secret exposure,
-  destructive actions, and failure or retry behavior across trust boundaries.
+- Trace untrusted data from each entry point to the operations that use it.
+  Check validation, output handling, authentication and authorization, secret
+  exposure, destructive actions, and failure or retry behavior across trust
+  boundaries.
 - Check how work scales. Find N+1 calls, unbounded work or storage, missing
-  pagination, leaked resources, blocking or repeated hot paths, and
-  performance claims without measurement.
+  pagination, leaked resources, blocking or repeated hot paths, and performance
+  claims without measurement.
 - Flag only a reachable security problem or material performance cost introduced
   by the change.
 
@@ -179,10 +184,10 @@ A style finding in changed lines needs only the last four conditions plus a
 cited convention from the surrounding code or repository; report it as `P3`.
 
 Reject speculation, pre-existing problems, intentional behavior within the
-stated scope, and style preferences without a cited convention. Anchor each
-finding to the smallest useful changed-line range. State the evidence, affected
-scenario, impact, and smallest credible repair. Cite the exact source and
-requirement for a specification or repository-rule finding. Return every
+stated scope, and style preferences without a cited convention. Cite the
+smallest useful range of changed lines for each finding. State the evidence,
+affected scenario, impact, and smallest credible repair. Cite the exact source
+and requirement for a specification or repository-rule finding. Return every
 qualifying finding without padding or a numeric cap.
 
 Use `$architecture-review` when the user wants a broad structural audit beyond
@@ -195,8 +200,9 @@ locally.
 
 ## Repair before reporting
 
-Unless the user requested review only, the coordinating agent repairs the
-complete retained in-scope set sequentially after synthesis. After an
+First, combine the review findings and decide which are supported. Unless the
+user requested review only, the coordinating agent fixes every supported issue
+within the original task scope. Make these repairs one at a time. After an
 implementation, this is the implementing agent's responsibility; a delegated
 reviewer's findings are input to that work, not the final user response. Choose
 the smallest supported repair within the original task and continue without
@@ -205,10 +211,10 @@ or authorize fixes already covered by the task. Do not end the turn with a list
 of proposed fixes or an offer to implement them.
 
 Do not repair a finding that requires new authority or expands the original
-task; report it unresolved and complete the other in-scope repairs. Run affected
-checks and inspect the final diff before reporting the result. Do not start
-another review after ordinary repairs. Start a new review only when the user
-asks or the repairs materially change the original review scope.
+task; report it unresolved and complete the other repairs within the task scope.
+Run affected checks and inspect the final diff before reporting the result. Do
+not start another review after ordinary repairs. Start a new review only when
+the user asks or the repairs materially change the original review scope.
 
 ## Report the result
 
@@ -231,8 +237,9 @@ Use these priorities:
 
 If there are no qualifying findings, say `No findings.` Do not invent a finding
 to fill the result. After the findings, add a brief overall assessment and
-mention any material test gaps or residual risks. Omit rejected candidates,
-reviewer process, clean-area summaries, and praise.
+mention any material test gaps or remaining risks. Omit rejected candidates,
+descriptions of the review process, summaries of areas without findings, and
+praise.
 
 For repaired findings, summarize the applied fix and checks run. For unresolved
 findings, state the blocker or decision needed from the user.

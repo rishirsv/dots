@@ -42,13 +42,14 @@ to the request and concrete risks; omit implementation reasoning, conclusions,
 conversation history, and generic checklists already owned by the skill.
 
 Include staged, unstaged, and untracked changes when they belong to the target.
-Record their content hashes as well as HEAD so the implementer can detect drift.
-If the connection cannot read Git diffs, prepare a diff packet with the
-base/head identifiers and relevant untracked contents in an authorized path,
-outside the review target. Link that path in the prompt; the reviewer still
-reads surrounding repository files directly through Dots. Split large packets
-into readable parts without omitting any changed paths. Do not assume that
-the connected plugin exposes every tool supported by the local server.
+Record their content hashes as well as HEAD so the implementer can detect
+changes made during review. If the connection cannot read Git diffs, prepare a
+diff packet with the base/head identifiers and relevant untracked contents in an
+authorized path, outside the review target. Link that path in the prompt; the
+reviewer still reads surrounding repository files directly through Dots. Split
+large packets into readable parts without omitting any changed paths. Do not
+assume that the connected plugin exposes every tool supported by the local
+server.
 
 Adapt this prompt, replacing placeholders with actual values:
 
@@ -86,8 +87,8 @@ implementing chat. Keep publishing pending while the requested review is
 incomplete.
 
 Compare the current target with the recorded revisions and working-tree hashes.
-If it drifted, obtain review of the changed target before treating the review as
-complete. Otherwise resume the parent skill's synthesis and repair path without
-asking for routine fix approvals. Run affected checks and continue any
-already-authorized PR publishing; the external review adds no publishing
-authority of its own.
+If it changed, obtain review of the changed target before treating the review as
+complete. Otherwise combine the findings and repair supported issues under the
+parent skill without asking for routine fix approvals. Run affected checks and
+continue any already-authorized PR publishing; the external review adds no
+publishing authority of its own.

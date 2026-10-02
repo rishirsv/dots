@@ -1,10 +1,15 @@
 # Scale on press
 
-Use this selected web press treatment within the established motion system; native controls keep platform motion. Disable the scale for reduced motion.
+Use this selected web press treatment within the established motion system;
+native controls keep platform motion. Disable the scale for reduced motion.
 
-A subtle scale-down on click gives buttons tactile feedback. Always `scale(0.96)`, never below `0.95`, which feels exaggerated. Use CSS transitions so a release mid-press returns smoothly.
+A subtle scale-down on click gives buttons tactile feedback. Use `scale(0.96)`.
+Keep the scale at or above `0.95` to avoid exaggerated movement. Use CSS
+transitions so a release mid-press returns smoothly.
 
-Not every button needs it. Reuse an existing variant to disable distracting scale; the `static` prop below is an option when designing a new button API.
+Apply this effect only to buttons that benefit from it. Reuse an existing
+variant to disable distracting scale; the `static` prop below is an option when
+designing a new button API.
 
 ### CSS example
 
@@ -38,7 +43,8 @@ Not every button needs it. Reuse an existing variant to disable distracting scal
 
 ### Static prop pattern
 
-Extract the scale class into a variable and apply it conditionally on a `static` prop:
+Extract the scale class into a variable and apply it conditionally on a `static`
+prop:
 
 ```tsx
 const tapScale = "active:not-disabled:scale-[0.96]";

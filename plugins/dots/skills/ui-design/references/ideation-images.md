@@ -8,18 +8,19 @@ what the proposal could not use.
 
 For each prompt, specify:
 
-- Subject, audience, primary job, and the direction's distinguishing premise.
+- Subject, audience, primary job, and what makes the direction distinct.
 - Intended viewport or aspect ratio and the screen or state to depict.
 - Realistic content, hierarchy, palette, typography, and asset treatment.
 - Existing design constraints and the aspects intentionally being varied.
 
-Focus the frame on the intended task rather than advertising every product
-feature. Use grouping, spacing, and typography to establish hierarchy; add
-containers and decoration where they serve the direction. Keep device chrome
-outside the design unless it is part of the requested presentation. Preserve
-source dates or use a coherent date context when temporal content matters.
+Show the intended task in the image. Avoid showing every product feature when
+those features do not help explain the direction. Use grouping, spacing, and
+typography to establish hierarchy; add containers and decoration where they
+serve the direction. Keep device chrome outside the design unless it is part of
+the requested presentation. Preserve source dates or use a coherent date context
+when temporal content matters.
 
-Present each generated result once and retain its exact identity. If numbering
-options, bind numbers to their displayed order after results appear, not prompt
-submission order. Use stable concept names and result identifiers so later
-selection remains unambiguous.
+Present each generated result once and record its exact result identifier. If
+numbering options, assign numbers from their displayed order after results
+appear, not prompt submission order. Use stable concept names and result
+identifiers so later selection remains unambiguous.

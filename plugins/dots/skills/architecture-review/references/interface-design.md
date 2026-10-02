@@ -8,14 +8,14 @@ when independent designs would improve the decision.
 
 ## Process
 
-### 1. Frame The Problem Space
+### 1. Describe the problem
 
 Before spawning subagents, write a user-facing explanation of the selected candidate:
 
 - constraints any new interface must satisfy
 - dependencies it relies on, classified with the dependency categories below
-- the current seam and what sits behind it
-- a rough illustrative code sketch to ground the constraints
+- the current module boundary and the behavior its implementation handles
+- a rough code sketch that illustrates the constraints
 
 This sketch is not the proposal. It helps the user and subagents reason about the same problem.
 
@@ -25,13 +25,16 @@ Produce two to four meaningfully different interfaces for the deepened module.
 For high-impact seams, spawn parallel subagents when available; otherwise create
 the alternatives yourself.
 
-Each design should work from the same technical brief: file paths, coupling
-details, dependency category, what sits behind the seam, repo review guidance,
-and relevant domain vocabulary. Give each design a different constraint:
+Each design should work from the same technical brief: file paths, dependencies
+between modules, dependency category, behavior behind the current boundary, repo
+review guidance, and relevant domain vocabulary. Give each design a different
+constraint:
 
-- Minimal: aim for 1-3 entry points and maximum leverage per entry point.
+- Minimal: aim for 1-3 entry points and as much useful behavior as possible
+  behind each entry point.
 - Flexible: support many use cases and extension points.
-- Common path: optimize for the most common caller and make the default case trivial.
+- Common path: optimize for the most common caller and make the default case
+  trivial.
 - Ports and adapters, when applicable: design around cross-seam dependencies.
 
 Each design outputs:
@@ -40,7 +43,8 @@ Each design outputs:
 2. Usage example showing how callers use it
 3. What the implementation hides behind the seam
 4. Dependency strategy and adapters
-5. Trade-offs: where leverage is high and where it is thin
+5. Trade-offs: which capabilities callers can use easily and which require more
+   work
 
 ### 3. Present And Compare
 
@@ -52,7 +56,8 @@ Present designs sequentially, then compare them in prose. Contrast by:
 - adapter need
 - test surface
 
-Finish with a recommendation. If elements from different designs combine well, propose a hybrid. Be opinionated; the user needs a strong read, not a menu.
+Finish with a recommendation. If elements from different designs combine well,
+propose a hybrid. State which design you recommend and why.
 
 ## Dependency Categories
 
@@ -61,15 +66,16 @@ determines how the module is tested across its seam.
 
 ### 1. In-Process
 
-Pure computation, in-memory state, no I/O. Always deepenable: merge the modules
-and test through the new interface directly. No adapter needed.
+Pure computation, in-memory state, no I/O. These modules can always be combined
+behind a simpler interface. Merge the modules and test through the new interface
+directly. No adapter needed.
 
 ### 2. Local-Substitutable
 
 Dependencies that have local test stand-ins such as an in-memory filesystem or
-local database substitute. Deepenable if the stand-in exists. The module is
-tested with the stand-in running in the test suite. The seam is internal; no port
-at the module's external interface.
+local database substitute. Combine the modules behind a simpler interface if the
+stand-in exists. The module is tested with the stand-in running in the test
+suite. The seam is internal; no port at the module's external interface.
 
 ### 3. Remote But Owned
 
@@ -90,7 +96,8 @@ external dependency as an injected port; tests provide a mock adapter.
 
 - One adapter means a hypothetical seam. Two adapters means a real one. Do not
   introduce a port unless at least two adapters are justified, typically
-  production plus test. A single-adapter seam is just indirection.
+  production plus test. With only one justified adapter, the boundary adds an
+  unnecessary layer.
 - A deep module can have internal seams private to its implementation and used
   by its own tests. Do not expose internal seams through the interface just
   because tests use them.

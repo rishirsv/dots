@@ -26,7 +26,7 @@ catalog's `--help` for the exact helper signatures.
 Line and stacked fragments print every value in adjacent text so readers can
 recover exact numbers without hovering over marks. A `source` supplied through
 the report helper is also stored in the embedded spec, so regenerating the
-chart preserves its provenance.
+chart preserves its source attribution.
 
 To edit a generated chart, change its `chart-spec` comment and run
 `node scripts/chart.mjs --from-fragment
@@ -58,9 +58,9 @@ Use a chart when magnitude, direction, or shape is easier to see than read.
 Prefer prose or a table when visual encoding adds no decision value; dataset
 size alone is not the deciding rule.
 
-## Compose the chart, not a dashboard around it
+## Explain The Supplied Data
 
-For a named numeric dataset or one-off analysis, start with the chart. Put the
+For a named numeric dataset or single analysis, start with the chart. Put the
 important values and takeaway on its marks, axis, or annotations when space
 allows. Do not add a KPI row, controls, cards, or a second visualization unless
 they answer a different supplied question.
@@ -80,11 +80,10 @@ cards above the plot.
 - Non-emphasized series: alpha steps (`--a20`/`--a40`/`--a70`) — lightness
   separates them in both modes and survives color-vision deficiency.
 - Good/bad polarity: `--warning-*`/`--danger-*` inks only when the data is
-  genuinely a warning, never as a second decorative hue.
+  a warning, never as a second decorative hue.
 
 Never introduce raw hex in a chart. If two series can't be told apart with
-the ladder, that's the signal to split into small multiples, not to add
-color.
+the ladder, split the chart into small multiples. Do not add another color.
 
 Keep each encoding stable throughout the page. Apply a category or series
 encoding to its marks, not its text labels, and pair emphasis with a direct
@@ -97,7 +96,7 @@ label, shape, position, or line treatment so color never carries meaning alone.
 - Sparklines: ~120×28, 1.5px stroke, one terminal dot at 2.5px in accent.
 - Lines in figures: 2px; grid rules 1px at `--a12`; no drop shadows, no
   gradients, no 3D.
-- Direct labels beat legends: 1-3 series may share a quiet legend line; 4+
+- Prefer direct labels to legends: 1-3 series may share a quiet legend line; 4+
   series must be directly labeled or split into small multiples.
 - Reserve space for the longest formatted label and value at every supported
   width. Move, wrap, or reduce tick density before allowing text to overlap a

@@ -2,7 +2,7 @@
 
 Read this when the user asks about workflow friction, slow testing, a better
 route through the work, agent-experienced friction, or harness engineering.
-Apply only the lenses selected by the prompt.
+Inspect only the aspects selected by the prompt.
 
 ## Compare the cost of the actual path
 
@@ -11,25 +11,26 @@ human attention consumed. Compare the observed route with what a capable agent
 using the same available tools reasonably needed. Do not punish exploration
 that was necessary to resolve real uncertainty.
 
-Inspect the relevant lenses:
+Inspect the relevant aspects:
 
 - **Rework:** edits, reads, builds, or explanations repeated because an earlier
   decision was wrong or an available check arrived too late.
 - **Information gathering:** broad or repeated searches when a smaller lookup
   could have settled the question.
-- **Routine overhead:** manual or roundabout work that a stable command, skill,
-  script, or harness primitive should own.
+- **Routine overhead:** manual or roundabout work that an existing command,
+  skill, script, or agent tool should perform.
 - **Sequencing and batching:** independent work serialized, dependent work
-  started too early, or validation deferred until rework compounded.
+  started too early, or validation delayed until repeated work increased.
 - **Flailing:** an unchanged failing approach retried instead of inspecting the
-  source, error, documentation, or live state that could discriminate the next
-  move.
+  source, error, documentation, or live state that could identify the next
+  action.
 - **Verification timing:** checks run too broadly, too often, too late, or
   without a relationship to the behavior they claim to prove.
 
-Name the dominant waste with a rough count and the likely fixable cause. A
-failed attempt is not waste merely because hindsight exists; explain what
-information made the better route available at the time.
+Name the largest source of unnecessary work. Give a rough count and identify the
+likely cause that can be fixed. A failed attempt is not waste merely because
+hindsight exists; explain what information made the better route available at
+the time.
 
 ## Testing and validation cost
 
@@ -60,7 +61,7 @@ the answer in advance:
 1. Preserve the necessary discoveries and decisions.
 2. Remove retries, premature edits, duplicated context gathering, and checks
    whose result did not change the next decision.
-3. Reorder steps when earlier evidence would have prevented downstream rework.
+3. Reorder steps when earlier evidence would have prevented repeated work later.
 4. Name what the better route would save and what uncertainty it would retain.
 
 Also ask what did not happen but should have, what second-order effect was
@@ -106,5 +107,6 @@ durable proposal.
 
 For every retained finding, account for the trigger, expected behavior, actual
 behavior, cost, cause, better path, closest owner, evidence strength, and a
-falsifier. Omit fields from the rendered answer when they would only repeat
-another line, but do not omit them from the analysis.
+result that would show the diagnosis is wrong. Omit fields from the rendered
+answer when they would only repeat another line, but do not omit them from the
+analysis.

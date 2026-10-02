@@ -1,6 +1,9 @@
 # Removed signals
 
-What to look for on the `-` side of a hunk and which reference owns the judgment. A row here is a lead, never a finding. Route the removal to its owner and report it only once inspection confirms the interface got worse.
+Inspect the removed lines on the `-` side of a diff hunk. Use the reference in
+the Owner column to assess each relevant removal. Each row identifies something
+to investigate. Report a finding only after confirming that the interface became
+worse.
 
 | Removed from the `-` side | Owner | What to check |
 | --- | --- | --- |
@@ -18,7 +21,8 @@ What to look for on the `-` side of a hunk and which reference owns the judgment
 
 ## Equivalent replacements
 
-These can clear the signal once their replacement behavior is verified. Check for them before routing anything, or the report fills with refactors reported as regressions:
+Before reporting a regression, check for an equivalent replacement. Verify its
+behavior. The following replacements can preserve the removed behavior:
 
 - `aria-label` giving way to `aria-labelledby` pointing at visible text.
 - An explicit `role` dropped because the element became the native equivalent, `role="button"` going as a `div` becomes a `<button>`.

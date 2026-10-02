@@ -17,9 +17,9 @@ A flat preview does not establish spatial quality.
 
 Keep named parts and assemblies in the asset hierarchy. Define whether a gesture
 moves the whole object or one part, and retain a way to restore the assembly.
-When controls edit geometry, keep their visible affordances synchronized with
-model state and convert gesture coordinates into the model's coordinate space.
-For shared inspection, verify that collaborators see consistent state.
+When controls edit geometry, keep their visible controls synchronized with model
+state. Convert gesture coordinates into the model's coordinate space. For shared
+inspection, verify that collaborators see consistent state.
 
 ## Test The Input
 

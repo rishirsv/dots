@@ -5,8 +5,9 @@ description: "Route work to the smallest applicable Dots skill, shared reference
 
 # Dots Index
 
-Route the request to the smallest Dots workflow that owns it. The index chooses
-and loads owners; it does not repeat or replace their instructions.
+Route the request to the smallest Dots workflow that owns it. The index selects
+and loads the skill responsible for the work; it does not repeat or replace
+its instructions.
 
 ## Route only
 
@@ -30,7 +31,7 @@ workflow. It routes into focused skills as its phases require.
 
 | Request | Owner |
 | --- | --- |
-| Forward architecture for a new or changed boundary | `$architect` |
+| Design a new or changed code boundary before implementation | `$architect` |
 | Structural audit or refactor candidates in existing code | `$architecture-review` |
 | Completed code change before merge | `$change-review` |
 | Resolve one uncertain choice through a throwaway build | `$prototype` |
@@ -65,5 +66,5 @@ boundary.
 ## Finish
 
 The selected owner finishes the work and produces the result. The index is done
-when the request has one clear primary owner, every supporting route has a
-distinct job, and the owners' completion conditions have been applied.
+when the request has one clear primary owner, every supporting skill has a
+distinct job, and the selected skills' completion conditions have been met.

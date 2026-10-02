@@ -4,10 +4,10 @@ type: block
 when: Every page starts here. The document skeleton: header (context line,
   title, dek), article column, and footer slot.
 deps: theme.css (inline verbatim in <style> before component CSS)
-variants: article (default, prose-led) | wide (parallel evidence) | canvas
+variants: article (default, text with embedded figures) | wide (parallel evidence) | canvas
   (visual references; keep prose in .reading-column).
-gotchas: The context line is a quiet breadcrumb, never an uppercase
-  eyebrow. Replace slot comments with real content; keep section ids stable —
+gotchas: The context line is a small context line. Do not style it as an uppercase
+  label. Replace slot comments with real content; keep section ids stable —
   the TOC rail targets them. Add page-behavior only when the page needs
   progressive enhancement.
 -->

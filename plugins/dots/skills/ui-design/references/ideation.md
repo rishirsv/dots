@@ -1,26 +1,27 @@
 # Ideation
 
 Explore distinct directions through local HTML prototypes, native previews, or
-generated images.
-Reuse the settled brief; read [brief.md](brief.md) when the subject, audience
-or intended outcome still needs grounding.
+generated images. Reuse the settled brief; read [brief.md](brief.md) when the
+subject, audience or intended outcome still needs clarification.
 
 ## Frame The Exploration
 
-Identify the decision the variants should resolve: product framing, information
-hierarchy, composition, interaction, or visual identity. Inspect relevant product
-screens and supplied references directly. Preserve the brief's hard constraints
-and distinguish missing evidence from freedom to invent.
+Identify the decision the variants should resolve: the product's purpose,
+information hierarchy, composition, interaction, or visual identity. Inspect
+relevant product screens and supplied references directly. Preserve the brief's
+hard constraints and distinguish missing evidence from freedom to invent.
 
 For an established product, vary structure, emphasis, and interaction within its
-identity unless a new style is requested. For broad exploration, vary both concept
-and visual system. Give each direction a descriptive name and a concise premise.
-Differences should change the experience, not merely swap accent colors.
+identity unless a new style is requested. For broad exploration, vary both
+concept and visual system. Give each direction a descriptive name. Briefly
+explain its main idea. Make differences that change the experience. A change in
+accent color alone is insufficient.
 
-Default to three variants unless the user specifies a count or the question needs
-a smaller comparison. Keep subject, core content, task, and viewport comparable
-so the user can judge the intended differences. Variant count is separate from
-iteration count: producing three alternatives is one exploration round.
+Default to three variants unless the user specifies a count or the question
+needs a smaller comparison. Keep subject, core content, task, and viewport
+comparable so the user can judge the intended differences. Variant count is
+separate from iteration count: producing three alternatives is one exploration
+round.
 
 ## Choose The Medium
 
@@ -44,21 +45,23 @@ forcing every concept into one device preset.
 ## Compare And Continue
 
 Show the variants with a short comparison of their defining choice, benefit, and
-trade-off. Recommend a direction against the brief and explain why. Avoid grading
-all options against a single aesthetic preference.
+trade-off. Recommend the direction that best meets the brief. Explain why. Avoid
+grading all options against a single aesthetic preference.
 
 For ideation-only requests, stop with the reviewable options and ask which to
 pursue or refine. If the user already asked you to choose and build, select the
-best-supported direction and continue. Do not add a second confirmation after
-an unambiguous selection.
+direction best supported by the brief and evidence and continue. Do not add a
+second confirmation after an unambiguous selection.
 
 Apply feedback to the named variant. When combining directions, identify which
-structure, styling, and behavior carry forward; produce a revised concept if
-the combination needs visual resolution. Small, explicit corrections can go
-directly into the selected HTML prototype. Preserve earlier variants for comparison.
+structure, styling, and behavior to retain; produce a revised concept if you
+need to show how the combined elements will look. Small, explicit corrections
+can go directly into the selected HTML prototype. Preserve earlier variants for
+comparison.
 
 Continue from the selected prototype source rather than rebuilding it
-unnecessarily. For a selected image, use [reference-to-code.md](reference-to-code.md). Once an accepted
-visual target exists, [design-qa.md](design-qa.md) governs fidelity and correction
-iterations. Ideation itself explores alternatives; it does not require a fidelity
-pass against a target that has not yet been chosen.
+unnecessarily. For a selected image, use
+[reference-to-code.md](reference-to-code.md). Once an accepted visual target
+exists, [design-qa.md](design-qa.md) governs fidelity and correction iterations.
+Ideation itself explores alternatives; it does not require a fidelity pass
+against a target that has not yet been chosen.

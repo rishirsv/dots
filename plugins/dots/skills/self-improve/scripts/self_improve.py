@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Collect session evidence for a Codex or Claude Code workflow review.
 
-The helper ranks evidence, extracts structured file activity, distinguishes
-skill mentions from invocations, and derives aggregate statistics. It never
-interprets findings or edits source.
+The helper ranks evidence, extracts file activity recorded in tool arguments,
+distinguishes skill mentions from invocations, and calculates summary
+statistics. It never interprets findings or edits source.
 """
 from __future__ import annotations
 
@@ -347,7 +347,7 @@ def _output_text(output: Any) -> str:
 
 @dataclass
 class ThreadSignals:
-    """Heuristic per-thread signals. Candidate detection, not conclusions."""
+    """Indicators of threads that need inspection. These are not conclusions."""
 
     mentions: Counter = field(default_factory=Counter)
     invocations: Counter = field(default_factory=Counter)
@@ -626,10 +626,10 @@ def save_stats_cache(entries: dict[str, dict[str, Any]]) -> None:
 
 
 def stats_cache_key(thread: Thread, window_start: int | None = None, window_end: int | None = None) -> str:
-    """Invalidate on transcript mtime so a growing session is recomputed.
+    """Recompute a session when its transcript modification time changes.
 
     Bump STATS_SCHEMA whenever a derived field is added, removed, or redefined;
-    otherwise a cached entry from an older shape is read as current."""
+    otherwise the helper treats an older cached record as current."""
     try:
         mtime = Path(thread.rollout_path).stat().st_mtime_ns
     except OSError:
@@ -1389,7 +1389,7 @@ def cmd_skill_usage(args: argparse.Namespace) -> None:
 
 
 def cmd_stats(args: argparse.Namespace) -> None:
-    """Emit structured aggregate evidence for downstream interpretation."""
+    """Return summary statistics for the agent to interpret."""
     if args.days is not None and args.days <= 0:
         raise SystemExit("--days must be positive")
     if args.max_new is not None and args.max_new < 0:
@@ -1454,7 +1454,7 @@ def build_parser() -> argparse.ArgumentParser:
     stats_p.add_argument("--query")
     stats_p.add_argument("--cwd")
     stats_p.add_argument("--max-new", type=int,
-                         help="optional explicit cap on newly derived sessions; default scans the full selected window")
+                         help="maximum sessions whose statistics to calculate in this run; by default, scan the full selected window")
     stats_p.add_argument("--refresh", action="store_true", help="ignore the cache and recompute")
     stats_p.set_defaults(func=cmd_stats)
 

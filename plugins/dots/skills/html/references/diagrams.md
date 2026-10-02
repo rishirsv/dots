@@ -1,7 +1,8 @@
 # Diagram vocabulary
 
-Use this when relationships, direction, hierarchy, or state are clearer as a
-figure. For page modules, use the `flow`, `state`, `sequence`, or computed
+Read this when planning a substantive HTML page. Identify relationships,
+direction, hierarchy, and state that a figure can explain. Choose useful
+visual explanations by default, before drafting the detailed prose. For page modules, use the `flow`, `state`, `sequence`, or computed
 `timeline` helper when it fits; `node scripts/catalog.mjs --help <helper>`
 shows the input shape. Use [the diagram gallery](../assets/diagrams.html) to
 compare visual forms. Hand-author a figure when the helpers cannot express the
@@ -30,22 +31,29 @@ relationship or the composition needs precise placement.
 | What fields, methods, and inheritance define the types? | Class | `#class` |
 | Which records relate, and with what cardinality? | Entity relationship | `#entity-relationship` |
 
-Use a comparison table for a binary contrast. Use ordinary prose when one box
-or one arrow would merely restate a sentence.
+Use a comparison table for a binary contrast when exact criteria matter.
+For a plan, use a flow for phases or decisions, a sequence or swimlane for
+owners and handoffs, or a timeline for supplied dates and dependencies.
+For an explainer, show the mechanism or state change. Add a separate view
+when it explains another part of the answer.
 
-## Draw the relationship, not decoration
+A figure must reveal a relationship. If one box or arrow only repeats a
+sentence, use prose for that point. Do not omit useful diagrams merely
+because prose could also describe the relationship.
+
+## Make the relationship clear
 
 - Keep an embedded diagram to about 4–9 nodes. Split a larger explanation into
-  two diagrams or promote it to an architecture board.
+  two diagrams or use an architecture board.
 - Emphasize only one or two elements. Neutral structure should
-  carry most of the drawing.
+  occupy most of the drawing.
 - Remove connectors whose meaning is already obvious from placement.
 - Put important labels in HTML when a responsive SVG would shrink them below
   11px. Otherwise place the diagram in an internally scrolling wrapper.
 - Keep the SVG `aria-hidden="true"` and state the equivalent relationship in
   an adjacent summary or ordered explanation.
-- Use existing tokens only. A new diagram may introduce geometry, never a
-  second palette, font system, shadow language, or decorative texture.
+- Use existing tokens. New diagrams can use different geometry. Preserve
+  the palette, fonts, flat surfaces, and absence of decorative texture.
 
 For bar, line, donut, candlestick, and waterfall forms, also read
 [charts.md](charts.md). Exact values need visible labels or an adjacent table;
@@ -64,7 +72,7 @@ together. Organize it into a stable reading order:
 5. governance, ownership, or next intervention.
 
 Prefer bands with dividers over a field of small cards. Keep 10–25 major
-blocks; merge detail into domains beyond that. Orthogonal connectors should
+blocks. If more blocks are needed, group details by domain. Orthogonal connectors should
 not cross text or run along a module border.
 
 ## Hand-authored figures
@@ -75,6 +83,6 @@ and its shared `.diagram-*` rules, then replace the example labels, values,
 connectors, and summary with the supplied material. Adjust geometry to fit the
 actual labels and relationships.
 
-Before handoff, inspect the actual display width. A valid diagram has no
+Before delivery, inspect the diagram at its actual display width. A valid diagram has no
 overlapping labels, ambiguous crossings, clipped content, unreadable scaled
 text, or strong emphasis on more than two elements.

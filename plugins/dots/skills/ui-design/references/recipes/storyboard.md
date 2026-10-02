@@ -13,6 +13,7 @@ Reduced motion: show the complete preview immediately.
 ```
 
 Name values by their role, such as `surfaceEnter`, `detailsDelay`, and
-`travelDistance`. Keep a single owner for sequencing and cancellation; derive
-presentation from current state rather than accumulating independent flags.
-Use a live tuning control only when comparing values would resolve a real choice.
+`travelDistance`. Use one component or controller to manage sequencing and
+cancellation. Derive appearance from current state rather than adding
+independent flags. Use a live tuning control only when comparing values would
+resolve a real choice.

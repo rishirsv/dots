@@ -16,6 +16,7 @@
 }
 ```
 
-Drive `aria-expanded` and panel visibility from the same state. The icon transition
-can reverse naturally when the user toggles again. Panel semantics, focus, and
-content availability should not depend on the icon's transition completing.
+Drive `aria-expanded` and panel visibility from the same state. The icon
+transition can reverse naturally when the user toggles again. Keep panel
+semantics, focus, and content available independently of the icon's transition.
+Do not wait for that transition to complete.

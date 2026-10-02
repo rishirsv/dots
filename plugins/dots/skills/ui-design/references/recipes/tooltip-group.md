@@ -1,8 +1,13 @@
 # Tooltips: skip delay on subsequent hovers
 
-Use the component library's tooltip-group timing API. Keep content available to keyboard users and essential meaning available without hover. Disable spatial motion for reduced motion.
+Use the component library's tooltip-group timing API. Keep content available to
+keyboard users and essential meaning available without hover. Disable spatial
+motion for reduced motion.
 
-Tooltips should delay before appearing to prevent accidental activation. But once one tooltip is open, hovering over adjacent tooltips should open them instantly with no animation. This feels faster without defeating the purpose of the initial delay.
+Tooltips should delay before appearing to prevent accidental activation. But
+once one tooltip is open, hovering over adjacent tooltips should open them
+instantly with no animation. This lets users inspect adjacent tooltips quickly
+while preserving the initial delay that prevents accidental activation.
 
 ```css
 .tooltip {
