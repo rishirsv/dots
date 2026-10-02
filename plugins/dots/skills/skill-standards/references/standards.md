@@ -2,8 +2,7 @@
 
 Use this standard to create, update, or review Dots skills. The environment's
 `skill-creator` provides authoring and validation instructions. This reference
-adds requirements for clear prose, behavior preservation, and methods for
-specific kinds of work.
+adds requirements for clear prose and behavior preservation.
 
 Follow the host's requirements for valid skills. Use its default `skill-creator`
 or `plugin-creator` for schemas, initial files, packaging, installation, and
@@ -62,11 +61,9 @@ maps. Load those resources only when the task needs them.
 
 For a skill that authors and reviews other skills:
 
-- **Before:** “Before every task, read the review, session-capture, and template
-  execution references.”
+- **Before:** “Before every task, read the review and session-capture references.”
 - **After:** “Read the review reference for a source audit, session capture when
-  turning a completed task into a skill, and template execution when the skill
-  operates on a supplied template.”
+  turning a completed task into a skill.”
 
 A description edit can proceed without loading those unrelated methods. These
 examples are illustrations, not required wording for generated skills.
@@ -230,27 +227,6 @@ examples are illustrations, not required wording for generated skills.
   or artifact a reader can inspect.
 - **State limitations that change the decision.** Omit generic disclaimers that
   do not affect how the result should be used.
-
-### Load the method for the artifact
-
-The summaries below route to domain methods. Read a reference when its method
-can affect the requested creation, update, review, or evaluation design; a
-metadata-only edit does not need the whole domain workflow:
-
-- **[Research and synthesis](research-synthesis.md).**
-  Use for investigation, source comparison, evidence synthesis, research
-  briefs, and recommendations.
-- **[Reports and presentations](reports-presentations.md).**
-  Use for reports, decks, briefings, memos, and other reader-facing artifacts.
-- **[Spreadsheet analysis](spreadsheet-analysis.md).**
-  Use for spreadsheet creation, editing, cleaning, analysis, transformation,
-  and audit.
-- **[Financial modelling](financial-modelling.md).**
-  Use when the workbook is a financial model whose formulas, assumptions,
-  scenarios, schedules, and controls carry domain meaning.
-- **[Template execution](template-execution.md).**
-  Use in addition to the artifact-specific reference when the skill fills,
-  refreshes, converts, or edits a supplied template.
 
 ## Rules
 

@@ -22,11 +22,8 @@ evidence-backed findings and proposed edits. Review-only requests leave source u
 the user also requests fixes, apply the supported edits and run their relevant
 checks.
 
-When examples, transcripts, accepted outputs, source packs, or user corrections
-must become reusable behavior, read
-[source-distillation.md](references/source-distillation.md). When the user wants
-the current or a named Codex task turned into a new or updated skill, read
-[session-capture.md](references/session-capture.md) first.
+When the user wants the current or a named Codex task turned into a new or
+updated skill, read [session-capture.md](references/session-capture.md) first.
 
 Plugin scaffolding, manifests, packaging, marketplace entries, installation,
 and cache updates belong to the environment's default `plugin-creator`.

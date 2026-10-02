@@ -48,7 +48,5 @@ Ask only the questions needed to settle ownership, output, or a boundary that
 changes the requested action. Infer everything else from the evidence and mark
 uncertainty in the authoring note.
 
-Return to [source-distillation.md](source-distillation.md) when the session has
-paired inputs and outputs, several examples, or sources that teach conflicting rules.
 Return to [standards.md](standards.md) to settle
 selection criteria, where instructions belong, and completion requirements before editing.
