@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * chart.mjs — compile a chart spec into a catalog-conformant fragment.
+ * chart.mjs — compile a chart spec into a fragment that follows the component catalog.
  *
  * Authoring-time only: run it while building an artifact, paste the output,
  * never ship the script. Colors come exclusively from --chart-* tokens
- * (see references/DESIGN.md x-chart); markup matches the registry anatomy so
+ * (see references/DESIGN.md x-chart); markup matches the registry structure so
  * output is indistinguishable from hand-authored catalog work and
  * machine-editable.
  *

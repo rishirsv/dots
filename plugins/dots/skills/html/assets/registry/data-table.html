@@ -3,7 +3,7 @@ title: Data table
 type: ui
 when: Structured rows a reader compares line by line — decisions, inventories,
   risk registers. Builds on the base table styles already in theme.css;
-  reach for this only when you need labeled first columns, right-aligned
+  use this only when you need labeled first columns, right-aligned
   numeric columns, or a horizontal scroll wrapper for wide content.
 deps: theme.css
 variants: plain (default — theme.css table styles, no extra classes) |
@@ -13,8 +13,8 @@ variants: plain (default — theme.css table styles, no extra classes) |
 gotchas: Horizontal dividers only — never a full grid, never zebra striping,
   never a left accent stripe on any row. Wrap wide tables in .table-scroll so
   the page itself never scrolls sideways. Numeric columns get tabular-nums via
-  .col-num; only decorate a value with --accent when it is the single point
-  the reader must land on, not a whole column.
+  .col-num; only decorate a value with --accent when it is the single value
+  that needs emphasis. Do not emphasize a whole column.
 -->
 <style>
   .table-scroll {

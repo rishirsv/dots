@@ -1,8 +1,10 @@
 # Animate enter states with @starting-style
 
-Check the project's supported browsers before selecting this treatment. Provide an immediate reduced-motion state. Entry CSS alone does not manage exit or focus lifecycle.
+Check the project's supported browsers before selecting this treatment. For
+reduced motion, show the final state immediately. Manage exit and focus
+separately because entry CSS does not handle them.
 
-The modern CSS way to animate element entry without JavaScript:
+Use this CSS pattern to animate element entry without JavaScript:
 
 ```css
 .toast {
@@ -17,7 +19,8 @@ The modern CSS way to animate element entry without JavaScript:
 }
 ```
 
-This replaces the common React pattern of using `useEffect` to set `mounted: true` after initial render. Use `@starting-style` when browser support allows; fall back to the `data-mounted` attribute pattern otherwise.
+This replaces the common React pattern of using `useEffect` to set `mounted: true` after initial render. Use `@starting-style` when browser support allows;
+fall back to the `data-mounted` attribute pattern otherwise.
 
 ```jsx
 // Legacy pattern (still works everywhere)

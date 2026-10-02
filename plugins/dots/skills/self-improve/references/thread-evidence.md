@@ -4,7 +4,7 @@ Use this common method after selecting the platform-specific session source.
 The helper narrows the read set; the agent verifies the evidence and decides
 whether it supports a durable change.
 
-## Evidence packet
+## Evidence record
 
 Capture only fields that change the proposal decision:
 
@@ -17,24 +17,24 @@ Capture only fields that change the proposal decision:
 | Governing files | Instructions, skills, docs, scripts, configs, or checks that shaped the result |
 | File activity | Files read, searched, edited, written, or merely mentioned |
 | Outcome | Validation result and whether the user accepted it |
-| Support | Deduplicated thread clusters and cross-repo spread |
+| Support | Thread clusters with duplicates removed and the repositories they cover |
 | Contradictions | Evidence that points toward a different rule |
 | Falsifier | What would show the diagnosis is wrong |
 
-Thread ids, timestamps, and transcript paths establish provenance. Do not copy
-them into portable skill or instruction text unless the runtime task requires
-them.
+Thread IDs, timestamps, and transcript paths identify where the evidence came
+from. Do not copy them into portable skill or instruction text unless the
+runtime task requires them.
 
 ## Generalization gate
 
 Before generalizing beyond the task:
 
-1. Name the reusable failure class in behavioral terms.
+1. Describe the repeated failure in terms of what the agent does.
 2. State the rule without copying the incident's names, wording, counts, or
    numeric heuristic unless the number is independently supported.
 3. Check the nearest adjacent skill or workflow and keep the rule with the
    component that owns the behavior.
-4. Give a counterexample or falsifier that would show the rule is too broad or
+4. Give a counterexample or a result that would show the rule is too broad or
    the diagnosis is wrong.
 
 Reject or narrow a generalized proposal when it cannot pass all four checks.
@@ -67,14 +67,14 @@ Prioritize threads containing:
 
 - direct corrections or stable preferences;
 - repeated retries followed by an accepted workflow;
-- failed validation or tool friction tied to a named procedure;
+- failed validation or tool problems tied to a named procedure;
 - instruction, skill, plugin, memory, documentation, or harness decisions;
 - files that recur across several related threads;
 - recent work in the current repository.
 
 Do not treat generic negative words, incidental error output, a skill name in a
-diff, or a path mention as proof of failure. Separate organic use from threads
-developing the skill itself.
+diff, or a path mention as proof of failure. Distinguish normal use of the skill
+from threads that develop the skill itself.
 
 ## Proposal destinations
 
@@ -90,6 +90,7 @@ Choose one primary destination:
 - validation check;
 - conflict resolution or deletion.
 
-Prefer the cheapest durable home. Mechanical requirements belong in checks;
-judgment that must load every session belongs in instructions; long procedures
-belong in skills or docs; generated facts and preferences belong in memory.
+Choose the place that can maintain the rule with the least unnecessary work.
+Mechanical requirements belong in checks; judgment that must load every session
+belongs in instructions; long procedures belong in skills or docs; generated
+facts and preferences belong in memory.

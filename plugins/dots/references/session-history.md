@@ -1,4 +1,4 @@
-# Session History
+# Session history
 
 Use this reference only when a skill needs evidence from earlier Codex or Claude
 Code sessions. Prefer supported read-only interfaces. Local stores are a fallback
@@ -18,13 +18,13 @@ A project-file connector does not provide a terminal or history API.
 For a historical audit, record the requested sources, available stores, cutoff,
 window, exclusions, and sessions actually read. Select each platform explicitly:
 `auto` chooses one store, not both. Include alternate `CODEX_HOME` or
-`CLAUDE_CONFIG_DIR` locations only when they are in scope. Freeze the cohort and
-apply the parent skill's deduplication and causal-review rules.
+`CLAUDE_CONFIG_DIR` locations only when they are in scope. Keep the selected set of sessions fixed during the analysis. Apply the
+calling skill's rules for removing duplicate sessions and checking causes.
 
 Distinguish missing access, an empty bounded search, an older report, and a newly
-read transcript. Reading a report does not repeat its transcript audit. Continue
-supported source review when history is unavailable and label the missing
-behavioral evidence; do not turn inaccessible history into zero usage.
+read transcript. Reading a report does not repeat its transcript audit. If history is unavailable, continue reviewing accessible source files. State
+that evidence of past behavior is missing. Missing access does not establish
+zero usage.
 
 ## Codex
 
@@ -75,7 +75,7 @@ Prefer supported interfaces when they fit the task:
 See Anthropic's [session documentation](https://code.claude.com/docs/en/sessions)
 and [Agent SDK session APIs](https://code.claude.com/docs/en/agent-sdk/sessions).
 
-For historical mining, Claude Code stores plaintext JSONL under
+For historical analysis, Claude Code stores plaintext JSONL under
 `$CLAUDE_CONFIG_DIR` or `~/.claude`:
 
 | Source | Use |
@@ -107,6 +107,6 @@ python3 ../self-improve/scripts/self_improve.py --platform claude stats
 
 From the `self-improve` directory itself, drop the leading `../self-improve/`.
 `triage` narrows candidates, `show` renders a selected transcript, `files`
-extracts structured file references, `skill-usage` builds an invocation ledger,
+extracts structured file references, `skill-usage` builds a record of invocations,
 and `stats` emits structured aggregate evidence. Read cited transcript regions
 before drawing a causal conclusion.

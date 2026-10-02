@@ -1,16 +1,15 @@
 <!-- component: code-panel
 title: Code panel
 type: ui
-when: Multi-line code or config the reader needs verbatim — a snippet worth
-  quoting in full, not paraphrasing inline with <code>. Dark surface in both
-  light and dark mode so code always reads as code.
+when: Multi-line code or config the reader needs verbatim — a snippet
+  to quote in full. Use a dark code surface in light and dark mode.
 deps: theme.css
 variants: default (filename header) | omit .code-head for an anonymous
   fragment with no filename to show.
 gotchas: Horizontal scroll stays inside the pre — never let wide lines widen
   the page. The syntax tint classes (.tok-k/.tok-s/.tok-c/.tok-n) are literal
   colors scoped to the code surface, not page tokens, because the surface
-  stays dark even when the page flips to light mode.
+  stays dark even when the page uses light mode.
 -->
 <style>
   .code-panel {

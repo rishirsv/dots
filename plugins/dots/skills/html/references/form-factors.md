@@ -4,6 +4,10 @@ Choose structure from the information type and the reader's job. Use the
 lightest form that makes the supplied material easier to understand, compare,
 or act on. Preserve a strong structure already supplied by the caller or source.
 
+For a plan, put a visual overview before the detailed steps. For reports
+and explainers, choose the opening figure and any supporting views before
+drafting. Preserve explicit reading order and fixed template regions.
+
 Map each major content unit before composing:
 
 - **Prose section:** explanation, background, rationale, or narrative. Use
@@ -25,8 +29,8 @@ Map each major content unit before composing:
   many criteria matter.
 - **Table:** repeated records with shared fields where row/column lookup or
   comparison is the point.
-- **Diagram:** relationships, boundaries, branching flows, or spatial systems
-  that prose cannot express as clearly. Choose the family through
+- **Diagram:** relationships, boundaries, branching flows, or spatial systems.
+  Use these proactively to explain substantive material. Choose the form through
   [diagrams.md](diagrams.md).
 - **Chart:** supplied quantitative evidence whose pattern or comparison matters.
   Choose and verify it through [charts.md](charts.md).
@@ -61,7 +65,8 @@ Map each page before writing it:
 - the transition to the next page; and
 - whether the page also needs an internal `toc-rail`.
 
-Give the sequence one visual system but not one repeated silhouette. Use the
+Use the same design tokens throughout the sequence. Vary page layouts when
+the content requires different forms. Use the
 existing width modes and components to distinguish orientation, instruction or
 lab work, and closure when their content differs: an introduction may lead
 with one meaningful `wide-figure`, a lab may use parallel evidence in `wide`,
@@ -76,7 +81,7 @@ content-component system.
 
 For a learning site, use one root contents page, make chapter landing pages its
 children, and make lessons children of their chapter. A chapter landing should
-explain the local learning arc; the generated `chapter-index` then exposes its
+explain the chapter's learning sequence. The generated `chapter-index` lists its
 lessons. `sequence-nav` stays scoped to the current sibling group, while
 breadcrumbs preserve the route back to the chapter and contents. Keep live
 simulations, tutoring, search, and mutable progress outside a static HTML page
@@ -84,7 +89,7 @@ set.
 
 ## Table gate
 
-Use a table only for genuinely tabular information: repeated items, shared
+Use a table only for tabular information: repeated items, shared
 fields, and useful comparison or lookup. If most cells become sentences or
 mini-paragraphs, switch to prose, bullets, steps, callouts, or disclosure.
 
@@ -103,12 +108,16 @@ Use these only when the caller and source lack a deliberate order. They arrange
 supplied content and never invent a claim, fill an evidence gap, or make a
 decision the source did not make.
 
-- **Decision:** context -> options -> distinguishing evidence -> recommendation.
-- **Explanation:** answer -> mechanism -> worked path or example -> implications.
+- **Plan:** brief goal -> visual phases and dependencies -> full steps, owners,
+  constraints, and verification.
+- **Decision:** context -> visual comparison -> distinguishing evidence -> recommendation.
+- **Explanation:** answer -> visual overview -> mechanism -> worked example -> implications.
 - **Status:** current state -> meaningful movement -> blockers -> owned next actions.
 - **Incident:** impact -> chronology -> established cause -> recovery -> follow-up.
 - **Comparison:** criteria -> meaningful differences -> trade-offs -> decision or
   explicit absence of one.
 
-When `how` or planning work supplies researched content and a reading order,
-follow it instead of these generic forms.
+When `how` or planning work supplies researched content and a required reading
+order, follow it. Add visual explanations in the permitted locations. For an
+adaptive template, preserve required content while placing the overview before
+the details.

@@ -36,7 +36,7 @@ configure around them.
 
 ## Portable CPU and native acceleration: whisper.cpp
 
-`whisper.cpp` is the native, dependency-light route. The adapter uses FFmpeg to
+`whisper.cpp` runs locally with few dependencies. The adapter uses FFmpeg to
 normalize any decodable media to 16 kHz mono PCM WAV, then asks `whisper-cli`
 for full JSON output. Install whisper.cpp and FFmpeg with the platform's package
 manager, then download a GGML model separately.
@@ -60,9 +60,9 @@ machine-level default is more convenient than passing `--model` each time.
 
 ## Output and failure interpretation
 
-Every successful route becomes the same normalized record: title, source,
-source kind, provider, language, and ordered `{start, end, text}` segments. The
-renderer then emits:
+The orchestrator converts every successful result to the same record format:
+title, source, source kind, provider, language, and ordered `{start, end, text}`
+segments. The renderer then emits:
 
 - `md`: readable metadata and timestamped paragraphs;
 - `txt`: spoken text only;
@@ -70,7 +70,7 @@ renderer then emits:
 - `srt` or `vtt`: segment-level subtitles.
 
 An empty transcript is a failure. For subtitle output, confirm start/end order
-and spot-check synchronization. Speaker diarization is intentionally outside
-the skinny runtime: WhisperX/pyannote add gated model access, downloads, and
-latency. If the user requires speaker labels, state that additional boundary
-instead of implying the current skill assigned speakers.
+and spot-check synchronization. The runtime does not identify speakers:
+WhisperX/pyannote add gated model access, downloads, and latency. If the user
+requires speaker labels, explain the additional software and access needed. Do
+not imply that this skill assigned speakers.

@@ -3,17 +3,17 @@
 Add the code-specific distinctions the task needs. General composition and
 authorization decisions live in the entry point and [guidance.md](guidance.md).
 
-## Ground the change without designing an imaginary codebase
+## Base the change on the actual codebase
 
 Use the user's observed behavior, relevant files, accepted plan, and repository
 instructions as context. Ask the recipient to inspect the current code when
 ownership or implementation is unknown; do not invent class names, services,
 storage, or framework choices. Preserve supplied identifiers exactly.
 
-Prefer the simplest complete change that meets the current requirement. A
-small diff is not automatically a simple design, and necessary failure handling
-is not automatically overengineering. New machinery needs a present reason,
-not a hypothetical future caller.
+Prefer the simplest complete change that meets the current requirement. A small
+diff is not automatically a simple design, and necessary failure handling is not
+automatically overengineering. Add a new mechanism only for a current
+requirement. A possible future caller does not justify it.
 
 **Input:** “Make the avatar upload recover from a failed request. Keep the
 selected image for retry and show failure instead of an endless uploading
@@ -31,10 +31,10 @@ state. Keep the existing endpoint and UI. Implement it.”
 
 ## Preserve meaning when improving presentation
 
-An approved composition does not by itself authorize new persistence, changed
-navigation semantics, or another feature. Retain the user's accepted reference
-and current capabilities, including meaningful units, relationships, and failure
-states. Do not add states or screens merely because a mock could display them.
+Approval of a layout does not authorize new data storage, changes to navigation
+behavior, or another feature. Retain the user's accepted reference and current
+capabilities, including meaningful units, relationships, and failure states. Do
+not add states or screens merely because a mock could display them.
 
 **Input:** “Implement the approved compact invoice header. Same data and
 actions. Ask before making backend changes.”
@@ -57,7 +57,7 @@ instead of silently upgrading it to production implementation.
 For coupled or stateful changes, define the observable guarantee, authoritative
 owner, and necessary order when known. Do not prescribe new queues, protocols,
 or coordinators as a substitute for understanding that guarantee. For ordinary
-local edits, omit architecture ceremony.
+local edits, omit unnecessary design steps.
 
 **Input:** “Draft a plan for making order submission safe against repeated
 taps. No code yet. We already have a server idempotency key.”
@@ -77,9 +77,10 @@ taps. No code yet. We already have a server idempotency key.”
 For implementation prompts, include a concise completion condition matched to
 the affected behavior. Use the repository's relevant checks rather than
 inventing commands. Distinguish static review, executed tests, builds, rendered
-interaction, and device verification when that difference matters. A check on
-an earlier revision or a temporary workaround does not establish the delivered
-change's behavior. Refresh affected evidence after material repairs.
+interaction, and device verification when that difference matters. A check on an
+earlier revision or a temporary workaround does not establish the delivered
+change's behavior. After repairs that could affect the behavior, repeat the
+checks needed to verify the repaired change.
 
 Ask for tests that check meaningful behavior, not tests that merely mirror a
 reversible, low-impact edit. Preserve required repository checks.

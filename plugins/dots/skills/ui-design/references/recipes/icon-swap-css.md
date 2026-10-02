@@ -1,8 +1,11 @@
 # CSS transition approach (no Motion)
 
-Without Motion or Framer Motion, keep both icons in the DOM and cross-fade with CSS transitions. Neither unmounts, so enter and exit both animate smoothly.
+Without Motion or Framer Motion, keep both icons in the DOM and cross-fade with
+CSS transitions. Neither unmounts, so enter and exit both animate smoothly.
 
-One icon is absolutely positioned on top of the other. Toggling state cross-fades them, the entering icon scaling up from `0.25` while the exiting one scales down to `0.25`, both with opacity and blur.
+One icon is absolutely positioned on top of the other. Toggling state
+cross-fades them, the entering icon scaling up from `0.25` while the exiting one
+scales down to `0.25`, both with opacity and blur.
 
 ```tsx
 function IconButton({ isActive, ActiveIcon, InactiveIcon, label }) {
@@ -43,11 +46,13 @@ function IconButton({ isActive, ActiveIcon, InactiveIcon, label }) {
 }
 ```
 
-The non-absolute icon, `InactiveIcon`, defines the layout size. The absolute one, `ActiveIcon`, overlays it without affecting flow.
+The non-absolute icon, `InactiveIcon`, defines the layout size. The absolute
+one, `ActiveIcon`, overlays it without affecting flow.
 
-The examples show presentation; connect the button event to the existing state
-owner. These examples represent a toggle: keep its label stable and expose its
-state with `aria-pressed`. For a changing action such as Play/Pause, name the
-next action and omit `aria-pressed`; for disclosure, use `aria-expanded` instead.
-`cn` is the project's class-name helper. For reduced motion, use a static
-glyph branch or disable the CSS transition so state changes remain immediate.
+The examples show appearance only. Connect the button event to the existing
+component or service that manages state. These examples represent a toggle: keep
+its label stable and expose its state with `aria-pressed`. For a changing action
+such as Play/Pause, name the next action and omit `aria-pressed`; for
+disclosure, use `aria-expanded` instead. `cn` is the project's class-name
+helper. For reduced motion, render the current glyph without animation or
+disable the CSS transition. Keep state changes immediate.

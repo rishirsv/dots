@@ -6,8 +6,8 @@ description: "Explains how code, a subsystem, change, commit, branch, or pull re
 # How
 
 Explore the codebase to answer “how does X work?” questions. Produce clear
-architectural explanations at the level of a senior engineer onboarding onto a
-subsystem. Enough to build a working mental model, not annotated source code.
+explanations that help a senior engineer understand an unfamiliar subsystem.
+Explain how the parts work together so the reader can start working on it.
 
 ## 1. Understand the question and choose the depth
 
@@ -32,19 +32,19 @@ Choose the exploration path:
 - **Simple:** a single module, small utility, or narrow function. Explore and
   explain it directly in the current context.
 - **Complex:** a subsystem spread across several files or services, a
-  cross-cutting feature, or a broad architectural overview. Trace it directly
-  when one coherent pass can cover the consequential paths. Add read-only
-  explorers only when the work divides into independent paths or parallel
-  investigation materially improves coverage or latency.
+  feature that crosses modules, or a broad architectural overview. Investigate
+  the code yourself if you can follow all paths needed to answer the question.
+  Add read-only explorers when they can investigate independent paths or
+  when parallel work will cover more evidence or finish substantially faster.
 
-When in doubt, start simple. Add an explorer only when the source stops fitting
-comfortably in one coherent pass.
+When in doubt, investigate directly. Add an explorer when you cannot cover
+the necessary source clearly in the current investigation.
 
 ## 2. Trace the source
 
-Start broad enough to find the real entry point, then follow the thread through
-callers, callees, types, state changes, data flow, boundaries, and observable
-effects. Read the code. Do not guess from file names.
+Find the real entry point. Follow its callers, callees, types, state changes,
+data flow, module boundaries, and observable effects. Read the implementation
+before drawing conclusions from file names.
 
 When delegating a complex question, divide the work by parts that answer
 different pieces of the question. A rate limiter might split into:
@@ -55,23 +55,24 @@ different pieces of the question. A rate limiter might split into:
 
 Read [explorer-prompt.md](references/explorer-prompt.md) before briefing
 explorers. Each explorer should stop only when it can describe its path from
-input to output or trigger to effect without hand-waving a step. It returns the
+input to output or from trigger to effect, with evidence for each step. It returns the
 components found, flow traced, files read, and anything surprising or easy to
 misunderstand.
 
 ## 3. Build one explanation
 
-Reconcile the exploration into one mental model. Synthesize the reports in the
-current context unless they are large, conflicting, or independently complex.
+Combine your findings into one explanation. Resolve conflicting findings
+before writing the answer. Combine reports in the current context unless
+they are large, conflict, or each require substantial analysis.
 Only then use a separate explainer with
 [explainer-prompt.md](references/explainer-prompt.md).
 
-Lead with the system's purpose and organizing idea. Then walk through what
+Lead with the system's purpose and how its parts work together. Then walk through what
 happens, where state lives, how data moves, and which decisions change the
-path. Connect consequential claims to specific files and symbols.
+path. Link claims that affect the explanation to specific files and symbols.
 
-The explanation is the product. Do not make the reader reconstruct it from
-search notes, file lists, or disconnected component summaries.
+Write a complete explanation. Connect the findings so the reader does not
+have to reconstruct the behavior from search notes or file lists.
 
 ## Output contract
 
@@ -79,7 +80,7 @@ Adapt these sections to the question. Do not include an empty section merely
 because it appears here.
 
 - **Overview.** One or two paragraphs explaining what the thing is, what it
-  does, and the organizing idea. The reader should know whether to keep reading.
+  does, and how its parts work together. The reader should know whether to keep reading.
 - **Key concepts.** Brief definitions of the types, services, or abstractions
   needed to understand the rest. Include only the important ones.
 - **How it works.** Walk through the trigger-to-effect flow in prose. Explain
@@ -88,7 +89,7 @@ because it appears here.
 - **Where things live.** Give the smallest useful map of files and ownership so
   the reader knows where to start working.
 - **Gotchas.** Explain the surprising behavior, hidden coupling, historical
-  oddity, or sharp edge a newcomer is likely to miss.
+  constraint, or failure risk a newcomer is likely to miss.
 
 When the user asks to see, diagram, or make the explanation visual, read
 [Visual explanations](../../references/visual-explanations.md) and include the
@@ -96,15 +97,17 @@ smallest useful view. Otherwise use a visual when several components interact
 or data changes shape across stages and the picture makes that relationship
 easier to understand. Skip it when prose already makes the flow clear.
 
-For change mode, derive the teaching story from `changes.md` rather than
-forcing subsystem headings onto a diff.
+For change mode, follow `changes.md` to choose the explanation's order.
+Use headings that fit the change.
 
 ## Delivery and completion
 
 Return chat unless the user asks for HTML or a durable, visual, or shareable
 artifact. For HTML, hand the finished content and structure to `html` with this
-skill's `artifact-template.json`.
+skill's `artifact-template.json`. HTML adds visual explanations by default;
+provide the flows, state changes, dependencies, and evidence needed to draw
+them accurately. Preserve any fixed template requirements.
 
 The explanation is complete when it answers the question or covers the
-meaningful change, traces consequential claims to source, makes material gaps
+meaningful change, links important claims to source, makes material gaps
 visible, and can be understood without opening the repository.

@@ -7,24 +7,24 @@ selectively. When the request also authorizes fixes, apply the supported edits
 through the default `skill-creator` workflow, including its criteria for
 behavioral trials.
 
-## 1. Set the review contract
+## 1. Define the review
 
 Take the scope and decision from the user's request.
 
-- A broad review covers the effective payload, neighboring descriptions,
+- A broad review covers all instructions and resources the skill uses, related skill descriptions,
   repository instructions, validation evidence, and existing evaluation
   artifacts.
-- A narrow review covers every surface that can change the requested diagnosis.
+- A narrow review covers every file or behavior that can change the requested diagnosis.
 
-Reconstruct the recurring job, nearest boundary, inputs, common path,
-meaningful branches, output, completion evidence, authorization, and stop
-behavior. Use the relevant guidance in `standards.md`; inspect supporting
+Identify the recurring job, related work it excludes, required inputs, common
+workflow, and alternative paths. Identify its output, evidence of completion,
+authorization requirements, and stopping conditions. Use the relevant guidance in `standards.md`; inspect supporting
 domain references only when their method can affect the diagnosis.
 
 State the scope and any assumptions at the top of the review instead of
 pausing to confirm them. The user can narrow the scope and rerun.
 
-## 2. Inventory the payload
+## 2. List the files and resources
 
 List everything the agent loads or runs before judging any of it:
 
@@ -39,7 +39,7 @@ Include the inventory in the review so the user can correct it.
 
 ## 3. Classify every instruction
 
-Read each sentence, bullet, and example in the inventory. Ask what the agent
+Read each sentence, bullet, and example in the listed files. Ask what the agent
 would do differently without it, then sort it:
 
 - **Context only the author has:** audience, deliverable, environment facts,
@@ -53,14 +53,25 @@ would do differently without it, then sort it:
   careful, and behavior the agent already shows unprompted. It is a removal
   candidate.
 
-The split between context and constraint keeps the review from becoming a
-length contest: a shortening pass tends to delete the most valuable words.
+Keep this distinction between context and constraints. A review that only
+tries to shorten the skill can delete information the agent needs.
 
 ## 4. Scan for defects
 
+Apply [Clear language](../../../references/plain-language.md) to descriptions,
+instructions, supporting references, and embedded prompts. Use technical writing
+guidance for procedures and claims. Add prose writing guidance for developed
+explanations. Check the meaning before polishing the style.
+
+For a prose defect, identify the action or condition that is unclear. Quote the
+wording, describe a plausible misreading, and provide the exact replacement.
+Check that the replacement preserves who acts, when, with what authority, and
+what must be true at completion. If the original meaning is unresolved, report
+that uncertainty rather than inventing a new rule.
+
 Inspect for:
 
-- discovery overlap or near-miss capture;
+- descriptions that overlap other skills or select similar but unrelated requests;
 - an opener that promises quality, confidence, or impact without naming the
   work; prose that says how the result should feel instead of what the agent
   should do; or compression that removes actions, artifacts, decision rules,
@@ -79,8 +90,8 @@ Inspect for:
   language that describes a grader instead of stating the requirement;
 - deterministic work left to the agent, such as lookup tables, point systems,
   arithmetic, or fixed formatting that a data file or script should own;
-- missing modes, decisions, examples, output fields, or completion behavior;
-- detail in the wrong layer and resources without runtime callers;
+- missing modes, decisions, examples, output fields, or completion conditions;
+- instructions in the wrong file and resources that no workflow loads;
 - validators that accept plausible bad results;
 - missing authorization, failure, stop, or partial-success behavior;
 - private, source-specific, or maintainer material in the runtime; and
@@ -111,7 +122,7 @@ Do not flag these, even when a search matches:
 Under-specification is a defect too. When a step is vague, a contract is
 missing, or completion is undefined, the correction adds text.
 
-A clean surface is a valid result. Report a defect only when you can name the
+A file with no supported defects is a valid result. Report a defect only when you can name the
 pattern and its consequence for the job; otherwise record it as an open
 question.
 
@@ -125,7 +136,7 @@ Separate direct observation from inferred consequence. Each finding includes:
 - the location as `path:line` or a line range;
 - the exact text, quoted;
 - the pattern it matches, from step 4 or `standards.md`;
-- the likely consequence and a falsifier when that consequence is uncertain;
+- the likely consequence and, if it is uncertain, what evidence would disprove it;
 - a confidence level: high when source, a check, or a reproduced failure shows
   the defect; medium when it matches a pattern in step 4 or `standards.md`
   with a concrete consequence; low when it rests on style or inference alone;
@@ -173,7 +184,7 @@ Return chat by default:
 3. A summary: finding counts by pattern and the two or three
    highest-consequence findings in prose.
 4. Findings in consequence order.
-5. Proposed edits.
+5. Proposed edits, including exact replacements for prose defects.
 6. Relevant rubric areas where no defect was supported.
 7. Limits, `flag` items, and open questions that could change the verdict.
 
@@ -181,8 +192,8 @@ For a long review, write the findings and edits to a file and link it.
 
 When the user requests a durable machine-readable review receipt, copy
 [`review.json`](../assets/review.json) to the selected output location. Replace
-every placeholder, repeat the finding and edit entries once per item, hash every inspected file that supports the verdict or a
-finding, and keep the finished receipt immutable. Recheck relevant hashes
+every placeholder, repeat the finding and edit entries once per item, record the content hash of each inspected file that supports the verdict or a
+finding. Do not change the receipt after completing it. Recheck relevant hashes
 before consuming it later.
 
 When a claim needs fresh behavioral evidence, state the limitation and the

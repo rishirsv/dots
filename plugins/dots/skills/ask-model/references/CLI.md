@@ -1,9 +1,9 @@
 # CLI advisor runs
 
 Run in the task's repository. Honor the user's model and effort; otherwise use
-the configured model at medium effort. Pass a self-contained prompt as the final
-argument. For a long or multiline prompt, write it to a temporary `.txt` file
-outside the repository and pass it on stdin.
+the configured model at medium effort. Pass a prompt that contains all necessary
+task context as the final argument. For a long or multiline prompt, write it to
+a temporary `.txt` file outside the repository and pass it on stdin.
 
 ## Models and effort
 
@@ -24,8 +24,8 @@ silently substitute a model or effort.
 
 ## Session lifecycle
 
-Every persisted Codex run appears as a task in the Codex app, so choose
-persistence before launching:
+Every persisted Codex run appears as a task in the Codex app, so decide whether
+to save the session before launching:
 
 - **Review and consultation:** run without persistence by default. Add
   `--ephemeral` after `exec` for Codex, or `--no-session-persistence` for
@@ -44,11 +44,11 @@ claude -p --model fable --effort medium --dangerously-skip-permissions \
   --output-format json "<self-contained prompt>"
 ```
 
-The bypass flag grants broad access. For a read-only run, replace it with
-`--tools 'Read,Glob,Grep' --no-session-persistence`; the tool list restricts
-tools but is not an OS sandbox.
-The JSON result contains the exact `session_id` and the final response in
-`result`. Record the ID for any follow-up.
+The bypass flag permits access beyond the workspace. For a read-only run,
+replace it with `--tools 'Read,Glob,Grep' --no-session-persistence`; the tool
+list restricts tools but is not an OS sandbox. The JSON result contains the
+exact `session_id` and the final response in `result`. Record the ID for any
+follow-up.
 
 ## Codex
 
@@ -78,8 +78,7 @@ codex exec resume -m gpt-6-astra \
 `codex -p muse` layers `$CODEX_HOME/muse.config.toml` over the base config. The
 profile selects `meta/muse-spark-1.3-contributor` at `xhigh`; its catalog
 supports `none`, `minimal`, `low`, `medium`, `high`, and `xhigh`. The synced
-profile supplies valid disabled MCP transports, so no extra `-c mcp_servers.*`
-flags are needed.
+profile provides valid settings that disable MCP transports, so no extra `-c mcp_servers.*` flags are needed.
 
 ```sh
 codex -p muse exec --ephemeral -C /absolute/path/to/repo \

@@ -77,7 +77,7 @@ state transition, or control flow.
 Show the whole block when most of it is new, omitted context would hide
 ownership or order, or the reader needs a copyable target shape.
 
-## Escalate only when the inline view stops helping
+## Choose HTML when the answer needs a page
 
 Use one focused HTML artifact for a visual UI, spatial layout, dense state
 comparison, or explanation that needs to be durable or shareable. Give `html`
@@ -85,8 +85,16 @@ the finished content, evidence, and reading order so it can render the page
 without redoing the investigation. Follow [Visual Proof](visual-proof.md) when
 the result must be verified as rendered output.
 
+When the user requests HTML or a skill routes to HTML, follow HTML's visual
+explanation default. Plans begin with a useful visual overview and retain
+their full steps. Reports and explainers choose diagrams proactively. The
+inline-first guidance above does not suppress those views. Respect explicit
+format and template constraints. Ordinary chat answers can use inline views
+without creating an artifact.
+
 Keep each visual beside the short text it supports. Use real labels and facts
 from the owning skill's evidence. Include only the calls, files, props, states,
 and boundaries needed to answer the question. Use several views when they
 teach different parts of the answer, but do not turn the available forms into
-a checklist. Skip the visual when prose is already clearer.
+a checklist. In chat, omit a visual when prose is clearer. In HTML, select useful visual
+relationships before drafting; omit figures that would only repeat a sentence.

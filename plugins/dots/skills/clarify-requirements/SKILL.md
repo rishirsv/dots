@@ -32,8 +32,8 @@ change any of these:
 ### 2. Ask the must-have questions
 
 Ask the smallest set of unresolved questions, at most three in the first pass.
-Ask none when the available evidence already settles them. Prioritize the
-question that removes the largest consequential branch of work.
+Ask none when the available evidence already settles them. First ask the
+question whose answer would change the most important part of the work.
 
 Make each question easy to answer:
 
@@ -56,10 +56,11 @@ the user has already approved that path.
 
 ### 4. Record the shared understanding when it helps
 
-For work with meaningful scope or risk, summarize the agreed outcome,
-definition of done, scope and non-goals, constraints, and remaining assumptions.
-Keep it short. This skill owns alignment, not a repo-grounded implementation plan.
+For work with meaningful scope or risk, summarize the agreed outcome, definition
+of done, scope and non-goals, constraints, and remaining assumptions. Keep it
+short. This skill establishes the agreed requirements. It does not produce an
+implementation plan based on repository investigation.
 
 Finish when every blocking ambiguity is answered, explicitly deferred, or
 covered by an assumption the user authorized. If later evidence changes one of
-those decisions, surface the change before continuing.
+those decisions, report the change before continuing.

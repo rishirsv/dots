@@ -2,13 +2,13 @@
 title: Timeline
 type: ui
 when: Milestones, phases, or an incident chronology that happened in a real
-  order — order must carry information. If items aren't sequential, use a
+  order — order must explain the sequence. If items aren't sequential, use a
   table or list instead.
 deps: theme.css
 variants: default (title + quiet detail line + optional date) | compact (no
   detail lines, title and date only — for long chronologies).
 gotchas: The vertical connector is a hairline --a20 line, never an accent
-  stripe — this is a hard rule, not a style choice. Markers carry state:
+  stripe — use this rule for every timeline. Markers carry state:
   filled --foreground for done, hairline --a40 ring for pending, --accent
   fill for the current/emphasized step. Dates use tabular-nums. Never invent
   milestones — every row must be a real, dated (or ordered) event.

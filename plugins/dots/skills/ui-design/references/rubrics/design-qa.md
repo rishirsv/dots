@@ -9,10 +9,10 @@ explicitly. Each defect has one primary category, assigned by its cause.
 | ID | Criterion | Compare |
 |---|---|---|
 | Q1 | Structure and geometry | Content order, grouping, frame/crop, grid tracks, proportions, density, alignment, margins, padding, gaps, component sizes, and above-the-fold composition at the reference viewport. |
-| Q2 | Typography | Family and fallback, weight, size, line height, tracking, optical balance, wrapping, truncation, and text density. Separate rendering-environment differences from fixable drift; do not infer an exact font from an indistinct capture. |
+| Q2 | Typography | Family and fallback, weight, size, line height, tracking, optical balance, wrapping, truncation, and text density. Separate rendering-environment differences from differences that the implementation can correct; do not infer an exact font from an indistinct capture. |
 | Q3 | Color and surfaces | Palette/token mapping, foreground/background balance, gradients, opacity, state colors, borders, radii, shadows, and elevation. Contrast usability belongs to Q8. |
-| Q4 | Images and icons | Account for every target asset: subject/metaphor, crop, scale, aspect ratio, sharpness, compression, transparency edges, masks, style, stroke, and optical size. Flag missing assets and approximations that drift from the target. |
-| Q5 | Copy and content | Preserve approved app copy, labels, and content structure. Distinguish dynamic data from fixed copy; check standalone meaning, realism, and leaked instructions or invented claims. Text geometry belongs to Q2. |
+| Q4 | Images and icons | Account for every target asset: subject/metaphor, crop, scale, aspect ratio, sharpness, compression, transparency edges, masks, style, stroke, and optical size. Flag missing assets and approximations that differ from the target. |
+| Q5 | Copy and content | Preserve approved app copy, labels, and content structure. Distinguish dynamic data from fixed copy; check standalone meaning, realism, and instructions accidentally shown in product copy or invented claims. Text geometry belongs to Q2. |
 
 ## Implementation UX
 
@@ -32,8 +32,8 @@ Q8. Link effects across categories without counting the same defect twice.
   behavior, adaptation, or accessibility requirement. Correct within scope.
 - **Agreed adaptation:** an intentional, supported difference. Record it and
   exclude it from the defect count.
-- **Source-design issue:** a problem reproduced from the accepted design. Send
-  it to design audit; do not change the target silently. If it also violates an
+- **Source-design issue:** a problem reproduced from the accepted design. Use
+  design audit to assess it; do not change the target silently. If it also violates an
   explicit acceptance requirement, keep that requirement blocked pending a
   resolved design decision.
 - **Unspecified or unverified:** evidence or a governing decision is missing.
@@ -45,11 +45,12 @@ Q8. Link effects across categories without counting the same defect twice.
 |---|---|
 | P0 | Core task impossible, severe accessibility failure, or unusable layout |
 | P1 | Major mismatch or usability regression |
-| P2 | Material visual drift, inconsistent behavior, or adaptive/polish defect |
+| P2 | Material visual difference, inconsistent behavior, or a layout/refinement defect |
 | P3 | Minor refinement that does not block the declared acceptance scope |
 
-Persistent controls hidden by overflow, or drift that materially changes major
-proportions, wrapping, density, or first-viewport content, is P2 or higher.
+Classify persistent controls hidden by overflow as P2 or higher. Use the same
+severity for differences that materially change major proportions, wrapping,
+density, or first-viewport content.
 
 Each finding names location, expected versus actual result, evidence, impact,
 and a concrete fix. Prefer the responsible component/token when known. Do not

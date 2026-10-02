@@ -1,14 +1,15 @@
 # Skill-Usage Analytics
 
-Use `skill-usage` once to build the frozen read list for a named skill review.
+Use `skill-usage` once to select a fixed list of sessions to read for a named
+skill review.
 
 ```bash
 python3 scripts/self_improve.py skill-usage --skill dots:publish-pr --days 30 --limit 100
 ```
 
-The exact skill filter is applied after the bounded corpus is scanned. Do not
-use a session-title or prompt query to find invocations; it omits sessions where
-the skill ran without appearing in searchable metadata.
+The exact skill filter is applied after the selected set of sessions is scanned.
+Do not use a session-title or prompt query to find invocations; it omits
+sessions where the skill ran without appearing in searchable metadata.
 
 ## Signals
 
@@ -21,9 +22,9 @@ the skill ran without appearing in searchable metadata.
   frustration cue somewhere in the thread.
 
 Injected skill bodies contribute only their exact `<name>` value. Their embedded
-instructions do not create mentions or friction signals. Duplicate transport
-copies, delegated children, and exact retries collapse before invocation counts.
-Structured invocations remain visible when the named skill is no longer
+instructions do not create mentions or friction signals. Before counting
+invocations, the helper combines duplicate copies, delegated children, and exact
+retries. Structured invocations remain visible when the named skill is no longer
 installed or came from a project checkout; the ledger labels them
 `historical/local` instead of discarding them.
 
@@ -31,10 +32,10 @@ These signals are discovery aids, not telemetry. Description-based or otherwise
 silent invocations may be absent. Friction is correlation until the transcript
 shows that the skill caused or failed to prevent it.
 
-The output's cohort cutoff and representative IDs define the audit read set.
-Use every listed representative, including invocations without friction cues,
-rather than rerunning a moving top-N query after new audit threads have been
-created.
+The output's cutoff time and representative session IDs define which sessions to
+read. Use every listed representative, including invocations without friction
+cues, rather than rerunning a query for the top results whose contents can
+change after new audit threads have been created.
 
 ## Review
 
@@ -50,5 +51,5 @@ candidates. For each cluster:
    Pass broader changes through the generalization gate in
    [thread-evidence.md](thread-evidence.md).
 
-Prioritize repeated causal friction across invocation clusters. A heavily used
-skill with clean representative runs may need no change.
+Prioritize repeated problems caused by the skill across invocation clusters. A
+heavily used skill with clean representative runs may need no change.

@@ -40,9 +40,24 @@ fragments use the separate routes below.
 
 ## Choose the content and structure
 
-Start with the reader's question and the supplied material. Use a title,
-introduction, and sections for a typical report; add components where they help
-the reader understand a point or make the requested decision.
+Start with the reader's question and the supplied material. Plan visual
+explanations before drafting the sections. Use a title and a short
+introduction, then show the main relationship in an opening figure when the
+material supports one. Add more views when they answer different questions.
+Read [diagrams.md](diagrams.md) to choose forms and helpers.
+
+For a plan, show phases, dependencies, decision branches, or responsibilities
+before the detailed steps. Follow the figure with the complete actions,
+owners, constraints, and verification that the source requires. A visual
+overview does not replace those details. If the user requires a fixed order
+or template, put the visual in the first permitted location.
+
+For an explainer, show the important flow, structure, state change, or
+comparison before explaining it in detail. For a report, visualize the
+relationships or quantitative findings that help the reader assess its
+claims. Do not invent facts, dependencies, numbers, or recommendations to
+fill a figure. If the material contains no useful relationship to draw,
+use the form that explains it clearly.
 
 - Use `stat-tiles` only for two to five supplied headline measures that matter
   at first glance; omit them when a chart already labels those values.
@@ -65,12 +80,13 @@ the reader understand a point or make the requested decision.
    visual treatment but are not an agent authoring input.
 2. Start from `page-shell`, which supplies the context line, title, short
    introduction (`dek`), footer, and width mode. Choose
-   `article` for prose-led work, `wide` for parallel evidence, and `canvas` for
+   `article` for text with embedded figures, `wide` for parallel evidence, and `canvas` for
    visual references. Keep canvas prose inside `.reading-column`. Inline
    `theme.css` verbatim before component CSS; never edit its tokens or add
    colors inline.
-3. Preserve the source's reading order when it serves the reader. Otherwise
-   choose a structure from [form-factors.md](form-factors.md). Each
+3. Preserve required reading order and fixed template regions. Otherwise
+   place the visual overview before the detailed explanation. Choose the
+   remaining structure from [form-factors.md](form-factors.md). Each
    `<section id="...">` gets an `<h2>`; ids are short and stable. Add
    `toc-rail` for six or more sections or a long reference page needing
    non-linear lookup.
@@ -201,9 +217,8 @@ opened directly.
 
 ## Fragment delivery
 
-A fragment is one component shipped for embedding in a surface we don't
-control — a Notion doc, a PR description, an email. Package it differently from
-a full page:
+A fragment is one component delivered for embedding in another surface,
+such as a Notion document, a PR description, or an email. Package it as follows:
 
 - Wrap the component in `<div class="dots-block" data-component="...">` and
   scope the tokens to that wrapper instead of `:root`: copy the token block
@@ -212,9 +227,9 @@ a full page:
   var(--font-sans);` and the component's own CSS rewritten under
   `.dots-block`. The fragment carries its own background and text style, so it
   reads as a complete block instead of partly inheriting the destination's fonts.
-- No script, no reveals: keep behavior with the destination. Ship static — if the
-  component's markup has `class="reveal"`, drop it (or add `is-in`);
-  nothing may depend on our JS.
+- Remove scripts and reveal animations. The destination controls behavior.
+  If the markup has `class="reveal"`, remove it or add `is-in`. The fragment
+  must display completely without our JavaScript.
 - No TOC and no general footer. One quiet caption line may name an
   authoritative reader-facing source when attribution helps. Never expose
   tool names, sessions, prompts, private paths, or scratch files.
@@ -227,8 +242,8 @@ The same visual style and real-content rules apply.
 ## Delivery
 
 Prefer the platform's HTML creation tool when present. Otherwise write to the
-location the user named — or ask where when it will be kept — and open it in
-the browser. Name files and page-set directories for the content
+location the user named. If the artifact needs a durable location and none
+is known, ask where to keep it. Open the result in the browser. Name files and page-set directories for the content
 (`sync-rollout-brief.html`, `agentic-product-workshop/`), not the skill.
 
 Open the delivered file in a browser when claiming visual verification; reading
@@ -253,6 +268,10 @@ sheet cannot show the affected area.
 
 Review the source before delivery:
 
+- Confirm that a plan starts with a useful visual overview and retains the
+  full procedure. For reports and explainers, check that figures explain
+  the important relationships and add information beyond repeated prose.
+  Respect any explicit format or template constraint.
 - Preserve the reasoning the reader needs. For each material finding in the
   source, keep its consequence and evidence; include an action only when the
   source or request supports one. Trace figures to their sources.

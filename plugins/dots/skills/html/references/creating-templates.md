@@ -1,6 +1,6 @@
 # Create an HTML-template skill
 
-Read this alongside `skill-standards` when creating or revising a named
+Read this with `skill-standards` when creating or revising a named
 HTML-template skill. This file covers the HTML-specific package and handoff;
 `skill-standards` covers the rest of the skill and its validation.
 
@@ -24,7 +24,7 @@ Use this package structure:
 ```
 
 Use this manifest exactly, replacing only the asset paths when the package
-genuinely uses different relative locations:
+uses different relative locations:
 
 ```json
 {
@@ -50,9 +50,9 @@ Make the template skill explicit-only. Its description begins with the named
 artifact job and says to use it when the user selects or names that template.
 Set `policy.allow_implicit_invocation: false` in `agents/openai.yaml`.
 
-Keep `SKILL.md` focused on what makes this artifact distinct:
+Keep `SKILL.md` focused on the requirements specific to this artifact:
 
-- the target, audience, and source material to resolve;
+- the target, audience, and source material to inspect;
 - the domain investigation or preparation required before composition;
 - required claims, sections, evidence, boundaries, and completion criteria;
 - whether structure is fixed or must adapt to the source; and
@@ -75,17 +75,18 @@ Follow the user's requested content and explicit deviations. Otherwise, use the
 template skill for required coverage and structure, and the retained reference
 for visual treatment.
 
-For an adaptive template, the reference demonstrates composition, density,
-component language, and recurring treatment. It is not a form to fill. Do not
-copy its headings, sample claims, or section order unless the source
-independently calls for them. For a fixed template, name the stable regions and
-fidelity rules explicitly in the template skill.
+For an adaptive template, the reference demonstrates layout, density,
+components, and repeated visual patterns. Compose the artifact from the
+supplied content. Copy headings or section order only when that content
+requires them. HTML adds useful visual explanations by default.
+For a fixed template, explicitly name the required regions and which visual
+changes are permitted in the template skill.
 
 ## Build the reference and preview
 
 Build `assets/reference.html` through the normal HTML workflow. Use realistic,
 clearly fictional sample content that demonstrates the intended treatment
-without becoming runtime evidence. Keep it self-contained and free of private
+without presenting it as observed evidence. Keep it self-contained and free of private
 paths or external requests.
 
 Create `assets/preview.png` from the retained reference. It identifies the
@@ -105,7 +106,7 @@ Before delivery:
 - inspect the reference source manually for self-containment and external
   requests, then confirm the preview represents it;
 - confirm the skill invokes `$html` without duplicating its format workflow;
-- confirm adaptive versus fixed structural authority is unambiguous; and
+- confirm which structure is required and which can adapt to the content; and
 - review every changed source file directly.
 
 When behavior evidence is requested or material uncertainty remains, use the

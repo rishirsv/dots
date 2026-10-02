@@ -2,9 +2,8 @@
 
 Read this when creating, updating, reviewing, or evaluating a skill that fills,
 refreshes, converts, or edits a supplied document, workbook, deck, form, or
-other template. Use the actual template as the contract for that run. This
-reference guides a skill's branching behavior; it is not a universal
-template-filling sequence.
+other template. Use the actual template to determine what the run must preserve. This
+reference explains how the workflow changes with the task and template.
 
 ## Establish the authoritative artifact
 
@@ -15,10 +14,9 @@ existing artifact, or a narrowly scoped edit. When multiple near-duplicate
 files exist, do not infer which one wins from its filename alone; ask a focused
 question or preserve each candidate until the user identifies the source.
 
-When a derived map or execution contract will be reused across runs, or the
-authoritative artifact can change between inspection and editing,
-bind it to the exact reference kind and a stable marker such as a version or
-content hash. Verify the marker before reuse. If it changed, inspect the
+If an inspection map or set of template requirements will be reused, record
+the reference format and a stable version or content hash. Do the same if the
+reference can change between inspection and editing. Verify the marker before reuse. If it changed, inspect the
 reference again instead of applying a stale map to a new structure.
 
 Choose the output policy from the request:
@@ -35,14 +33,14 @@ Choose the output policy from the request:
 
 ## Separate reference identity from task execution
 
-For a reusable reference-backed skill, keep three responsibilities distinct:
+For a reusable skill built from a reference artifact, separate these responsibilities:
 
 - the template package identifies the artifact kind, retained reference, and
   optional representative preview;
-- a format-native workflow performs inspection, copying or import, editing,
+- a workflow that supports the original format performs inspection, copying or import, editing,
   rendering, export, and format-specific checks; and
-- the current task owns user content, source data, and task-local maps, notes,
-  or deviation records.
+- the current task keeps user content, source data, inspection maps, notes,
+  and records of changes from the template.
 
 The template skill should resolve retained assets relative to its own directory
 and use an available format-native workflow that can preserve and verify the
@@ -121,8 +119,8 @@ details in conditional guidance rather than loading all of them on every run:
   user's explicit request; do not introduce formulas into a deliberate snapshot
   or hardcode derived values inside an established calculation area.
 
-Keep inspection contracts task-local unless a stable reusable map has been
-verified against the exact retained reference. Do not package transient render
+Keep inspection requirements in the current task unless a reusable map has
+been checked against the exact retained reference. Do not package transient render
 paths, run logs, or capability-specific scratch state as template assets.
 
 ## Create a source-to-location map
@@ -141,7 +139,7 @@ from derived values, and update chart data or formulas rather than only their
 labels. Flag related calculations whose inputs changed; do not silently alter
 them or leave them presented as current.
 
-For repeated sections, define the record grain, section anchor, ordering,
+For repeated sections, define what one record represents, where to insert it, the order,
 minimum and maximum count if the template has one, and insertion/removal rule.
 Duplicate an established row, paragraph, slide, or section pattern only when
 the template supports repetition. Never append records by copying a visually
@@ -251,8 +249,8 @@ replace checks for formulas, fields, relationships, names, placeholders, or
 other non-visible structure.
 
 Keep previews, renders, comparison images, maps, and diagnostic logs as QA
-support unless the user asks for them. The default deliverable is the finished
-artifact, not its execution scaffolding.
+support unless the user asks for them. Deliver the finished
+artifact by default. Keep working files as supporting evidence.
 
 When the runtime reads cached workbook formula values or cannot render a native
 format, state that limit and retain the artifact for calculation or visual
@@ -273,8 +271,8 @@ recreated look-alike template without saying so.
 
 Also stop when no available workflow can perform the operations the requested
 task requires while preserving and verifying the retained format with the
-required fidelity. Report the missing operation rather than substituting a
-look-alike workflow whose preservation cannot be checked.
+required accuracy. Report the missing operation. Do not substitute a workflow
+that only imitates the appearance when it cannot verify preservation.
 
 When behavioral evidence is needed, use independent forward tests with cases that
 exercise the specific template contract: a valid fill, a missing required
@@ -284,7 +282,7 @@ unsupported template version. Specify the changed locations, preserved regions,
 map coverage, artifact structure, rendered appearance, and failure behavior—not
 merely that an output file exists.
 
-For a reusable reference-backed skill, also include cases for each supported
+For a reusable skill built from a reference artifact, also test each supported
 artifact kind, relative asset resolution outside the authoring checkout, a
 reference-version mismatch, unavailable format-native operations, a
 metadata-only update that must not alter the reference, and a reference update
@@ -292,7 +290,7 @@ that must refresh any preview or derived contract. Include a case where a clean
 preview coexists with a defect later in the artifact so preview generation
 cannot pass as full validation.
 
-Keep the runtime compact: put template-specific maps, brand constraints,
-placeholder inventories, and stable layout measurements in template-local
-references or assets; put repeatable inspection, mapping, generation, and
-rendering in scripts; keep the common decision path in `SKILL.md`.
+Keep the common workflow and decisions in `SKILL.md`. Put template maps, brand
+constraints, placeholder lists, and stable layout measurements in the
+template's references or assets. Use scripts for repeatable inspection,
+mapping, generation, and rendering.

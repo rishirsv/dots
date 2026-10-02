@@ -1,14 +1,16 @@
 # Icons
 
-Icon weight, states, sizing and direction, the details that make icons sit naturally in an interface.
+Choose icon weight, states, size, and direction to fit the interface.
 
 Use the web examples within the chosen icon system. Platform conventions and
 supplied brand artwork govern meaning; do not force every icon family to expose
-stroke or filled variants. For native app icons, read [app icons](platforms/app-icons.md).
+stroke or filled variants. For native app icons, read [app
+icons](platforms/app-icons.md).
 
 ## Match icon stroke to text weight
 
-A hairline icon beside semibold text reads as broken; a heavy icon beside regular text shouts.
+A very thin icon beside semibold text can appear incomplete. A heavy icon beside
+regular text can draw too much attention.
 
 | Adjacent text | Icon stroke width (24px grid) |
 | --- | --- |
@@ -32,12 +34,13 @@ A hairline icon beside semibold text reads as broken; a heavy icon beside regula
 
 Two related consistency rules:
 
-- **One optical strategy per surface.** Never mix icon libraries with incompatible stroke conventions on one toolbar. Where the library supports stroke variants, match them to adjacent text as above; otherwise keep the set's native stroke and use size or color for emphasis.
+- **Use consistent icon weights within each interface region.** Never mix icon libraries with incompatible stroke conventions on one toolbar. Where the library supports stroke variants, match them to adjacent text as above; otherwise keep the set's native stroke and use size or color for emphasis.
 - **Size icons relative to the text's cap height**, typically `1em`–`1.25em` when inline with text, so the pair scales together.
 
 ## One SVG, recolored per state
 
-When states differ only in color, use one SVG drawn with `currentColor` and let CSS state drive the color:
+When states differ only in color, use one SVG drawn with `currentColor` and let
+CSS state drive the color:
 
 ```html
 <!-- Good: one asset, states are CSS -->
@@ -58,11 +61,13 @@ When states differ only in color, use one SVG drawn with `currentColor` and let 
 </button>
 ```
 
-Hardcoded fills inside a monochrome SVG, such as `fill="#666"`, break this. Use `currentColor` for those glyphs; preserve intentional multicolor artwork.
+Hardcoded fills inside a monochrome SVG, such as `fill="#666"`, break this. Use
+`currentColor` for those glyphs; preserve intentional multicolor artwork.
 
 ## Outline default, fill active
 
-Where an icon set offers outline and filled variants, use them as a state pair, never interchangeably:
+Where an icon set offers outline and filled variants, use them as a state pair,
+never interchangeably:
 
 | Variant | Use for |
 | --- | --- |
@@ -77,20 +82,24 @@ Where an icon set offers outline and filled variants, use them as a state pair, 
 <TabIcon variant="solid" />
 ```
 
-When animation helps communicate a variant change, read [icon transitions](recipes/icon-transitions.md). Keep a static swap when motion adds no information.
+When animation helps communicate a variant change, read [icon
+transitions](recipes/icon-transitions.md). Keep a static swap when motion adds
+no information.
 
 ## Design at render size
 
-An icon that looks great at 48px collapses into mush at 16px. Thin interior lines, tight counters and fine texture all blur or alias when small.
+An icon that is clear at 48px can lose detail at 16px. Thin interior lines,
+tight counters and fine texture all blur or alias when small.
 
 - Test every icon at the smallest size it will render, often `16px`. It must stay recognizable there.
 - Prefer simplified glyphs for small contexts over scaling down detailed artwork.
-- Keep icons on the pixel grid at their render size. A 16px icon drawn on a 24px grid with fractional scaling renders soft, so use the set's native grid sizes (`16`, `20`, `24`) rather than arbitrary scales.
+- Keep icons on the pixel grid at their render size. A 16px icon drawn on a 24px grid with fractional scaling can appear blurred, so use the set's native grid sizes (`16`, `20`, `24`) rather than arbitrary scales.
 - Prefer SVG for ordinary web interface glyphs. Preserve intentional raster artwork and native symbol assets when those are the appropriate source formats.
 
 ## Icons in RTL
 
-Under `dir="rtl"`, flip icons whose meaning is tied to reading direction, and leave the rest alone:
+Under `dir="rtl"`, flip icons whose meaning is tied to reading direction, and
+leave the rest alone:
 
 | Flip | Don't flip |
 | --- | --- |
@@ -111,4 +120,6 @@ Under `dir="rtl"`, flip icons whose meaning is tied to reading direction, and le
 <ChevronRightIcon class="icon-directional rtl:-scale-x-100" />
 ```
 
-Analyze composite icons part by part. A badge or slash overlay may keep its position even when the base glyph flips. Give icon-only buttons accessible names and test them through [interaction.md](interaction.md).
+Analyze composite icons part by part. A badge or slash overlay may keep its
+position even when the base glyph flips. Give icon-only buttons accessible names
+and test them through [interaction.md](interaction.md).

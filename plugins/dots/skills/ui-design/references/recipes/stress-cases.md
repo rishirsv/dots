@@ -1,10 +1,14 @@
 # Scenario axes
 
-Use the selected axes only when the component can encounter their cases. Add project-specific extremes; keep the set bounded by real data and supported layouts.
+Use the selected axes only when the component can encounter their cases. Add
+project-specific extremes; keep the set bounded by real data and supported
+layouts.
 
 ## Content length
 
-**Cue: the component renders variable text.** User input, CMS content, API data, translations. A fixed, untranslated label fails the cue.
+**Use these cases when the component renders variable text**, such as user
+input, CMS content, API data, or translations. Do not use them for a fixed,
+untranslated label.
 
 | Scenario | What it catches |
 | --- | --- |
@@ -16,7 +20,9 @@ Use the selected axes only when the component can encounter their cases. Add pro
 
 ## Content shape
 
-**Cue: the text can come from users or locales the team does not write in.** Same sources as content length, minus content the codebase fully controls.
+**Use these cases when text can come from users or locales the team does not
+write in.** Consider the same sources as content length, except content the
+codebase fully controls.
 
 | Scenario | What it catches |
 | --- | --- |
@@ -24,11 +30,12 @@ Use the selected axes only when the component can encounter their cases. Add pro
 | RTL text | Direction handling, punctuation landing on the wrong side |
 | Mixed-direction text | An LTR product name inside an RTL sentence, and the reverse |
 | Diacritics and tall scripts | Clipped ascenders and descenders in tight line boxes |
-| Numbers where columns align | Proportional figures wobbling in tables and timers |
+| Numbers where columns align | Changing digit widths moving values in tables and timers |
 
 ## Quantity
 
-**Cue: the component repeats over items.** Lists, tables, grids, tag rows, avatar stacks. A singular component fails the cue.
+**Use these cases when the component repeats over items**, such as lists,
+tables, grids, tag rows, or avatar stacks. Do not use them for a single item.
 
 | Scenario | What it catches |
 | --- | --- |
@@ -39,17 +46,22 @@ Use the selected axes only when the component can encounter their cases. Add pro
 
 ## Container
 
-**Cue: the component’s available space varies.** Use its smallest and largest supported containers; test viewport changes too when viewport rules govern its layout.
+**Use these cases when the component’s available space varies.** Use its
+smallest and largest supported containers; test viewport changes too when
+viewport rules govern its layout.
 
 | Scenario | What it catches |
 | --- | --- |
 | Smallest supported container (for example, 320px) | Clipping, horizontal scroll, controls escaping the box |
-| Squeezed by a flex or grid sibling | Min-content blowout, the component refusing to shrink |
+| Squeezed by a flex or grid sibling | Overflow caused by min-content sizing, the component refusing to shrink |
 | A very wide container | Unbounded measure, stretched controls, content pinned to opposite edges |
 
 ## State
 
-**Cue: the component has the state.** Read the props and the interaction model; exercise reachable states through props, interactions, or supported test adapters. A static component fails the cue entirely.
+**Use a state case only when the component can reach that state.** Read the
+props and the interaction model; exercise reachable states through props,
+interactions, or supported test adapters. Do not add state cases to a static
+component.
 
 | Scenario | What it catches |
 | --- | --- |
@@ -57,8 +69,13 @@ Use the selected axes only when the component can encounter their cases. Add pro
 | Error | Messages that overflow, color as the only signal |
 | Disabled | State recognition, explanation, and focus behavior; apply the relevant contrast exceptions |
 
-Exercise real focus and hover, state transitions, cancellation, and repeated input where supported. Static state fixtures cannot prove transition behavior.
+Exercise real focus and hover, state transitions, cancellation, and repeated
+input where supported. Static state fixtures cannot prove transition behavior.
 
 ## Environment
 
-**Cue: the project supports the mode.** Use the app’s real theme controls and browser or platform settings for dark mode, zoom, text scaling, reduced motion, and forced colors where applicable. Record which modes were exercised and which were unavailable. Redeclaring tokens around a fixture tests a different theme.
+**Use an environment case only when the project supports that mode.** Use the
+app’s real theme controls and browser or platform settings for dark mode, zoom,
+text scaling, reduced motion, and forced colors where applicable. Record which
+modes were exercised and which were unavailable. Redeclaring tokens around a
+fixture tests a different theme.

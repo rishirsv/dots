@@ -1,6 +1,6 @@
 ---
 name: transcribe
-description: "Transcribes local media and YouTube videos into Markdown, text, JSON, SRT, or VTT, then creates task-shaped YouTube summaries when requested. Uses captions first and free local speech recognition otherwise. Use for recorded-media transcripts, subtitles, or YouTube summaries; not live capture or paid/cloud transcription."
+description: "Transcribes local media and YouTube videos into Markdown, text, JSON, SRT, or VTT, then creates YouTube summaries suited to the user's task when requested. Uses captions first and free local speech recognition otherwise. Use for recorded-media transcripts, subtitles, or YouTube summaries; not live capture or paid/cloud transcription."
 ---
 
 # Transcribe
@@ -26,10 +26,10 @@ and uses the video ID as the title. Local ASR also uses English.
 3. If the command reports a missing downloader, decoder, ASR runtime, or model,
    run `python3 scripts/doctor.py`. Read [backends.md](references/backends.md)
    only for the missing route, a model choice, or a speed/accuracy override.
-4. Open the produced document. Require non-empty spoken text, ordered
-   timestamps, and no obvious repeated hallucination loop. Report the output
-   path and whether the result used manual captions, automatic captions, or a
-   local ASR backend.
+4. Open the produced document. Require spoken text and timestamps in order.
+   Reject obvious repeated passages invented by the transcription model. Report
+   the output path and whether the result used manual captions, automatic
+   captions, or a local ASR backend.
 5. When the user asks for a summary, notes, takeaways, an explanation, or an
    action plan from a YouTube video, read
    [youtube_summaries.md](references/youtube_summaries.md) after inspecting the
@@ -46,15 +46,14 @@ and uses the video ID as the title. Local ASR also uses English.
   to finish instead of starting competing model processes.
 - Markdown is the default. Use `--format txt|json|srt|vtt` with a matching
   output extension when the user requests another document or subtitle form.
-- The command preserves an existing output by default. Use `--force` only when
+- By default, the command refuses to replace an existing output. Use `--force` only when
   the user asked to replace that exact transcript.
 - Use `--keep-temp` only to diagnose a failure. It preserves downloaded audio
   and intermediate backend output and prints their directory to stderr.
 
-Run `python3 scripts/transcribe.py --help` for the complete mechanical
-interface. Keep backend installation and rapidly changing YouTube setup out of
-the common path; [backends.md](references/backends.md) owns that conditional
-guidance.
+Run `python3 scripts/transcribe.py --help` for the complete command-line
+interface. Load installation and YouTube setup guidance only when needed;
+[backends.md](references/backends.md) owns that conditional guidance.
 
 ## Stop with a useful result
 

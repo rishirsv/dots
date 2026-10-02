@@ -70,11 +70,12 @@ keep uncertain matches separate, and give me the cleaned file.”
 > the cleaned file and a concise account of removed duplicates and unresolved
 > matches. Check that no records were lost beyond the exact duplicates.
 
-For a truly staged request, state the transition: “Present the alternatives
-and stop for selection” or “Implement the accepted plan and verify it.” Do
-not give both as competing instructions for the same response.
+If the request requires separate stages, state when to move to the next stage:
+“Present the alternatives and stop for selection” or “Implement the accepted
+plan and verify it.” Do not give both as competing instructions for the same
+response.
 
-## Evidence requirements belong to the downstream work
+## Assign evidence gathering to the prompt recipient
 
 Retain the user's time window, authoritative sources, confidentiality limits,
 and intended decision. Specify what needs support and how to represent gaps.
@@ -100,15 +101,16 @@ remain a gap rather than become a confident negative or a fabricated fact.
 
 ## Revision preserves the requested substance
 
-Use the newest requested change to resolve conflicts; retain earlier material
-that still applies. Remove obsolete instructions rather than appending a
-second instruction that contradicts them.
+If requested changes conflict, follow the newest request. Keep earlier
+instructions that still apply. Remove obsolete instructions rather than
+appending a second instruction that contradicts them.
 
 For an earlier assistant draft, rebuild from the user's request and underlying
 source context first. The draft is not the authority: its length, checklists,
-and report template are not requirements. Recover useful additions only after
-the source-based brief is complete. Preserve elaborate output contracts
-when the user supplied or approved them, not merely because a draft contains them.
+and report template are not requirements. First complete a brief based on the
+original request and sources. Then retain useful additions from the earlier
+draft. Preserve elaborate output contracts when the user supplied or approved
+them, not merely because a draft contains them.
 
 **Input:** “Shorten this interview-summary prompt. Keep attributed quotes,
 disagreements, and unresolved questions. Remove its mandatory SWOT analysis.”
@@ -136,5 +138,5 @@ shipment_id, dispatch_date; preserve source order; blank date if absent.”
 > Escape CSV values correctly. Do not add Markdown fences or surrounding prose.
 
 For API integrations, schema enforcement is a host responsibility. Do not
-pretend natural-language instructions change API settings or guarantee valid
-semantic content. Preserve the user's actual destination and format.
+pretend natural-language instructions change API settings or guarantee answers
+whose content is correct. Preserve the user's actual destination and format.

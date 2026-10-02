@@ -27,7 +27,7 @@ For each task family, reconstruct:
 Do not treat message length, number of corrections, or tool-call volume as
 inherently good or bad. Interpret them through the task and outcome.
 
-## Develop categories from what good looks like
+## Derive categories from effective work
 
 Create three to five categories that explain the largest meaningful differences
 between the effective route and the observed work. Derive them after inspecting
@@ -41,10 +41,11 @@ Use the user's language and the task domain. Each category must:
 - have enough evidence to support a pattern at the stated scope; and
 - produce a practical experiment or behavior worth keeping.
 
-For example, repeated debugging work might yield “getting to a falsifiable
-symptom,” “choosing the next discriminating check,” “steering before rework
-compounds,” and “closing with proof.” Research, design, planning, and operational
-work should produce different categories.
+For example, repeated debugging work might yield “describing a symptom that can
+be checked,” “choosing the next check that distinguishes possible causes,”
+“correcting the direction before repeated work increases,” and “finishing with
+verified results.” Research, design, planning, and operational work should
+produce different categories.
 
 For each category, show:
 
@@ -62,10 +63,10 @@ change the conclusion.
 
 ## Rate only when asked
 
-If the user requests ratings, define observable anchors for each derived
-category before assigning a score. Use a compact scale such as 1–5 only when
-the evidence can distinguish its levels. Explain the score with representative
-evidence and name coverage that could move it.
+If the user requests ratings, define the observable behavior that each score
+represents in each category before assigning a score. Use a compact scale such
+as 1–5 only when the evidence can distinguish its levels. Explain the score with
+representative evidence and name coverage that could move it.
 
 Do not create one overall user score unless the user defines what it should
 mean and how the categories should be weighted. Do not average unlike task
@@ -74,7 +75,7 @@ evidence` instead of using a neutral score.
 
 ## Output
 
-Lead with the most useful reflection, not the scoring mechanics:
+Start with the most useful observation. Explain scoring only where needed:
 
 ```md
 ## Read on your work

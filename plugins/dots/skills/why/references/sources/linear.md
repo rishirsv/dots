@@ -10,15 +10,15 @@
 - Status updates that explain scope changes
 - Attachments and linked GitHub PRs
 
-Linear is where the product/business context often lives: the "we're doing this because customer X asked" or "this is for the Q3 compliance initiative" layer.
+Linear can record product and business reasons, such as "customer X requested this" or "this is required for Q3 compliance."
 
 ## How to search it
 
 Use the Linear MCP.
 
-1. **Start with linked tickets.** If the seed commits or PRs reference ticket IDs (e.g., `ENG-1234`, `[BUG-567]`), fetch those first with `get_issue`. Read the full issue including comments.
+1. **Start with linked tickets.** If the initial commits or PRs reference ticket IDs (e.g., `ENG-1234`, `[BUG-567]`), fetch those first with `get_issue`. Read the full issue. Include its comments.
 2. **List related issues by keyword.** Use `list_issues` with text search for the feature name, key symbol, or business term. Try multiple phrasings.
-3. **Walk the issue tree.** If you land on a sub-issue, fetch its parent. Sub-issues are tactical; parents often carry the "why."
+3. **Follow parent issues.** If the match is a sub-issue, fetch its parent. The parent may explain the wider goal that motivated the sub-issue.
 4. **Read project docs.** If the issue belongs to a project, use `get_project` and check attached docs. Project-level documents are where specs and rationale are most often captured.
 5. **Check labels and milestones.** Labels hint at the category of motivation (customer-request, incident-followup, compliance). Milestones tie work to deadlines, which often reveal motivation.
 
@@ -33,9 +33,9 @@ Use the Linear MCP.
 ## Common pitfalls
 
 - **Scope drift.** The ticket the PR references may have been closed and reopened with a different scope. Read the whole history.
-- **Mechanical templates.** Some teams require "Why" sections but fill them with boilerplate. Generic text ("improve user experience") is probably not a real answer.
+- **Mechanical templates.** Some teams require "Why" sections but fill them with generic text. Generic text ("improve user experience") is probably not a real answer.
 - **Stale tickets.** Old tickets often reflect a version of the plan that changed. Check dates and cross-reference with the code's ship date.
-- **Closed-as-duplicate chains.** Follow the duplicate-of relationships back to the canonical ticket.
+- **Issues closed as duplicates.** Follow the duplicate-of relationships back to the canonical ticket.
 - **Private workspace content.** If you can't access an issue, note that as a gap rather than guessing.
 
 ## What to return

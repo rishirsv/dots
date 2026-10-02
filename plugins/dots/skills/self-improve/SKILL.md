@@ -1,13 +1,13 @@
 ---
 name: self-improve
-description: "Use only when the user selects `$self-improve` to learn from agent work, diagnose workflow or harness friction, evaluate how they work with agents, or find durable improvements across Codex or Claude sessions. Not for static skill review, product fixes, or reconstructing context without improvement."
+description: "Use only when the user selects `$self-improve` to learn from agent work, diagnose problems in workflows or agent tools, evaluate how they work with agents, or find durable improvements across Codex or Claude sessions. Not for static skill review, product fixes, or reconstructing context without improvement."
 ---
 
 # Self-Improve
 
 Learn from agent work and turn supported findings into the smallest useful
-improvement. Treat counts and helper output as leads; base conclusions on the
-conversation, tool calls, files, and observed outcome.
+improvement. Use counts and helper output to find work that needs inspection;
+base conclusions on the conversation, tool calls, files, and observed outcome.
 
 ## Choose the route
 
@@ -35,32 +35,34 @@ Run helper commands from this skill directory. Relative `scripts/` paths in
 the selected references assume that working directory. Pass `--platform` when
 the requested host differs from the current one.
 
-## Judge the work
+## Evaluate the work
 
-1. Reconstruct the request, intended outcome, actual path, user corrections,
-   and observed proof. A confident completion message is not proof by itself.
+1. Reconstruct the request, intended outcome, actual actions, user corrections,
+   and checks that establish the result. A confident completion message is not
+   proof by itself.
 2. Separate observed causes from plausible explanations. Keep uncertainty when
    the evidence does not establish causation.
 3. Require repeated evidence only when generalizing beyond the task. One task
    can support a narrow correction to that task or an exact durable behavior the
    user explicitly requests.
 
-Compare the actual path with the shortest defensible path while preserving
-discoveries that affected the result. State what worked, what caused friction,
-its effect, and the most useful next move. A valid result may find no reusable
-lesson.
+Compare the actual actions with the shortest sequence the available evidence
+justifies while preserving discoveries that affected the result. State what
+worked, what caused problems, how those problems affected the work, and the most
+useful next action. A valid result may find no reusable lesson.
 
-For repeated work, freeze a bounded read set before reviewing it. Deduplicate
-retries and delegated children under the parent session, inspect successful and
-friction examples, preserve contradictions, and use the generalization gate in
-[thread-evidence.md](references/thread-evidence.md).
+For repeated work, choose a fixed set of sessions before reviewing them.
+Deduplicate retries and delegated children under the parent session, inspect
+examples of success and problems, preserve contradictions, and use the
+generalization gate in [thread-evidence.md](references/thread-evidence.md).
 
 ## Propose or apply improvements
 
-For a durable change, name the behavior, closest owner, smallest change, and how
-to verify it. Include a counterexample or uncertainty only when it could change
-the decision. Read [instructions.md](references/instructions.md) only for
-proposals targeting `AGENTS.md`, `CLAUDE.md`, or `.claude/rules/*.md`.
+For a durable change, name the behavior, the component most directly responsible
+for it, the smallest change, and how to verify it. Include a counterexample or
+uncertainty only when it could change the decision. Read
+[instructions.md](references/instructions.md) only for proposals targeting
+`AGENTS.md`, `CLAUDE.md`, or `.claude/rules/*.md`.
 
 Do not edit until the user approves a concrete proposal unless the original
 request already authorized implementation. Approval does not expand ownership:

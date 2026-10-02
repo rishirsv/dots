@@ -6,9 +6,10 @@ avatars. Record the needed dimensions, crop, focal point, and transparency.
 
 Reuse supplied originals and project assets first. Generate missing custom
 imagery when needed, using reference crops and a shared art direction, palette,
-and rendering style. Inspect each result at its consuming size. Prioritize
-assets visible in the initial viewport and replace temporary placeholders before
-QA. If an exact asset cannot be recovered, disclose the approximation.
+and rendering style. Inspect each result at the size where the interface will
+display it. Prioritize assets visible in the initial viewport and replace
+temporary placeholders before QA. If an exact asset cannot be recovered,
+disclose the approximation.
 
 Keep lettering inside posters, packaging, signs, or illustrations in the image
 when it belongs to the artwork. Implement editable interface copy as real text.
@@ -25,5 +26,6 @@ favorite. Preserve supplied brand marks.
 
 When asset production can proceed independently, delegate bounded asset tasks
 while building the page. Give each task its reference crop, dimensions, focal
-point, style, output path, and consuming element. Keep asset work separate from
-page edits to avoid conflicts; standard library icons need no asset subtask.
+point, style, output path, and consuming element. Assign asset creation and page
+edits to different files to avoid conflicts; standard library icons need no
+asset subtask.

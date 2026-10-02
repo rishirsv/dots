@@ -11,7 +11,7 @@
 - Runbooks that may explain defensive code
 - Strategy documents that set priorities
 
-Notion is where "why" often lives in long-form before it becomes code. A significant feature usually has a doc.
+Notion can hold explanations written before implementation. Look for documents that describe the target feature or decision.
 
 ## How to search it
 
@@ -20,7 +20,7 @@ Use the Notion MCP.
 1. **Keyword searches with `notion-search`.** Try:
    - The feature name
    - Key symbols / class names from the target code
-   - Author handles (design docs are often authored before the code lands)
+   - Author handles (design docs are often authored before the code is merged)
    - Error strings or user-visible terms
    - Time-bounded queries if you know when the code shipped
 2. **Fetch candidate pages with `notion-fetch`.** Read the full content, not the preview; rationale is often buried mid-document.
@@ -34,13 +34,13 @@ Use the Notion MCP.
 - An "Alternatives considered" or "Rejected approaches" section
 - A postmortem that names the target code as the fix for a specific incident
 - Meeting notes that record "we decided X because Y" and tie to the same author/date range as the PR
-- An ADR template filled out non-trivially (status, context, decision, consequences)
+- An ADR template filled out with specific context and consequences (status, context, decision, consequences)
 
 ## Common pitfalls
 
 - **Outdated docs.** Specs are often written before implementation and not updated; the doc may describe a plan that changed. Cross-check against the actual PR.
-- **Doc vs. reality drift.** A spec may say "we'll do X" but the code actually does Y. Flag the divergence; the synthesizer will surface the contradiction.
-- **Boilerplate templates.** Some orgs require a "Why" section that gets filled with fluff. Look for specificity.
+- **Document and implementation disagree.** A spec may say "we'll do X" but the code actually does Y. Report both with citations so the synthesizer can explain the contradiction.
+- **Generic template answers.** Some orgs require a "Why" section that gets filled with generic text. Look for a specific problem, decision, or constraint.
 - **Unlinked docs.** The most relevant doc may not be linked from anywhere. Broad keyword searches help.
 - **Multiple drafts.** If a topic has multiple docs, find the one that was finalized or most recently updated. Check dates.
 - **Access-restricted pages.** If you can't access a page, note it as a gap.

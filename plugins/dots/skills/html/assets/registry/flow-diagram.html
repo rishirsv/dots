@@ -1,7 +1,7 @@
 <!-- component: flow-diagram
 title: Flow diagram
 type: ui
-when: A branching system where nodes and edges carry meaning — a request path,
+when: A branching system where connections between nodes explain the behavior — a request path,
   dependency map, or state machine. Use process-steps for a linear sequence.
 deps: theme.css
 variants: default | annotated (numbered SVG callouts paired with an ordered
@@ -9,8 +9,8 @@ variants: default | annotated (numbered SVG callouts paired with an ordered
 gotchas: Do not use this for an ordinary left-to-right sequence; process-steps
   stays fully visible on narrow screens. Hand-author only simple branching
   flows of up to about 8 nodes; beyond that,
-  restructure the content as a table or ordered list instead of fighting an
-  SVG layout. The SVG is aria-hidden="true" — the .flow-caption paragraph
+  restructure the content as a table or ordered list when an
+  SVG cannot show it legibly. The SVG is aria-hidden="true" — the .flow-caption paragraph
   next to it is the accessible description and must state the same flow in
   a sentence. Exactly one node is emphasized with an --accent stroke; the
   rest stay neutral --a40. Fills reference var(--background) so nodes work

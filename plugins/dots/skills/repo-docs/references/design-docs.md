@@ -1,8 +1,8 @@
 # Design docs
 
-Expose expensive mistakes before implementation. Spend the design doc's
-attention on decisions that are hard to reverse, risky to misunderstand, or
-important for several people or systems to coordinate around.
+Identify costly mistakes before implementation. Explain decisions that are hard
+to reverse, risky to misunderstand, or necessary for people or systems to
+coordinate their work.
 
 ## When to use a design doc
 
@@ -10,7 +10,7 @@ Prefer a design doc when one or more of these are true:
 
 - Several people, teams, agents, services, or workstreams must coordinate.
 - The work will take sustained engineering effort rather than a small patch.
-- The result will run in production, become a durable platform surface, or be
+- The result will run in production, become a lasting platform interface, or be
   hard to remove later.
 - Goals, requirements, ownership, user behavior, or system boundaries are still
   ambiguous.
@@ -29,7 +29,7 @@ Use a different document type when the job is narrower:
 - Use a concept doc when the reader needs to understand a model but no design is
   being proposed.
 
-## Penalty filter
+## Identify costly decisions
 
 Before choosing sections, identify the expensive decisions:
 
@@ -41,16 +41,16 @@ Before choosing sections, identify the expensive decisions:
 - What choices look easy now but lock in a data model, protocol, vendor,
   deployment topology, permission model, or user promise?
 
-Document those areas deeply. Keep cheap choices brief or leave them to
-implementation. For example, a database, public API, auth model, data retention
-rule, or migration strategy often belongs in the design doc. Button copy,
-minor layout choices, small helper functions, and easily swapped libraries
-usually do not unless they create meaningful risk.
+Document those areas deeply. Describe choices that are easy to change briefly,
+or leave them to implementation. For example, a database, public API, auth
+model, data retention rule, or migration strategy often belongs in the design
+doc. Button copy, minor layout choices, small helper functions, and easily
+swapped libraries usually do not unless they create meaningful risk.
 
 ## Core shape
 
-Start with the smallest useful structure, then add sections based on the risk
-profile.
+Start with the smallest useful structure, then add sections based on the risks
+of the work.
 
 Recommended default shape:
 
@@ -63,11 +63,12 @@ Recommended default shape:
   make true.
 - **Background**: why this work exists, what problem it solves, relevant prior
   attempts, and what context a reviewer needs before reacting to the design.
-- **Goals**: user, team, operational, or business outcomes after the work lands.
+- **Goals**: user, team, operational, or business outcomes after the change is
+  delivered.
 - **Non-goals**: explicit exclusions that prevent scope creep and wrong review
   expectations.
-- **Scenarios**: concrete user, system, migration, failure, or operational
-  flows that reveal the required behavior.
+- **Scenarios**: concrete user, system, migration, failure, or operational flows
+  that reveal the required behavior.
 - **Proposed design**: the architecture, interfaces, data model, dependencies,
   ownership, and important mechanisms.
 - **How to build it**: the implementation path when build order, integration,
@@ -85,7 +86,7 @@ the reader's ability to review the design, omit it.
 
 ## Section selection
 
-Choose sections by project shape.
+Choose sections for the kind of project.
 
 For user-facing apps and workflows, consider:
 
@@ -132,16 +133,16 @@ needs staged rollout, migration safety, early feedback, cross-team coordination,
 or proof that the design can be built without a large risky launch.
 
 Follow the repository's ownership model for sequencing. Keep design-dependent
-build strategy here; put delivery sequencing in the owning roadmap, issue
-tracker, or pull request when those surfaces own execution.
+build strategy here; put delivery order in the roadmap, issue tracker, or pull
+request that manages execution.
 
 Do not turn this section into a full task tracker. It should explain the build
 strategy reviewers need to validate the design.
 
 Useful subsections:
 
-- **Build order**: milestones that create useful intermediate states, not only
-  internal plumbing. Prefer early slices that validate the riskiest assumptions.
+- **Build order**: milestones that create useful intermediate states, rather
+  than only internal setup. Verify the riskiest assumptions early.
 - **Integration points**: where the new code connects to existing modules,
   services, data stores, jobs, CLIs, APIs, files, or deployment systems.
 - **Interfaces to create or change**: public contracts, schemas, commands,
@@ -206,8 +207,8 @@ Avoid:
 
 ## Open and resolved issues
 
-Use open issues when the design has a real unresolved decision, not as a parking
-lot for miscellaneous thoughts.
+Use open issues when the design has a real unresolved decision, rather than to
+collect unrelated thoughts.
 
 Each open issue should include:
 
@@ -238,8 +239,8 @@ repeat debate, not prove that the author explored every possibility.
 
 Before finalizing or reviewing a design doc, check:
 
-- The first page gives enough context for a reviewer who has not heard the
-  hallway explanation.
+- The first page gives enough context for a reviewer who has not heard an
+  earlier verbal explanation.
 - Goals describe outcomes, while the proposed design describes implementation.
 - Non-goals are specific enough to stop scope creep.
 - The doc spends the most detail on expensive or risky decisions.

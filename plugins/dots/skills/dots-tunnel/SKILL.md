@@ -56,14 +56,15 @@ patch, with exact matching context. Add and update are supported; delete,
 rename, binary files, and creating parent directories are not.
 
 Read the result before proceeding. A revision conflict means the file changed;
-read it again and reconcile the user's edit. An uncertain write result means
-inspect the file before considering another write. A safety or authorization
-denial is not a reason to retry through another tool, model, or connection.
+read it again and combine your proposed change with the user's edit. If a write
+result is uncertain, inspect the file before considering another write. A safety
+or authorization denial is not a reason to retry through another tool, model, or
+connection.
 
-Verify edited bytes with `read_file`, then run relevant checks when execution is
-available. Otherwise report that limitation and ask the user to run them. Report
-the paths changed and checks actually completed; file edits alone do not prove
-that tests or builds passed.
+Read the edited file with `read_file` to confirm its contents, then run relevant
+checks when execution is available. Otherwise report that limitation and ask the
+user to run them. Report the paths changed and checks actually completed; file
+edits alone do not prove that tests or builds passed.
 
 ## Run commands when enabled
 
@@ -90,10 +91,11 @@ read-only checks when that saves round trips. Commit/push only when requested.
 - Use `terminate_command` to stop a job, including non-PTY commands. Jobs have
   a ten-minute limit; eight sessions may be retained. Collect results promptly.
 
-Sessions are capability handles shared within this authorized tunnel, not private
-to a chat. Do not share IDs or use IDs from another task. Restarting loses them.
-If delivery is uncertain, inspect files/process evidence before deciding whether
-to repeat a mutation. Truncated output is not a complete log; narrow the check.
+Session IDs grant access to running commands within this authorized tunnel. They
+are shared across chats that use the tunnel. Do not share IDs or use IDs from
+another task. Restarting loses them. If delivery is uncertain, inspect the files
+and running processes before deciding whether to repeat a mutation. Truncated
+output is not a complete log; narrow the check.
 
 The server fixes the native sandbox to authorized folders plus minimal system
 tool reads, with network disabled. It rejects escalation and `prefix_rule`;
@@ -108,11 +110,11 @@ for supported edits; preserve unrelated changes and confirm destructive scope.
 Do not launch detached daemons, change the tunnel's installation, or assume access
 to the user's shell credentials, caches, or network package registries.
 
-Continue in this ChatGPT conversation for follow-up edits. All calls carry
-their own paths and revisions; no turn token or retained browser tab is needed.
-When the host provides code mode, it may compose these ordinary structured
-tools in its own sandbox. Local execution occurs only through explicitly enabled
-command tools; there is no additional code-mode evaluator in dots-tunnel.
+Continue in this ChatGPT conversation for later edits. All calls carry their own
+paths and revisions; no turn token or retained browser tab is needed. When the
+host provides code mode, it may compose these ordinary structured tools in its
+own sandbox. Local execution occurs only through explicitly enabled command
+tools; there is no additional code-mode evaluator in dots-tunnel.
 
 If dots-tunnel is unavailable, report the missing connection. Do not start a browser,
 change account permissions, or silently use another file-access route.

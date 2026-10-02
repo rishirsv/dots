@@ -1,5 +1,5 @@
 /**
- * The one escaping owner for dots HTML output.
+ * Escape interpolated values for Dots HTML output.
  *
  * `html` and `svg` tagged templates escape every interpolated value unless it
  * is already SafeHtml. Arrays render each item; null, undefined, and false

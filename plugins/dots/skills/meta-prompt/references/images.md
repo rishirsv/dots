@@ -23,8 +23,9 @@ its role: subject identity, composition, palette, or style. Explain which
 features transfer instead of saying only “use these references.”
 
 For edits, state the change and the features that must remain intact, such as
-identity, geometry, labels, or framing. Follow-up prompts should isolate the
-next change and restate critical invariants rather than redescribe everything.
+identity, geometry, labels, or framing. For a later edit, describe the next
+change and repeat the features that must remain unchanged. Do not describe the
+whole image again.
 
 ## Keep API controls separate
 
@@ -32,10 +33,10 @@ Preserve requested dimensions and aspect ratio as requirements, but do not
 suggest that prompt wording sets API parameters. Include settings instructions
 only when the recipient controls the API and the request needs them.
 
-For GPT-image-2, transparent output requires `background: "transparent"` and
-PNG or WebP, not JPEG. Describe an isolated subject without a painted backdrop
-or checkerboard. GPT-image-2 does not accept `input_fidelity`; image inputs
-already use high fidelity. Do not import that parameter from older recipes.
+For GPT-image-2, transparent output requires `background: "transparent"` and PNG
+or WebP, not JPEG. Describe an isolated subject without a painted backdrop or
+checkerboard. GPT-image-2 does not accept `input_fidelity`; image inputs already
+use high fidelity. Do not import that parameter from guidance for older models.
 
 ## Examples
 

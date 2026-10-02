@@ -10,29 +10,29 @@ What edge cases were considered? What product, business, or operational
 constraints shaped the design? What alternatives were rejected, and why?
 
 Why is the companion to `how`. How explains what the code does and how it works.
-Why investigates the forces that gave it that shape.
+Why investigates the constraints and decisions that led to the code.
 
 ## How this skill works
 
 Historical context is fragmented. It may live in source control, a ticket,
 long-form documentation, team chat, observability, error tracking, or product
-analytics. Code anchors the investigation, but code alone rarely proves intent.
+analytics. Use the code to locate relevant records. Code alone rarely proves intent.
 
 Start with the evidence closest to the change. Widen the search when the direct
-record cannot answer the question. The goal is the strongest honest answer the
-available record supports, not a ceremonial search of every system.
+record cannot answer the question. Return the strongest answer the available record supports. Search another
+system only when its records could improve that answer.
 
-## Operating posture
+## Evidence Rules
 
-- **Evidence before narrative.** Collect the pieces before choosing the story
-  they support.
+- **Collect evidence first.** Decide which explanation the collected evidence
+  supports before writing it.
 - **Precision over polish.** Prefer a claim the reader can trace to its source
   over a smoother unsupported explanation.
 - **Consider what you have not seen.** Ask what evidence would exist if a
   competing explanation were true and whether you looked for it.
-- **Name the gaps.** Say when a source is unavailable, a thread goes cold, or
+- **Name the gaps.** Say when a source is unavailable, linked records provide no further evidence, or
   the record does not answer the question.
-- **Hedge on purpose.** Use confident language for direct evidence and cautious
+- **Match language to confidence.** Use confident language for direct evidence and cautious
   language for inference.
 - **Do not use code as proof of its own intent.** “It handles null because it
   checks for null” describes mechanics, not motivation.
@@ -54,9 +54,10 @@ If the target is vague, use the conversation, current selection, open files, or
 recent work to make the best interpretation. State it briefly and proceed so
 the user can redirect you.
 
-## 2. Establish the code anchor
+## 2. Locate The Code And Its History
 
-Find the relevant files, line ranges, symbols, and recent substantive commits.
+Find the relevant files, line ranges, symbols, and recent commits that change
+the target's structure, ownership, interfaces, or behavior.
 Use blame and file history to locate merge commits, pull requests, tickets,
 comments, tests, and incidents tied to the target.
 
@@ -70,22 +71,21 @@ git log -1 --format=%B <commit>
 ```
 
 When `gh` is installed and authenticated, inspect the PR body, discussion,
-reviews, and linked issues for substantive commits. Keep the file paths,
-symbols, commits, PRs, and ticket IDs together as the seed context for later
-searches.
+reviews, and linked issues for those commits. Keep the file paths, symbols,
+commits, PRs, and ticket IDs together as the starting evidence for later searches.
 
 ## 3. Choose the investigation depth
 
 Use the smallest depth likely to answer the question:
 
 - **Focused is the default.** Search source control and the records directly
-  linked from the code anchor.
+  linked from the target code and its history.
 - **Expanded** adds one to three evidence sources that are likely to hold the
   missing answer. Use it when the direct record is incomplete or contradictory.
 - **Exhaustive** searches every available evidence category in parallel. Use it
   for an explicit comprehensive request, a postmortem, a contested or
-  high-stakes decision, or when focused searches leave materially different
-  explanations alive.
+  high-stakes decision, or when focused searches still support different
+  explanations that would change the conclusion.
 
 Use the available source playbooks under `references/sources/` when their source
 is relevant:
@@ -105,28 +105,28 @@ is relevant:
   assumptions.
 
 Investigate directly when the search is small. Delegate independent sources in
-parallel when that materially improves breadth or latency. For a large run, use
+parallel when that substantially improves coverage or reduces time. For a large run, use
 [investigator-prompt.md](references/investigator-prompt.md) rather than
 recreating its brief.
 
-A null result matters only when the search was focused enough to mean
-something. Record an unavailable source as a gap when it could plausibly change
+A search with no results is useful only when its terms and scope could
+have found relevant evidence. Record an unavailable source as a gap when it could plausibly change
 the conclusion, not as a routine disclaimer.
 
-## 4. Test the story
+## 4. Test The Explanation
 
 Look for earlier implementations, reversions, contradictions, and evidence that
 supports a competing explanation. Do not assume the latest commit tells the
-whole story or retrofit a sensible present-day rationale onto an undocumented
+whole story or use a present-day justification as evidence for an undocumented
 past decision.
 
 Keep direct evidence, inference, and hypotheses separate while you work. When
-several explanations still fit, preserve them instead of forcing a winner.
+several explanations still fit, preserve them instead of choosing one without sufficient evidence.
 
-## 5. Synthesize the answer
+## 5. Combine The Findings
 
 Use a separate synthesizer only when the reports are large, conflicting, or
-independently complex. When needed, give it the code anchor, findings, null
+independently complex. When needed, give it the target code and its history, findings, searches with no
 results, original question, `epistemics.md`, and
 [synthesizer-prompt.md](references/synthesizer-prompt.md).
 
@@ -149,7 +149,7 @@ Adapt the headings to the question, but keep the confidence separation:
   meaningful sources were unavailable or empty.
 
 If the question precedes a code change, finish with Preserve / Change / Avoid /
-Risk constraints derived from the lineage.
+Risk constraints derived from the recorded history.
 
 The investigation is complete when every claim about intent has the right
 confidence, material contradictions and gaps are visible, and further searching

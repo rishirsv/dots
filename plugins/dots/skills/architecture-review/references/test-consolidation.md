@@ -2,7 +2,8 @@
 
 Read this when a refactor candidate changes test placement, adds coverage, removes coverage, or consolidates duplicate tests.
 
-Purpose: preserve regression signal, not test count. Prove each durable invariant once at the layer or verification surface that truthfully owns it.
+Keep tests that detect regressions. Prove each lasting rule once at the layer
+responsible for that rule, using a check that can verify it.
 
 Definitions:
 
@@ -19,9 +20,13 @@ Before choosing test APIs or placement:
 1. Name the durable invariant and its owning layer.
 2. Name the plausible regression and resulting user or system harm.
 3. Search for an existing test or other proof that already owns it.
-4. Prefer static analysis, rendered evidence, or manual platform verification when those prove the invariant more truthfully than an automated test.
-5. Reject coverage that requires broad fakes or repeats the same invariant at another layer.
-6. Before deleting a mixed suite, inventory its privacy, persistence, concurrency, retry, lifecycle, and external-system contracts.
+4. Prefer static analysis, rendered evidence, or manual platform verification
+   when those prove the invariant more truthfully than an automated test.
+5. Reject coverage that requires broad fakes or repeats the same invariant at
+   another layer.
+6. Before deleting a suite that checks several kinds of behavior, list its
+   privacy, persistence, concurrency, retry, lifecycle, and external-system
+   contracts.
 
 ## Hard Rules
 
@@ -36,7 +41,8 @@ Before choosing test APIs or placement:
 
 ## Regression Signal
 
-Review changed tests for regression signal rather than test count. Reconsider:
+Review whether changed tests detect plausible regressions. Test count does not
+establish this. Reconsider:
 
 - a test double that computes the production outcome;
 - exact copy, style, haptic, or timing assertions without an external contract;
@@ -81,7 +87,7 @@ A standalone regression-style test is allowed only if all are true:
 
 - no existing canonical suite can express the case cleanly
 - the reproduction is deterministic
-- the case has durable incident or contract value
+- the case protects a lasting contract or a failure that must remain covered
 - adding it to the canonical suite would make that suite less clear
 
 If any condition is false, fold the coverage into the canonical suite.
@@ -91,7 +97,7 @@ If any condition is false, fold the coverage into the canonical suite.
 After placing coverage:
 
 1. Search for tests that assert the same invariant.
-2. Keep the strongest owned location.
+2. Keep the strongest test in the layer responsible for the rule.
 3. Merge any unique assertions into that location.
 4. Delete or simplify weaker duplicates.
 5. Rename tests by behavior and owner, not by ticket number or bug history.

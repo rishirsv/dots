@@ -3,13 +3,15 @@
 Apply this web treatment to content imagery that needs separation. Exclude
 decorative images and logos unless their treatment calls for it.
 
-Add a `1px` outline at low opacity to images for consistent depth, especially where other elements use borders or shadows.
+Add a `1px` outline at low opacity to images for consistent depth, especially
+where other elements use borders or shadows.
 
-### Color rules (non-negotiable)
+### Required colors
 
 - **Light mode**: pure black, `oklch(0 0 0 / 0.1)`.
 - **Dark mode**: pure white, `oklch(1 0 0 / 0.1)`.
-- Never a near-black or near-white from the project palette, such as slate-900, zinc-900, `#0a0a0a`, `#111827`, or `#f5f5f7`. Tinted outlines pick up the surrounding surface color and read as dirt on the image edge.
+- Never a near-black or near-white from the project palette, such as slate-900, zinc-900, `#0a0a0a`, `#111827`, or `#f5f5f7`. Tinted outlines can combine with the surrounding surface color and make the
+  image edge appear discolored.
 - Never match the outline to the project's accent or ink color. The outline is a neutral separator, not a themed element.
 
 ### Light mode
@@ -40,9 +42,11 @@ img {
 />
 ```
 
-**Why outline instead of border?** `outline` never affects layout, adding no width or height at any offset, and `outline-offset: -1px` draws the ring just inside the image edge so it hugs the corner radius.
+**Why outline instead of border?** `outline` never affects layout, adding no
+width or height at any offset, and `outline-offset: -1px` draws the ring just
+inside the image edge so it follows the corner radius.
 
 Compare pale, dark, and mixed-edge images with the outline enabled and disabled
 in each supported theme. The edge should clarify the image's shape without
-reading as a separate frame. Check the actual crop and corner shape; a correct
+appearing as a separate frame. Check the actual crop and corner shape; a correct
 color token alone does not establish that the treatment helps.

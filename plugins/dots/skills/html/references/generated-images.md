@@ -4,7 +4,7 @@ Read this when an original raster image would clearly improve a page. Use
 `imagegen` to create, edit, and check the image; this file explains how to place
 the result in HTML.
 
-## Decide whether an image earns its place
+## Decide Whether An Image Helps
 
 Use `imagegen` for a purposeful photo, illustration, texture, product mockup,
 or other raster visual that helps the reader understand or feel the subject.
@@ -30,9 +30,9 @@ Before generating, write a short visual brief:
 2. Generate for the intended placement rather than creating a generic image
    first and trying to crop it into the page later.
 3. Inspect the result for subject accuracy, composition, unwanted text or
-   marks, and consistency with the page's calm, restrained visual style.
+   marks, and consistency with the page's restrained visual style.
    Iterate with one targeted change when needed.
-4. Copy the selected final into the workspace beside the body fragment or in a
+4. Copy the selected final image into the workspace beside the body fragment or in a
    workspace-owned image directory. A project-bound image must not
    remain only in the generator's default output location.
 5. Resize or optimize near the largest rendered size before embedding. Prefer
@@ -84,6 +84,5 @@ node scripts/assemble.mjs \
   360, and 320px in light and dark modes.
 - The image does not contain invented evidence, broken text, logos, watermarks,
   or unintended generated defects.
-- Its decoded dimensions and encoded size are proportionate to the rendered
-  role; the first useful content is not delayed by a decorative asset.
+- Its pixel dimensions and file size fit the displayed size; the first useful content is not delayed by a decorative asset.
 - The page remains complete with JavaScript disabled and honors reduced motion.

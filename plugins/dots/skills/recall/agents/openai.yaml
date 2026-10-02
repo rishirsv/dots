@@ -1,6 +1,6 @@
 interface:
   display_name: "Recall"
-  short_description: "Rebuild recent working context and the next move"
+  short_description: "Rebuild recent working context and the next action"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
   brand_color: "#36C5A7"

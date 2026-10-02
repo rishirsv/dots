@@ -1,9 +1,10 @@
 # Harness Audit
 
-Review the software around an AI model for avoidable cost, lost context, and
+Review the software around an AI model for avoidable cost, missing context, and
 duplicated policy. Aim to lower price-weighted token cost per completed task
-without reducing task quality. Keep the parent skill's candidate-first scope
-and implementation authorization; an audit does not authorize edits or commits.
+without reducing task quality. Report candidates under the parent skill's scope
+and follow its implementation authorization; an audit does not authorize edits
+or commits.
 
 Apply these checks to the agent subsystem in scope. A repository containing
 only agent instructions or skills supports an instruction review, but runtime
@@ -17,10 +18,11 @@ Identify who owns each instruction and decision, including framework or SDK
 hooks that determine the actual request.
 
 Inspect representative rendered requests and execution traces, not just prompt
-templates. Look for duplication, volatile values in reusable context, retries,
-and information that disappears between turns. Check current provider docs for
-the models in use: billing categories, caching rules, and required continuation
-items. Treat these as provider contracts rather than universal prompt patterns.
+templates. Look for duplication, frequently changing values in reusable context,
+retries, and information that disappears between turns. Check current provider
+docs for the models in use: billing categories, caching rules, and required
+continuation items. Treat these as provider contracts rather than universal
+prompt patterns.
 
 Use available usage data to establish:
 
@@ -94,6 +96,7 @@ deployed product, use an authorized controlled rollout to check the real task
 mix; offline evaluations alone do not establish production savings.
 
 Report measured improvements, null results, and unresolved gaps separately.
-Recommend rollout only when cost improves without a quality or reliability
-regression beyond measurement noise. Without adequate success measurements,
-describe the result as a candidate or experiment, not a proven optimization.
+Recommend rollout only when cost improves without a loss of quality or
+reliability larger than the uncertainty in the measurements. Without adequate
+success measurements, describe the result as a candidate or experiment, not a
+proven optimization.

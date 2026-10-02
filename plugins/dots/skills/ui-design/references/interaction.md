@@ -1,66 +1,73 @@
 # Interaction And States
 
 Define what the interface does through the user's task, available actions, and
-observable outcomes. Motion describes transitions; this reference owns the
-behavior and state being communicated.
+observable outcomes. Motion describes transitions; use this reference to define
+the behavior and state that those transitions communicate.
 
 ## Map The Task
 
 Identify the entry point, main path, completion, and relevant recovery paths.
-Reuse the product's navigation and state owners. Keep similar actions consistent,
-make the next step predictable, and preserve location or progress when returning.
-Use familiar platform controls unless another treatment improves the actual task.
+Reuse the product's navigation and the components or services that manage its
+state. Keep similar actions consistent, make the next step predictable, and
+preserve location or progress when returning. Use familiar platform controls
+unless another treatment improves the actual task.
 
 ## Make Controls Understandable
 
 Match control type to the choice: navigation changes location, buttons perform
 actions, selections change values. Give controls persistent, meaningful labels
-and give each decision region one visually dominant action by default. Style
-secondary and destructive actions according to their role. State the action and
-its object when context alone would not make the outcome clear. Do not depend on
-hover, color, or an unexplained icon for essential meaning.
+and by default, give each region where the user makes a choice one visually
+dominant action. Style secondary and destructive actions according to their
+role. State the action and its object when context alone would not make the
+outcome clear. Do not depend on hover, color, or an unexplained icon for
+essential meaning.
 
-Support keyboard and touch alongside pointer interaction. Preserve visible focus,
-logical traversal, and alternatives to essential gestures. Use platform focus
-facilities for native overlays, including initial focus, containment where
+Support keyboard and touch alongside pointer interaction. Preserve visible
+focus, logical traversal, and alternatives to essential gestures. Use platform
+focus facilities for native overlays, including initial focus, containment where
 appropriate, dismissal, and restoration. Prefer native elements and established
-accessible components. For custom web focus rings, read [focus styles](recipes/focus-styles.md);
-for composite widgets, [keyboard behavior](recipes/composite-keyboard.md);
-for modal focus management, [dialog focus](recipes/dialog-focus.md).
-For small web targets or blocked pointer input, read [hit areas](recipes/hit-areas.md).
+accessible components. For custom web focus rings, read [focus
+styles](recipes/focus-styles.md); for composite widgets, [keyboard
+behavior](recipes/composite-keyboard.md); for modal focus management, [dialog
+focus](recipes/dialog-focus.md). For small web targets or blocked pointer input,
+read [hit areas](recipes/hit-areas.md).
 
 ## Design Forms And Recovery
 
-Explain expected input before failure when the format is not obvious. Keep labels
-visible, distinguish required fields, and connect errors to the affected fields.
-Validate at a useful moment without interrupting entry. Retain entered data after
-recoverable failures and make correction and retry straightforward. For web field
-association, autofill, or error markup, read [form feedback](recipes/form-feedback.md).
+Explain expected input before failure when the format is not obvious. Keep
+labels visible, distinguish required fields, and connect errors to the affected
+fields. Validate at a useful moment without interrupting entry. Retain entered
+data after recoverable failures and make correction and retry straightforward.
+For web field association, autofill, or error markup, read [form
+feedback](recipes/form-feedback.md).
 
-Default to a single-column form so labels, fields, and errors follow one scanning
-path; use multiple columns only for short, strongly related values when the
-reading order remains unmistakable. Let field width suggest the expected amount
-of input without constraining valid values.
+Default to a single-column form so labels, fields, and errors follow one
+scanning path; use multiple columns only for short, strongly related values when
+the reading order remains unmistakable. Let field width suggest the expected
+amount of input without constraining valid values.
 
 Use confirmation or undo according to the consequence of an action, rather than
-adding a confirmation to every change. Make consequences clear before commitment.
+adding a confirmation to every change. Explain the consequences before the user
+performs the action.
 
 ## Own Each State
 
-Assign idle, pending, success, empty, error, selected, and disabled states to the
-control or region that owns the outcome; not every element needs every state.
-Give timely feedback and prevent unintended duplicate actions while work is pending.
-Preserve useful content during refresh where possible. When web feedback changes
-without navigation, read [announcements](recipes/announcements.md) to decide
-whether focus, a field description, or a live region should communicate it.
+Assign idle, pending, success, empty, error, selected, and disabled states to
+the control or region that owns the outcome; not every element needs every
+state. Give timely feedback and prevent unintended duplicate actions while work
+is pending. Preserve useful content during refresh where possible. When web
+feedback changes without navigation, read
+[announcements](recipes/announcements.md) to decide whether focus, a field
+description, or a live region should communicate it.
 
 Distinguish first use, no results, and unavailable data: each needs a different
-next action. Explain disabled actions when their cause is not apparent. Optimistic
-updates need a credible failure and recovery path; do not present an unconfirmed
-outcome as final when correctness matters.
+next action. Explain disabled actions when their cause is not apparent. For
+optimistic updates, define what happens if the operation fails and how the user
+can recover; do not present an unconfirmed outcome as final when correctness
+matters.
 
-Show warnings where the relevant condition occurs. State the consequence and
-a useful next step; present non-blocking context as quieter supporting detail
+Show warnings where the relevant condition occurs. State the consequence and a
+useful next step; present non-blocking context as quieter supporting detail
 instead of a persistent warning. Let the current controls communicate routine
 workflow state; add narration only when it changes what the user can do or
 explains how to recover.
@@ -69,28 +76,28 @@ explains how to recover.
 
 Follow the main path and relevant errors, retries, cancellation, dismissal, and
 back navigation. For reversible state changes, exercise both directions and
-check dependent status, counts, and action eligibility. For example, reopening
-a required checklist item must revoke readiness if readiness requires every
-item to be complete. Check rapid repeated input and supported input methods.
-After a rerender, keep focus on the equivalent control or move it to a useful
-enabled destination; attempting to focus a disabled or removed trigger does not
-restore keyboard continuity. Verify that labels, visible state, focus, and
-underlying behavior agree. In prototypes,
-make local simulations explicit without building unrequested services. Use the
-active audit or QA workflow for findings and iterations.
+check dependent status, counts, and action eligibility. For example, reopening a
+required checklist item must revoke readiness if readiness requires every item
+to be complete. Check rapid repeated input and supported input methods. After a
+rerender, keep focus on the equivalent control. If that control is unavailable,
+move focus to a useful enabled destination; attempting to focus a disabled or
+removed trigger does not restore a usable keyboard focus position. Verify that
+labels, visible state, focus, and underlying behavior agree. In prototypes, make
+local simulations explicit without building unrequested services. Use the active
+audit or QA workflow for findings and iterations.
 
 ## Agency And Permission Timing
 
-Let people explore without unnecessary setup. Request personal data at the
-point its purpose is apparent; explain why it is needed and ask only for that purpose. Where a
-feature could cause concrete harm, address that failure in the interaction,
-rather than relying on a generic disclaimer.
+Let people explore without unnecessary setup. Request personal data at the point
+its purpose is apparent; explain why it is needed and ask only for that purpose.
+Where a feature could cause concrete harm, address that failure in the
+interaction, rather than relying on a generic disclaimer.
 
 ## Search, Names And Native Controls
 
 Use [search.md](search.md) for scope, suggestions, filters and results, and
-[product copy](product-copy.md) when writing labels, errors or empty states.
-Use [naming](naming.md) when exploring feature names.
+[product copy](product-copy.md) when writing labels, errors or empty states. Use
+[naming](naming.md) when exploring feature names.
 
 For web selection controls, first assess whether a semantic select can meet the
 required behavior with progressive styling. Verify both enhanced and fallback

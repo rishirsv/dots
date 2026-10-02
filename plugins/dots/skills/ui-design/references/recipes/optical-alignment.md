@@ -1,16 +1,18 @@
 # Optical alignment
 
-When geometric centering looks off, align optically instead.
+If a geometrically centered glyph appears off-center, adjust its position to
+balance its visible shape.
 
 Squint at the control or temporarily blur the glyph in the inspector to see
-where its visual weight sits. Compare the original and adjusted glyph at its
-actual display size, then remove the diagnostic blur. Correct the glyph without
-moving the control's hit area or changing the alignment of neighboring controls.
+where its visual weight is concentrated. Compare the original and adjusted glyph
+at its actual display size, then remove the diagnostic blur. Correct the glyph
+without moving the control's hit area or changing the alignment of neighboring
+controls.
 
 ### Buttons with text + icon
 
-Where an icon makes symmetric padding look unbalanced, use slightly less on the icon side. A starting point:
-`icon-side padding = text-side padding - 2px`.
+Where an icon makes symmetric padding look unbalanced, use slightly less on the
+icon side. A starting point: `icon-side padding = text-side padding - 2px`.
 
 ```css
 /* Good: less padding on icon side */
@@ -36,9 +38,9 @@ Where an icon makes symmetric padding look unbalanced, use slightly less on the 
 ### Play button triangles
 
 Play icons are triangular and their geometric center is not their visual center.
-A small rightward shift is a useful starting point for a right-pointing triangle.
-Check the actual path and viewBox: an icon may already include that correction,
-and neither its direction nor the amount should be applied to every glyph.
+A small rightward shift is a useful starting point for a right-pointing
+triangle. Check the actual path and viewBox: an icon may already include that
+correction, and do not apply the same direction or amount to every glyph.
 
 ```css
 /* Candidate correction: compare with the unshifted glyph */
@@ -54,7 +56,8 @@ and neither its direction nor the amount should be applied to every glyph.
 
 ### Asymmetric icons (stars, arrows, carets)
 
-Some icons carry uneven visual weight. The best fix is adjusting the SVG directly, so the component needs no extra margin or padding.
+Some icons carry uneven visual weight. The best fix is adjusting the SVG
+directly, so the component needs no extra margin or padding.
 
 ```tsx
 // Best: fix in the SVG itself

@@ -1,17 +1,21 @@
 # Enter animations: split and stagger
 
 Use this selected web treatment within the established motion system. Keep
-required content and actions usable, and provide an immediate reduced-motion
-branch. Use the project’s existing Motion package and components for the examples.
+required content and actions usable, and for reduced motion, show the final
+state immediately. Use the project’s existing Motion package and components for
+the examples.
 
-Use this for infrequent staged entrances where sequence communicates hierarchy: the first load of a page hero, a success state, an empty state. Break a large container into semantic chunks and animate each one. Never stagger routine interactions such as row hovers, keystrokes, or repeated tab changes.
+Use this for infrequent staged entrances where sequence communicates hierarchy:
+the first load of a page hero, a success state, an empty state. Divide a large
+container into meaningful groups and animate each group. Never stagger routine
+interactions such as row hovers, keystrokes, or repeated tab changes.
 
 ### Step by step
 
-1. **Split** into logical groups (title, description, buttons)
-2. **Stagger** with ~100ms delay between groups
-3. **For titles**, consider splitting into individual words with ~80ms stagger
-4. **Combine** `opacity`, `blur` and `translateY` for the enter effect
+1. **Split** the content into logical groups (title, description, buttons).
+2. **Stagger** the groups with ~100ms delay between them.
+3. **For titles**, consider animating individual words with ~80ms stagger.
+4. **Combine** `opacity`, `blur` and `translateY` for the entrance effect.
 
 ### Code example
 

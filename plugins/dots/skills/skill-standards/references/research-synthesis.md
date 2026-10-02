@@ -2,10 +2,8 @@
 
 Read this when creating, updating, reviewing, or evaluating a skill that
 investigates a question, compares sources, or turns evidence into findings, a
-brief, a recommendation, or another research output. Build a conditional
-evidence workflow, not a fixed research template. The skill should adapt its
-depth, source mix, and output to the question while making support, uncertainty,
-and stopping decisions visible.
+brief, a recommendation, or another research output. Specify how the agent chooses sources, depth, and output for the question.
+State how it shows evidence and uncertainty, and how it decides when to stop.
 
 ## Frame An Answerable Research Job
 
@@ -18,7 +16,7 @@ selection and stopping:
   it;
 - the entity, population, period, geography, definitions, and comparison basis
   that bound each subquestion;
-- the expected output surface and depth; and
+- the expected output format and depth; and
 - the evidence that would be sufficient to answer, qualify, or leave each
   subquestion open.
 
@@ -37,8 +35,8 @@ assumption.
 
 ## Select Sources By What They Can Prove
 
-Author a source-selection policy that ranks sources by fitness for the specific
-claim, rather than treating every source as interchangeable. Inspect supplied
+Define which sources can support each kind of claim and which sources take
+priority. Inspect supplied
 files and stated context as in-scope evidence; use each only for claims it can
 support, and record when a supplied source is irrelevant, superseded, or
 insufficient. A general evidence order is:
@@ -68,22 +66,21 @@ For each source the workflow keeps, require a compact evidence record with:
 - freshness status, limitation, and conflict notes.
 
 Keep the record proportional to the output. A short answer may cite at the
-point of use; a multi-claim analysis may need a source register or evidence
-ledger. In either case, a reader should be able to locate the support for an
+point of use; a multi-claim analysis may need a list of sources or a record of evidence
+for each claim. In either case, a reader should be able to locate the support for an
 important claim without guessing.
 
 ## Handle Recency Explicitly
 
-Tell the skill to choose a freshness rule for each source class before relying
-on it. The rule should use the question's time horizon and the cadence at which
-the underlying fact changes. Check for a newer version, a superseding event,
+Specify how the skill determines whether each kind of source is current
+enough for the question. Account for the requested period and how often the
+underlying fact changes. Check for a newer version, a superseding event,
 and an as-of date whenever a time-dependent fact affects the answer.
 
 If freshness cannot be determined, label the input as unknown rather than
 current. If older evidence remains useful for historical context, preserve it
-with its period and do not present it as current. When sources span different
-periods, require the skill to reconcile or disclose the mismatch before making
-a comparison.
+with its period and do not present it as current. When sources cover different periods, align the periods if the data permits
+it. Otherwise, explain the mismatch before making a comparison.
 
 ## Search Deliberately And Stop For A Reason
 
@@ -103,7 +100,7 @@ Give the skill a stop rule. It may stop when every priority subquestion has
 either a traceable, sufficiently current answer or a clearly stated unresolved
 gap; the strongest plausible alternatives have been checked for meaningful
 conflicts; and additional searching is unlikely to change the answer. Continue
-searching when a central claim rests only on discovery-only sources, the
+searching when a central claim rests only on search snippets or summaries used to find sources, the
 evidence is stale or mismatched to the question, a competing explanation
 remains untested, or source coverage is visibly incomplete.
 
@@ -113,14 +110,14 @@ new sources can change the conclusion.
 
 ## Capture Evidence Before Writing Findings
 
-Instruct the skill to extract claim-sized evidence, not undifferentiated notes.
+Instruct the skill to record evidence separately for each claim.
 Each record should preserve the source wording or data needed to check the
 claim, its location, the relevant context, and the relationship between the
 evidence and the subquestion. Keep direct observations distinct from summaries
 of them.
 
-For qualitative synthesis, code observations separately before grouping them
-into themes. Preserve counterexamples, outliers, and segment differences rather
+For qualitative research, label each observation separately before grouping
+the observations into themes. Preserve counterexamples, outliers, and segment differences rather
 than forcing every observation into the dominant theme. Distinguish what people
 did from what they said; distinguish a quotation that illustrates a finding from
 the inference the skill draws from it. For quantitative evidence, retain the
@@ -134,8 +131,8 @@ and definition before treating them as comparable.
 
 ## Classify Claims And Inferences
 
-Author a claim-type system that prevents evidence from acquiring more certainty
-than it earned. Use equivalent labels appropriate to the domain, such as:
+Define labels that distinguish what each claim can establish. Use terms
+appropriate to the subject, such as:
 
 - **direct fact or observation:** supported by a source that directly records
   the asserted item;
@@ -194,8 +191,8 @@ names, dates, values, or short phrases into unreadable citation fragments.
 
 ## Detect Unsupported Claims Before Delivery
 
-Require a final claim sweep that works from the draft back to the evidence
-records. It should check that:
+Require a final review that compares each claim in the draft with its
+evidence. It should check that:
 
 - each important factual, numerical, comparative, causal, or recommendation
   claim has suitable support, a clear inference path, or an explicit label;
@@ -209,8 +206,8 @@ records. It should check that:
 - the conclusion answers the question map without quietly filling unanswered
   subquestions.
 
-If the sweep finds a problem, the skill should add support, narrow or relabel
-the claim, surface the limitation, or remove the claim. It must not resolve the
+If the review finds a problem, add support, narrow or relabel the claim, state
+the limitation, or remove the claim. It must not resolve the
 problem by adding a citation that does not support the statement.
 
 ## Define Tool And Source Failure Behavior
@@ -263,5 +260,5 @@ cases when they fit the skill:
 For each case, assert observable outcomes: question decomposition when needed,
 appropriate source selection, evidence records, claim labels, citation-to-claim
 mapping, recency treatment, conflict and failure handling, output shape, and
-the final unsupported-claim sweep. Reject tests that merely count citations,
+the final review for unsupported claims. Reject tests that merely count citations,
 sources, headings, or search calls.

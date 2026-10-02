@@ -1,8 +1,8 @@
 # Validation
 
-Prove the claims and surfaces the current documentation change depends on. Run
-only applicable checks; this is documentation QA, not an application release
-gate.
+Verify the claims, examples, and interfaces described by the documentation
+change. Run only applicable checks; this is documentation QA, not an application
+release gate.
 
 ## Check truth
 
@@ -11,7 +11,8 @@ gate.
 - Check that examples, commands, paths, flags, environment variables, and output
   names match the current repo.
 - Label inference, proposals, and partial evidence near the affected claim.
-- Claim verification only for checks run now or supplied as fresh evidence.
+- Describe a claim as verified only when a current check or recently supplied
+  result supports it.
 
 ## Check the document
 
@@ -38,7 +39,7 @@ gate.
 - Keep descriptions useful as one-sentence search or index snippets.
 - Existing unknown frontmatter fields are preserved unless the user asks to
   remove them.
-- Cross-links are intentional and use the repo's preferred path style.
+- Cross-links connect relevant concepts and use the repo's preferred path style.
 - External claims have inline source links or a `# Citations` section when
   source authority matters.
 

@@ -1,7 +1,7 @@
-"""Isolated session-store adapters for Self Improve.
+"""Read sessions from each host for Self Improve.
 
-Each adapter owns discovery and parsing for one host. The mining pipeline only
-consumes ``SessionRecord`` and ``SessionEvent`` values from this module; it does
+Each adapter owns discovery and parsing for one host. The evidence collector only
+reads ``SessionRecord`` and ``SessionEvent`` values from this module; it does
 not read another host's state as a fallback.
 """
 from __future__ import annotations
@@ -38,7 +38,8 @@ class SessionEvent:
     # call/output pairing; consumers must not infer one from event order.
     call_id: str = ""
     # Raw host timestamp when the rollout records one. Empty when the host does
-    # not stamp the event; callers must degrade instead of assuming coverage.
+    # not stamp the event; callers must report missing timestamps rather than
+    # assume coverage.
     timestamp: str = ""
     # Structured completed operations may occur inside a wrapper. No parent is
     # inferred from ordering when the host omits that relationship.

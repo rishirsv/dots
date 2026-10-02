@@ -5,23 +5,24 @@ with the actual design.
 
 ## Problem
 
-*What are we trying to do, and what makes the shape non-obvious? Include the
-existing types, callers, invariants, or constraints the design must honor.*
+*What are we trying to do, and which constraints make the design difficult?
+Include the existing types, callers, invariants, or constraints the design must
+honor.*
 
 ## Usage (caller's view)
 
 *Write this before the type sketch. Show the README or quickstart the consumer
 would read and two or three realistic call sites: what they import, what they
-call, and what comes back. Derive the shape from this usage. When they diverge,
-reconcile the sketch to the usage.*
+call, and what comes back. Derive the design from this usage. If the sketch does
+not support the usage, change the sketch.*
 
 ## Shape
 
-*Describe the recommended architecture. Put data structures first, then show
-how data moves through the signatures. Name the load-bearing decisions,
+*Describe the recommended architecture. Put data structures first, then show how
+data moves through the signatures. Name the decisions that determine the design,
 invariants encoded in types, validation boundaries, responsible modules, and
-what the system deliberately does not do. State what complexity the public
-surface hides and what remains exposed to callers.*
+what the system deliberately does not do. State which complexity the public
+interface hides and what remains exposed to callers.*
 
 ## Decision
 

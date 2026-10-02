@@ -5,14 +5,24 @@ description: "Create or edit self-contained HTML reports, linked page sets, frag
 
 # HTML
 
-For a report, deliver one self-contained HTML page by default. Use a linked
-page set when its parts need independent URLs, or a fragment when the result
-must be embedded elsewhere.
+For a report, deliver one self-contained HTML page by default. If its parts
+need independent URLs, use a linked page set. If the result must be embedded
+elsewhere, deliver a fragment.
+
+Explain substantive material visually by default. Start plans with a diagram
+that shows the phases, dependencies, decisions, or owners. Keep the full steps,
+constraints, and verification after that overview. For reports and explainers,
+identify the relationships the reader needs to understand and draw useful
+views before writing the detailed prose. Read
+[diagrams.md](references/diagrams.md) to select a form and an existing helper.
+Use visuals to explain real information; do not add decorative diagrams to
+meet a quota. Follow explicit format and template constraints.
 
 ## Report page loop
 
-1. Use the reader's question and supplied material to decide what the page
-   needs. Carry through the source's claims and decisions; use
+1. Identify the reader's question and the supplied claims and decisions.
+   Choose the opening visual and the additional views that explain different
+   parts of the answer. Preserve the evidence and detailed instructions. Use
    `recommendation()` only when the request or material supports a decision.
    Keep the default `report` tone for work artifacts; choose `personal` when
    the page is private or relational material written to one person, as
@@ -21,7 +31,7 @@ must be embedded elsewhere.
    `--help <helper>`. Write a `.page.mjs` module and build the HTML with
    `scripts/build.mjs`. The exact commands and source format are in
    [authoring.md](references/authoring.md#page-module-loop).
-3. For layout risk, run `scripts/capture-artifact.mjs` on the finished HTML.
+3. If the page has layout risk, run `scripts/capture-artifact.mjs` on the finished HTML.
    Inspect its contact sheet and findings report, fix the source, and rebuild.
    Deliver the HTML and say which render states you inspected.
 
@@ -36,7 +46,9 @@ components; [the atlas](assets/atlas.html) and
 ## Other inputs and boundaries
 
 When another skill calls `$html`, use its material, audience, reading order,
-and source labels. Identify contradictions that would change a claim.
+and source labels. Add visual explanations within that order by default.
+If the caller requires a fixed format, place visuals only where that format
+allows them. Report contradictions that would change a claim.
 When it supplies `artifact-template.json` with
 `kind: "html"`, inspect the retained reference and preview relative to that
 skill, follow its content and structure, and deliver the new artifact.

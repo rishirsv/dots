@@ -1,105 +1,121 @@
-# Writing style
+# Prose writing
 
 Use this for conversational, explanatory, editorial, or narrative prose whose
-voice matters to the result. Do not combine it with
-`technical-writing-guidance.md`; each artifact uses one writing reference.
+voice matters to the result. Apply [Clear language](plain-language.md) when
+drafting and editing. Add [Technical writing](technical-writing-guidance.md)
+when the same artifact contains procedures, technical claims, or evidence that
+the reader must act on. Either guide can be used alone with the shared clarity
+rules, or the two guides can be used together.
 
-Use this as a drafting and editing pass for substantial prose. Preserve quoted
-text, code, commands, identifiers, and required terminology.
+Preserve quoted text, code, commands, identifiers, and required terminology.
+Respect the writer's established voice. Style changes must not change technical
+meaning, hide uncertainty, or weaken a requirement.
 
-Edit text to remove AI patterns and add human voice.
+## Draft for the reader
 
-## Process
+Identify the reader, the intended effect, and the facts or source material that
+control the piece. Organize the explanation around a clear sequence, question,
+or argument. Give each paragraph a purpose: explain a mechanism, present
+support, interpret a result, or introduce the next idea.
 
-1. Identify the reader, intended effect, and controlling facts or source
-   material.
-2. Build the structure and voice with the guidance in "Adding soul."
-3. Scan for unsupported claims, mechanical patterns, and the AI tells below.
-   Rewrite without flattening the voice.
-4. Read the result aloud. Fix anywhere attention, orientation, or trust breaks.
+Follow an abstract claim with a concrete fact, action, image, or example when
+that helps the reader understand it. Reuse important nouns so the reader can
+follow the same subject across paragraphs. Vary the sentences around those
+nouns instead of renaming the subject for variety.
 
-## Adding soul
+## Preserve a natural voice
 
-Removing patterns is half the job. Sterile, voiceless writing is just as obvious.
+State an opinion when the task calls for one, and explain the facts behind it.
+Do not force neutrality when the evidence supports a judgment. Do not invent
+reactions to make the text sound personal.
 
-- **Have opinions.** React to facts instead of neutrally listing pros and cons.
-- **Vary rhythm.** Short sentences. Then longer ones that take their time. Mix it up.
-- **Acknowledge complexity.** "Impressive but also kind of unsettling" beats "impressive."
-- **Use "I" when it fits.** First person isn't unprofessional.
-- **Be specific.** Not "this is concerning" but "there's something unsettling about agents churning away at 3am."
+Vary sentence length when the meaning benefits. Use a short sentence to make
+an important point. Keep a longer sentence when it connects an idea with its
+condition or consequence clearly.
 
-Give that voice a structure:
+Acknowledge complexity in concrete terms. Explain what is promising,
+uncertain, or concerning. First person is appropriate when the writer's own
+judgment or experience matters. Specific observations are more useful than
+generic emotional language.
 
-- **Choose a spine.** Organize the piece around chronology, causality, questions,
-  or an argument so the reader always knows what is moving forward.
-- **Give each paragraph a job.** Advance events, explain a mechanism, present
-  evidence, interpret it, or turn to the next idea.
-- **Move between abstract and concrete.** Follow a general claim with a fact,
-  action, image, or example the reader can picture.
-- **Earn reactions.** Put surprise, judgment, or feeling after the evidence that
-  prompts it instead of using a reaction in place of evidence.
-- **Repeat anchors on purpose.** Keep important nouns and motifs stable. Vary the
-  surrounding syntax instead of renaming the subject.
-- **Put rhythm at real turns.** Use a short sentence to land a reversal or
-  conclusion. Let a longer sentence carry a coherent chain of reasoning.
-- **Show the mind at work.** Disclose uncertainty, surprise, or a changed belief
-  when it helps the reader understand how to interpret the account.
+Put facts before reactions. Disclose uncertainty, surprise, or a changed view
+when it helps the reader interpret the account. Preserve useful humor and
+individual phrasing when they serve the audience and do not obscure meaning.
 
-## Patterns to detect and fix
+## Remove artificial patterns
+
+Review patterns in context. A familiar word or punctuation mark is not a defect
+by itself. Replace wording when it adds no meaning, hides the claim, or makes
+the piece sound formulaic.
 
 ### Content
 
-- **Puffery.** "pivotal moment", "testament to", "evolving landscape", "setting the stage for", "indelible mark", "deeply rooted". Cut puffery, state what happened.
-- **Name-dropping.** Listing media outlets without context. Pick one, say what was said.
-- **Superficial -ing phrases.** "highlighting...", "ensuring...", "reflecting...", "showcasing...", "fostering...". Delete or expand with real sources.
-- **Promotional language.** "nestled", "vibrant", "breathtaking", "groundbreaking", "renowned", "stunning", "must-visit". Use neutral descriptions.
-- **Vague attributions.** "Experts believe", "Industry reports suggest", "Some critics argue". Name the source or delete.
-- **Formulaic challenges.** "Despite challenges... continues to thrive." Replace with specific facts.
+- Remove inflated significance claims such as "pivotal moment" or "testament
+  to." State what happened and why it matters.
+- Remove name-dropping. Name a source when its evidence supports the point.
+- Replace trailing phrases such as "highlighting" or "showcasing" with the
+  supported claim, or remove them if they add nothing.
+- Remove promotional descriptions such as "groundbreaking" unless the source
+  and task justify them.
+- Replace vague attributions such as "experts believe" with the actual source,
+  or remove the unsupported claim.
+- Replace formulaic passages about challenges and continued success with the
+  specific facts.
 
-### Language
+### Language and structure
 
-- **Word choice.** Replace inflated or vague words when a familiar word preserves the meaning. Keep precise domain terms.
-- **Fancy ways to say "is".** "serves as", "stands as", "boasts", "features". Just say "is" or "has".
-- **"Not just X, but Y."** State the point directly instead.
-- **Rule of three.** Forcing ideas into groups of three. Use the natural number.
-- **Synonym cycling.** Protagonist, main character, central figure, hero all in one paragraph. Pick one, repeat it.
-- **False ranges.** "from X to Y" where X and Y aren't on a meaningful scale. List topics directly.
+- Prefer "is" or "has" to elaborate substitutes such as "serves as" or "boasts"
+  when the simpler verb carries the same meaning.
+- State the point directly instead of adding a "not just X, but Y" construction.
+- Use the number of examples or arguments the material requires. Do not force
+  ideas into groups of three.
+- Avoid artificial ranges such as "from X to Y" when the items do not define a
+  meaningful range. Name the items directly.
+- Cut filler such as "in order to" and "it is important to note that."
+- Replace stacked hedges with the level of uncertainty the evidence supports.
+  "May" is clearer than "could potentially possibly."
+- End when the piece has answered the question. Remove generic conclusions
+  that merely announce optimism or repeat the preceding text.
+- Use a stronger verb or a measurement when an adverb adds no information.
+  Preserve qualifiers that change the claim's accuracy.
 
-### Style
+### Formatting
 
-- **Punctuation.** Prefer periods or commas to em dashes. Split a sentence when an aside obscures its main point.
-- **Colon overuse.** Colons are fine before a list or example. Not as mid-sentence connectors. "If you're coming from traditional automation: instead of registering event handlers, you describe conditions" adds nothing with the colon. Rewrite to let the point stand on its own without comparison framing. "Describing when the scheduler should fire works best as plain English." Same meaning, no crutch punctuation.
-- **Boldface overuse.** Don't bold every proper noun or acronym.
-- **Inline-header lists.** The tell is a bold label and colon that restates the line: "**Performance:** Performance improved...". Convert those to prose. A bold lead-in that ends in a period, names the item, and is followed by genuinely new detail ("**Schema in TypeScript.** Tables live in one file.") is fine, not a tell.
-- **Title case headings.** Use sentence case.
-- **Decorative emojis.** Remove from headings and bullets.
-- **Curly quotes.** Replace with straight quotes.
+Prefer periods or commas when a long aside makes the sentence difficult to
+follow. Parentheses, dashes, and other punctuation remain available when they
+clarify the relationship. Use colons to introduce a list or example; avoid them
+as a substitute for writing the connection between two ideas.
 
-### Communication artifacts
+Use emphasis to help the reader find important information. Do not bold every
+name or add a bold label that merely repeats the following sentence. A short
+label is useful when it identifies the subject and the text adds new information.
 
-- **Chatbot phrases.** "I hope this helps!", "Let me know if...", "Of course!", "Certainly!", "Found the smoking gun!" Remove.
-- **Cutoff disclaimers.** "While specific details are limited..." Find sources or remove.
-- **Sycophantic tone.** "Great question! You're absolutely right!" Respond directly.
+Use sentence case for headings. Remove decorative emojis. Prefer straight
+quotes in newly authored Dots instructions; preserve quoted sources and any
+format the user requires.
 
-### Filler
+### Voice and specificity
 
-- **Filler phrases.** "In order to" becomes "To". "Due to the fact that" becomes "Because". "It is important to note that" gets deleted.
-- **Excessive hedging.** "could potentially possibly be argued that it might" becomes "may".
-- **Generic conclusions.** "The future looks bright." State specific plans or facts.
+Remove stock chatbot openings, praise, and sign-offs when they do not help the
+reader. State the answer directly. Replace generic disclaimers with the
+specific limitation and its effect on the answer.
 
-### Jargon
+Use the concrete-word and sentence rules in [Clear language](plain-language.md)
+for abstract metaphors, dense noun groups, unclear actors, and compressed
+fragments. Explain what a system does rather than how it feels. For example,
+"`.toSQL()` returns the exact string sent to the database" explains more than
+"SQL you can read."
 
-- **Abstract metaphor nouns.** Substrate, wedge, vector, locus, vantage, nexus, primitive (as noun), harness (as metaphor), surface (as in "API surface"), bedrock, scaffolding (as metaphor), modality, paradigm, gold-plating, ratchet (as metaphor), evacuate (for moving code), endgame, north star, flywheel. These read as technical but usually have a plainer concrete word. "Substrate" becomes "base". "Wedge in" becomes "add". "Vector" becomes "way" or "method". "Gold-plating" becomes "more than the job needs". "Ratchet" becomes the mechanism's real name or "a limit that only tightens". "Evacuate" becomes "move out". "Endgame" becomes "the last phase". Pick the concrete word.
+If a sentence could fit unchanged in several unrelated pieces, check whether it
+adds necessary context here. Make it specific or remove it when it adds nothing.
+Do not delete useful background merely because other readers also need it.
 
-### Plain speech
+## Edit before delivery
 
-- **Say what it does, not how it feels.** "the database stays close at hand", "SQL you can read", "types that follow your schema" name a feeling. The fix names the mechanism or a number: "`.toSQL()` returns the exact string sent to the database", "a column rename fails the build". Ask what the sentence tells the reader to do or know, then write that. If you can't restate it as a concrete instruction, fact, or number, cut it. One more check: if the sentence could appear unchanged in another project's docs, it says nothing about this one. Cut it.
-- **Give each sentence one primary movement.** Keep related conditions,
-  contrasts, or consequences together when splitting them would obscure the
-  relationship. Split when the reader must backtrack to recover the grammar.
-- **Active voice.** Prefer it. Catch "is/are/was/were + past participle" and name the actor: "queries are validated" becomes "the compiler validates queries", "the file is parsed by the loader" becomes "the loader parses the file". Passive is fine only when the actor is unknown or genuinely doesn't matter.
-- **Cut adverbs, or use a stronger verb.** "runs quickly" becomes "is fast" or the number. "significantly improves" becomes the measured delta. An adverb propping up a weak verb means the verb is wrong.
-- **Prefer the plain word.** "utilize" becomes "use", "leverage" becomes "use", "facilitate" becomes "help", "numerous" becomes "many", "in the event that" becomes "if". The fancier synonym is rarely clearer.
-
-- **Mannered prose.** Metaphor or flourish where a literal phrase exists: aphorisms ("wire it or delete it"), rhetorical fragments for effect, personified code ("the plan holds it"), figurative verbs ("rides along", "stands on"), stock framing phrases. "A dial worth turning" becomes "a parameter worth varying". Say what you mean. The Jargon section covers the metaphor nouns.
-- **Over-compression.** Restore articles, verbs, or expanded terms when their omission makes the reader decode the sentence. "Parser rejects bad date → exit 2, no write" becomes "The parser rejects a bad date, exits with code 2, and writes nothing." Keep familiar notation when it improves clarity.
+1. Check the structure against the reader's question and the source material.
+2. Apply [Clear language](plain-language.md) to meaning, terms, and sentences.
+3. Remove unsupported claims, repetition, filler, and artificial patterns.
+4. Read the prose aloud. Revise any passage that forces the reader to backtrack
+   or guess the connection between ideas.
+5. Compare the revision with the source. Preserve its meaning, evidence,
+   uncertainty, and the writer's intended voice.

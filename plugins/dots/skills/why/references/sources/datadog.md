@@ -16,7 +16,7 @@ Datadog answers "what was the production reality around the time this code was w
 
 ## How to search it
 
-Use the Datadog MCP. Start broad, then narrow.
+Use the Datadog MCP. Search broadly, then narrow by service, query, and time.
 
 1. **Identify the owning service(s).**
 
@@ -25,7 +25,7 @@ Use the Datadog MCP. Start broad, then narrow.
    search_datadog_service_dependencies (see upstream/downstream)
    ```
 
-2. **Dashboards and monitors first. They tell you what the team cares about.**
+2. **Dashboards and monitors first. They identify the conditions the team monitors.**
 
    ```
    search_datadog_dashboards (query: feature name, service name, symbol)
@@ -44,14 +44,14 @@ Use the Datadog MCP. Start broad, then narrow.
 
    Correlating a metric's trajectory with the target's add/change date is strong supporting evidence: "the `payment_timeout` metric spiked 2023-11-03, and the retry logic merged 2023-11-06."
 
-4. **Logs. Narrow, don't dump.**
+4. **Logs. Limit the search and summarize matches.**
 
    ```
    search_datadog_logs (raw log patterns near the target, set use_log_patterns=true)
    analyze_datadog_logs (SQL-style aggregations, only when you need counts)
    ```
 
-   Search with symbols, error strings, or feature names. **Strongly prefer time-bounded queries** (e.g., 30 days before/after the change). Log volume is huge; unconstrained searches waste time and may time out.
+   Search with symbols, error strings, or feature names. **Prefer queries with a time window** (e.g., 30 days before/after the change). Log volume is huge; unconstrained searches waste time and may time out.
 
 5. **APM spans and traces.**
 
@@ -83,10 +83,10 @@ Use the Datadog MCP. Start broad, then narrow.
 ## Common pitfalls
 
 - **Correlation is not causation.** A spike before a PR and stabilization after is suggestive, not definitive. Other changes may have landed in the same window. Check neighboring PRs.
-- **Overfitting to the chart you found.** Datadog visualizations are *made* by humans and reflect that human's framing. A chart named "retry success rate" is evidence the team cared about retry success, not that it's why a specific line of code exists.
-- **Vanished telemetry.** Metrics can be renamed, deleted, or have short retention. If you can't find data from the relevant window, that's a gap, not a null result.
-- **Noise at scale.** Searching logs for a common string returns thousands of matches. Narrow by service, tag, and time aggressively. Use `analyze_datadog_logs` to aggregate rather than dumping raw logs.
-- **Instrumented != caused.** A metric's existence tells you someone cared enough to measure something, not that the code was added *because* of it. Cross-reference with commit/PR dates.
+- **Inferring too much from one chart.** Datadog visualizations are *made* by humans and reflect the author's choice of what to show. A chart named "retry success rate" is evidence the team cared about retry success, not that it's why a specific line of code exists.
+- **Vanished telemetry.** Metrics can be renamed, deleted, or have short retention. If you can't find data from the relevant window, report the missing period as a gap. Do not report it as a search with no results.
+- **Too many log matches.** Searching logs for a common string returns thousands of matches. Narrow by service, tag, and time. Use `analyze_datadog_logs` to aggregate rather than dumping raw logs.
+- **Instrumentation does not establish causation.** A metric's existence tells you someone cared enough to measure something, not that the code was added *because* of it. Cross-reference with commit/PR dates.
 
 ## What to return
 

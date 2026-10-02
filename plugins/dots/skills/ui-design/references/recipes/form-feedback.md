@@ -18,15 +18,19 @@ The complete pattern:
 <p id="email-error">Enter a valid email address.</p>
 ```
 
-- `aria-invalid="true"` on the failing field, removed once fixed.
+- Set `aria-invalid="true"` on the failing field. Remove it when the input is valid.
 - `aria-describedby` links the field to its inline error so screen readers announce it with the field.
-- Errors render inline beside their fields, with an icon or text. Never a red border alone, which is a color-only cue.
+- Show errors inline beside their fields, with an icon or text. A red border
+  alone communicates the error only through color.
 
-On failed submission, focus the first invalid field or an error summary linked to the fields when the form needs an overview. Preserve existing hint IDs in `aria-describedby` when adding an error.
+On failed submission, focus the first invalid field or an error summary linked
+to the fields when the form needs an overview. Preserve existing hint IDs in
+`aria-describedby` when adding an error.
 
 ## Autocomplete and input types
 
-Use `autocomplete` with a meaningful `name` for fields collecting recognized personal information. The common tokens:
+Use `autocomplete` with a meaningful `name` for fields collecting recognized
+personal information. The common tokens:
 
 | Field | `autocomplete` |
 | --- | --- |
@@ -39,7 +43,8 @@ Use `autocomplete` with a meaningful `name` for fields collecting recognized per
 | Signup / reset | `new-password` |
 | 2FA code | `one-time-code` |
 
-Distinguish shipping and billing addresses where relevant: `autocomplete="shipping street-address"`.
+Distinguish shipping and billing addresses where relevant:
+`autocomplete="shipping street-address"`.
 
 Correct `type` and `inputmode` pick the right mobile keyboard:
 
@@ -52,6 +57,11 @@ Correct `type` and `inputmode` pick the right mobile keyboard:
 
 Disable spellcheck on emails, codes and usernames: `spellcheck="false"`.
 
-Stay compatible with password managers and 2FA autofill: real `<form>`, correct `autocomplete`, no fake inputs. Preserve passwords and other exact-value fields; normalize whitespace only where the field’s meaning permits it. Keyboard submit shortcuts beyond native behavior belong to the product’s interaction model.
+For compatibility with password managers and 2FA autofill, use a real `<form>`,
+correct `autocomplete` values, and real input elements. Preserve passwords and
+other exact-value fields; normalize whitespace only where the field’s meaning
+permits it. Keyboard submit shortcuts beyond native behavior belong to the
+product’s interaction model.
 
-For success, result counts, or form-level failures that need speech without focus moving, read [announcements](announcements.md).
+For success, result counts, or form-level failures that need speech without
+focus moving, read [announcements](announcements.md).

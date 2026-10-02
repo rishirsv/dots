@@ -1,5 +1,5 @@
 {
-  "$comment": "Outcome references teach reading order and editorial judgment. They are complete sample pages, not scaffolds. Select the nearest job, inspect one page, then compose real content from the component registry.",
+  "$comment": "Outcome references demonstrate reading order and content choices. They are complete sample pages. Inspect the example closest to the requested artifact. Then use the component registry to compose the supplied content.",
   "items": [
     {
       "name": "decision-comparison",
@@ -29,7 +29,7 @@
       "layout": "article",
       "treatment": "utilitarian",
       "shape": ["headline movement", "traceable measures", "workstreams", "risks", "next action"],
-      "boundary": "Do not invent metrics or turn ordinary activity into KPI theater."
+      "boundary": "Do not invent metrics or turn ordinary activity into unnecessary headline measures."
     },
     {
       "name": "incident-account",
@@ -48,7 +48,7 @@
       "job": "Help a reviewer understand the actual work, why it was necessary, its scope, mechanism, and proof.",
       "layout": "wide",
       "treatment": "editorial",
-      "shape": ["change-derived story", "realistic trace", "scope and consequence", "grounded proof"],
+      "shape": ["explanation organized around the change", "realistic trace", "scope and consequence", "verification tied to source"],
       "boundary": "Ground every claim in the actual diff and repository context."
     }
   ]

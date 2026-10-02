@@ -48,8 +48,8 @@ __DOTS_THEME_CSS__
   <div class="reading-column diagram-intro">
     <section id="choose">
       <h2>Choose the relationship before drawing</h2>
-      <p>These __DIAGRAM_COUNT__ templates cover system structure, process, hierarchy, interaction, and quantitative explanation. Copy the closest figure, keep the shared visual rules, and replace every illustrative label with grounded content.</p>
-      <p>Use a table for a binary comparison and prose when the diagram would only put a box around a sentence.</p>
+      <p>These __DIAGRAM_COUNT__ templates cover system structure, process, hierarchy, interaction, and quantitative explanation. Copy the closest figure, keep the shared visual rules, and replace every illustrative label with facts from the supplied sources.</p>
+      <p>Use diagrams by default to explain useful relationships. For plans, show phases and dependencies before the full steps. Use a table when exact comparison matters. Omit diagrams that only repeat a sentence.</p>
     </section>
   </div>
 
@@ -61,7 +61,7 @@ __DOTS_THEME_CSS__
     </section>
   </div>
 
-  <footer class="sources">Illustrative templates only. Replace every label and value with grounded source material; the shared Dots identity remains fixed.</footer>
+  <footer class="sources">Illustrative templates only. Replace every label and value with facts from the supplied sources. Preserve the Dots design tokens.</footer>
 </div>
 
 </body>

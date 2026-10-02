@@ -10,9 +10,9 @@ inset = parentBorderWidth + parentPadding
 
 Include any additional gap in the measured inset. With no parent border or gap,
 this is the familiar `outerRadius = innerRadius + padding` relationship until
-the inner radius reaches zero. Around `24px` of padding the layers may read as
-independent surfaces; judge that relationship rather than treating the number
-as a cutoff.
+the inner radius reaches zero. Around `24px` of padding the layers may appear as
+independent surfaces; judge that relationship rather than treating the number as
+a cutoff.
 
 ### Example
 
@@ -55,10 +55,11 @@ as a cutoff.
 }
 ```
 
-Here the inner radius is `12px`, not `13px`: the border contributes to the inset.
-Compare the corner gap with the straight-edge gap. They should read as a
-continuous band. If the inset exceeds the outer radius, the inner corner becomes
-square; asymmetric insets or different corner shapes need individual judgment.
+Here the inner radius is `12px`, not `13px`: the border contributes to the
+inset. Compare the corner gap with the straight-edge gap. The two gaps should
+form a continuous band. If the inset exceeds the outer radius, the inner corner
+becomes square; asymmetric insets or different corner shapes need individual
+judgment.
 
 ### Tailwind example
 
@@ -78,4 +79,7 @@ square; asymmetric insets or different corner shapes need individual judgment.
 </div>
 ```
 
-Mismatched radii on closely nested surfaces are a common source of visual tension. Calculate concentrically where the layers share a visible, even inset. Keep an established component token where they are independent or the padding is deliberately asymmetric.
+Mismatched radii on closely nested surfaces can make their corner gaps appear
+uneven. Calculate concentrically where the layers share a visible, even inset.
+Keep an established component token where they are independent or the padding is
+deliberately asymmetric.

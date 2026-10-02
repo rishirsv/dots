@@ -2,18 +2,17 @@
 
 Read this when creating, updating, reviewing, or evaluating a skill that creates,
 updates, or checks a report, presentation, pitch deck, briefing, memo, or other
-reader-facing artifact. Build a workflow for the artifact's actual job, not a
-fixed page or slide template. The skill should adapt its structure to the
-artifact, supplied materials, and reader need while making its evidence and
-completion checks observable.
+reader-facing artifact. Design the workflow around the artifact's purpose. Adapt its structure to the
+format, supplied material, and reader. Specify the evidence and checks needed
+to show that it is complete.
 
 ## Define The Artifact's Job
 
-Before prescribing sections, establish the conditions that determine them:
+Before specifying sections, identify what determines the structure:
 
 - **Audience:** who will read, present, or act on the artifact; what they know
   already; and how much detail they can absorb in one pass.
-- **Decision objective:** the understanding, choice, alignment, or next action
+- **Intended result:** the understanding, choice, agreement, or next action
   the artifact must enable. If no decision is required, define the intended
   change in understanding instead.
 - **Artifact role:** whether it introduces a view, compares options, explains a
@@ -21,25 +20,24 @@ Before prescribing sections, establish the conditions that determine them:
   detail.
 - **Inputs:** controlling source files, data, prior artifacts, templates,
   approved wording, and known gaps.
-- **Output surface:** editable deck or document, PDF, HTML report, page plan,
+- **Output format:** editable deck or document, PDF, HTML report, page plan,
   or a different user-requested format. Do not make a planning artifact the
   primary deliverable when the request calls for a finished reader-facing file.
 
 Write the skill so it asks only for a missing answer that would change the
-objective, audience, controlling inputs, or output surface. Otherwise state
+objective, audience, controlling inputs, or output format. Otherwise state
 the working assumption in the artifact or completion note where it affects
 interpretation, then proceed.
 
 ## Plan The Story Before Construction
 
-For a persuasive or decision-facing artifact, require a concise storyline
-before the skill writes pages or slides. It should name the reader's decision or
+For an artifact that supports persuasion or a decision, require a short
+outline of the argument before writing pages or slides. It should name the reader's decision or
 takeaway, the central conclusion, the evidence that supports it, and the main
 uncertainty or objection the artifact must address. Such an artifact is an
 argument with evidence, not a fact inventory.
 
-For a status, descriptive, or reference artifact, define an information path
-instead: what the reader needs to locate, compare, understand, or monitor; the
+For a status report, description, or reference, define the reading order: what the reader needs to locate, compare, understand, or monitor; the
 state and period represented; and the supporting detail needed to interpret it.
 Do not manufacture a recommendation or conclusion merely to make a neutral
 artifact sound decisive.
@@ -66,10 +64,10 @@ combining, moving, or omitting units.
 
 ## Make Claims Traceable
 
-Author a source-to-claim contract whenever the skill creates factual,
-quantitative, comparative, or recommendation-bearing content. The contract may
-be a source register, claim ledger, footnotes, point-of-use citations, or an
-equivalent representation appropriate to the output format. It must let the
+When the skill makes factual claims, reports numbers, compares options, or
+recommends actions, specify how each claim connects to its support. Use a list
+of sources, a record of claims, footnotes, citations beside claims, or another
+format the reader can inspect. It must let the
 skill determine, for each important claim:
 
 - what source, calculation, or supplied input supports it;
@@ -87,7 +85,7 @@ convenient one.
 When the artifact carries a recommendation or conclusion, instruct the skill to
 connect it to the evidence and to identify the observation, assumption, or
 missing input that would change the conclusion. Keep this proportional to the
-requested artifact; do not force a long evidence ledger into a short briefing
+requested artifact; do not force a long record of evidence into a short briefing
 when readable citations and a compact source note provide the needed trace.
 
 ## Give Data Displays A Contract
@@ -105,19 +103,19 @@ metadata to verify what the reader is seeing:
 
 Make chart selection conditional on the question and data relationship. A trend,
 comparison, composition, distribution, ranking, and relationship need different
-encodings. Require bars to use a zero baseline unless a clearly labeled exception
+visual forms. Require bars to use a zero baseline unless a clearly labeled exception
 is necessary; require comparable panels to use comparable scales; and require
 any truncated axis, forecast boundary, or scenario change to be explicit.
 
 Do not use a display merely to decorate a page. If a table or chart cannot
 answer a reader question more clearly than compact prose, omit it. If the data
 is image-only or cannot be inspected, state that limitation rather than claiming
-the values were tied out.
+the values were checked against the source.
 
 ## Preserve The Supplied Visual System
 
-When users provide a deck, document, template, or brand assets, make preserving
-them the default contract. The skill should inspect the existing structure and
+When users provide a deck, document, template, or brand assets, preserve
+them by default. The skill should inspect the existing structure and
 retain the elements that define the artifact unless the user requests a change:
 
 - slide or page size, masters, layouts, section structure, and page numbering;
@@ -171,7 +169,7 @@ or file existence alone. Give it a format-appropriate inspection path:
    page or slide the skill creates or changes. For a long artifact, define a
    sampling rule that covers changed units, data displays, and section openings,
    then identify any units that were not inspected.
-3. Compare rendered content with the source-to-claim and chart/data contracts.
+3. Compare rendered content with its sources and the requirements for each chart or data display.
 4. Inspect the target viewing sizes. For responsive HTML, include a narrow
    viewport and verify that the document does not overflow horizontally; tables
    may scroll inside a clearly bounded container.
@@ -191,9 +189,9 @@ Write concrete branches for common failure modes:
 | Objective, audience, or artifact format would change the result | Ask one focused question; otherwise proceed with a stated assumption. |
 | Controlling source, data, or template is absent | Build only the supportable structure, label placeholders or gaps, and request the missing input rather than inventing content. |
 | Sources conflict or a value does not tie across the artifact | Identify the locations and conflict, retain both values until resolved, and prevent the claim from appearing as settled. |
-| A chart or page cannot be read from extraction alone | Render and inspect it; if rendering is unavailable, state the unverified surface. |
+| A chart or page cannot be read from extraction alone | Render and inspect it; if rendering is unavailable, state which content could not be visually checked. |
 | Rendering shows clipping, overlap, unreadable text, broken hierarchy, or inconsistent formatting | Correct the artifact and render again before delivery. |
-| A required output format cannot be produced | Offer the closest usable surface only if it preserves the requested objective, and label the limitation. |
+| A required output format cannot be produced | Offer the closest usable format only if it preserves the requested objective, and label the limitation. |
 
 Avoid vague instructions such as “ensure quality” or “make it polished.” Name
 the observable check, the condition that fails it, and the corrective action.

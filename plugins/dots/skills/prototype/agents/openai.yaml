@@ -4,7 +4,7 @@ interface:
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
   brand_color: "#36C5A7"
-  default_prompt: "Use $prototype to build the cheapest isolated experiment that can settle this decision, observe it on the matching surface, and return the evidence and recommendation."
+  default_prompt: "Use $prototype to build the least costly isolated experiment that can settle this decision. Run or view it, then return the evidence and recommendation."
 
 policy:
   allow_implicit_invocation: true

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a compact handoff context packet from local Codex transcripts."""
+"""Create a brief for continuing work from local Codex transcripts."""
 
 from __future__ import annotations
 
@@ -257,7 +257,7 @@ def render_json(thread: Thread, events: list[dict[str, str]]) -> str:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Build a compact handoff context packet from local Codex transcripts."
+        description="Create a brief for continuing work from local Codex transcripts."
     )
     parser.add_argument("--thread", help="Exact Codex thread/session id to read.")
     parser.add_argument(
