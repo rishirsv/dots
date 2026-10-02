@@ -94,7 +94,7 @@ examples are illustrations, not required wording for generated skills.
 - **Make the work concrete before making it shorter.** Write the actions,
   artifacts, roles, and decisions plainly. Then remove repetition without
   replacing those details with umbrella nouns or compressed policy language.
-- **Apply the shared prose rules.** Use [Clear language](../../../references/plain-language.md)
+- **Apply the shared prose rules.** Use [Writing style](../../../references/writing-style.md)
   while drafting, not only after the skill is complete. Keep specialized terms
   when they express a precise concept the reader needs. Define unfamiliar terms
   before relying on them.
@@ -256,13 +256,11 @@ metadata-only edit does not need the whole domain workflow:
 
 ### Write and review clear instructions
 
-Apply [Clear language](../../../references/plain-language.md) to every skill's
+Apply [Writing style](../../../references/writing-style.md) to every skill's
 instructions, descriptions, supporting references, and embedded prompts.
-Use [Technical writing](../../../references/technical-writing-guidance.md) for
-procedures and technical claims. Add [Prose writing](../../../references/writing-style.md)
-when the skill includes a developed explanation or narrative. The guides can
-be used separately or together; exact meaning and required formats take
-priority over stylistic preferences.
+Use its rules for procedures, evidence, explanation, and voice as the content
+requires. Exact meaning and required formats take priority over stylistic
+preferences.
 
 Before completion, review the prose as well as the skill's structure. Identify
 ambiguous actors, conditions, pronouns, term changes, hidden actions, and dense

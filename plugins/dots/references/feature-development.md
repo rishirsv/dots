@@ -73,7 +73,7 @@ one unusual task.
    Follow `$change-review` for its review and repair mode; preserve an
    explicit review-only request. Report the result, evidence, and important
    remaining gaps. Apply
-   [Evidence in claims](technical-writing-guidance.md#evidence-in-claims)
+   [Evidence in claims](writing-style.md#evidence-in-claims)
    when writing the completion report.
 
 ## Stop at a planning handoff when requested

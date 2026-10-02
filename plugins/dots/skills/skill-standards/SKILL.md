@@ -6,9 +6,8 @@ description: "Creates, updates, or statically reviews agent skill source against
 # Skill Standards
 
 Use [standards.md](references/standards.md) to create, update, or review a skill.
-Apply [Clear language](../../references/plain-language.md) while writing the
-instructions and again before completing the review. Use the technical and
-prose writing guides as the content requires; they can be used together.
+Apply [Writing style](../../references/writing-style.md) while writing the
+instructions and again before completing the review.
 
 For creation or updates, use the environment's default `skill-creator` for
 authoring mechanics, resource structure, validation, and forward testing.

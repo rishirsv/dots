@@ -6,7 +6,7 @@ description: "Commits and pushes finished changes, then opens or updates a non-d
 # Publish PR
 
 For commit messages, the pull-request title, and its description, apply
-[Technical writing guidance](../../references/technical-writing-guidance.md)
+[Writing style](../../references/writing-style.md)
 as an editing standard. `$publish-pr` still owns these publishing artifacts.
 
 1. Confirm the GitHub repository and active account. If necessary, run

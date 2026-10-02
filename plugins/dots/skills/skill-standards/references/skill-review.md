@@ -58,10 +58,9 @@ tries to shorten the skill can delete information the agent needs.
 
 ## 4. Scan for defects
 
-Apply [Clear language](../../../references/plain-language.md) to descriptions,
-instructions, supporting references, and embedded prompts. Use technical writing
-guidance for procedures and claims. Add prose writing guidance for developed
-explanations. Check the meaning before polishing the style.
+Apply [Writing style](../../../references/writing-style.md) to descriptions,
+instructions, supporting references, and embedded prompts. Check the meaning
+before polishing the style.
 
 For a prose defect, identify the action or condition that is unclear. Quote the
 wording, describe a plausible misreading, and provide the exact replacement.
