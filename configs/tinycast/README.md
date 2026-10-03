@@ -1,17 +1,45 @@
 # Tinycast workflows
 
-Tinycast 0.11.3 supports these selected-text Quick Actions. This profile preserves
-Prompt (Hyper+P), adds Improve (Hyper+I) with the Dots writing guide embedded, and
-adds Explain (Hyper+E). Actions preview their results. Model routing and existing
-permissions remain machine-local and are never copied by this profile.
+This profile adds selected-text tools and local OCR to Tinycast 0.11.3. It
+preserves the existing Prompt, model routing, and Wispr Flow settings.
 
-Hyper+H opens History through a Karabiner alias to the existing Option+V binding.
-Tinycast supports one binding per command, so this keeps both gestures available.
-Requires an existing selected Karabiner profile and Tinycast History on Option+V.
-The helper refuses known shortcut conflicts and merges unrelated actions/rules.
+| Hyper key | Action | Input and result |
+| --- | --- | --- |
+| P | Prompt | Existing action and instructions, preserved |
+| I | Improve | Selected writing; previews a rewrite using the Dots guide |
+| E | Explain | Selected text, code, or error; previews an explanation |
+| R | Review selected text | Interface copy/headings or a screen description; previews critique |
+| W | Web selection | Selected page text; previews a summary, or answers an explicit question included with the selection |
+| H | History | Opens native history; Option+V remains available |
+| O | OCR image or area | Prompts for an image path; blank input chooses an area only when capture permission already exists |
 
-On another Mac, install Tinycast and Karabiner through their official channels,
-configure your own model and existing permissions, and clone Dots. Then run:
+R does not see screenshot pixels. W does not fetch the current tab automatically.
+The names deliberately identify their supported selected-text modes. Full visual
+Review needs an approved image-capable route: the existing OpenCode chat route is
+text-only, while installed Codex can accept images. Automatic full-page Web input
+needs a supported browser adapter/access; Tinycast v0.11.3 does not implement
+`getFrontmostBrowserTab`, `BrowserExtension.getContent`, or extension `AI.ask`.
+Those gaps are not replaced with nonfunctional commands or changed model routing.
+
+OCR uses local macOS Vision, with the fast CPU path and English recognition.
+Enter a local image path, including a `~/` path, to read an existing screenshot.
+The output appears in Tinycast's command output window, where you can copy it.
+It does not read clipboard history or send image contents to a model.
+Blank input checks existing Screen Recording access without requesting it. If
+access is absent, the command explains the permission requirement and exits.
+Temporary area images are removed after success or a reported error.
+
+Hyper+H uses a Karabiner alias to the existing Option+V binding because Tinycast
+supports one binding per command. The helper merges unrelated actions and rules,
+refuses known Tinycast shortcut conflicts, and preserves an existing Prompt
+verbatim. It enables the approved Quick Actions and the owned OCR custom command.
+
+## Apply on another Mac
+
+Install Tinycast and Karabiner from their official channels, configure the local
+model and permissions, and clone Dots. OCR compilation requires Apple's Swift
+compiler, supplied by Xcode or Command Line Tools. No third-party OCR package is
+installed by this profile.
 
 ```sh
 scripts/sync-configs.sh --dry-run --all
@@ -20,9 +48,12 @@ python3 scripts/sync-tinycast-workflows.py --apply
 python3 scripts/sync-tinycast-workflows.py --status
 ```
 
-The first helper invocation previews changes. Apply stops and restarts a running
-Tinycast process and backs up local quick actions, preferences, and Karabiner
-config under `~/Library/Application Support/com.tinycast.app/backups/dots-workflows-*`.
+The first helper invocation previews changes. Apply backs up local actions,
+preferences, and Karabiner config under
+`~/Library/Application Support/com.tinycast.app/backups/dots-workflows-*`, then
+stops and restarts a running Tinycast process to reload the configuration. The
+compiled OCR helper lives under `~/.local/share/dots/tinycast/` on each machine.
+
 Do not run the older `sync-tinycast-config.py` for these workflows: that helper
 also removes extensions and quicklinks according to its separate profile.
 
@@ -31,15 +62,29 @@ chosen backup to their original paths, and import its `com.tinycast.app.plist`
 with `defaults import com.tinycast.app <backup-path>/com.tinycast.app.plist`.
 Restart Tinycast. Backups contain local preferences and must stay off Git.
 
-Review (R), Web (W), and OCR (O) are reserved proposals, not installed bindings.
-Image input, browser page capture, and an OCR command were not verified. Add them
-only after a supported integration is established. Snippets are optional and
-not configured here. Wispr Flow and dictation settings are untouched.
+## Validation and limits
 
-Quick Actions send selected text to the machine's configured model. Do not
-assume that every provider keeps content local. No private content is used by
-the helper, and the portable files exclude credentials, account settings,
+Synthetic input returned responses from the existing on-device text model for
+I/E/R/W. The OCR helper extracted the exact synthetic image text and reported an
+invalid path correctly. The official v0.11.3 `CustomCommand` decoder accepted the
+portable OCR command. Configuration status and repeat apply are checked locally.
+These checks do not establish model accuracy or verify physical hotkey presses.
+
+End-to-end hotkey and area-selection checks have not passed. Native UI calls
+previously stalled; an isolated synthetic browser fixture was rejected because
+the browser tool permits only HTTP(S), and that restriction was not bypassed.
+Screen permission attribution differs between sandboxed and ordinary helper
+processes; ordinary CLI preflight reports existing access, but the Tinycast
+launch path has not been verified. A blank-input test did not return the
+expected refusal code, so area capture is not claimed as tested.
+
+Quick Actions use the machine's model configuration; providers may transmit
+selected text. The portable files exclude credentials, account settings,
 clipboard history, quicklinks, caches, and installed-provider preferences.
-
-Update Improve's embedded guide when the canonical
+Snippets remain optional and unconfigured. Update Improve's embedded guide when
 `plugins/dots/references/writing-style.md` changes.
+
+Behavior and schema sources:
+[Quick Actions](https://github.com/abue-ammar/tinycast/blob/v0.11.3/docs/features/quick-actions.md),
+[custom commands](https://github.com/abue-ammar/tinycast/blob/v0.11.3/docs/features/custom-commands.md),
+[command model](https://github.com/abue-ammar/tinycast/blob/v0.11.3/Tinycast/Features/CustomCommands/Model/CustomCommand.swift).

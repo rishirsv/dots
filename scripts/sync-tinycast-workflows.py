@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Merge portable Tinycast text actions and a Karabiner History alias."""
+"""Merge portable Tinycast workflows while preserving machine-local settings."""
 import argparse
 import json
 import pathlib
@@ -15,6 +15,7 @@ QUICK = SUPPORT / 'quick-actions.json'
 PREFS = HOME / 'Library/Preferences/com.tinycast.app.plist'
 KARABINER = HOME / '.config/karabiner/karabiner.json'
 DESCRIPTION = 'Dots: Hyper+H opens Tinycast clipboard history (Option+V)'
+HELPER_ROOT = HOME / '.local/share/dots/tinycast'
 
 def defaults():
     return plistlib.loads(subprocess.check_output(['defaults', 'export', 'com.tinycast.app', '-']))
@@ -30,6 +31,15 @@ def main():
     wanted = {}
     for binding in config['bindings'].values():
         key = 'hotkey.quickAction.' + binding['id'].lower()
+        wanted[key] = json.dumps({'combo': {'_0': {'carbonModifiers': 6912, 'carbonKeyCode': binding['carbonKeyCode']}}}, separators=(',', ':'))
+        for name, value in live.items():
+            if name.startswith('hotkey.') and name != key and isinstance(value, str):
+                try: combo = json.loads(value)['combo']['_0']
+                except (ValueError, KeyError, TypeError): continue
+                if combo == json.loads(wanted[key])['combo']['_0']:
+                    raise RuntimeError('Shortcut conflict: ' + name)
+    for binding in config.get('customBindings', {}).values():
+        key = 'hotkey.customCommand.' + binding['id'].lower()
         wanted[key] = json.dumps({'combo': {'_0': {'carbonModifiers': 6912, 'carbonKeyCode': binding['carbonKeyCode']}}}, separators=(',', ':'))
         for name, value in live.items():
             if name.startswith('hotkey.') and name != key and isinstance(value, str):
@@ -70,14 +80,38 @@ def main():
     new_rules = [r for r in rules if r.get('description') != DESCRIPTION] + [rule]
     changed = actions != merged or rules != new_rules or live.get('boundQuickActionIDs') != bound
     changed |= any(live.get(k) != v for k, v in wanted.items())
+    changed |= live.get('quickActionsEnabled') is not True
+    custom = config.get('customCommands', [])
+    live_custom = json.loads(live.get('customCommands', b'[]'))
+    custom_ids = {command['id'].lower() for command in custom}
+    for command in custom:
+        if any(existing['id'].lower() not in custom_ids and existing['name'] == command['name'] for existing in live_custom):
+            raise RuntimeError('Custom command name conflict: ' + command['name'])
+    merged_custom = [command for command in live_custom if command['id'].lower() not in custom_ids] + custom
+    custom_bound = list(live.get('boundCustomCommandIDs', []))
+    for binding in config.get('customBindings', {}).values():
+        if binding['id'].lower() not in [value.lower() for value in custom_bound]: custom_bound.append(binding['id'].lower())
+    if custom:
+        changed |= merged_custom != live_custom or live.get('customCommandsEnabled') is not True
+        changed |= live.get('boundCustomCommandIDs') != custom_bound
+        marker = HELPER_ROOT / 'ocr-source.swift'
+        source = ROOT / 'configs/tinycast/helpers/ocr.swift'
+        changed |= not (HELPER_ROOT / 'tinycast-ocr').exists() or not marker.exists() or marker.read_bytes() != source.read_bytes()
+
     if args.status:
         print('Tinycast workflows: ' + ('drift' if changed else 'current'))
         return int(changed)
     if not args.apply:
-        print('Would merge P/I/E actions and Hyper+H alias' if changed else 'Tinycast workflows already current')
+        print('Would merge the portable Tinycast workflows' if changed else 'Tinycast workflows already current')
         return 0
     if not changed:
         print('Tinycast workflows already current'); return 0
+    if custom:
+        HELPER_ROOT.mkdir(parents=True, exist_ok=True)
+        subprocess.run(['/usr/bin/swiftc', '-module-cache-path', str(HELPER_ROOT / 'swift-module-cache'),
+                        str(source), '-o', str(HELPER_ROOT / 'tinycast-ocr.new')], check=True)
+        (HELPER_ROOT / 'tinycast-ocr.new').replace(HELPER_ROOT / 'tinycast-ocr')
+        shutil.copy2(source, HELPER_ROOT / 'ocr-source.swift')
     running = subprocess.run(['pgrep', '-x', 'Tinycast'], capture_output=True).returncode == 0
     if running:
         subprocess.run(['pkill', '-TERM', '-x', 'Tinycast'], check=True)
@@ -94,10 +128,15 @@ def main():
     for key, value in wanted.items():
         subprocess.run(['defaults', 'write', 'com.tinycast.app', key, '-string', value], check=True)
     subprocess.run(['defaults', 'write', 'com.tinycast.app', 'boundQuickActionIDs', '-array', *bound], check=True)
+    subprocess.run(['defaults', 'write', 'com.tinycast.app', 'quickActionsEnabled', '-bool', 'true'], check=True)
+    if custom:
+        subprocess.run(['defaults', 'write', 'com.tinycast.app', 'customCommands', '-data', json.dumps(merged_custom).encode().hex()], check=True)
+        subprocess.run(['defaults', 'write', 'com.tinycast.app', 'boundCustomCommandIDs', '-array', *custom_bound], check=True)
+        subprocess.run(['defaults', 'write', 'com.tinycast.app', 'customCommandsEnabled', '-bool', 'true'], check=True)
     profile['complex_modifications']['rules'] = new_rules
     KARABINER.write_text(json.dumps(karabiner, indent=2) + '\n')
     if running: subprocess.run(['open', '-a', 'Tinycast'], check=True)
-    print('Applied P/I/E and Hyper+H; backup: ' + str(backup))
+    print('Applied portable Tinycast workflows; backup: ' + str(backup))
     return 0
 
 if __name__ == '__main__':
