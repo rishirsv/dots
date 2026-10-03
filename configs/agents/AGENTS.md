@@ -23,6 +23,12 @@ Use a filesystem path only when the browser explicitly supports local-file
 navigation; an HTTP(S)-only restriction calls for an HTTP preview, not abandoning
 the preview. Confirm that the page opened before claiming visual inspection.
 
+## Writing style
+
+Write human-facing prose so the reader understands it on the first read. Lead with the answer. Use concrete verbs, explicit actors and conditions, and consistent terminology. Preserve the reasons, examples, technical detail, evidence and uncertainty needed to act. Clarity does not mean terseness. Remove filler and unsupported claims. Preserve voice, quotations, code, required output formats and project conventions. Consult the Dots writing-style guide for substantial writing.
+
+Full guide: [Dots writing style](https://github.com/rishirsv/dots/blob/main/plugins/dots/references/writing-style.md).
+
 ## Explaining work in chat
 
 When a chat answer carries several decisions, findings, or plan items, present
