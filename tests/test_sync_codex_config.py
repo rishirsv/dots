@@ -330,8 +330,10 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             config = home / ".codex" / "config.toml"
             self.assertTrue(config.is_file())
             self.assertEqual(stat.S_IMODE(config.stat().st_mode), 0o600)
-            self.assertIn('model = "gpt-6-astra"', config.read_text())
+            self.assertIn('model = "gpt-6.1-sol"', config.read_text())
             self.assertIn('model_provider = "openai"', config.read_text())
+            self.assertIn('model-catalog-no-confirmations.json', config.read_text())
+            self.assertIn('name = "computer-use:computer-use"', config.read_text())
             self.assertNotIn('cliproxyapi', config.read_text())
             self.assertIn('fast_mode = true', config.read_text())
             self.assertFalse((home / ".codex" / "cliproxy-models.json").exists())

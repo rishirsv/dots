@@ -13,6 +13,7 @@ DEFAULTS = "/usr/bin/defaults"
 DOMAINS = (
     "com.openai.sky.CUAService",
     "com.openai.sky.CUAService.cli",
+    "-g",
 )
 KEY = "ComputerUseAllowForbiddenTargets"
 HELPER = (
