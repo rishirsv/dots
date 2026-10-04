@@ -36,51 +36,22 @@ as an editing standard. `$publish-pr` still owns these publishing artifacts.
 6. Confirm that the pull request contains the pushed commit. Report its URL,
    automated checks, and anything that remains unverified. Do not merge it.
 
-## Title
+## Commit messages and titles
 
-Describe the result in plain language, not the coding work.
-
-When the repository uses titles such as `fix(home):`, follow that format. The
-rest of the title must still describe the result clearly.
-
-| Avoid | Write instead |
-| --- | --- |
-| `Enforce semantic design token consistency` | `Keep colors and spacing consistent across screens` |
-| `Progress: truthful analysis and exercise progression` | `Show accurate progress and exercise trends` |
-| `Home Controller: require a real push to page the deck` | `Prevent accidental card paging on Home` |
-| `Backend refactor: one save path, 3-state receipts, definition-driven loggers` | `Save workout and health data through one path` |
+Keep commit subjects and PR titles terse and specific. Follow the repository's
+type-prefix convention and add a scope only when useful. Name the result in
+plain language. Omit a commit body unless a material reason or caveat is unclear
+from the subject; keep any body brief.
 
 ## Description
 
-Lead with what changes for users or the system:
+Keep the body terse: one or two sentences stating the change and reason, then
+brief validation. Include a material risk, limitation, or unverified behavior
+only when it affects review. Preserve required template fields.
 
-- what changes when this is merged;
-- what was wrong before;
-- why the change matters.
-
-Then include the implementation details needed to review the approach, risks,
-and affected boundaries. State what was tested and what remains unverified.
-Preserve fields required by the repository's pull-request template.
-
-Keep the description readable in about a minute. Link detailed investigation
-logs and supporting metric tables. For a performance change, report the primary
-measurement with its unit as before → after.
-
-Use paragraphs or bullets according to the change. Add explanatory sub-bullets
-only when they help a reviewer understand the behavior, mechanism, or reason.
-
-Write these explanations for a reader without specialist knowledge of the
-codebase. Use a conversational, respectful ELI5 tone: familiar words, concrete
-behavior, and enough background to understand the change without teaching the
-whole subject. Translate the technical claim rather than repeating it with
-simpler synonyms. Explain the behavior first, then define necessary technical
-terms where they appear. Use a small example or analogy only when it makes the
-mechanism clearer or shorter. Preserve the distinctions and caveats needed for
-an accurate review; plain language should not hide them.
-
-Omit file-by-file narration, raw commit history, generic checklists, and agent
-narration. Mention files, symbols, schemas, frameworks, or data flows when they
-help a reviewer verify the change.
+Use short paragraphs or bullets. Omit background, walkthroughs, file lists,
+commit history, generic checklists, and agent narration. For a performance
+change, give the primary measurement with its unit as before → after.
 
 ## Visual Evidence
 

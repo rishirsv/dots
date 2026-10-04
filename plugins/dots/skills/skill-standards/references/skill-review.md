@@ -187,8 +187,6 @@ Return chat by default:
 6. Relevant rubric areas where no defect was supported.
 7. Limits, `flag` items, and open questions that could change the verdict.
 
-For a long review, write the findings and edits to a file and link it.
-
 When the user requests a durable machine-readable review receipt, copy
 [`review.json`](../assets/review.json) to the selected output location. Replace
 every placeholder, repeat the finding and edit entries once per item, record the content hash of each inspected file that supports the verdict or a

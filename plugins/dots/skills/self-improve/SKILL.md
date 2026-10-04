@@ -56,6 +56,18 @@ Deduplicate retries and delegated children under the parent session, inspect
 examples of success and problems, preserve contradictions, and use the
 generalization gate in [thread-evidence.md](references/thread-evidence.md).
 
+For a supported recurring code or harness mistake, use the enforcement order
+below. Keep the evidence requirements above and edit authorization below.
+
+## Fix each class at the highest level that works
+
+1. **Eliminate it with architecture.** Give each piece of state one owner and each task one supported way. Hide internals so the wrong import fails. Replace hand-synced lists with one source of truth. Delete old ways and dead code an agent would copy.
+2. **Enforce it with types so the bad state can't be written.** If bad code still compiles, add a lint or CI check whose error names the file, type, or function to use instead. If the pattern is already common, fail only when a change adds more.
+3. **Test the behavior.** Fix or delete any test that would still pass if every function it calls returned nothing.
+4. **Write docs or agent rules last, only for judgment calls.** Nothing fails when an agent skips them.
+
+Prove each new check fails on a real past mistake. Run the same command locally and in CI.
+
 ## Propose or apply improvements
 
 For a durable change, name the behavior, the component most directly responsible

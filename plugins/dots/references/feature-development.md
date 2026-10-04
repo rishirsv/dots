@@ -30,6 +30,21 @@ If no route fits, use the common workflow below. State what evidence will
 show that the requested task succeeded. Do not add a permanent playbook for
 one unusual task.
 
+Running a benchmark, measuring perf yourself, or reporting a speedup or regression you measured → [Performance measurement](performance-measurement.md) before you report or act on the number.
+
+## Performance hypotheses
+
+Try the performance mantras in order, cheapest first:
+1. Don't do it. Stop work whose result nothing uses rather than cheapening it.
+2. Do it, but don't do it again.
+3. Do it less.
+4. Do it later.
+5. Do it when they're not looking.
+6. Do it concurrently.
+7. Do it cheaper.
+
+When an earlier mantra meets the target, stop.
+
 ## Follow the common workflow
 
 1. **Discover.** Read the request and repository instructions. Identify the

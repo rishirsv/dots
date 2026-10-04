@@ -68,10 +68,7 @@ satisfy the process. The runner loads its candidate references only; keep this
 coordinator workflow in the parent. Use `consultant` instead when only a focused
 decision or implementation plan needs a second opinion.
 
-Screen every candidate against
-[design red flags](references/design-red-flags.md). Reject or revise shallow
-modules, information leakage, temporal decomposition, and pass-through
-methods.
+Screen every candidate against [`references/design-red-flags.md`](references/design-red-flags.md) before synthesis. Assume the next contributor is an agent that sees only the files it opened, copies the nearest example, and takes the shortest path that compiles. Prefer the design where a change that looks right from one file is right for the whole repo.
 
 Compare viable candidates by how much complexity each interface handles for its
 callers. Prefer an interface that handles necessary complexity. Do not add a

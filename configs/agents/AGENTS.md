@@ -29,40 +29,20 @@ Write human-facing prose so the reader understands it on the first read. Lead wi
 
 Full guide: [Dots writing style](https://github.com/rishirsv/dots/blob/main/plugins/dots/references/writing-style.md).
 
-## Explaining work in chat
-
-When a chat answer carries several decisions, findings, or plan items, present
-one at a time:
-
-1. Lead with the single decision or finding that matters now. Explain it in
-   plain language: the current state, the proposed change, and why.
-2. Give a recommendation and the choice you need from the user, if any.
-3. List the remaining items as a short numbered queue, one line each.
-
-Put exhaustive detail in a linked file or artifact rather than the chat reply.
-Do not propose beyond what the user's stated workflows need; name deferred
-ideas in one line instead of scoping them. This governs chat replies, not
-documents the user asks to be comprehensive, such as roadmaps, reports, or
-Notion updates.
-
 ## Commits and pull requests
 
-- Use a descriptive type prefix for commit subjects and pull-request titles,
-  such as `feat:`, `fix:`, `docs:`, or `chore:`. Add a scope when it helps,
-  as in `fix(auth):`. Follow the repository's convention when it differs.
-  The text after the prefix must clearly describe the result in plain language;
-  do not use a branch name or task slug as the message.
+- Keep commit subjects and PR titles terse and specific. Use the repository's
+  type prefix, such as `fix:` or `docs:`, and a scope only when useful.
+  Name the result, not the branch or task slug.
 - Name branches for the work, using a descriptive prefix such as `feat/`,
   `fix/`, or `docs/` unless the repository has another convention. If Codex
   created a `codex/` branch, rename it before publishing when doing so will not
   disrupt an existing remote branch or pull request.
-- Add a commit body when the reason or a material caveat is not clear from the
-  subject.
-- In a pull-request description, lead with what changes, what was wrong before,
-  and why it matters.
-  Then explain the approach, material risks, tests run, and anything unverified.
-  Preserve required pull-request template fields. Keep the description concise
-  and avoid file-by-file narration or raw commit history.
+- Omit commit bodies unless the subject leaves a material reason or caveat
+  unclear. Keep any body brief.
+- Keep PR descriptions terse: change, reason, and validation. Include material
+  risks or unverified behavior only when relevant. Preserve required template
+  fields. Omit background, walkthroughs, file lists, and commit history.
 - When asked to publish a pull request, commit and push only the scoped work,
   update the branch's existing pull request or create one ready for review,
   and confirm it contains the pushed commit. Report its URL and check status.
