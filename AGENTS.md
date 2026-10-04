@@ -10,6 +10,11 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
 - Config source lives under `configs/<tool>/`.
 - Helper entrypoints live under `scripts/`.
 - Do not edit installed plugin/config caches.
+- Codex must load only the local `dots@dots` and `drafts@dots` copies. Preserve
+  their cloud installations for web use; never uninstall account-wide plugins
+  to fix local duplicates. Disable the `created-by-me-remote` copies only in
+  local Codex config through `configs/codex/plugin-exclusions.toml`, applied to
+  both Codex profiles when syncing plugins.
 - Work-in-progress skills that must not ship in any plugin live under `wip/`.
 
 ## Commands

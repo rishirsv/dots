@@ -2,6 +2,8 @@
 
 This is my canonical voice guide. Assignment-specific instructions take precedence.
 
+For text messages, load the authoritative [Texting voice guide](https://chatgpt.com/space/page_6abdcf87434c8191821af8b603560bfb) in the private Writing Space. This file remains the essay and standalone short-post voice authority.
+
 ## Core sound
 
 Write with clear, spoken conviction. Begin near a human need or tension, then let a concrete moment carry an ambitious idea. “We want fiercely and constantly” shows the direct emotional force I want, even when a claim needs a narrower scope.

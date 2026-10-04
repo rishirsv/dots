@@ -22,6 +22,10 @@ class SyncPluginsTests(unittest.TestCase):
             root = Path(directory)
             (root / "scripts").mkdir()
             shutil.copy2(ROOT / "scripts" / "sync-plugins.sh", root / "scripts")
+            shutil.copy2(ROOT / "scripts" / "sync-codex-config.py", root / "scripts")
+            config_source = root / "configs" / "codex"
+            config_source.mkdir(parents=True)
+            shutil.copy2(ROOT / "configs" / "codex" / "plugin-exclusions.toml", config_source)
 
             plugin = root / "plugins" / "dots"
             agents = plugin / "agents"
@@ -44,6 +48,14 @@ class SyncPluginsTests(unittest.TestCase):
             installed_agents = home / ".codex" / "agents"
             installed_agents.mkdir(parents=True)
             (installed_agents / "planner.toml").write_text('name = "planner"\n')
+            live_config = home / ".codex" / "config.toml"
+            live_config.write_text(
+                'model = "keep-my-model"\n'
+                '[plugins."dev-6aaf4ad66f108191b548c1a6a1012373@created-by-me-remote"]\n'
+                'enabled = true\n'
+                '[plugins."unrelated@remote"]\nenabled = true\n'
+                f'[plugins."dots@dots"]\nenabled = {str(not disabled).lower()}\n'
+            )
 
             bin_dir = root / "bin"
             bin_dir.mkdir()
@@ -78,6 +90,15 @@ class SyncPluginsTests(unittest.TestCase):
             )
 
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            merged = live_config.read_text()
+            self.assertIn('model = "keep-my-model"', merged)
+            self.assertIn('[plugins."unrelated@remote"]\nenabled = true', merged)
+            self.assertIn(f'[plugins."dots@dots"]\nenabled = {str(not disabled).lower()}', merged)
+            for plugin_id in (
+                "dev-6aaf4ad66f108191b548c1a6a1012373@created-by-me-remote",
+                "drafts@created-by-me-remote",
+            ):
+                self.assertIn(f'[plugins."{plugin_id}"]\nenabled = false', merged)
             if disabled:
                 self.assertNotIn("plugin add dots@dots", calls.read_text())
             else:

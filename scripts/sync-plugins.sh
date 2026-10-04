@@ -10,7 +10,9 @@ usage() {
 Usage: scripts/sync-plugins.sh [--all|--codex|--claude] [--allow-dirty]
 
 Refreshes repo-owned plugins and verifies their installed versions. Codex also
-syncs ~/.codex-personal when it exists and preserves disabled local plugins.
+syncs ~/.codex-personal when it exists, preserves disabled local plugins, and
+disables the known cloud copies of Dots and Drafts to prevent duplicate skills.
+Requires uv for the scoped Codex configuration merge.
 Defaults to --all. Refuses uncommitted
 plugin source unless --allow-dirty is passed for development testing.
 EOF
@@ -30,6 +32,7 @@ done
 (( ${#TARGETS} )) || TARGETS=([codex]=1 [claude]=1)
 
 sync_paths=(plugins)
+(( ${+TARGETS[codex]} )) && sync_paths+=(scripts/sync-plugins.sh scripts/sync-codex-config.py configs/codex/plugin-exclusions.toml)
 (( ${+TARGETS[codex]} )) && sync_paths+=(.agents/plugins/marketplace.json)
 (( ${+TARGETS[claude]} )) && sync_paths+=(.claude-plugin/marketplace.json)
 dirty_source="$(git -C "$ROOT" status --porcelain=v1 --untracked-files=all -- "${sync_paths[@]}")"
@@ -96,6 +99,10 @@ sync_codex_home() {
   [[ -z "$home" || -d "$home" ]] || { echo "Skipping $label: $home does not exist"; return; }
 
   echo "Syncing $label"
+  profile_home="${home:-$HOME/.codex}"
+  uv run --quiet --script "$ROOT/scripts/sync-codex-config.py" apply \
+    --source "$ROOT/configs/codex/plugin-exclusions.toml" \
+    --target "$profile_home/config.toml"
   codex_for "$home" plugin marketplace add "$ROOT" >/dev/null
   installed="$(codex_for "$home" plugin list --json)"
   active_specs=("${(@f)$(python3 -c '
@@ -124,7 +131,6 @@ errors = ["%s@dots: expected %s, got %s" % (name, version, installed.get(name + 
 if errors: raise SystemExit("Codex verification failed:\n  " + "\n  ".join(errors))
 ' "${active_specs[@]}" <<< "$installed"
 
-  profile_home="${home:-$HOME/.codex}"
   agent_source="$ROOT/plugins/dots/agents"
   agent_target="$profile_home/agents"
   if [[ ! -d "$agent_target" || -L "$agent_target" ]] || ! diff -qr "$agent_source" "$agent_target" >/dev/null; then

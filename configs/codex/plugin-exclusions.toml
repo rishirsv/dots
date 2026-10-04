@@ -1,0 +1,7 @@
+# Keep the cloud copies available in ChatGPT without loading a second copy of
+# their skills in Codex. The canonical Codex installs are dots@dots and drafts@dots.
+[plugins."dev-6aaf4ad66f108191b548c1a6a1012373@created-by-me-remote"]
+enabled = false
+
+[plugins."drafts@created-by-me-remote"]
+enabled = false
