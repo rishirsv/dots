@@ -304,6 +304,24 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.assertIsNotNone(shutil.which("uv"), "uv is required for config tests")
 
+    def test_config_sync_preserves_cloud_source_and_status_is_current(self):
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory)
+            profile = home / ".codex"
+            profile.mkdir()
+            (profile / "dots-plugin-source").write_text("cloud\n")
+            environment = {**os.environ, "HOME": directory}
+            for options in (["--codex"], ["--status", "--codex"]):
+                result = subprocess.run(
+                    ["zsh", str(SYNC), *options], cwd=ROOT, env=environment,
+                    text=True, capture_output=True,
+                )
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            config = (profile / "config.toml").read_text()
+            self.assertIn('[plugins."dots@dots"]\nenabled = false', config)
+            self.assertIn('[plugins."drafts@dots"]\nenabled = false', config)
+            self.assertIn('[plugins."drafts@created-by-me-remote"]\nenabled = true', config)
+
     def test_codex_apply_and_status_copy_owned_files_without_app_repairs(self):
         script = SYNC.read_text()
         self.assertNotIn("sync-codex-computer-use.py", script)
@@ -316,6 +334,10 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             old_catalog = Path(home_directory) / ".codex" / "cliproxy-models.json"
             old_catalog.parent.mkdir()
             old_catalog.write_text('{"models": []}\n')
+            live_config = old_catalog.parent / "config.toml"
+            live_config.write_text(
+                '[plugins."drafts@created-by-me-remote"]\nenabled = true\n'
+            )
 
             apply_result = subprocess.run(
                 ["zsh", str(SYNC), "--codex"],
@@ -336,6 +358,7 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             self.assertIn('name = "computer-use:computer-use"', config.read_text())
             self.assertNotIn('cliproxyapi', config.read_text())
             self.assertIn('fast_mode = true', config.read_text())
+            self.assertIn('[plugins."drafts@created-by-me-remote"]\nenabled = false', config.read_text())
             self.assertFalse((home / ".codex" / "cliproxy-models.json").exists())
             self.assertEqual(
                 (home / ".codex" / "AGENTS.md").read_bytes(),
@@ -355,6 +378,16 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
                 capture_output=True,
             )
             self.assertEqual(status.returncode, 0, status.stdout + status.stderr)
+            config.write_text(config.read_text().replace(
+                '[plugins."drafts@created-by-me-remote"]\nenabled = false',
+                '[plugins."drafts@created-by-me-remote"]\nenabled = true',
+            ))
+            drift = subprocess.run(
+                ["zsh", str(SYNC), "--status", "--codex"],
+                cwd=ROOT, env=environment, text=True, capture_output=True,
+            )
+            self.assertNotEqual(drift.returncode, 0)
+            self.assertIn("drafts@created-by-me-remote", drift.stdout)
 
     def test_claude_apply_and_status_copy_owned_files(self):
         with tempfile.TemporaryDirectory() as home_directory:

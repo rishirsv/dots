@@ -10,11 +10,12 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
 - Config source lives under `configs/<tool>/`.
 - Helper entrypoints live under `scripts/`.
 - Do not edit installed plugin/config caches.
-- Codex must load only the local `dots@dots` and `drafts@dots` copies. Preserve
-  their cloud installations for web use; never uninstall account-wide plugins
-  to fix local duplicates. Disable the `created-by-me-remote` copies only in
-  local Codex config through `configs/codex/plugin-exclusions.toml`, applied to
-  both Codex profiles when syncing plugins.
+- Load one Dots/Drafts source per Codex profile. Use cloud on the personal
+  account shared by web and desktop; use local on the work account without
+  those cloud plugins. `scripts/sync-plugins.sh --codex --source cloud|local`
+  records the choice in that profile's `dots-plugin-source` file. Preserve
+  other profiles' choices. Both plugin sync and config sync must enforce it.
+  Never uninstall account-wide cloud plugins to fix desktop duplicates.
 - Work-in-progress skills that must not ship in any plugin live under `wip/`.
 
 ## Commands

@@ -35,16 +35,40 @@ cd ~/Code/dots
 
 ## Install the plugins
 
-Sync each installed host:
+Choose one Codex source for the account signed in on this Mac:
 
 ```sh
-scripts/sync-plugins.sh --codex
-scripts/sync-plugins.sh --claude
+# Personal account with Dots and Drafts installed in ChatGPT:
+scripts/sync-plugins.sh --codex --source cloud
+
+# Work account without those cloud installations:
+scripts/sync-plugins.sh --codex --source local
 ```
 
-Use only the command for the host installed on the Mac. Codex sync also
-refreshes the second profile at `~/.codex-personal` when that directory exists.
-Claude sessions that were already open require `/reload-plugins` or a restart.
+Cloud mode uses the same account plugins on web and desktop. It verifies that
+Codex can load their skills before removing local Dots/Drafts packages. Local
+mode installs from this repository and disables the cloud copies only in that
+local profile. It preserves account-wide cloud installations.
+
+The choice is saved in `~/.codex/dots-plugin-source`, or under `CODEX_HOME`
+when set. Later plugin and config syncs preserve it. Profiles without a saved
+choice default to local. Codex sync also refreshes `~/.codex-personal` when
+present, using that profile's own choice. To select its source explicitly:
+
+```sh
+CODEX_HOME="$HOME/.codex-personal" scripts/sync-plugins.sh --codex --source local
+```
+
+After choosing, run `scripts/sync-plugins.sh --codex` for later refreshes. Sync
+fails if Codex loads duplicates or cannot load the selected plugins. Check the
+desktop skill picker after changing source; an existing app server can retain
+old skills until the desktop app restarts.
+
+For Claude, run `scripts/sync-plugins.sh --claude`. Existing Claude sessions
+require `/reload-plugins` or a restart.
+
+Local sync does not publish cloud releases. Bundled cloud skills are released
+separately from the repository through their owning plugin update process.
 
 For ChatGPT access to local files, follow the optional
 [dots-tunnel setup](plugins/dots/scripts/dots-tunnel/README.md#local-setup).

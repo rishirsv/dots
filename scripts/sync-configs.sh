@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="${0:A:h:h}"
+source "$ROOT/scripts/codex-plugin-source.sh"
 DRY_RUN=0
 MODE=apply
 STATUS=0
@@ -227,6 +228,13 @@ sync_codex_profile() {
   local codex_home="$1"
   install_file "$ROOT/configs/agents/AGENTS.md" "$codex_home/AGENTS.md"
   local helper_args=("$MODE" --source "$ROOT/configs/codex/config.toml" --target "$codex_home/config.toml")
+  if (( DRY_RUN )); then
+    helper_args+=(--dry-run)
+  fi
+  if ! run_codex_config "${helper_args[@]}"; then
+    STATUS=1
+  fi
+  helper_args=("$MODE" --source "$(codex_plugin_source "$codex_home")" --target "$codex_home/config.toml")
   if (( DRY_RUN )); then
     helper_args+=(--dry-run)
   fi

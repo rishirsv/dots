@@ -1,12 +1,12 @@
-# Work account: use local installs without also loading the personal cloud copies.
+# Personal account: use the same cloud installs on web and desktop.
 [plugins."dots@dots"]
-enabled = true
+enabled = false
 
 [plugins."drafts@dots"]
-enabled = true
+enabled = false
 
 [plugins."dev-6aaf4ad66f108191b548c1a6a1012373@created-by-me-remote"]
-enabled = false
+enabled = true
 
 [plugins."drafts@created-by-me-remote"]
-enabled = false
+enabled = true

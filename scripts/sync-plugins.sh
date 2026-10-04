@@ -2,16 +2,20 @@
 set -euo pipefail
 
 ROOT="${0:A:h:h}"
+source "$ROOT/scripts/codex-plugin-source.sh"
 typeset -A TARGETS
 typeset -i ALLOW_DIRTY=0
+PLUGIN_SOURCE=""
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-plugins.sh [--all|--codex|--claude] [--allow-dirty]
+Usage: scripts/sync-plugins.sh [--all|--codex|--claude] [--source cloud|local] [--allow-dirty]
 
 Refreshes repo-owned plugins and verifies their installed versions. Codex also
-syncs ~/.codex-personal when it exists, preserves disabled local plugins, and
-disables the known cloud copies of Dots and Drafts to prevent duplicate skills.
+syncs ~/.codex-personal when it exists. Each profile loads either cloud or local
+Dots/Drafts. --source selects and remembers the source for CODEX_HOME (or ~/.codex);
+it does not change the second profile. Unconfigured profiles default to local.
+Cloud mode verifies cloud availability before removing local duplicates.
 Requires uv for the scoped Codex configuration merge.
 Defaults to --all. Refuses uncommitted
 plugin source unless --allow-dirty is passed for development testing.
@@ -24,6 +28,13 @@ while (( $# )); do
     --codex) TARGETS[codex]=1 ;;
     --claude) TARGETS[claude]=1 ;;
     --allow-dirty) ALLOW_DIRTY=1 ;;
+    --source)
+      (( $# >= 2 )) || { usage >&2; exit 2; }
+      PLUGIN_SOURCE="$2"
+      [[ "$PLUGIN_SOURCE" == cloud || "$PLUGIN_SOURCE" == local ]] || { usage >&2; exit 2; }
+      TARGETS[codex]=1
+      shift
+      ;;
     -h|--help) usage; exit ;;
     *) echo "Unknown argument: $1" >&2; usage >&2; exit 2 ;;
   esac
@@ -32,7 +43,7 @@ done
 (( ${#TARGETS} )) || TARGETS=([codex]=1 [claude]=1)
 
 sync_paths=(plugins)
-(( ${+TARGETS[codex]} )) && sync_paths+=(scripts/sync-plugins.sh scripts/sync-codex-config.py configs/codex/plugin-exclusions.toml)
+(( ${+TARGETS[codex]} )) && sync_paths+=(scripts/sync-plugins.sh scripts/sync-codex-config.py scripts/codex-plugin-source.sh scripts/verify-codex-skills.py configs/codex/plugin-exclusions.toml configs/codex/plugins-cloud.toml)
 (( ${+TARGETS[codex]} )) && sync_paths+=(.agents/plugins/marketplace.json)
 (( ${+TARGETS[claude]} )) && sync_paths+=(.claude-plugin/marketplace.json)
 dirty_source="$(git -C "$ROOT" status --porcelain=v1 --untracked-files=all -- "${sync_paths[@]}")"
@@ -94,24 +105,36 @@ codex_for() {
 }
 
 sync_codex_home() {
-  local label="$1" home="$2" profile_home agent_source agent_target backup spec name version installed stale
+  local label="$1" home="$2" selection="${3:-}" profile_home policy agent_source agent_target backup spec name version installed stale
   local -a active_specs
   [[ -z "$home" || -d "$home" ]] || { echo "Skipping $label: $home does not exist"; return; }
 
   echo "Syncing $label"
   profile_home="${home:-$HOME/.codex}"
+  if [[ -n "$selection" ]]; then
+    mkdir -p "$profile_home"
+    printf '%s\n' "$selection" > "$profile_home/dots-plugin-source"
+  fi
+  policy="$(codex_plugin_source "$profile_home")"
   uv run --quiet --script "$ROOT/scripts/sync-codex-config.py" apply \
-    --source "$ROOT/configs/codex/plugin-exclusions.toml" \
+    --source "$policy" \
     --target "$profile_home/config.toml"
-  codex_for "$home" plugin marketplace add "$ROOT" >/dev/null
+  # Registering the repo can install its packages again. Cloud profiles must
+  # never enter the local installation path.
+  if [[ "$policy" != */plugins-cloud.toml ]]; then
+    codex_for "$home" plugin marketplace add "$ROOT" >/dev/null
+  fi
   installed="$(codex_for "$home" plugin list --json)"
-  active_specs=("${(@f)$(python3 -c '
+  active_specs=()
+  if [[ "$policy" != */plugins-cloud.toml ]]; then
+    active_specs=("${(@f)$(python3 -c '
 import json, sys
 disabled = {p["pluginId"] for p in json.load(sys.stdin)["installed"] if p.get("enabled") is False}
 for spec in sys.argv[1:]:
     if spec.split("\t", 1)[0] + "@dots" not in disabled:
         print(spec)
 ' "${CODEX_SPECS[@]}" <<< "$installed")}")
+  fi
   for spec in "${active_specs[@]}"; do
     [[ -n "$spec" ]] || continue
     IFS=$'\t' read -r name version <<< "$spec"
@@ -123,13 +146,31 @@ for spec in sys.argv[1:]:
     [[ -n "$stale" ]] && codex_for "$home" plugin remove "$stale" >/dev/null
   done
   installed="$(codex_for "$home" plugin list --json)"
-  python3 -c '
+  uv run --quiet --with tomlkit==0.13.3 python -c '
 import json, sys
-expected = dict(item.split("\t", 1) for item in sys.argv[1:] if item)
-installed = {p["pluginId"]: p["version"] for p in json.load(sys.stdin)["installed"]}
+from pathlib import Path
+import tomlkit
+policy = tomlkit.parse(Path(sys.argv[1]).read_text())["plugins"]
+expected = dict(item.split("\t", 1) for item in sys.argv[2:] if item)
+plugins = {p["pluginId"]: p for p in json.load(sys.stdin)["installed"]}
+installed = {key: value["version"] for key, value in plugins.items()}
 errors = ["%s@dots: expected %s, got %s" % (name, version, installed.get(name + "@dots", "not installed")) for name, version in expected.items() if installed.get(name + "@dots") != version]
+errors += ["%s: duplicate copy is still enabled" % key for key, settings in policy.items() if settings.get("enabled") is False and plugins.get(key, {}).get("enabled") is True]
 if errors: raise SystemExit("Codex verification failed:\n  " + "\n  ".join(errors))
-' "${active_specs[@]}" <<< "$installed"
+' "$policy" "${active_specs[@]}" <<< "$installed"
+  CODEX_HOME="$profile_home" uv run --quiet --script "$ROOT/scripts/verify-codex-skills.py" \
+    --policy "$policy" --cwd "$ROOT"
+
+  if [[ "$policy" == */plugins-cloud.toml ]]; then
+    for name in dots drafts; do
+      if python3 -c 'import json,sys; raise SystemExit(not any(p["pluginId"] == sys.argv[1] for p in json.load(sys.stdin)["installed"]))' "$name@dots" <<< "$installed"; then
+        codex_for "$home" plugin remove "$name@dots" >/dev/null
+      fi
+    done
+    # plugin remove also removes its config entry; retain explicit exclusions.
+    uv run --quiet --script "$ROOT/scripts/sync-codex-config.py" apply \
+      --source "$policy" --target "$profile_home/config.toml"
+  fi
 
   agent_source="$ROOT/plugins/dots/agents"
   agent_target="$profile_home/agents"
@@ -221,8 +262,10 @@ if errors:
 }
 
 if (( ${+TARGETS[codex]} )); then
-  sync_codex_home "default Codex" "${CODEX_HOME:-}"
-  sync_codex_home "Codex personal" "$HOME/.codex-personal"
+  sync_codex_home "default Codex" "${CODEX_HOME:-}" "$PLUGIN_SOURCE"
+  [[ "${CODEX_HOME:-$HOME/.codex}" == "$HOME/.codex-personal" ]] || sync_codex_home "Codex personal" "$HOME/.codex-personal"
+  echo "Codex files and fresh-process skills verified. Check the desktop skill picker; if it still shows old copies, restart the app after active chats finish."
+  echo "This command refreshes local installs only; it does not publish ChatGPT web plugin releases."
 fi
 if (( ${+TARGETS[claude]} )); then
   sync_claude
