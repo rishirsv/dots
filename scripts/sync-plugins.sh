@@ -236,6 +236,10 @@ if errors: raise SystemExit("Claude verification failed:\n  " + "\n  ".join(erro
   for spec in "${CLAUDE_SPECS[@]}"; do
     IFS=$'\t' read -r name version <<< "$spec"
     plugin_id="$name@dots"
+    if python3 -c 'import json,sys; raise SystemExit(not any(p.get("id") == sys.argv[1] and p.get("enabled") is False for p in json.load(sys.stdin)))' "$plugin_id" <<< "$installed"; then
+      echo "Skipping component loading for disabled Claude plugin $plugin_id"
+      continue
+    fi
     details="$(claude plugin details "$plugin_id")"
     python3 -c '
 import re, sys

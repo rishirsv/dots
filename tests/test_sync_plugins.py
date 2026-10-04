@@ -11,6 +11,35 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class SyncPluginsTests(unittest.TestCase):
+    def test_claude_sync_preserves_disabled_plugins_without_loading_them(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            calls = root / "calls"
+            for name in ("git", "node"):
+                command = root / name
+                command.write_text("#!/bin/sh\nexit 0\n")
+                command.chmod(0o755)
+            installed = [{"id": name + "@dots", "enabled": False, "version": json.loads(
+                (ROOT / "plugins" / name / ".claude-plugin" / "plugin.json").read_text()
+            )["version"]} for name in ("dots", "drafts")]
+            claude = root / "claude"
+            claude.write_text(
+                "#!/usr/bin/env python3\nimport json,sys\n"
+                f"with open({str(calls)!r}, 'a') as out: out.write(' '.join(sys.argv[1:]) + '\\n')\n"
+                "if sys.argv[1:4] == ['plugin', 'marketplace', 'list']: print(json.dumps([{'name': 'dots', 'source': 'github', 'repo': 'rishirsv/dots'}]))\n"
+                f"if sys.argv[1:3] == ['plugin', 'list']: print({json.dumps(installed)!r})\n"
+                "if sys.argv[1:3] == ['plugin', 'details']: raise SystemExit('disabled plugins cannot be loaded')\n"
+            )
+            claude.chmod(0o755)
+            result = subprocess.run(
+                ["zsh", str(ROOT / "scripts" / "sync-plugins.sh"), "--claude"],
+                env={**os.environ, "PATH": f"{root}:{os.environ['PATH']}"},
+                text=True, capture_output=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertNotIn("plugin details", calls.read_text())
+            self.assertNotIn("plugin enable", calls.read_text())
+
     def test_codex_sync_replaces_stale_agent_profiles_and_keeps_backup(self):
         self.run_codex_sync()
 
