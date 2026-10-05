@@ -16,14 +16,23 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
   records the choice in that profile's `dots-plugin-source` file. Preserve
   other profiles' choices. Both plugin sync and config sync must enforce it.
   Never uninstall account-wide cloud plugins to fix desktop duplicates.
-- Preserve the naming structure: plugin **Dots**, bundled MCP app **Tunnel**.
-  Update the existing cloud plugin and app in place; preserve their IDs and
-  the app mapping in `plugins/dots/.app.json`. Cloud app edits or tool refreshes
-  can regenerate plugin metadata. Apply the complete plugin package afterward
-  with display name Dots and all source skills, scripts, references, and assets;
-  downloaded app-generated ZIPs can omit skills. Before declaring an update
-  complete, verify Dots contains the connected Tunnel app and the expected
-  skills in cloud and desktop, with one skill source and zero duplicates.
+- Keep **Dots** as a standalone skills plugin and **Tunnel** as a separate app.
+  Dots manifests must not bind Tunnel through `.app.json` or `apps`. The Tunnel
+  app ID remains `asdk_app_6aaf4ad66f108191b548c1a6a1012373`; preserve its service,
+  connection, and authorized folders. Do not put Dots skills back into its
+  app-backed canonical plugin. Keep the tools-only Tunnel plugin enabled
+  independently of the Dots/Drafts skill-source policies.
+- For cloud propagation, follow [the cloud release procedure](INSTALL.md#release-cloud-plugins).
+  Use Plugin Creator source and archive update tools before browser automation.
+  The standalone personal Dots backend ID is
+  `plugins_6ac41e50a2588191b45ece5c4a5ed1c3`. Read its current release and pass that
+  release as `expected_release_id`; preserve its identity, scope, and audience.
+  Never create another Dots plugin during ordinary updates. Archive updates
+  overlay files and cannot delete them: report retired files that remain.
+  Verify the complete expected skill inventory and changed content in cloud,
+  then check a fresh desktop loader for one skill source and zero duplicates.
+  Local sync does not publish cloud releases. Report publication and desktop
+  verification separately; if either fails, report it as pending.
 - Work-in-progress skills that must not ship in any plugin live under `wip/`.
 
 ## Commands

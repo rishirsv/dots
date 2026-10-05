@@ -5,7 +5,7 @@ enabled = false
 [plugins."drafts@dots"]
 enabled = false
 
-[plugins."dev-6aaf4ad66f108191b548c1a6a1012373@created-by-me-remote"]
+[plugins."dots@created-by-me-remote"]
 enabled = true
 
 [plugins."drafts@created-by-me-remote"]

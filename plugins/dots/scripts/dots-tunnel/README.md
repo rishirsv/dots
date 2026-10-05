@@ -5,7 +5,7 @@ The server belongs to Dots; it does not run a model, automate a browser, or
 depend on an active Codex task.
 
 ```text
-ChatGPT → Dots connection → OpenAI secure tunnel → local file server → project
+ChatGPT → Tunnel connection → OpenAI secure tunnel → local file server → project
 ```
 
 ChatGPT manages the conversation, model selection, and tool confirmations.
@@ -15,7 +15,7 @@ ChatGPT. No model API calls or model billing are added by this server.
 
 ## Use it
 
-Connect Dots in ChatGPT, mention `@Dots`, and ask for a file change:
+Connect Tunnel in ChatGPT, mention `@Tunnel`, and ask for a file change:
 
 > Read notes.txt, shorten the introduction without changing its meaning, save
 > the edit, and read it back to verify it.
@@ -78,10 +78,12 @@ Put the restricted runtime credential in
 It authenticates the tunnel, not model requests. Place the official
 `tunnel-client` at `~/.local/share/dots-tunnel/bin/tunnel-client`.
 
-Register the tunnel in ChatGPT developer mode as the Dots connection. The
-repository's `.app.json` points to the maintainer's registered app; installing
-the source does not grant another account access to that app or this Mac.
-For a separate deployment, register your own app and update your local mapping.
+Register the tunnel in ChatGPT developer mode as the separate Tunnel app.
+The maintainer's app ID is `asdk_app_6aaf4ad66f108191b548c1a6a1012373`.
+The standalone Dots skills plugin has no app binding; installing its source
+neither connects Tunnel nor grants another account access to this Mac.
+For a separate deployment, register your own Tunnel app. Preserve the saved
+runtime connection, credentials, and authorized folders during plugin updates.
 
 ## Start, check, and stop
 
@@ -108,7 +110,7 @@ The runtime stays in the background after a chat or terminal closes. Stop it
 explicitly when finished; logout, reboot, or failure may also stop it. No login
 startup or extra watchdog is installed. While the Mac is asleep or offline,
 ChatGPT cannot reach it. A Web skill cannot start a stopped local server: invoke
-the skill in Codex on the Mac first, then mention `@Dots` in ChatGPT.
+the skill in Codex on the Mac first, then mention `@Tunnel` in ChatGPT.
 
 Lifecycle commands are local operator actions, not remotely exposed MCP tools.
 They do not authorize new folders. Stop the runtime before changing the

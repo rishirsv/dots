@@ -17,7 +17,7 @@ Do not start the service merely to explain it.
 
 If setup is missing or the runtime is unhealthy, report that result; do not
 reconfigure, repeatedly restart, or broaden access. After successful startup,
-tell the user to open ChatGPT and mention `@Dots`. Loading this skill in a
+tell the user to open ChatGPT and mention `@Tunnel`. Loading this skill in a
 cloud or Web session cannot start a stopped service on the Mac: ask the user
 to invoke `$dots-tunnel` locally in Codex instead.
 
@@ -36,7 +36,7 @@ Load this skill with MCP `skills/list`, `skills/get`, and `resources/read` when
 supported. Otherwise call `get_workflow` once: it returns these instructions,
 the authorized absolute folder paths, and whether command execution is enabled.
 Use the tools actually advertised by this connection; skill text does not grant
-access or install missing tools. Never create a separate MCP-only Dots plugin.
+access or install missing tools. Connect the separate Tunnel app for these tools; the Dots skills plugin does not bundle that app. Preserve the existing Tunnel connection rather than creating another app.
 
 ## Inspect and edit
 

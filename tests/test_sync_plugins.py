@@ -94,7 +94,7 @@ class SyncPluginsTests(unittest.TestCase):
             live_config = home / ".codex" / "config.toml"
             live_config.write_text(
                 'model = "keep-my-model"\n'
-                '[plugins."dev-6aaf4ad66f108191b548c1a6a1012373@created-by-me-remote"]\n'
+                '[plugins."dots@created-by-me-remote"]\n'
                 'enabled = true\n'
                 '[plugins."unrelated@remote"]\nenabled = true\n'
                 '[plugins."dots@dots"]\nenabled = true\n'
@@ -122,11 +122,11 @@ class SyncPluginsTests(unittest.TestCase):
                 "marker = home / 'dots-plugin-source'\n"
                 "cloud = marker.exists() and marker.read_text().strip() == 'cloud'\n"
                 "local = [{'pluginId': name + '@dots', 'version': '1.0.0', 'enabled': not cloud} for name in ('dots', 'drafts')]\n"
-                f"extra = [{{'pluginId': 'dev-6aaf4ad66f108191b548c1a6a1012373@created-by-me-remote', 'version': '1.0.3', 'enabled': True}}] if {cloud_enabled!r} else []\n"
+                f"extra = [{{'pluginId': 'dots@created-by-me-remote', 'version': '1.0.3', 'enabled': True}}] if {cloud_enabled!r} else []\n"
                 "if sys.argv[1:3] == ['plugin', 'list']: print(json.dumps({'installed': local + extra}))\n"
                 "if sys.argv[1:4] == ['plugin', 'marketplace', 'list']: print(json.dumps({'marketplaces': [{'name': 'dots'}]}))\n"
                 "if sys.argv[1:] == ['app-server']:\n"
-                "    ids = ['dev-6aaf4ad66f108191b548c1a6a1012373@created-by-me-remote', 'drafts@created-by-me-remote'] if cloud else ['dots@dots', 'drafts@dots']\n"
+                "    ids = ['dots@created-by-me-remote', 'drafts@created-by-me-remote'] if cloud else ['dots@dots', 'drafts@dots']\n"
                 f"    skills = [] if cloud and {cloud_missing!r} else [{{'pluginId': pid, 'name': ('architect' if i == 0 else 'scribe'), 'path': '/skills/' + str(i), 'enabled': True}} for i, pid in enumerate(ids)]\n"
                 f"    if {duplicate_skills!r}: skills.append({{'pluginId': 'dots@dots', 'name': 'dots:architect', 'path': '/duplicate/architect', 'enabled': True}})\n"
                 "    for line in sys.stdin:\n"
@@ -168,7 +168,7 @@ class SyncPluginsTests(unittest.TestCase):
             self.assertIn('[plugins."unrelated@remote"]\nenabled = true', merged)
             self.assertIn(f'[plugins."dots@dots"]\nenabled = {str(mode == "local").lower()}', merged)
             for plugin_id in (
-                "dev-6aaf4ad66f108191b548c1a6a1012373@created-by-me-remote",
+                "dots@created-by-me-remote",
                 "drafts@created-by-me-remote",
             ):
                 self.assertIn(f'[plugins."{plugin_id}"]\nenabled = {str(mode == "cloud").lower()}', merged)

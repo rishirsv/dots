@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "dots",
-  "version": "0.2.238",
+  "version": "0.2.240",
   "description": "Focused workflows for planning, building, reviewing, and shipping software.",
   "author": {
     "name": "Rishi"
@@ -13,7 +13,6 @@
   ],
   "extensions": {
     "com.openai": {
-      "apps": "./.app.json",
       "interface": {
         "displayName": "Dots",
         "shortDescription": "Plan, build, review, and ship.",

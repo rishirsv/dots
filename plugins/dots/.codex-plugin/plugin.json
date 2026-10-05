@@ -1,6 +1,6 @@
 {
   "name": "dots",
-  "version": "0.2.238",
+  "version": "0.2.240",
   "description": "Focused workflows for planning, building, reviewing, and shipping software.",
   "author": {
     "name": "Rishi"
@@ -12,7 +12,6 @@
     "skills"
   ],
   "skills": "./skills/",
-  "apps": "./.app.json",
   "interface": {
     "displayName": "Dots",
     "shortDescription": "Plan, build, review, and ship.",
