@@ -61,6 +61,16 @@ below. Keep the evidence requirements above and edit authorization below.
 
 ## Fix each class at the highest level that works
 
+Read the repo's own check command first (its `package.json`/build-tool
+`lint`/`check` scripts, its CI workflow), so a check that already exists but sits
+unwired or silently broken is the finding, not a reinvention. Inspect pre-commit
+hooks too. Distinguish a missing or broken check from an agent failing to run an
+available check, and repair existing enforcement before adding another check.
+
+A repo with no guardrail (no pre-commit hook and no CI job running its
+lint/typecheck/test command) is itself a finding. Report that missing protection
+without claiming it caused a failure the evidence does not establish.
+
 1. **Eliminate it with architecture.** Give each piece of state one owner and each task one supported way. Hide internals so the wrong import fails. Replace hand-synced lists with one source of truth. Delete old ways and dead code an agent would copy.
 2. **Enforce it with types so the bad state can't be written.** If bad code still compiles, add a lint or CI check whose error names the file, type, or function to use instead. If the pattern is already common, fail only when a change adds more.
 3. **Test the behavior.** Fix or delete any test that would still pass if every function it calls returned nothing.
@@ -71,10 +81,15 @@ Prove each new check fails on a real past mistake. Run the same command locally 
 ## Propose or apply improvements
 
 For a durable change, name the behavior, the component most directly responsible
-for it, the smallest change, and how to verify it. Include a counterexample or
+for it, the smallest change, and how to verify it. For each mistake class,
+include its evidence, the enforcement level you picked, and why a higher level
+didn't work or would require disproportionate change. Present candidates in
+order of severity, using recurrence and strength of evidence to prioritize
+findings with similar impact. Include a counterexample or
 uncertainty only when it could change the decision. Read
 [instructions.md](references/instructions.md) only for proposals targeting
-`AGENTS.md`, `CLAUDE.md`, or `.claude/rules/*.md`.
+`AGENTS.md`, `CLAUDE.md`, `.claude/rules/*.md`, or review standards, or when a
+correction repeats an existing rule.
 
 Do not edit until the user approves a concrete proposal unless the original
 request already authorized implementation. Approval does not expand ownership:

@@ -27,6 +27,12 @@ runtime task requires them.
 
 ## Generalization gate
 
+For recurring repository mistakes, read relevant recent commits, reverts,
+review comments, agent instruction files, and comments that explain workarounds
+alongside the session evidence. Group the mistakes into classes. Count
+independent occurrences of the same failure, not repeated discussion of one
+incident. Apply the generalization gate below before proposing a shared rule.
+
 Before generalizing beyond the task:
 
 1. Describe the repeated failure in terms of what the agent does.

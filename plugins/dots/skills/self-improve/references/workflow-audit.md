@@ -69,6 +69,21 @@ missed, and whether the local success depended on a lucky test path.
 
 ## Agent-experienced friction
 
+When information gathering caused friction, distinguish navigation from
+information access:
+
+- **Navigation:** how easy was it for the agent to find the right files? Are
+  there hidden dependencies between files? Would a navigation pointer make it
+  easier? Use when the session took a long time to find a piece of information.
+- **Information access:** look for opportunities to increase the agent's access
+  to information. Teeing dev server logs, readonly access to third-party
+  services. Use when a crucial piece of information was not available to the
+  agent.
+
+Add a focused pointer when the information exists but is hard to find. Propose
+logs, diagnostics, or read access when the environment does not expose it.
+Apply the parent skill's edit authorization before changing access or tooling.
+
 Separate two claim types:
 
 - **Direct:** the agent explicitly identified a limitation, conflict, failed

@@ -1,6 +1,7 @@
 # Instruction Files
 
-Use this reference when a proposal targets agent instructions. Apply the edit
+Use this reference when a proposal targets agent instructions or review
+standards, or when a correction repeats an existing rule. Apply the edit
 authorization in Self-Improve's parent skill: an explicit request to audit and
 implement instruction changes already authorizes supported edits in that scope.
 For proposal-only work, obtain approval of the exact rule and target before editing.
@@ -38,6 +39,38 @@ files. Check existing imports and nested files so the proposal does not create
 duplicate or contradictory guidance.
 
 ## Write observable rules
+
+### Put guidance in the stage that uses it
+
+Implementation and review need different guidance. Put decisions needed while
+building in the implementation workflow. Put judgment criteria used to assess
+a completed change in the review workflow.
+
+Reserve `CODING_STANDARDS.md`, or the repository's existing review standards,
+for genuine judgment calls (cross-file consistency, "matches the surrounding
+style," anything no guardrail could ever substitute for). Mechanical violations
+(a fixed syntactic pattern, a banned API, an import shape, a file-location rule)
+belong in a deterministic check. Use the enforcement order in the parent skill.
+
+Look for instructions in steering files that don't modify the agent's behavior.
+Use when the steering files are large and unwieldy. Move review-only criteria
+to review standards, replace duplicated procedures with a pointer to their
+owner, and remove instructions that change no behavior. Preserve guidance that
+affects a decision even when it looks obvious in isolation.
+
+### Handle corrections to existing rules
+
+When the operator corrects a mistake, check whether the rule was already there.
+If it was, determine whether it was unavailable, ambiguous, unenforced, or
+bypassed. Fix that cause instead of adding another copy of the rule.
+
+If the rule was already there and nothing enforces it, fix it at the highest
+level that works within the authorized scope. Pair the rule with what enforces
+it in the proposal or existing maintenance documentation; do not create a
+mandatory rule table in the agent instruction file. Drop a rule once its
+mistake can't happen, retaining any explanation still needed for judgment.
+
+### Describe observable behavior
 
 Describe behavior an agent can follow and a reviewer can verify:
 
