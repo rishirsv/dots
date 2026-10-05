@@ -16,6 +16,14 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
   records the choice in that profile's `dots-plugin-source` file. Preserve
   other profiles' choices. Both plugin sync and config sync must enforce it.
   Never uninstall account-wide cloud plugins to fix desktop duplicates.
+- Preserve the naming structure: plugin **Dots**, bundled MCP app **Tunnel**.
+  Update the existing cloud plugin and app in place; preserve their IDs and
+  the app mapping in `plugins/dots/.app.json`. Cloud app edits or tool refreshes
+  can regenerate plugin metadata. Apply the complete plugin package afterward
+  with display name Dots and all source skills, scripts, references, and assets;
+  downloaded app-generated ZIPs can omit skills. Before declaring an update
+  complete, verify Dots contains the connected Tunnel app and the expected
+  skills in cloud and desktop, with one skill source and zero duplicates.
 - Work-in-progress skills that must not ship in any plugin live under `wip/`.
 
 ## Commands

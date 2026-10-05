@@ -124,6 +124,7 @@ class SyncPluginsTests(unittest.TestCase):
                 "local = [{'pluginId': name + '@dots', 'version': '1.0.0', 'enabled': not cloud} for name in ('dots', 'drafts')]\n"
                 f"extra = [{{'pluginId': 'dev-6aaf4ad66f108191b548c1a6a1012373@created-by-me-remote', 'version': '1.0.3', 'enabled': True}}] if {cloud_enabled!r} else []\n"
                 "if sys.argv[1:3] == ['plugin', 'list']: print(json.dumps({'installed': local + extra}))\n"
+                "if sys.argv[1:4] == ['plugin', 'marketplace', 'list']: print(json.dumps({'marketplaces': [{'name': 'dots'}]}))\n"
                 "if sys.argv[1:] == ['app-server']:\n"
                 "    ids = ['dev-6aaf4ad66f108191b548c1a6a1012373@created-by-me-remote', 'drafts@created-by-me-remote'] if cloud else ['dots@dots', 'drafts@dots']\n"
                 f"    skills = [] if cloud and {cloud_missing!r} else [{{'pluginId': pid, 'name': ('architect' if i == 0 else 'scribe'), 'path': '/skills/' + str(i), 'enabled': True}} for i, pid in enumerate(ids)]\n"
@@ -153,6 +154,7 @@ class SyncPluginsTests(unittest.TestCase):
                     self.assertIn("architect: loaded 2 copies", result.stderr)
                 if cloud_missing:
                     self.assertNotIn("plugin remove dots@dots", calls.read_text())
+                    self.assertNotIn("plugin marketplace remove dots", calls.read_text())
                 self.assertNotIn("plugin remove dev-", calls.read_text())
                 return
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
@@ -171,6 +173,7 @@ class SyncPluginsTests(unittest.TestCase):
             ):
                 self.assertIn(f'[plugins."{plugin_id}"]\nenabled = {str(mode == "cloud").lower()}', merged)
             if mode == "cloud":
+                self.assertIn("plugin marketplace remove dots", calls.read_text())
                 self.assertNotIn("plugin marketplace add", calls.read_text())
                 self.assertNotIn("plugin add dots@dots", calls.read_text())
                 self.assertIn("plugin remove dots@dots", calls.read_text())

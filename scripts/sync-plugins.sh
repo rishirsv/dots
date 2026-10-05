@@ -105,7 +105,7 @@ codex_for() {
 }
 
 sync_codex_home() {
-  local label="$1" home="$2" selection="${3:-}" profile_home policy agent_source agent_target backup spec name version installed stale
+  local label="$1" home="$2" selection="${3:-}" profile_home policy agent_source agent_target backup spec name version installed stale marketplaces
   local -a active_specs
   [[ -z "$home" || -d "$home" ]] || { echo "Skipping $label: $home does not exist"; return; }
 
@@ -167,6 +167,12 @@ if errors: raise SystemExit("Codex verification failed:\n  " + "\n  ".join(error
         codex_for "$home" plugin remove "$name@dots" >/dev/null
       fi
     done
+    # Desktop lists registered folder-marketplace entries even after uninstall.
+    # Cloud profiles must remove the local source as well as its packages.
+    marketplaces="$(codex_for "$home" plugin marketplace list --json)"
+    if python3 -c 'import json,sys; raise SystemExit(not any(m["name"] == "dots" for m in json.load(sys.stdin)["marketplaces"]))' <<< "$marketplaces"; then
+      codex_for "$home" plugin marketplace remove dots >/dev/null
+    fi
     # plugin remove also removes its config entry; retain explicit exclusions.
     uv run --quiet --script "$ROOT/scripts/sync-codex-config.py" apply \
       --source "$policy" --target "$profile_home/config.toml"
