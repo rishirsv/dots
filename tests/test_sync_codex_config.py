@@ -96,6 +96,47 @@ class CodexConfigHelperTests(unittest.TestCase):
             self.assertNotIn("model_catalog_json", live)
             self.assertNotIn("cliproxyapi", live)
 
+    def test_native_provider_retires_only_obsolete_stripped_catalog(self):
+        cases = (
+            ("openai", None, "/Users/rishi/.codex/model-catalog-no-confirmations.json", True),
+            ("openai", None, "model-catalog-no-confirmations.json", True),
+            ("openai", None, "custom-models.json", False),
+            ("openrouter", None, "muse-models.json", False),
+            ("openai", "custom-models.json", "model-catalog-no-confirmations.json", False),
+        )
+        for provider, source_catalog, live_catalog, removed in cases:
+            with self.subTest(provider=provider, catalog=live_catalog, source=source_catalog):
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    source = root / "source.toml"
+                    target = root / "config.toml"
+                    source_text = 'model = "gpt-6-astra"\nmodel_provider = "{}"\n'.format(provider)
+                    if source_catalog is not None:
+                        source_text += 'model_catalog_json = "{}"\n'.format(source_catalog)
+                    if provider == "openrouter":
+                        source_text += (
+                            '[model_providers.openrouter]\n'
+                            'name = "OpenRouter"\n'
+                            'base_url = "https://openrouter.ai/api/v1"\n'
+                        )
+                    source.write_text(source_text)
+                    target.write_text(
+                        'model_catalog_json = "{}"\nmodel_reasoning_effort = "medium"\n'.format(live_catalog)
+                    )
+                    for catalog in ("custom-models.json", "muse-models.json"):
+                        (root / catalog).write_bytes(
+                            (ROOT / "configs" / "codex" / "muse-models.json").read_bytes()
+                        )
+                    result = self.run_helper("apply", source, target)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    live = target.read_text()
+                    self.assertEqual("model_catalog_json" not in live, removed)
+                    self.assertIn('model_reasoning_effort = "medium"', live)
+                    if not removed:
+                        self.assertIn(
+                            'model_catalog_json = "{}"'.format(source_catalog or live_catalog), live
+                        )
+
     def test_apply_overlays_managed_keys_and_preserves_unmanaged_state(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -354,7 +395,7 @@ class SyncConfigsIntegrationTests(unittest.TestCase):
             self.assertEqual(stat.S_IMODE(config.stat().st_mode), 0o600)
             self.assertIn('model = "gpt-6.1-sol"', config.read_text())
             self.assertIn('model_provider = "openai"', config.read_text())
-            self.assertIn('model-catalog-no-confirmations.json', config.read_text())
+            self.assertNotIn("model_catalog_json", config.read_text())
             self.assertIn('name = "computer-use:computer-use"', config.read_text())
             self.assertNotIn('cliproxyapi', config.read_text())
             self.assertIn('fast_mode = true', config.read_text())

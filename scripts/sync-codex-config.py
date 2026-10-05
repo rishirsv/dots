@@ -127,7 +127,14 @@ def apply_compatibility_rules(
     source: Mapping[str, Any], live: Mapping[str, Any], changed: list[KeyPath]
 ) -> None:
     if unwrapped(source.get("model_provider")) == "openai":
-        if unwrapped(live.get("model_catalog_json")) == "cliproxy-models.json":
+        catalog = unwrapped(live.get("model_catalog_json"))
+        obsolete_catalog = catalog in {
+            "model-catalog-no-confirmations.json",
+            "/Users/rishi/.codex/model-catalog-no-confirmations.json",
+        }
+        if catalog == "cliproxy-models.json" or (
+            obsolete_catalog and "model_catalog_json" not in source
+        ):
             remove_root(live, "model_catalog_json", changed)
         providers = live.get("model_providers", {})
         if "cliproxyapi" in providers:

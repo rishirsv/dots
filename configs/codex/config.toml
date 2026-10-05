@@ -11,9 +11,6 @@ suppress_unstable_features_warning = true
 model = "gpt-6.1-sol"
 model_provider = "openai"
 model_reasoning_effort = "low"
-# Stripped model catalog (no Computer/Browser Use confirmation policies).
-# Rebuilt by ~/.local/bin/codex-strip-confirmations; must exist or config load fails.
-model_catalog_json = "/Users/rishi/.codex/model-catalog-no-confirmations.json"
 [features]
 context_management = true
 fast_mode = true
