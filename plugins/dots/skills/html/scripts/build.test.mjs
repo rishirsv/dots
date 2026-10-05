@@ -14,7 +14,7 @@ import { execFileSync } from 'node:child_process';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const registry = JSON.parse(readFileSync(join(root, "assets", "registry", "registry.json"), "utf8"));
-const NOT_CONTENT = new Set(["page-shell", "page-behavior", "sequence-nav", "chapter-index", "toc-rail", "theme-toggle"]);
+const NOT_CONTENT = new Set(["page-shell", "page-behavior", "document-tools", "sequence-nav", "chapter-index", "toc-rail", "theme-toggle"]);
 const VOID = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"]);
 
 function withTempDir(run) {
@@ -238,7 +238,7 @@ test("helpers reject invalid arguments with the helper name", () => {
 // ---------- build.mjs ----------
 
 test("committed outcome page modules rebuild their committed pages exactly", async () => {
-  for (const name of ["status-report", "decision-comparison"]) {
+  for (const name of ["status-report", "decision-comparison", "implementation-plan"]) {
     const built = await build(join(root, "assets", "outcomes", `${name}.page.mjs`));
     assert.equal(built, readFileSync(join(root, "assets", "outcomes", `${name}.html`), "utf8"), `${name}.html is stale`);
   }

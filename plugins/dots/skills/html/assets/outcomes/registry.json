@@ -50,6 +50,23 @@
       "treatment": "editorial",
       "shape": ["explanation organized around the change", "realistic trace", "scope and consequence", "verification tied to source"],
       "boundary": "Ground every claim in the actual diff and repository context."
+    },
+    {
+      "name": "implementation-plan",
+      "title": "Plan review",
+      "file": "implementation-plan.html",
+      "job": "Understand a proposed change and return explicit decisions, comments, and edited proposals.",
+      "layout": "article",
+      "treatment": "editorial",
+      "shape": [
+        "experience walkthrough",
+        "behavior guarantees",
+        "decisions with consequences",
+        "expandable mechanisms",
+        "verification and rollout",
+        "one response"
+      ],
+      "boundary": "Feedback remains local. Recommendations are proposals until explicitly selected."
     }
   ]
 }

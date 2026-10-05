@@ -16,7 +16,7 @@ test("inserts dollar patterns literally and preserves preformatted body content"
   assert.ok(html.includes(`<pre>${code}</pre>`));
   assert.ok(html.includes(`<textarea>${code}</textarea>`));
   assert.ok(html.includes("<p>$' $& $1</p>"));
-  assert.ok(html.includes("<footer class=\"sources\">$&amp; $&#39;</footer>"));
+  assert.ok(html.includes("<footer class=\"sources\"><p>$&amp; $&#39;</p>$&amp; $&#39;</footer>"));
 });
 
 test("includes body components and dependencies, and rejects unknown names", () => {
@@ -270,7 +270,8 @@ test("assembles hierarchical learning sites with scoped navigation and generated
     assert.match(chapter, /href="contracts\.html"/);
 
     assert.match(lesson, /<span class="sequence-index">2\.1<\/span>Contracts/);
-    assert.match(lesson, /class="context-line sequence-page-context">tool boundary \/ public contract<\/p>/);
+    assert.match(lesson, /<footer class="sources"><p>tool boundary \/ public contract<\/p>/);
+    assert.ok(lesson.indexOf('<h1>') < lesson.indexOf('aria-label="Breadcrumb"'));
     assert.match(lesson, /href="state\.html" rel="next"/);
     assert.doesNotMatch(lesson, />Foundations<\/a>/);
     assert.doesNotMatch(lesson, /data-component="chapter-index"/);

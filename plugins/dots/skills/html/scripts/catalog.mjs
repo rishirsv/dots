@@ -37,7 +37,7 @@ export function renderAtlas(source) {
     list.push(name);
     groups.set(entry.component, list);
   }
-  const sections = registry.items.filter((item) => !['page-shell', 'page-behavior'].includes(item.name)).map((item) => {
+  const sections = registry.items.filter((item) => !['page-shell', 'page-behavior', 'document-tools'].includes(item.name)).map((item) => {
     const names = groups.get(item.name);
     const name = preferred[item.name] ?? names?.[0];
     const markup = name ? helperExample(name) : fragment(item);
@@ -47,7 +47,9 @@ export function renderAtlas(source) {
   source = slot(source, '__ATLAS_FRAME_CSS__', readFileSync(join(assets, 'registry', 'atlas-frame.css'), 'utf8'));
   const componentStyles = registry.items.map((item) => readFileSync(join(assets, 'registry', item.file), 'utf8').match(/<style>([\s\S]*?)<\/style>/)?.[1] ?? '').join('\n');
   source = slot(source, '__COMPONENT_STYLES__', `<style>${componentStyles}</style>`);
-  return slot(source, '__DIAGRAM_STYLES__', diagramStyles({ components: false }));
+  source = slot(source, '__DIAGRAM_STYLES__', diagramStyles({ components: false }));
+  const scripts = registry.items.filter(item => ['plan-review', 'walkthrough'].includes(item.name)).map(item => readFileSync(join(assets, 'registry', item.file), 'utf8').match(/<script[^>]*>[\s\S]*?<\/script>/)?.[0] ?? '').join('\n');
+  return slot(source, '__COMPONENT_SCRIPTS__', scripts);
 }
 
 function htmlFiles(dir) {

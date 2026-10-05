@@ -93,7 +93,7 @@ function page(meta, children) {
     tone,
     toc: meta.toc ?? "auto",
     sources: "collect",
-    components: meta.behavior ? ["page-behavior"] : [],
+    components: [...(meta.behavior ? ["page-behavior"] : []), ...(meta.tools ? ["document-tools"] : [])],
     body: blocks(children ?? []),
   });
 }
@@ -145,7 +145,7 @@ function stats(items, { source } = {}) {
   return withSource(markup.__html, "stat-tiles", source, "stats");
 }
 
-function table({ columns, rows, stacked = false, labelFirst = false }) {
+function table({ columns, rows, stacked = false, labelFirst = false, searchable = false, sortable = false }) {
   list("table", "columns", columns);
   list("table", "rows", rows);
   const cols = columns.map((column) => (typeof column === "object" && !(column instanceof SafeHtml) ? column : { label: column }));
@@ -159,7 +159,7 @@ function table({ columns, rows, stacked = false, labelFirst = false }) {
     const className = cellClass(column, index);
     return html`${className ? html` class="${className}"` : ""}${stacked ? html` data-label="${labelText(column)}"` : ""}`;
   };
-  return html`<div data-component="data-table" class="${stacked ? "table-scroll table-stack" : "table-scroll"}"><table><thead><tr>${cols.map((column) =>
+  return html`<div data-component="data-table" class="${stacked ? "table-scroll table-stack" : "table-scroll"}"><table${searchable ? html` data-searchable` : ""}${sortable ? html` data-sortable` : ""}><thead><tr>${cols.map((column) =>
     html`<th${column.numeric ? html` class="col-num"` : ""}>${column.label}</th>`)}</tr></thead><tbody>${rows.map((row) =>
     html`<tr>${cols.map((column, index) => html`<td${attrs(column, index)}>${cell(row, index)}</td>`)}</tr>`)}</tbody></table></div>`;
 }
@@ -380,7 +380,59 @@ const MOCKUP_SKELETON = html`<div class="mockup-toolbar" aria-hidden="true"><spa
 function mockup({ label, caption, content }) {
   required("mockup", "label", label);
   required("mockup", "caption", caption);
-  return html`<figure data-component="mockup-frame" class="mockup-frame"><div class="mockup-surface" role="img" aria-label="${label}">${content ?? MOCKUP_SKELETON}</div><figcaption>${leadText(caption)}</figcaption></figure>`;
+  return html`<figure data-component="mockup-frame" class="mockup-frame"><div class="${content ? "mockup-surface is-custom" : "mockup-surface"}" role="img" aria-label="${label}">${content ?? MOCKUP_SKELETON}</div><figcaption>${leadText(caption)}</figcaption></figure>`;
+}
+
+// ---------- review and interactive explanations ----------
+
+function stableId(helper, id) {
+  if (typeof id !== "string" || !/^[a-z][a-z0-9-]*$/.test(id)) fail(helper, "id must be a stable lowercase slug");
+  return id;
+}
+
+function review({ id, title, revision }, children) {
+  stableId("review", id);
+  required("review", "title", title);
+  required("review", "revision", revision);
+  return html`<div data-component="plan-review" class="plan-review" data-review-id="${id}" data-review-title="${title}" data-review-revision="${revision}">
+    <div class="review-toolbar" hidden><span class="review-progress" data-document-control role="status" aria-live="polite"></span><button type="button" data-review-next>Next unanswered decision</button><button type="button" data-review-response>Prepare response</button></div>
+    <p class="review-save" data-document-control role="status" aria-live="polite"></p>
+    <noscript><p>Choices and notes need JavaScript to export. Send your feedback in chat using the item headings.</p></noscript>
+    ${blocks(children)}
+    <dialog class="review-dialog" aria-label="Review response"><form method="dialog"><button class="review-close" aria-label="Close response">Close</button></form><h2>Your response</h2><p>Copy or download this response and send it back in chat. Nothing is sent from this page.</p><label>Response intent<select data-review-intent><option value="feedback">Feedback only</option><option value="revise">Revise the plan</option><option value="ready">Ready to implement</option></select></label><label>Response<textarea data-review-output readonly rows="14"></textarea></label><div class="review-actions"><button type="button" data-review-copy>Copy response</button><button type="button" data-review-download>Download response</button></div><p data-review-message role="status" aria-live="polite"></p></dialog>
+  </div>`;
+}
+
+function reviewPoint({ id, title, summary }, children) {
+  stableId("reviewPoint", id);
+  required("reviewPoint", "title", title);
+  required("reviewPoint", "summary", summary);
+  return html`<article data-component="plan-review" class="review-point" id="${id}" data-review-point="${id}" data-review-label="${title}"><h3>${title}</h3><p class="review-summary">${summary}</p>${blocks(children)}<details class="review-notes"><summary>Comment or request a change</summary><label>Disposition<select data-review-field="${id}:disposition"><option value="">No disposition</option><option value="keep">Keep this part</option><option value="change">Change this part</option><option value="remove">Remove this part</option></select></label><label>Comment on ${title}<textarea data-review-field="${id}:comment" rows="3"></textarea></label></details></article>`;
+}
+
+function decision({ id, question, options, recommended }) {
+  stableId("decision", id);
+  required("decision", "question", question);
+  list("decision", "options", options);
+  const values = options.map((o) => o.value);
+  if (options.length < 2 || options.some((o) => typeof o.value !== "string" || !o.value || !o.label || !o.consequence) || new Set(values).size !== values.length) fail("decision", "options need distinct string values, labels, and consequences; use at least two");
+  if (recommended != null && !values.includes(recommended)) fail("decision", "recommended must match an option value");
+  return html`<fieldset data-component="plan-review" class="review-decision" id="${id}" data-review-decision="${id}"><legend>${question}</legend><p class="decision-state" data-document-control>Unanswered</p><div class="decision-options">${options.map((o) => html`<label class="decision-option"><input type="radio" name="decision-${id}" data-review-field="${id}:choice" value="${o.value}"><span><strong>${o.label}</strong>${o.value === recommended ? html`<span class="decision-recommended">Recommended</span>` : ""}<small>${o.consequence}</small></span></label>`)}</div><button type="button" data-review-clear data-document-control hidden>Clear answer</button><label class="decision-note">Reason or another suggestion<textarea data-review-field="${id}:note" rows="2"></textarea></label></fieldset>`;
+}
+
+function editableCode({ id, title, source }) {
+  stableId("editableCode", id);
+  required("editableCode", "title", title);
+  if (typeof source !== "string" || !source) fail("editableCode", "source must be non-empty plain text");
+  return html`<div data-component="plan-review" class="review-code" data-review-code="${id}" data-review-label="${title}"><label>${title}<textarea data-review-field="${id}:code" spellcheck="false" rows="8">${source}</textarea></label><button type="button" data-review-revert hidden>Revert edit</button><label>Comment on ${title} (include a line number when relevant)<textarea data-review-field="${id}:code-comment" rows="2"></textarea></label></div>`;
+}
+
+function walkthrough({ id, label, steps: items }) {
+  stableId("walkthrough", id);
+  required("walkthrough", "label", label);
+  list("walkthrough", "steps", items);
+  if (items.length < 2 || items.some((s) => !s.title || !s.body)) fail("walkthrough", "use at least two steps with title and body");
+  return html`<div data-component="walkthrough" class="walkthrough" id="${id}" aria-label="${label}"><h2 class="walkthrough-label">${label}</h2><div class="walkthrough-body"><div class="walkthrough-nav" hidden>${items.map((s, i) => html`<button type="button" aria-controls="${id}-step-${i + 1}" data-walkthrough-step="${i}">${i + 1}. ${s.title}</button>`)}</div>${items.map((s, i) => html`<div class="walkthrough-panel" id="${id}-step-${i + 1}"><h3>${s.title}</h3>${blocks(s.body)}</div>`)}</div></div>`;
 }
 
 export const helpers = Object.freeze({
@@ -392,10 +444,17 @@ export const helpers = Object.freeze({
   steps, timeline, finding, findings, fileMap, comparison,
   code, diff,
   figure, gallery, flowDiagram, flow, state, sequence, mockup,
+  review, reviewPoint, decision, editableCode, walkthrough,
 });
 
 export const meta = Object.freeze({
-  page: { component: "page-shell", summary: "The page: title, context line, dek, footer, layout, tone, and body. Returns a PageSpec for build.mjs.", params: "page({ title, context?, dek?, footer?, layout?: 'article'|'wide'|'canvas', tone?: 'report'|'personal', toc?: 'auto'|true|false, behavior?: boolean }, children)", example: `page({ title: "Release status", context: "dots / release" }, [section("state", "Current state", ["One candidate passed verification."])])` },
+  review: { component: "plan-review", summary: "Local comments, explicit decisions, editable proposals, and copy/download response. One wrapper per review; preserve id and update revision when revising.", params: "review({ id, title, revision }, children)", example: `review({ id: "release-plan", title: "Release plan", revision: "1" }, [reviewPoint({id:"delivery", title:"Readers get one file", summary:"The report works offline."}, ["All assets are embedded.", decision({id:"hosting", question:"Where does the report live?", recommended:"local", options:[{value:"local",label:"Local file",consequence:"Open offline."},{value:"hosted",label:"Hosted",consequence:"Requires publishing."}]}), editableCode({id:"schema", title:"Proposed config", source:"offline: true"})])])` },
+  reviewPoint: { component: "plan-review", summary: "A behavior or guarantee with visible explanation and targeted feedback. Put technical detail in disclosure() below it.", params: "reviewPoint({ id, title, summary }, children)", example: `reviewPoint({id:"delivery", title:"Readers get one file", summary:"The report works offline."}, ["All assets are embedded."])` },
+  decision: { component: "plan-review", summary: "An explicit choice with consequences. Recommendation is labeled but never preselected. Place inside review().", params: "decision({ id, question, options: [{value,label,consequence}], recommended? })", example: `decision({id:"hosting", question:"Where does the report live?", recommended:"local", options:[{value:"local",label:"Local file",consequence:"Open offline."},{value:"hosted",label:"Hosted",consequence:"Requires publishing."}]})` },
+  editableCode: { component: "plan-review", summary: "A plain-text schema or code proposal the reviewer can edit, revert, and comment on. Exported edits are data.", params: "editableCode({ id, title, source })", example: `editableCode({id:"schema", title:"Proposed config", source:"offline: true"})` },
+  walkthrough: { component: "walkthrough", summary: "Switch between explained screens or states. Without JavaScript all steps remain visible; the selected view is an illustration, never live state.", params: "walkthrough({ id, label, steps: [{title,body}] })", example: `walkthrough({id:"delivery-flow",label:"Delivery states",steps:[{title:"Queued",body:"The message waits."},{title:"Sent",body:"The message is delivered."}]})` },
+
+  page: { component: "page-shell", summary: "The page: title, dek, footer metadata, layout, tone, and body. Returns a PageSpec for build.mjs.", params: "page({ title, context?, dek?, footer?, layout?: 'article'|'wide'|'canvas', tone?: 'report'|'personal', toc?: 'auto'|true|false, behavior?: boolean, tools?: boolean }, children)", example: `page({ title: "Release status", context: "dots / release" }, [section("state", "Current state", ["One candidate passed verification."])])` },
   section: { component: "page-shell", summary: "A top-level section with a stable id and an h2. Strings become paragraphs.", params: "section(id, title, children)", example: `section("state", "Current state", ["One candidate passed verification."])` },
   readingColumn: { component: "page-shell", summary: "Keeps prose at article width inside a wide or canvas page.", params: "readingColumn(children)", example: `readingColumn([section("frame", "The decision", ["Choose one release boundary."])])` },
   callout: { component: "callout", summary: "A fact the reader must not scroll past. callout.note, callout.warn, callout.danger.", params: "callout.note(lead, body) | callout.warn(lead, body) | callout.danger(lead, body)", example: `calloutStack([callout.note("Note.", "Old configs keep working through v3."), callout.warn("Alpha spec.", "The schema may change."), callout.danger("Blocked.", "Staging credentials expired.")])` },
@@ -406,7 +465,7 @@ export const meta = Object.freeze({
   exchange: { component: "message-thread", summary: "The prompting messages, then what was sent beside a suggested reply.", params: "exchange({ title?, meta?, context: [{ from, text }], sent: [text], suggested: [text], outcome?, why?, names?, labels?: { sent?, suggested? } })", example: `exchange({ title: "The demo that crashed", meta: "Tue · 9:12 PM", names: { them: "Maya" }, context: [{ from: "them", text: "the demo crashed in front of the whole team 😩" }], sent: ["did you check the logs?"], suggested: ["oh no, in front of everyone? want to vent tonight?"], outcome: "Her reply: “not really what i needed rn”", why: "Acknowledge the feeling first." })` },
   disclosure: { component: "disclosure", summary: "Progressive detail: sources, raw data, appendix.", params: "disclosure(summary, children, { plain? })", example: `[disclosure("Raw latency samples", ["p50 88ms, p99 640ms."]), disclosure("Sources", ["Incident report."], { plain: true })]` },
   stats: { component: "stat-tiles", summary: "Two to five supplied headline measures.", params: "stats([{ value, label, note? }], { source })", example: `stats([{ value: "14", label: "PRs merged", note: "+3 vs last week" }, { value: "6", label: "deploys" }], { source: "GitHub, week 38" })` },
-  table: { component: "data-table", summary: "Rows compared line by line. Columns may be labels or { label, key?, numeric? }; rows arrays or objects.", params: "table({ columns, rows, stacked?, labelFirst? })", example: `table({ columns: ["Risk", "Owner", { label: "Exposure", numeric: true }], rows: [["Vendor SSO", "Priya", "$180k"]], stacked: true, labelFirst: true })` },
+  table: { component: "data-table", summary: "Rows compared line by line. Columns may be labels or { label, key?, numeric? }; rows arrays or objects.", params: "table({ columns, rows, stacked?, labelFirst?, searchable?, sortable? })", example: `table({ columns: ["Risk", "Owner", { label: "Exposure", numeric: true }], rows: [["Vendor SSO", "Priya", "$180k"]], stacked: true, labelFirst: true })` },
   bars: { component: "bar-chart", summary: "Ranked magnitudes with one emphasized row (via chart.mjs).", params: "bars(rows, { title, emphasis?, sort?, limit?, source })", example: `bars([["checkout", 412], ["search", 255], ["auth", 104]], { title: "p95 latency, ms", emphasis: "checkout", source: "APM, last 7 days" })` },
   line: { component: "line-chart", summary: "A sourced trend with ordered points.", params: "line([[label, value], ...], { title, source })", example: `line([["W1", 100], ["W2", 120], ["W3", 140]], { title: "Latency by week", source: "APM" })` },
   stacked: { component: "stacked-chart", summary: "Sourced totals split into named segments.", params: "stacked([[label, ...values]], { title, series, source })", example: `stacked([["Search", 5, 2]], { title: "Work", series: ["Done", "Pending"], source: "Tracker" })` },

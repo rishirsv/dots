@@ -29,6 +29,9 @@
     { "name": "evidence-gallery", "title": "Evidence gallery", "type": "ui", "file": "evidence-gallery.html", "deps": [], "when": "Two to four screenshots or figures need readable, point-specific captions and an optional focal image." },
     { "name": "pull-quote", "title": "Pull quote", "type": "ui", "file": "pull-quote.html", "deps": [], "when": "One thesis line worth isolating per document. Typographic emphasis only — no accent bar." },
     { "name": "message-thread", "title": "Message thread", "type": "ui", "file": "message-thread.html", "deps": [], "when": "Real chat messages shown as a conversation, or a sent-versus-suggested reply comparison. Every bubble carries a hidden speaker name." },
-    { "name": "theme-toggle", "title": "Theme toggle", "type": "ui", "file": "theme-toggle.html", "deps": ["page-behavior"], "when": "Reader-facing light/dark switch; page-behavior wires it. Optional — prefers-color-scheme works without it." }
+    { "name": "theme-toggle", "title": "Theme toggle", "type": "ui", "file": "theme-toggle.html", "deps": ["page-behavior"], "when": "Reader-facing light/dark switch; page-behavior wires it. Optional — prefers-color-scheme works without it." },
+    {"name": "plan-review", "title": "Plan review", "file": "plan-review.html", "type": "ui", "when": "Review behavior, decisions, and proposed code with local comments and one response.", "deps": ["page-shell"]},
+    {"name": "walkthrough", "title": "Visual walkthrough", "file": "walkthrough.html", "type": "ui", "when": "Explain a sequence or compare illustrated states without simulating a live system.", "deps": ["page-shell"]},
+    {"name": "document-tools", "title": "Document tools", "file": "document-tools.html", "type": "behavior", "when": "Copy code, open technical detail, or search and sort marked tables. Opt in with page({tools:true}).", "deps": ["page-shell"]}
   ]
 }

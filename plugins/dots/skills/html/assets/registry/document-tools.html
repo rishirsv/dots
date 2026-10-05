@@ -1,0 +1,108 @@
+<!-- component: document-tools
+ title: Document tools
+ type: behavior
+ when: An ordinary report benefits from copying code, expanding technical detail,
+   or searching/sorting explicitly marked tables. Opt in with page({tools:true}).
+ deps: page-shell
+ variants: none
+ gotchas: No external requests or persistence. All content remains available without JS.
+-->
+<style>
+.doc-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-block: 12px; }
+.doc-tools button, .doc-copy { font: inherit; font-size: 13px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--a20); border-radius: var(--r-card); background: var(--background); color: var(--foreground); cursor: pointer; }
+.doc-tools input, .doc-tools select { min-height: 44px; width: min(100%, 300px); box-sizing: border-box; font: inherit; font-size: 15px; padding: 8px 12px; background: var(--background); color: var(--foreground); border: 1px solid var(--a20); border-radius: var(--r-card); }
+.doc-tools label { font-size: 14px; }
+.doc-tools :is(button,input):focus-visible, .doc-copy:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.doc-tools output { font-size: 13px; color: var(--text-muted); }
+.code-panel { position: relative; }
+.doc-copy { display: block; margin: 8px 12px 0 auto; }
+.doc-sort { border: 0; background: none; color: inherit; font: inherit; font-weight: inherit; cursor: pointer; padding: 8px 4px; min-height: 44px; }
+.doc-sort:focus-visible { outline: 3px solid var(--accent); }
+[data-searchable] tr[hidden] { display: none !important; }
+.doc-table-sort { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; }
+.doc-table-sort select { display: block; }
+@media(min-width:641px) { .doc-table-sort { display: none; } }
+@media(max-width:640px) { .table-stack .doc-sort { display: none; } }
+@media print { .doc-tools,.doc-copy { display: none !important; } [data-searchable] tr[hidden] { display: table-row !important; } }
+</style>
+<script data-component="document-tools">
+(function () {
+  'use strict';
+  function button(label, className, action) { const el = document.createElement('button'); el.type = 'button'; el.setAttribute('data-document-control',''); el.className = className; el.textContent = label; el.addEventListener('click', action); return el; }
+  document.querySelectorAll('.code-panel').forEach(panel => {
+    const code = panel.querySelector('pre code'); if (!code) return;
+    panel.prepend(button('Copy code', 'doc-copy', async event => {
+      const target = event.currentTarget;
+      try { await navigator.clipboard.writeText(code.textContent); target.textContent = 'Copied'; }
+      catch { const range = document.createRange(); range.selectNodeContents(code); const selection = getSelection(); selection.removeAllRanges(); selection.addRange(range); target.textContent = 'Selected — press Copy'; }
+    }));
+  });
+  const details = Array.from(document.querySelectorAll('details.disclosure, details.disclosure-plain'));
+  if (details.length > 1) {
+    const tools = document.createElement('div'); tools.className = 'doc-tools'; tools.setAttribute('data-document-control','');
+    tools.append(button('Expand technical detail', '', () => details.forEach(el => { el.open = true; })), button('Collapse technical detail', '', () => details.forEach(el => { el.open = false; })));
+    details[0].parentElement.insertBefore(tools, details[0]);
+  }
+  const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+  document.querySelectorAll('table[data-searchable], table[data-sortable]').forEach((table, index) => {
+    const tbody = table.tBodies[0]; if (!tbody) return;
+    const rows = Array.from(tbody.rows); const headers = Array.from(table.tHead?.rows[0]?.cells || []);
+    const tools = document.createElement('div'); tools.className = 'doc-tools'; tools.setAttribute('data-document-control','');
+    const output = document.createElement('output'); output.setAttribute('aria-live', 'polite');
+    const labelText = table.getAttribute('aria-label') || table.caption?.textContent || table.closest('section')?.querySelector('h2')?.textContent || 'Table ' + (index + 1);
+    const count = () => { output.textContent = rows.filter(row => !row.hidden).length + ' of ' + rows.length + ' rows'; };
+    if (table.hasAttribute('data-searchable')) {
+      const label = document.createElement('label'); label.textContent = 'Search ' + labelText;
+      const input = document.createElement('input'); input.type = 'search'; label.append(input);
+      input.addEventListener('input', () => { const words = input.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean); rows.forEach(row => { const haystack = row.textContent.toLocaleLowerCase(); row.hidden = !words.every(w => haystack.includes(w)); }); count(); });
+      tools.append(label);
+    }
+    tools.append(output); table.parentElement.before(tools); count();
+    if (table.hasAttribute('data-sortable')) {
+      const names = headers.map(header => header.textContent.trim());
+      const number = value => {
+        const match = value.replace(/,/g, '').match(/^[^\d.+-]*([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)\s*[^0-9]*$/i);
+        return match ? Number(match[1]) : NaN;
+      };
+      let activeColumn = -1, direction = 1;
+      function sort(column, order) {
+        activeColumn = column; direction = order;
+        const numeric = headers[column].classList.contains('col-num');
+        const value = row => row.cells[column]?.textContent.trim() || '';
+        rows.slice().sort((a,b) => {
+          const av = value(a), bv = value(b), an = number(av), bn = number(bv);
+          const compared = numeric && Number.isFinite(an) && Number.isFinite(bn) ? an - bn : collator.compare(av,bv);
+          return direction * compared || rows.indexOf(a) - rows.indexOf(b);
+        }).forEach(row => tbody.append(row));
+        headers.forEach((header,i) => {
+          if (i === column) header.setAttribute('aria-sort', direction === 1 ? 'ascending' : 'descending');
+          else header.removeAttribute('aria-sort');
+          const control = header.querySelector('.doc-sort');
+          if (control) control.textContent = i === column ? (direction === 1 ? '↑' : '↓') : '↕';
+        });
+        if (mobileSelect) { mobileSelect.value = String(column); mobileDirection.textContent = direction === 1 ? 'Ascending ↑' : 'Descending ↓'; }
+        output.textContent = rows.filter(row => !row.hidden).length + ' of ' + rows.length + ' rows · ' + names[column] + ' ' + (direction === 1 ? 'ascending' : 'descending');
+      }
+      let mobileSelect, mobileDirection;
+      const stacked = table.parentElement.classList.contains('table-stack');
+      if (stacked) {
+        const group = document.createElement('div'); group.className = 'doc-table-sort';
+        const label = document.createElement('label'); label.textContent = 'Sort ' + labelText;
+        mobileSelect = document.createElement('select');
+        const placeholder = document.createElement('option'); placeholder.value = ''; placeholder.textContent = 'Original order'; mobileSelect.append(placeholder);
+        names.forEach((name,i) => { const option = document.createElement('option'); option.value = String(i); option.textContent = name; mobileSelect.append(option); });
+        mobileSelect.addEventListener('change', () => {
+          if (mobileSelect.value === '') { rows.forEach(row => tbody.append(row)); activeColumn = -1; headers.forEach(h => h.removeAttribute('aria-sort')); headers.forEach(h => {const b=h.querySelector('.doc-sort'); if(b)b.textContent='↕';}); count(); }
+          else sort(Number(mobileSelect.value),1);
+        });
+        label.append(mobileSelect); group.append(label);
+        mobileDirection = button('Ascending ↑','', () => { if (mobileSelect.value !== '') sort(Number(mobileSelect.value),direction * -1); }); group.append(mobileDirection); tools.append(group);
+      }
+      headers.forEach((header,column) => {
+        const control = button('↕','doc-sort', () => sort(column, activeColumn === column ? direction * -1 : 1));
+        control.setAttribute('aria-label','Sort by ' + names[column]); header.append(control);
+      });
+    }
+  });
+})();
+</script>

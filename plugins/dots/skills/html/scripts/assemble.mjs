@@ -173,6 +173,35 @@ export function checkPage(bodyHtml) {
   }
   if (depth > 0 && current && !current.hasH2) findings.push(`top-level section "${current.id || "(no id)"}" needs an h2`);
   if (recommendations.length > 1) findings.push(`${rules.page.recommendation} (sections: ${recommendations.map((id) => `"${id}"`).join(", ")})`);
+  // Review controls must belong to a wrapper and have distinct stable targets.
+  const reviewIds = new Set();
+  const documentIds = new Set();
+  const stack = [];
+  const voidTags = new Set(['input','br','hr','img','meta','link','wbr','source','area','base','col','embed','param','track']);
+  for (const match of structuralMarkup(bodyHtml).matchAll(/<(\/?)([a-z][a-z0-9-]*)\b([^>]*)>/gi)) {
+    const [, closing, tagName, attrs] = match;
+    const tag = tagName.toLowerCase();
+    if (closing) {
+      const index = stack.map(item => item.tag).lastIndexOf(tag);
+      if (index >= 0) stack.length = index;
+      continue;
+    }
+    const domId = attrs.match(/\sid=(["'])(.*?)\1/i)?.[2];
+    if (domId) {
+      if (documentIds.has(domId)) findings.push(`duplicate document id "${domId}"`);
+      documentIds.add(domId);
+    }
+    const identity = attrs.match(/\sdata-review-(id|point|decision|code)=(["'])(.*?)\2/i);
+    const isReview = identity?.[1] === 'id';
+    if (identity) {
+      const id = identity[3];
+      if (reviewIds.has(id)) findings.push(`duplicate review target "${id}"`);
+      reviewIds.add(id);
+      if (isReview && stack.some(item => item.review)) findings.push(`review "${id}" cannot nest inside another review`);
+      if (!isReview && !stack.some(item => item.review)) findings.push(`review target "${id}" needs a review() wrapper`);
+    }
+    if (!voidTags.has(tag) && !attrs.endsWith('/')) stack.push({ tag, review: isReview });
+  }
   return findings;
 }
 
@@ -191,18 +220,15 @@ function pageShell({ title, context, contextMarkup, dek, footer, body, layout })
   let shell = sourceFor("page-shell").match(/<div data-component="page-shell"[\s\S]*$/)?.[0];
   if (!shell) fail("page-shell markup is missing");
 
-  const renderedContext = [
-    contextMarkup,
-    context ? `<p class="context-line${contextMarkup ? " sequence-page-context" : ""}">${escapeText(context)}</p>` : "",
-  ].filter(Boolean).join("\n    ");
-
   shell = replaceLiteral(shell, 'data-layout="article"', `data-layout="${layout}"`);
-  shell = replaceLiteral(shell, /<p class="context-line">[\s\S]*?<\/p>/, renderedContext);
+  shell = replaceLiteral(shell, /\s*<!-- slot: breadcrumbs[^\n]*-->/, contextMarkup ? `\n\n  ${contextMarkup}` : "");
   shell = replaceLiteral(shell, /<h1>[\s\S]*?<\/h1>/, `<h1>${escapeText(title)}</h1>`);
   shell = replaceLiteral(shell, /<p class="dek">[\s\S]*?<\/p>/, dek ? `<p class="dek">${escapeText(dek)}</p>` : "");
   shell = replaceLiteral(shell, /\s*<!-- slot: toc-rail[^\n]*-->/, "");
   shell = replaceLiteral(shell, /\s*<!-- slot: sections[^\n]*-->/, `\n\n  ${body.trim()}`);
-  shell = replaceLiteral(shell, /\s*<footer class="sources">[\s\S]*?<\/footer>/, footer ? `\n\n  <footer class="sources">${footer}</footer>` : "");
+  const metadata = context ? `<p>${escapeText(context)}</p>` : "";
+  const footerContent = metadata + footer;
+  shell = replaceLiteral(shell, /\s*<footer class="sources">[\s\S]*?<\/footer>/, footerContent ? `\n\n  <footer class="sources">${footerContent}</footer>` : "");
 
   return shell;
 }
@@ -404,7 +430,7 @@ function hierarchyBreadcrumbs(page, hierarchy) {
   const index = siblings.findIndex((peer) => peer.id === page.id);
   const links = ancestors.map((ancestor) => `<a href="${escapeText(pageHref(page.output, ancestor.output))}">${escapeText(ancestor.label)}</a>`).join('<span aria-hidden="true">›</span>');
   const position = siblings.length > 1 ? `<span class="sequence-breadcrumb-position" lang="en">${index + 1} of ${siblings.length}</span>` : "";
-  return `<nav class="context-line sequence-breadcrumbs" aria-label="Breadcrumb"><span class="sequence-breadcrumb-links">${links}</span>${position}</nav>`;
+  return `<nav class="sequence-breadcrumbs" aria-label="Breadcrumb"><span class="sequence-breadcrumb-links">${links}</span>${position}</nav>`;
 }
 
 function hierarchicalSequenceMarkup(manifest, page, hierarchy) {

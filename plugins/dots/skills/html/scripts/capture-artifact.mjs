@@ -57,14 +57,23 @@ try {
   failureReport.findings = findings;
   const sheetItems = [];
   let baselineText = "";
+  // Compare authored content while excluding labeled runtime controls and status text.
+  // Hidden panels still count: progressive disclosure must not remove their content.
+  async function coreText(page) {
+    return normalizedVisibleText(await page.evaluate(`(() => {
+      const content = document.body.cloneNode(true);
+      content.querySelectorAll('[data-document-control],script,style').forEach(el => el.remove());
+      return content.innerHTML;
+    })()`));
+  }
   async function capture(name, width, options, firstFrame = false) {
     const page = await browser.openPage(artifact, width, options);
     try {
       const result = await page.diagnose();
       if (result.viewport !== width) fail(`${name}: Chrome rendered ${result.viewport}px instead of ${width}px`);
       findings.push(...result.findings.map((finding) => ({ state: name, ...finding })));
-      if (name === `360-${themes[0]}`) baselineText = normalizedVisibleText(await page.html());
-      if (name === "360-js-off" && normalizedVisibleText(await page.html()) !== baselineText)
+      if (name === `360-${themes[0]}`) baselineText = await coreText(page);
+      if (name === "360-js-off" && await coreText(page) !== baselineText)
         findings.push({ state: name, rule: "js-off-text", section: null, component: null, index: null, message: "JS-off page changes document text" });
       if (firstFrame) {
         const first = `${name}-first-frame`;

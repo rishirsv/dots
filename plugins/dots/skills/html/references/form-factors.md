@@ -102,6 +102,11 @@ Before delivery, check whether adjacent tables or repeated component forms make
 the page harder to read. Change a form only when another representation better
 matches the information; visual variety is not a goal by itself.
 
+For reviewable implementation plans, use [plans.md](plans.md) to show user
+behavior first and keep implementation detail expandable. Preserve the overview,
+execution sequence, constraints, and verification. Local feedback controls do
+not replace those details.
+
 ## Generic reading orders
 
 Use these only when the caller and source lack a deliberate order. They arrange

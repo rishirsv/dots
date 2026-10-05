@@ -1,0 +1,37 @@
+<!-- component: walkthrough
+ title: Visual walkthrough
+ type: content
+ when: Show and explain states, screens, or before/after views one at a time.
+ deps: page-shell
+ variants: none
+ gotchas: Selected state is illustrative. All steps stay visible without JS and in print.
+-->
+<style>
+.walkthrough { position: relative; margin-block: 24px; }
+.walkthrough-body { border: 1px solid var(--a12); border-radius: var(--r-card); overflow: hidden; }
+.walkthrough-label { margin: 0 0 16px; font-size: 20px; font-weight: 600; line-height: 1.4; letter-spacing: -.02em; }
+@media(min-width:1200px) { .page[data-layout="article"] .walkthrough-label { position: absolute; top: 12px; left: -200px; width: 176px; margin: 0; font-size: 18px; } }
+.walkthrough-nav { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 20px; border-bottom: 1px solid var(--a12); }
+.walkthrough [hidden] { display: none !important; }
+.walkthrough-nav button { font: inherit; font-size: 14px; min-height: 44px; padding: 8px 12px; background: var(--background); color: var(--foreground); border: 1px solid var(--a20); border-radius: var(--r-card); cursor: pointer; }
+.walkthrough-nav button[aria-pressed="true"] { background: var(--accent); color: var(--background); border-color: var(--accent); }
+.walkthrough-nav button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.walkthrough-panel { padding: 24px; }
+.walkthrough-panel h3 { margin-top: 0; }
+.walkthrough-panel > :last-child { margin-bottom: 0; }
+@media print { .walkthrough-label { position: static !important; width: auto !important; margin-bottom: 16px !important; } .walkthrough-nav { display: none !important; } .walkthrough .walkthrough-panel[hidden] { display: block !important; } }
+</style>
+<script data-component="walkthrough">
+(function () {
+  document.querySelectorAll('.walkthrough[data-component="walkthrough"]').forEach(root => {
+    const nav = root.querySelector('.walkthrough-nav');
+    const buttons = Array.from(nav.querySelectorAll('button'));
+    const panels = Array.from(root.querySelectorAll(':scope > .walkthrough-body > .walkthrough-panel'));
+    const select = index => { panels.forEach((panel, i) => { panel.hidden = i !== index; }); buttons.forEach((button, i) => button.setAttribute('aria-pressed', String(i === index))); };
+    buttons.forEach((button, i) => button.addEventListener('click', () => select(i)));
+    select(0); nav.hidden = false;
+  });
+})();
+</script>
+
+<div data-component="walkthrough" class="walkthrough" id="delivery-flow" aria-label="Delivery states"><h2 class="walkthrough-label">Delivery states</h2><div class="walkthrough-body"><div class="walkthrough-nav" hidden><button type="button" aria-controls="delivery-flow-step-1" data-walkthrough-step="0">1. Queued</button><button type="button" aria-controls="delivery-flow-step-2" data-walkthrough-step="1">2. Sent</button></div><div class="walkthrough-panel" id="delivery-flow-step-1"><h3>Queued</h3><p>The message waits.</p></div><div class="walkthrough-panel" id="delivery-flow-step-2"><h3>Sent</h3><p>The message is delivered.</p></div></div></div>

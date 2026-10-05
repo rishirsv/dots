@@ -17,6 +17,10 @@ small, consistent set of type, color, spacing, radius, and depth values. Add
 exceptions when an element has a distinct role or a visible problem. Preserve
 the meaning and behavior of conventional controls.
 
+Do not use eyebrows: small category, context, or identifier labels above or
+beside headings. Start with the heading and place necessary metadata in the
+body or footer. Keep functional navigation separate from headings.
+
 ## Choose The Work
 
 Read only the references needed for the current decision. For a focused design

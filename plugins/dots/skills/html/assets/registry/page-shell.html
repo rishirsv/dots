@@ -1,13 +1,13 @@
 <!-- component: page-shell
 title: Page shell
 type: block
-when: Every page starts here. The document skeleton: header (context line,
-  title, dek), article column, and footer slot.
+when: Every page starts here. The document skeleton: header (title and dek),
+  article column, and footer slot.
 deps: theme.css (inline verbatim in <style> before component CSS)
 variants: article (default, text with embedded figures) | wide (parallel evidence) | canvas
   (visual references; keep prose in .reading-column).
-gotchas: The context line is a small context line. Do not style it as an uppercase
-  label. Replace slot comments with real content; keep section ids stable —
+gotchas: Start with the title; omit eyebrows. Put document metadata in the footer.
+  Replace slot comments with real content; keep section ids stable —
   the TOC rail targets them. Add page-behavior only when the page needs
   progressive enhancement.
 -->
@@ -24,7 +24,6 @@ gotchas: The context line is a small context line. Do not style it as an upperca
   .page[data-layout="wide"] .reading-column { margin-right: auto; }
   .page[data-layout="canvas"] .reading-column { margin-left: auto; margin-right: auto; }
   .page > header { margin-bottom: var(--section); }
-  .context-line { font-size: 13px; color: var(--text-muted); margin: 0 0 20px; }
   .title-row {
     margin-bottom: 8px;
   }
@@ -41,12 +40,13 @@ gotchas: The context line is a small context line. Do not style it as an upperca
 
 <div data-component="page-shell" class="page" data-layout="article">
   <header class="stagger">
-    <p class="context-line">project / area</p>
     <div class="title-row">
       <h1>Document title</h1>
     </div>
     <p class="dek">One-or-two-sentence dek: what this document is and the single decision or understanding it exists to drive.</p>
   </header>
+
+  <!-- slot: breadcrumbs (optional navigation for hierarchical page sets) -->
 
   <!-- slot: toc-rail (optional, for 6+ sections or non-linear lookup) -->
   <!-- slot: sections — each <section id="..."> with an <h2> -->

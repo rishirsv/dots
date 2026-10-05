@@ -176,7 +176,7 @@ negative tracking that scales with size — the tracking values in the
 front-matter are per-size absolutes, not a ratio. H1 steps down to its mobile
 size at 380px so a long title does not consume the whole first viewport. Body
 is 15px/1.7 at a ~66ch measure inside a 720px article column. Use mono (13px/20px, ligatures off) only for code and aligned figures.
-Use the body font for labels and context lines. Digits that line up vertically always set `font-variant-numeric:
+Use the body font for labels. Digits that line up vertically always set `font-variant-numeric:
 tabular-nums`. Headings get `text-wrap: balance`.
 
 ## Layout
@@ -249,9 +249,10 @@ must render completely and remain static.
 - **Do** limit chips to at most one status indicator per page ("draft").
   **Don't** add label-chips inside callouts or headers — use a bold run-in
   word ("**Note.**").
-- **Do** use one quiet small line of breadcrumb context above the title.
-  **Don't** style it as an uppercase mono eyebrow — no letter-spaced
-  all-caps labels anywhere.
+- **Do** start with the title. **Don't** use eyebrows: small category,
+  breadcrumb, identifier, or context labels above or beside a heading.
+  Keep document metadata in the footer, review IDs in exported feedback,
+  and functional breadcrumb navigation below the introduction.
 - **Do** keep the single accent for links, active states, and the one
   emphasized data point. **Don't** introduce a second bright hue; amber/red
   are for genuine warnings only.

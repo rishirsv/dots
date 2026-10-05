@@ -9,6 +9,9 @@ For a report, deliver one self-contained HTML page by default. If its parts
 need independent URLs, use a linked page set. If the result must be embedded
 elsewhere, deliver a fragment.
 
+Do not use eyebrows above or beside headings. Start with the title; put
+document metadata in the footer and keep review IDs in exported feedback.
+
 Explain substantive material visually by default. Start plans with a diagram
 that shows the phases, dependencies, decisions, or owners. Keep the full steps,
 constraints, and verification after that overview. For reports and explainers,
@@ -17,6 +20,12 @@ views before writing the detailed prose. Read
 [diagrams.md](references/diagrams.md) to select a form and an existing helper.
 Use visuals to explain real information; do not add decorative diagrams to
 meet a quota. Follow explicit format and template constraints.
+
+For reviewable implementation plans or RFCs, read
+[plans.md](references/plans.md). It adds behavior-led reading order, explicit
+decisions, local comments and editable proposals, and one exported response.
+Read [interactivity.md](references/interactivity.md) when readers benefit from
+state walkthroughs, code copying, or searching and sorting evidence tables.
 
 ## Report page loop
 

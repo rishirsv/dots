@@ -1,5 +1,10 @@
 /** One source for helper guidance and the corresponding validation errors. */
 export const rules = Object.freeze({
+  review: { identity: 'id, title, and revision are required; review IDs and field IDs must be unique within the page; place review fields inside a review wrapper.' },
+  reviewPoint: { identity: 'id, title, and a visible summary are required; IDs must be stable lowercase slugs.' },
+  decision: { options: 'use at least two distinct string values with labels and consequences; recommended must match an option and is never preselected.' },
+  editableCode: { source: 'id, title, and non-empty plain-text source are required; edits are feedback and never execute.' },
+  walkthrough: { steps: 'id and label are required; use at least two steps with title and body; all steps remain readable without JavaScript.' },
   page: { title: 'title is required; layout must be article, wide, or canvas; tone must be report or personal.', recommendation: 'at most one recommendation is allowed' },
   section: { id: 'id must be a lowercase slug; title is required.' },
   readingColumn: { children: 'children are required; text and helper output stay at article width.' },

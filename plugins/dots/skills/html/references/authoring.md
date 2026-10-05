@@ -46,7 +46,8 @@ introduction, then show the main relationship in an opening figure when the
 material supports one. Add more views when they answer different questions.
 Read [diagrams.md](diagrams.md) to choose forms and helpers.
 
-For a plan, show phases, dependencies, decision branches, or responsibilities
+For a reviewable plan, read [plans.md](plans.md) and organize by observable
+behavior. For a procedure, show phases, dependencies, decision branches, or responsibilities
 before the detailed steps. Follow the figure with the complete actions,
 owners, constraints, and verification that the source requires. A visual
 overview does not replace those details. If the user requires a fixed order
@@ -61,9 +62,10 @@ use the form that explains it clearly.
 
 - Use `stat-tiles` only for two to five supplied headline measures that matter
   at first glance; omit them when a chart already labels those values.
-- Add a control only when the user requests it or the material requires a
-  choice. If filtering, simulation, or mutable form state is the page's main
-  purpose, use a product-UI workflow.
+- Add a control when it helps the reader inspect or respond to the document.
+  Use [interactivity.md](interactivity.md) for local review, walkthroughs, code
+  copying, and marked tables. Use a product-UI workflow for live data, external
+  actions, authentication, or complex application state.
 - Prefer one visual that explains the claim over several versions of it.
 - Show real chat or text messages with `thread()`, and a sent-versus-suggested
   reply with `exchange()`, rather than quoting them as prose; bubble layout
@@ -78,7 +80,7 @@ use the form that explains it clearly.
    matching fragment source. If a valid template manifest is supplied, inspect
    its retained reference instead. Human outcome galleries can help review
    visual treatment but are not an agent authoring input.
-2. Start from `page-shell`, which supplies the context line, title, short
+2. Start from `page-shell`, which supplies the title, short
    introduction (`dek`), footer, and width mode. Choose
    `article` for text with embedded figures, `wide` for parallel evidence, and `canvas` for
    visual references. Keep canvas prose inside `.reading-column`. Inline

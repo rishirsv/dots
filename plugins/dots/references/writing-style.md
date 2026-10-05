@@ -246,6 +246,10 @@ Use emphasis to help the reader find important information. Do not bold every
 name or add a bold label that merely repeats the following sentence. A short
 label is useful when it identifies the subject and the text adds new information.
 
+Do not use eyebrows: small category, context, or identifier labels above or
+beside headings. Start with the heading. Put necessary metadata in the body or
+footer, and keep functional navigation separate from headings.
+
 Use sentence case for headings. Remove decorative emojis. Prefer straight
 quotes in newly authored Dots instructions; preserve quoted sources and any
 format the user requires.
