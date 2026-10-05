@@ -49,9 +49,23 @@ Keep the body terse: one or two sentences stating the change and reason, then
 brief validation. Include a material risk, limitation, or unverified behavior
 only when it affects review. Preserve required template fields.
 
+Name the relevant check and its observed result, including what behavior it
+verifies. Use before-and-after evidence when the completed task produced it.
+Distinguish observed results from expected behavior. Claim that a check failed
+before the change only when that failure was observed.
+
+Assess who or what the change can affect and whether reverting the code
+restores the previous behavior. Describe material consequences and any
+recovery work a revert would leave, such as restoring data or coordinating
+consumer changes.
+
 Use short paragraphs or bullets. Omit background, walkthroughs, file lists,
 commit history, generic checklists, and agent narration. For a performance
 change, give the primary measurement with its unit as before → after.
+
+When prose alone makes a structural or behavioral change hard to follow,
+add a compact diff sketch, call tree, or Mermaid diagram beside the
+explanation. Include only the context needed to understand the change.
 
 ## Visual Evidence
 
