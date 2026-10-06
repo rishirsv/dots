@@ -79,7 +79,6 @@ It authenticates the tunnel, not model requests. Place the official
 `tunnel-client` at `~/.local/share/dots-tunnel/bin/tunnel-client`.
 
 Register the tunnel in ChatGPT developer mode as the separate Tunnel app.
-The maintainer's app ID is `asdk_app_6aaf4ad66f108191b548c1a6a1012373`.
 The standalone Dots skills plugin has no app binding; installing its source
 neither connects Tunnel nor grants another account access to this Mac.
 For a separate deployment, register your own Tunnel app. Preserve the saved

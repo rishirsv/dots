@@ -40,3 +40,6 @@ dist/
 
 # Local tool state
 .codex/
+
+# Personal planning artifacts stay local.
+/.plans/

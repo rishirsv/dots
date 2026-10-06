@@ -17,15 +17,15 @@ Source repo for Dots plugins, agent workflows, and optional machine config.
   other profiles' choices. Both plugin sync and config sync must enforce it.
   Never uninstall account-wide cloud plugins to fix desktop duplicates.
 - Keep **Dots** as a standalone skills plugin and **Tunnel** as a separate app.
-  Dots manifests must not bind Tunnel through `.app.json` or `apps`. The Tunnel
-  app ID remains `asdk_app_6aaf4ad66f108191b548c1a6a1012373`; preserve its service,
-  connection, and authorized folders. Do not put Dots skills back into its
+  Dots manifests must not bind Tunnel through `.app.json` or `apps`. Preserve
+  the existing Tunnel app, its service, connection, and authorized folders. Do not put Dots skills back into its
   app-backed canonical plugin. Keep the tools-only Tunnel plugin enabled
   independently of the Dots/Drafts skill-source policies.
-- For cloud propagation, follow [the cloud release procedure](INSTALL.md#release-cloud-plugins).
+- For cloud propagation, follow [the cloud release procedure](docs/maintainers/cloud-releases.md).
   Use Plugin Creator source and archive update tools before browser automation.
-  The standalone personal Dots backend ID is
-  `plugins_6ac41e50a2588191b45ece5c4a5ed1c3`. Read its current release and pass that
+  Resolve the existing plugin's exact backend ID from installation metadata,
+  authorized discovery, or the maintainer's local
+  `~/.config/dots/cloud-plugins.json`. Read its current release and pass that
   release as `expected_release_id`; preserve its identity, scope, and audience.
   Never create another Dots plugin during ordinary updates. Archive updates
   overlay files and cannot delete them: report retired files that remain.
