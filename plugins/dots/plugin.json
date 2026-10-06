@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "dots",
-  "version": "0.2.244",
+  "version": "0.2.245",
   "description": "Focused workflows for planning, building, reviewing, and shipping software.",
   "author": {
     "name": "Rishi"
@@ -25,8 +25,8 @@
         ],
         "defaultPrompt": "Use Dots to choose the smallest workflow for this task and carry it through.",
         "brandColor": "#FF4B0A",
-        "composerIcon": "assets/icon.png",
-        "logo": "assets/logo.png",
+        "composerIcon": "./assets/icon.png",
+        "logo": "./assets/logo.png",
         "screenshots": []
       }
     }

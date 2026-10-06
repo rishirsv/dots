@@ -98,7 +98,11 @@ Use Plugin Creator's supported tools without ChatGPT web login:
    identify retired files still present rather than claiming ZIP omission
    removed them.
 4. Read back the returned release. Compare the complete expected skill inventory,
-   changed content, and metadata with the source. Installing or publishing the
+   changed content, and metadata with the source. Open the cloud listing and
+   desktop plugin card to confirm the logo and composer icon render. Packaged
+   image files alone do not prove that the listing uses them; report branding
+   verification as pending if either surface shows a fallback icon.
+   Installing or publishing the
    skills does not start Tunnel or authorize folders.
 5. Refresh the desktop plugin inventory and verify a fresh loader uses the
    selected source without duplicates. The current `verify-codex-skills.py`
