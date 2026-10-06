@@ -15,7 +15,12 @@
 .doc-tools :is(button,input):focus-visible, .doc-copy:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .doc-tools output { font-size: 13px; color: var(--text-muted); }
 .code-panel { position: relative; }
-.doc-copy { display: block; margin: 8px 12px 0 auto; }
+.code-panel .doc-copy { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 44px; min-height: 44px; padding: 0; margin: 0; border: 0; background: transparent; color: var(--code-ink); }
+.doc-copy svg { width: 18px; height: 18px; }
+.code-panel .doc-copy:hover { background: var(--a12); }
+.code-panel:has(.doc-copy) pre, .code-panel:has(.doc-copy) .code-head { padding-right: 64px; }
+.doc-copy-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.disclosure-content > .code-panel:last-child { margin-bottom: 0; }
 .doc-sort { border: 0; background: none; color: inherit; font: inherit; font-weight: inherit; cursor: pointer; padding: 8px 4px; min-height: 44px; }
 .doc-sort:focus-visible { outline: 3px solid var(--accent); }
 [data-searchable] tr[hidden] { display: none !important; }
@@ -31,11 +36,17 @@
   function button(label, className, action) { const el = document.createElement('button'); el.type = 'button'; el.setAttribute('data-document-control',''); el.className = className; el.textContent = label; el.addEventListener('click', action); return el; }
   document.querySelectorAll('.code-panel').forEach(panel => {
     const code = panel.querySelector('pre code'); if (!code) return;
-    panel.prepend(button('Copy code', 'doc-copy', async event => {
-      const target = event.currentTarget;
-      try { await navigator.clipboard.writeText(code.textContent); target.textContent = 'Copied'; }
-      catch { const range = document.createRange(); range.selectNodeContents(code); const selection = getSelection(); selection.removeAllRanges(); selection.addRange(range); target.textContent = 'Selected — press Copy'; }
-    }));
+    const icons = {
+      copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>',
+      done: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>'
+    };
+    const status = document.createElement('span'); status.className = 'doc-copy-status'; status.setAttribute('role','status'); status.setAttribute('data-document-control','');
+    const copy = button('', 'doc-copy', async () => {
+      try { await navigator.clipboard.writeText(code.textContent); copy.innerHTML = icons.done; copy.title = 'Copied'; status.textContent = 'Code copied.'; }
+      catch { const range = document.createRange(); range.selectNodeContents(code); const selection = getSelection(); selection.removeAllRanges(); selection.addRange(range); copy.title = 'Code selected — press Copy'; status.textContent = 'Code selected. Press Copy on your keyboard.'; }
+    });
+    copy.setAttribute('aria-label','Copy code'); copy.title = 'Copy code'; copy.innerHTML = icons.copy;
+    panel.prepend(copy, status);
   });
   const details = Array.from(document.querySelectorAll('details.disclosure, details.disclosure-plain'));
   if (details.length > 1) {

@@ -52,7 +52,7 @@ typography:
     lineHeight: 20px
 spacing:
   unit: 4px
-  article: 720px
+  article: 900px
   wide: 1040px
   canvas: 1440px
   section: 48px
@@ -175,7 +175,7 @@ the tone. Headings are semibold with
 negative tracking that scales with size — the tracking values in the
 front-matter are per-size absolutes, not a ratio. H1 steps down to its mobile
 size at 380px so a long title does not consume the whole first viewport. Body
-is 15px/1.7 at a ~66ch measure inside a 720px article column. Use mono (13px/20px, ligatures off) only for code and aligned figures.
+is 15px/1.7 at a readable measure inside a 900px article column. Use mono (13px/20px, ligatures off) only for code and aligned figures.
 Use the body font for labels. Digits that line up vertically always set `font-variant-numeric:
 tabular-nums`. Headings get `text-wrap: balance`.
 
@@ -183,7 +183,7 @@ tabular-nums`. Headings get `text-wrap: balance`.
 
 Pages use one of three maximum widths on the same flat background:
 
-- `article` (`spacing.article`, 720px) for explanations with text and figures, status,
+- `article` (`spacing.article`, 900px) for explanations with text and figures, status,
   incidents, and plans.
 - `wide` (`spacing.wide`, 1040px) for comparisons, reviews, file maps, and
   other pages that need evidence shown side by side.
@@ -203,7 +203,13 @@ block; do not set structural spacing on the header's last child. For parallel gr
 
 ## Elevation & Depth
 
-The visual style is flat. Hierarchy comes from spacing, type, ink contrast, and
+The visual style is flat. Keep code and diffs wrapped within their panels, including long identifiers.
+Visual wrapping must preserve the original text when copied. Use a small copy
+icon with an accessible name and visible focus. Keep one surface per exhibit:
+use flat disclosures and spacing inside a review point instead of bordered
+cards inside bordered cards.
+
+Hierarchy comes from spacing, type, ink contrast, and
 hairline rules rather than shadows or layered surfaces. A component may use a
 faint semantic tint when meaning requires it, but it never creates a second
 page background or simulated elevation.

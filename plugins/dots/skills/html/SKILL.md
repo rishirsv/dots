@@ -5,9 +5,18 @@ description: "Create or edit self-contained HTML reports, linked page sets, frag
 
 # HTML
 
+For every HTML task, read [Dots writing style](../../references/writing-style.md)
+before drafting. Apply it to the visible prose and review that prose again before
+delivery. Preserve quotations, code, required formats, and source uncertainty.
+
 For a report, deliver one self-contained HTML page by default. If its parts
 need independent URLs, use a linked page set. If the result must be embedded
 elsewhere, deliver a fragment.
+
+Use the shared 900px article layout for ordinary documents. Wrap all code and
+diffs, including long identifiers, so readers do not scroll sideways. Keep code
+copying exact, use an accessible copy icon, and avoid stacked bordered containers
+around technical detail.
 
 Do not use eyebrows above or beside headings. Start with the title; put
 document metadata in the footer and keep review IDs in exported feedback.
@@ -24,6 +33,9 @@ meet a quota. Follow explicit format and template constraints.
 For reviewable implementation plans or RFCs, read
 [plans.md](references/plans.md). It adds behavior-led reading order, explicit
 decisions, local comments and editable proposals, and one exported response.
+For a pull request or implemented change, read
+[pr-walkthroughs.md](references/pr-walkthroughs.md). It adds a behavior-led
+walkthrough, exact source evidence, complete file coverage, and local review notes.
 Read [interactivity.md](references/interactivity.md) when readers benefit from
 state walkthroughs, code copying, or searching and sorting evidence tables.
 

@@ -1,0 +1,1342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find a building block. Keep the source.</title>
+<style>
+/* GENERATED from DESIGN.md by scripts/generate-theme.mjs — do not edit.
+ * Tokens + base document styles for dots HTML artifacts. Inline this file
+ * verbatim inside <style> in every artifact. */
+
+:root {
+  --background: #fbfbfa;
+  --foreground: #0d0d0d;
+  --accent: #1f5eff;
+  --accent-deep: #12379e;
+  --warning-ink: #6b4c00;
+  --warning-line: rgba(180,130,0,0.35);
+  --warning-bg: rgba(255,178,0,0.06);
+  --danger-ink: #8c1d18;
+  --danger-line: rgba(200,60,50,0.35);
+  --danger-bg: rgba(220,70,60,0.05);
+  --code-surface: #0d0d0d;
+  --code-ink: #ededed;
+  --a4: rgba(13, 13, 13, 0.04);
+  --a8: rgba(13, 13, 13, 0.08);
+  --a12: rgba(13, 13, 13, 0.12);
+  --a20: rgba(13, 13, 13, 0.20);
+  --a40: rgba(13, 13, 13, 0.40);
+  --a55: rgba(13, 13, 13, 0.55);
+  --a60: rgba(13, 13, 13, 0.60);
+  --a70: rgba(13, 13, 13, 0.70);
+  --text-muted: var(--a60);
+  --font-sans: -apple-system, Helvetica Neue, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace;
+  --font-display: -apple-system, Helvetica Neue, Arial, sans-serif;
+  --display-tracking: 1;
+  --article: 900px;
+  --wide: 1040px;
+  --canvas: 1440px;
+  --section: 48px;
+  --block: 16px;
+  --r-card: 6px;
+  --r-code: 6px;
+  --r-inline: 4px;
+  --r-pill: 6px;
+  --r-bubble: 18px;
+  --dur-fast: 150ms;
+  --dur-reveal: 400ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --stagger: 60ms;
+  --chart-emphasis: var(--accent);
+  --chart-value-emphasis: var(--accent-deep);
+  --chart-pos: var(--a40);
+  --chart-neg: var(--a20);
+  --chart-mark: var(--a20);
+  --chart-track: var(--a4);
+  --chart-grid: var(--a12);
+  --chart-label: var(--text-muted);
+  --chart-value: var(--text-muted);
+}
+
+[data-theme="dark"] {
+  --background: #0f0f0e;
+  --foreground: #f5f5f4;
+  --accent: #6f94ff;
+  --accent-deep: #b7c9ff;
+  --warning-ink: #f2c14e;
+  --warning-line: rgba(255,193,77,0.35);
+  --warning-bg: rgba(255,193,77,0.08);
+  --danger-ink: #ff8a80;
+  --danger-line: rgba(255,120,110,0.35);
+  --danger-bg: rgba(255,120,110,0.07);
+  --code-surface: #161615;
+  --code-ink: #ededed;
+  --a4: rgba(245, 245, 244, 0.04);
+  --a8: rgba(245, 245, 244, 0.08);
+  --a12: rgba(245, 245, 244, 0.12);
+  --a20: rgba(245, 245, 244, 0.20);
+  --a40: rgba(245, 245, 244, 0.40);
+  --a55: rgba(245, 245, 244, 0.55);
+  --a60: rgba(245, 245, 244, 0.60);
+  --a70: rgba(245, 245, 244, 0.70);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --background: #0f0f0e;
+    --foreground: #f5f5f4;
+    --accent: #6f94ff;
+    --accent-deep: #b7c9ff;
+    --warning-ink: #f2c14e;
+    --warning-line: rgba(255,193,77,0.35);
+    --warning-bg: rgba(255,193,77,0.08);
+    --danger-ink: #ff8a80;
+    --danger-line: rgba(255,120,110,0.35);
+    --danger-bg: rgba(255,120,110,0.07);
+    --code-surface: #161615;
+    --code-ink: #ededed;
+    --a4: rgba(245, 245, 244, 0.04);
+    --a8: rgba(245, 245, 244, 0.08);
+    --a12: rgba(245, 245, 244, 0.12);
+    --a20: rgba(245, 245, 244, 0.20);
+    --a40: rgba(245, 245, 244, 0.40);
+    --a55: rgba(245, 245, 244, 0.55);
+    --a60: rgba(245, 245, 244, 0.60);
+    --a70: rgba(245, 245, 244, 0.70);
+  }
+}
+
+/* tone: personal */
+[data-tone="personal"] {
+  --background: #f7f2ec;
+  --foreground: #2b2320;
+  --accent: #0866d6;
+  --accent-deep: #0a4fa3;
+  --warning-ink: #6b4c00;
+  --warning-line: rgba(180,130,0,0.35);
+  --warning-bg: rgba(255,178,0,0.06);
+  --danger-ink: #9c3148;
+  --danger-line: rgba(180,72,93,0.30);
+  --danger-bg: rgba(180,72,93,0.06);
+  --code-surface: #0d0d0d;
+  --code-ink: #ededed;
+  --a4: rgba(43, 35, 32, 0.04);
+  --a8: rgba(43, 35, 32, 0.08);
+  --a12: rgba(43, 35, 32, 0.12);
+  --a20: rgba(43, 35, 32, 0.20);
+  --a40: rgba(43, 35, 32, 0.40);
+  --a55: rgba(43, 35, 32, 0.55);
+  --a60: rgba(43, 35, 32, 0.60);
+  --a70: rgba(43, 35, 32, 0.70);
+  --font-display: New York, Iowan Old Style, ui-serif, Georgia, serif;
+  --display-tracking: 0.35;
+  --r-card: 14px;
+  --text-muted: var(--a70);
+}
+
+[data-tone="personal"][data-theme="dark"] {
+  --background: #171412;
+  --foreground: #f2ebe4;
+  --accent: #4ea1ff;
+  --accent-deep: #a9d0ff;
+  --warning-ink: #f2c14e;
+  --warning-line: rgba(255,193,77,0.35);
+  --warning-bg: rgba(255,193,77,0.08);
+  --danger-ink: #ea8a9b;
+  --danger-line: rgba(234,138,155,0.30);
+  --danger-bg: rgba(234,138,155,0.08);
+  --code-surface: #161615;
+  --code-ink: #ededed;
+  --a4: rgba(242, 235, 228, 0.04);
+  --a8: rgba(242, 235, 228, 0.08);
+  --a12: rgba(242, 235, 228, 0.12);
+  --a20: rgba(242, 235, 228, 0.20);
+  --a40: rgba(242, 235, 228, 0.40);
+  --a55: rgba(242, 235, 228, 0.55);
+  --a60: rgba(242, 235, 228, 0.60);
+  --a70: rgba(242, 235, 228, 0.70);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-tone="personal"]:not([data-theme]) {
+    --background: #171412;
+    --foreground: #f2ebe4;
+    --accent: #4ea1ff;
+    --accent-deep: #a9d0ff;
+    --warning-ink: #f2c14e;
+    --warning-line: rgba(255,193,77,0.35);
+    --warning-bg: rgba(255,193,77,0.08);
+    --danger-ink: #ea8a9b;
+    --danger-line: rgba(234,138,155,0.30);
+    --danger-bg: rgba(234,138,155,0.08);
+    --code-surface: #161615;
+    --code-ink: #ededed;
+    --a4: rgba(242, 235, 228, 0.04);
+    --a8: rgba(242, 235, 228, 0.08);
+    --a12: rgba(242, 235, 228, 0.12);
+    --a20: rgba(242, 235, 228, 0.20);
+    --a40: rgba(242, 235, 228, 0.40);
+    --a55: rgba(242, 235, 228, 0.55);
+    --a60: rgba(242, 235, 228, 0.60);
+    --a70: rgba(242, 235, 228, 0.70);
+  }
+}
+
+/* ---------- base ---------- */
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; overflow-x: clip; }
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-inline);
+}
+
+::selection { background: var(--a12); }
+
+h1 {
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 48px;
+  letter-spacing: calc(-2.4px * var(--display-tracking));
+  font-weight: 600;
+  margin: 0;
+  text-wrap: balance;
+}
+
+@media (max-width: 380px) {
+  h1 {
+    font-size: 32px;
+    line-height: 38px;
+    letter-spacing: calc(-1.5px * var(--display-tracking));
+  }
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: calc(-0.96px * var(--display-tracking));
+  font-weight: 600;
+  margin: 0 0 16px;
+  text-wrap: balance;
+}
+
+h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: calc(-0.32px * var(--display-tracking));
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+p { margin: 0 0 var(--block); }
+p:last-child { margin-bottom: 0; }
+
+section { margin-bottom: var(--section); }
+
+code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--a4);
+  border-radius: var(--r-inline);
+  padding: 1px 5px;
+}
+
+pre { white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; }
+pre code { background: none; padding: 0; white-space: inherit; overflow-wrap: inherit; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  border-top: 1px solid var(--a20);
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--a12);
+  vertical-align: top;
+}
+
+thead th {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
+
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- motion: choreographed moments only ---------- */
+/* One-time load stagger + one-time scroll reveals. Elements render complete
+ * and static by default; page-behavior opts them in only when JS
+ * runs and reduced-motion is off. Nothing loops; nothing is ambient. */
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js-motion .stagger > * {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: rise var(--dur-reveal) var(--ease) forwards;
+  }
+  html.js-motion .stagger > *:nth-child(1) { animation-delay: 0ms; }
+  html.js-motion .stagger > *:nth-child(2) { animation-delay: var(--stagger); }
+  html.js-motion .stagger > *:nth-child(3) { animation-delay: calc(var(--stagger) * 2); }
+  html.js-motion .stagger > *:nth-child(4) { animation-delay: calc(var(--stagger) * 3); }
+  html.js-motion .stagger > *:nth-child(5) { animation-delay: calc(var(--stagger) * 4); }
+
+  html.js-motion .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity var(--dur-reveal) var(--ease), transform var(--dur-reveal) var(--ease);
+  }
+  html.js-motion .reveal.is-in { opacity: 1; transform: none; }
+
+  html.js-motion .reveal .bar-fill {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform calc(var(--dur-reveal) * 1.5) var(--ease) 120ms;
+  }
+  html.js-motion .reveal.is-in .bar-fill { transform: scaleX(1); }
+
+  a, summary, button { transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease); }
+}
+
+@keyframes rise {
+  to { opacity: 1; transform: none; }
+}
+
+.page {
+    max-width: var(--article);
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+  .page[data-layout="wide"] { max-width: var(--wide); }
+  .page[data-layout="canvas"] { max-width: var(--canvas); }
+  .reading-column { max-width: var(--article); }
+  .page[data-layout="article"] .reading-column,
+  .page[data-layout="wide"] .reading-column { margin-right: auto; }
+  .page[data-layout="canvas"] .reading-column { margin-left: auto; margin-right: auto; }
+  .page > header { margin-bottom: var(--section); }
+  .title-row {
+    margin-bottom: 8px;
+  }
+  .page section > p { max-width: 75ch; }
+  .dek { font-size: 16px; color: var(--text-muted); margin: 0; max-width: 62ch; }
+  footer.sources {
+    margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--a12);
+    font-size: 12px; color: var(--text-muted); line-height: 1.7;
+  }
+  footer.sources a { color: var(--text-muted); }
+  @media (max-width: 680px) {
+    .page { padding: 40px 24px 72px; }
+  }
+
+.doc-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-block: 12px; }
+.doc-tools button, .doc-copy { font: inherit; font-size: 13px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--a20); border-radius: var(--r-card); background: var(--background); color: var(--foreground); cursor: pointer; }
+.doc-tools input, .doc-tools select { min-height: 44px; width: min(100%, 300px); box-sizing: border-box; font: inherit; font-size: 15px; padding: 8px 12px; background: var(--background); color: var(--foreground); border: 1px solid var(--a20); border-radius: var(--r-card); }
+.doc-tools label { font-size: 14px; }
+.doc-tools :is(button,input):focus-visible, .doc-copy:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.doc-tools output { font-size: 13px; color: var(--text-muted); }
+.code-panel { position: relative; }
+.code-panel .doc-copy { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 44px; min-height: 44px; padding: 0; margin: 0; border: 0; background: transparent; color: var(--code-ink); }
+.doc-copy svg { width: 18px; height: 18px; }
+.code-panel .doc-copy:hover { background: var(--a12); }
+.code-panel:has(.doc-copy) pre, .code-panel:has(.doc-copy) .code-head { padding-right: 64px; }
+.doc-copy-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.disclosure-content > .code-panel:last-child { margin-bottom: 0; }
+.doc-sort { border: 0; background: none; color: inherit; font: inherit; font-weight: inherit; cursor: pointer; padding: 8px 4px; min-height: 44px; }
+.doc-sort:focus-visible { outline: 3px solid var(--accent); }
+[data-searchable] tr[hidden] { display: none !important; }
+.doc-table-sort { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; }
+.doc-table-sort select { display: block; }
+@media(min-width:641px) { .doc-table-sort { display: none; } }
+@media(max-width:640px) { .table-stack .doc-sort { display: none; } }
+@media print { .doc-tools,.doc-copy { display: none !important; } [data-searchable] tr[hidden] { display: table-row !important; } }
+
+.walkthrough { position: relative; margin-block: 24px; }
+.walkthrough-body { border: 1px solid var(--a12); border-radius: var(--r-card); overflow: hidden; }
+.walkthrough-label { margin: 0 0 16px; font-size: 20px; font-weight: 600; line-height: 1.4; letter-spacing: -.02em; }
+@media(min-width:1320px) { .page[data-layout="article"] .walkthrough-label { position: absolute; top: 12px; left: -200px; width: 176px; margin: 0; font-size: 18px; } }
+.walkthrough-nav { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 20px; border-bottom: 1px solid var(--a12); }
+.walkthrough [hidden] { display: none !important; }
+.walkthrough-nav button { font: inherit; font-size: 14px; min-height: 44px; padding: 8px 12px; background: var(--background); color: var(--foreground); border: 1px solid var(--a20); border-radius: var(--r-card); cursor: pointer; }
+.walkthrough-nav button[aria-pressed="true"] { background: var(--accent); color: var(--background); border-color: var(--accent); }
+.walkthrough-nav button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.walkthrough-panel { padding: 24px; }
+.walkthrough-panel h3 { margin-top: 0; }
+.walkthrough-panel > :last-child { margin-bottom: 0; }
+@media print { .walkthrough-label { position: static !important; width: auto !important; margin-bottom: 16px !important; } .walkthrough-nav { display: none !important; } .walkthrough .walkthrough-panel[hidden] { display: block !important; } }
+
+.callout {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .callout p { margin: 0; }
+  .callout p + p { margin-top: 6px; }
+  .callout strong { font-weight: 700; }
+  .callout.warn {
+    background: var(--warning-bg);
+    border-color: var(--warning-line);
+    color: var(--warning-ink);
+  }
+  .callout.danger {
+    background: var(--danger-bg);
+    border-color: var(--danger-line);
+    color: var(--danger-ink);
+  }
+  .callout-stack { display: flex; flex-direction: column; gap: 10px; }
+
+.plan-review { --review-gap: 24px; }
+.plan-review [hidden] { display: none !important; }
+.review-toolbar { position: fixed; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); right: max(16px, calc((100vw - var(--article)) / 2 + 24px)); z-index: 5; display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; max-width: calc(100vw - 32px); margin: 0; }
+.review-progress { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.plan-review .review-toolbar button { font-size: 13px; padding: 8px 12px; min-height: 44px; }
+.review-toolbar [data-review-response] { display: flex; align-items: center; gap: 8px; }
+.review-toolbar [data-review-count] { font-size: 11px; line-height: 1; padding: 4px 6px; border-radius: var(--r-inline); background: var(--a12); }
+.plan-review button, .plan-review select { font: inherit; font-size: 14px; color: var(--foreground); background: var(--background); border: 1px solid var(--a20); border-radius: var(--r-card); padding: 10px 14px; min-height: 44px; cursor: pointer; }
+.plan-review button:hover { background: var(--a4); }
+.plan-review [data-review-response], .plan-review [data-review-copy] { background: var(--accent); border-color: var(--accent); color: var(--background); }
+.plan-review :is(button,input,textarea,select,summary):focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.plan-review label { display: block; font-size: 14px; font-weight: 500; }
+.plan-review textarea, .plan-review select { display: block; width: 100%; margin-block: 8px 16px; box-sizing: border-box; }
+.plan-review textarea { padding: 12px; border: 1px solid var(--a20); border-radius: var(--r-card); background: var(--background); color: var(--foreground); font: inherit; font-size: 15px; line-height: 1.5; resize: vertical; }
+.review-save { font-size: 13px; color: var(--text-muted); min-height: 1em; }
+.review-point { margin-block: var(--review-gap); padding: 24px 0; border: 0; border-top: 1px solid var(--a12); scroll-margin-top: 100px; }
+.review-point > h3 { font-size: 24px; letter-spacing: -.03em; margin: 0; }
+.review-point > p { max-width: 75ch; }
+.review-summary { font-size: 18px; line-height: 1.5; max-width: 62ch; }
+.review-notes { border-top: 1px solid var(--a12); padding-top: 12px; margin-top: 24px; }
+.review-notes summary { cursor: pointer; font-size: 14px; min-height: 32px; }
+.review-notes[open] summary { margin-bottom: 12px; }
+.review-decision { min-width: 0; padding: 20px; border: 1px solid var(--accent); border-radius: var(--r-card); background: var(--a4); margin-block: 24px; scroll-margin-top: 110px; }
+.review-decision legend { font-size: 19px; font-weight: 600; padding-inline: 6px; }
+.decision-state { color: var(--text-muted); font-size: 13px; margin-top: 0; }
+.decision-options { display: grid; gap: 10px; }
+.plan-review .decision-option { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1px solid var(--a12); border-radius: var(--r-card); background: var(--background); cursor: pointer; }
+.decision-option:has(input:checked) { border-color: var(--accent); background: var(--a4); }
+.decision-option input { margin: 3px 0 0; width: 20px; height: 20px; accent-color: var(--accent); flex-shrink: 0; }
+.decision-option small { display: block; font-size: 14px; font-weight: 400; line-height: 1.5; margin-top: 6px; color: var(--text-muted); }
+.decision-recommended { display: inline-block; font-size: 11px; font-weight: 600; color: var(--accent-deep); margin-left: 10px; }
+.decision-note { margin-top: 16px; }
+.review-code { margin-block: 24px; }
+.review-code textarea[data-review-field$=":code"] { font: 13px/1.7 var(--font-mono); background: var(--code-surface); color: var(--code-ink); white-space: pre-wrap; overflow-wrap: anywhere; }
+.review-dialog { background: var(--background); color: var(--foreground); border: 1px solid var(--a20); border-radius: var(--r-card); width: min(760px, calc(100vw - 48px)); max-height: 85vh; box-sizing: border-box; padding: 24px; }
+.review-dialog::backdrop { background: var(--a55); }
+.review-dialog h2 { margin-top: 16px; }
+.review-dialog form { display: flex; justify-content: flex-end; }
+.review-dialog textarea { font: 13px/1.6 var(--font-mono); }
+.review-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+@media(max-width:640px) { .review-point { padding: 20px 0; } .review-toolbar { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); } .review-decision { padding: 12px; } .review-point > h3 { font-size: 21px; } }
+@media print { .review-toolbar,.review-save,.review-notes,.review-dialog,.decision-note { display: none !important; } .review-point { break-inside: auto; } }
+
+.disclosure {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    margin-bottom: var(--block);
+  }
+  .disclosure summary {
+    cursor: pointer;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    list-style: none;
+  }
+  .disclosure summary::-webkit-details-marker { display: none; }
+  .disclosure summary:hover { background: var(--a4); }
+  .disclosure[open] summary { border-bottom: 1px solid var(--a12); }
+  .disclosure-content {
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .review-point .disclosure, .disclosure .disclosure { border: 0; border-radius: 0; margin-bottom: 4px; }
+  .review-point .disclosure summary, .disclosure .disclosure summary { padding: 12px 0; }
+  .review-point .disclosure[open] summary, .disclosure .disclosure[open] summary { border-bottom: 0; }
+  .review-point .disclosure-content, .disclosure .disclosure-content { padding: 8px 0 16px; }
+  .disclosure summary::after { content: ""; display: inline-block; width: 7px; height: 7px; margin-left: 10px; border-right: 1.5px solid var(--text-muted); border-bottom: 1.5px solid var(--text-muted); transform: translateY(-2px) rotate(45deg); }
+  .disclosure[open] > summary::after { transform: translateY(2px) rotate(225deg); }
+  @media (prefers-reduced-motion: no-preference) {
+    .disclosure[open] .disclosure-content {
+      animation: disclosure-in var(--dur-fast) var(--ease);
+    }
+  }
+  @keyframes disclosure-in {
+    from { opacity: 0; transform: translateY(-2px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .disclosure-plain {
+    border: none;
+    margin-bottom: 8px;
+  }
+  .disclosure-plain summary {
+    padding: 4px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    list-style: none;
+  }
+  .disclosure-plain summary::-webkit-details-marker { display: none; }
+  .disclosure-plain summary:hover { color: var(--foreground); }
+  .disclosure-plain .disclosure-content { padding: 8px 0 0; font-size: 13px; }
+
+.code-panel {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-code);
+    overflow: hidden;
+    margin-bottom: var(--section);
+  }
+  .code-head {
+    background: var(--code-surface);
+    color: var(--code-ink);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-transform: lowercase;
+    opacity: 0.6;
+  }
+  .code-panel pre {
+    margin: 0;
+    background: var(--code-surface);
+    color: var(--code-ink);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 20px;
+    padding: 16px 20px;
+    overflow-wrap: anywhere;
+    font-feature-settings: "liga" 0;
+    white-space: pre-wrap;
+  }
+  /* code-surface-scoped tints: literal colors, not page tokens — this
+     background never flips with the page theme, so these can't be a4/a55 etc. */
+  .tok-k { color: #8ab4ff; }
+  .tok-s { color: #b7c9ff; }
+  .tok-c { color: #6e7681; }
+  .tok-n { color: #ffb200; }
+
+.diff-block {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-code);
+    overflow: hidden;
+    margin-bottom: var(--section);
+  }
+  .diff-head {
+    background: var(--code-surface);
+    color: var(--code-ink);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-transform: lowercase;
+    opacity: 0.6;
+  }
+  .diff-block pre {
+    margin: 0;
+    background: var(--code-surface);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .diff-line {
+    display: block;
+    position: relative;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 20px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    padding: 0 20px 0 44px;
+  }
+  .diff-line:has(> .diff-line-number) { padding-left: 90px; }
+  .diff-line-number + .diff-gutter { left: 66px; }
+  .diff-line-number {
+    position: absolute;
+    left: 20px;
+    top: 0;
+    display: inline-block;
+    width: 34px;
+    flex: none;
+    color: rgba(237, 237, 237, 0.38);
+    text-align: right;
+    padding-right: 12px;
+    user-select: none;
+  }
+  .diff-gutter {
+    position: absolute;
+    left: 20px;
+    top: 0;
+    display: inline-block;
+    width: 16px;
+    flex: none;
+    color: var(--text-muted);
+    color: rgba(237, 237, 237, 0.35);
+  }
+  .diff-line.ctx { color: var(--code-ink); }
+  .diff-line.add {
+    background: rgba(80, 200, 120, 0.12);
+    color: var(--code-ink);
+  }
+  .diff-line.add .diff-gutter { color: rgba(120, 220, 150, 0.9); }
+  .diff-line.del {
+    background: rgba(220, 90, 80, 0.12);
+    color: var(--code-ink);
+  }
+  .diff-line.del .diff-gutter { color: rgba(240, 130, 120, 0.9); }
+  .diff-annotation {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 280px);
+    border-top: 1px solid var(--a12);
+    background: var(--background);
+  }
+  .diff-annotation-code {
+    min-width: 0;
+    background: var(--code-surface);
+  }
+  .diff-note {
+    padding: 16px 20px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .diff-note strong { color: var(--foreground); }
+  @media (max-width: 680px) {
+    .diff-annotation { grid-template-columns: 1fr; }
+    .diff-note { border-top: 1px solid var(--a12); }
+  }
+
+.table-scroll {
+    overflow-x: auto;
+    margin-bottom: var(--section);
+  }
+  .cell-label {
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--foreground);
+  }
+  .col-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 680px) {
+    .table-stack { overflow: visible; }
+    .table-stack table,
+    .table-stack tbody,
+    .table-stack tr,
+    .table-stack td { display: block; width: 100%; }
+    .table-stack thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .table-stack tr {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--a20);
+    }
+    .table-stack tr:first-child { border-top: 1px solid var(--a20); }
+    .table-stack td {
+      display: grid;
+      grid-template-columns: minmax(88px, 0.42fr) minmax(0, 1fr);
+      gap: 12px;
+      padding: 5px 4px;
+      border: 0;
+      text-align: left;
+      white-space: normal;
+    }
+    .table-stack td::before {
+      content: attr(data-label);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+</style>
+</head>
+<body>
+<div data-component="page-shell" class="page" data-layout="article">
+  <header class="stagger">
+    <div class="title-row">
+      <h1>Find a building block. Keep the source.</h1>
+    </div>
+    <p class="dek">Dots PR #65 helps HTML authors choose an existing block, carry editable source inside a finished page, and restore that source for another edit.</p>
+  </header>
+
+  <style>
+      .pr-pair { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+      .pr-pair > div { min-width:0; }
+      #coverage td a, #proof td, .sources { overflow-wrap:anywhere; }
+      .pr-pair h4 { margin:0 0 12px; font-size:20px; letter-spacing:-.5px; }
+      .pr-pair p { margin:12px 0 0; font-size:14px; }
+      .pr-command { padding:16px; margin:0; border-radius:var(--r-card); background:var(--code-surface); color:var(--code-ink); font:13px/1.7 var(--font-mono); white-space:pre-wrap; overflow-wrap:anywhere; }
+      .pr-bundle { display:grid; gap:8px; margin-block:16px; }
+      .pr-bundle > div { border:1px solid var(--a20); padding:16px; border-radius:var(--r-card); }
+      .pr-bundle > .pr-portable { border-color:var(--accent); background:var(--a4); }
+      .pr-bundle strong { display:block; font-size:20px; letter-spacing:-.6px; }
+      .pr-bundle span { display:block; color:var(--text-muted); margin-top:4px; }
+      .pr-bundle .pr-arrow { padding:0; border:0; font-size:14px; color:var(--accent-deep); }
+      .pr-tiles { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--a20); border:1px solid var(--a20); border-radius:var(--r-card); overflow:hidden; }
+      .pr-tiles div { background:var(--background); padding:20px 12px; font-size:22px; font-weight:600; letter-spacing:-.6px; }
+      .pr-tiles-after > :last-child { grid-column:span 2; color:var(--accent-deep); background:var(--a4); }
+      @media(max-width:640px) { .pr-pair { grid-template-columns:1fr; gap:24px; } }
+      @media print { .pr-command { white-space:pre-wrap; } }
+    </style><div data-component="walkthrough" class="walkthrough" id="author-experience" aria-label="What changes for the author"><h2 class="walkthrough-label">What changes for the author</h2><div class="walkthrough-body"><div class="walkthrough-nav" hidden><button type="button" aria-controls="author-experience-step-1" data-walkthrough-step="0">1. Choose a block</button><button type="button" aria-controls="author-experience-step-2" data-walkthrough-step="1">2. Restore source</button><button type="button" aria-controls="author-experience-step-3" data-walkthrough-step="2">3. Fill the last row</button></div><div class="walkthrough-panel" id="author-experience-step-1"><h3>Choose a block</h3><div class="pr-pair"><div><h4>Before</h4><pre class="pr-command"><code>Open the gallery
+Read helper source
+Find the call signature</code></pre><p>The author finds examples and signatures by reading the existing assets and code.</p></div><div><h4>After</h4><pre class="pr-command"><code>node scripts/catalog.mjs --list
+node scripts/catalog.mjs --help code</code></pre><p>The author can ask for a helper's signature, rules, and maintained example.</p></div></div><p>This schematic summarizes the source and instruction changes. It is not a captured terminal session.</p></div><div class="walkthrough-panel" id="author-experience-step-2"><h3>Restore source</h3><div class="pr-bundle"><div><strong>Editable page files</strong><span>A page module and its declared text inputs.</span></div><div class="pr-arrow">↓ Build with --embed-source</div><div class="pr-portable"><strong>One portable HTML file</strong><span>The rendered page plus a text copy of those source files.</span></div><div class="pr-arrow">↓ Extract to a new folder</div><div><strong>Editable files again</strong><span>Inspect the restored module, then build it when you trust the code.</span></div></div><p>Without --embed-source, the finished page contains no recoverable source payload. Extraction writes text; a later build executes the module.</p></div><div class="walkthrough-panel" id="author-experience-step-3"><h3>Fill the last row</h3><div class="pr-pair"><div><h4>Before</h4><div class="pr-tiles "><div>12 pages</div><div>3 sources</div><div>5 blocks</div></div><p>The third stat occupies half of the last row.</p></div><div><h4>After</h4><div class="pr-tiles pr-tiles-after"><div>12 pages</div><div>3 sources</div><div>5 blocks</div></div><p>The third stat fills the row at mobile widths.</p></div></div><p>Illustration of the CSS change at widths up to 620px. Values are sample content; these are not observed page screenshots. Desktop columns also adjust to two, three, or five tiles.</p></div></div></div><div data-component="callout" class="callout"><p><strong>Extraction leaves time to inspect the code.</strong> Restoring text does not run the page module. Building the restored module does. A matching kit version establishes compatibility, not trust in the code.</p></div><div data-component="plan-review" class="plan-review" data-review-id="pr65" data-review-title="Dots PR #65 — helper discovery and source restoration" data-review-revision="https://github.com/rishirsv/dots/pull/65; base bc3d6cd11c9271fe01399096ae246044a01cb7ad; head f72893a7a21b72fd450c5685bc501ac3733859aa" data-review-kind="pull-request">
+    <div class="review-toolbar" data-document-control hidden><span class="review-progress" data-document-control role="status" aria-live="polite"></span><button type="button" data-review-next aria-label="Next unanswered decision">Next decision</button><button type="button" data-review-response>Prepare response<span data-review-count aria-hidden="true" hidden></span></button></div>
+    <p class="review-save" data-document-control role="status" aria-live="polite"></p>
+    <noscript><p>Choices and notes need JavaScript to export. Send your feedback in chat using the item headings.</p></noscript>
+    <section id="mechanism"><h2>How the change produces the result</h2><article data-component="plan-review" class="review-point" id="discovery" data-review-point="discovery" data-review-label="Helper examples drive discovery and galleries"><h3>Helper examples drive discovery and galleries</h3><p class="review-summary">The author can find a block without scanning the whole gallery. The gallery can be checked against the same maintained examples.</p><p>The new catalog command reads the helper metadata. Its list and help routes expose signatures and examples. Its write and check routes generate gallery sections from those examples and detect stale output. The retained templates supply the authored page layout. Helper metadata clarifies required chart sources and other rules. The atlas starts helper-generated diagram IDs at 1000 to keep them distinct from the earlier gallery diagrams.</p><details data-component="disclosure" class="disclosure"><summary>The exact list and help routes</summary><div class="disclosure-content"><p><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/scripts/catalog.mjs#L98-L105">scripts/catalog.mjs · head lines 98–105</a>. Exact excerpt; surrounding source is available at the link.</p><div data-component="code-panel" class="code-panel"><pre><code>    if (args.length === 1 &amp;&amp; args[0] === &#39;--list&#39;) {
+      for (const [name, entry] of Object.entries(meta)) console.log(`${name}: ${entry.params}`);
+    } else if (args.length === 2 &amp;&amp; args[0] === &#39;--help&#39;) {
+      const entry = meta[args[1]];
+      if (!entry) throw new Error(`unknown helper ${args[1]}`);
+      console.log(`${args[1]} — ${entry.summary}\nSignature: ${entry.params}\nRules: ${entry.rules ?? &#39;Pass required fields; strings are escaped, SafeHtml is preserved.&#39;}\nExample: ${entry.example}`);
+    } else if (args.length === 1 &amp;&amp; args[0] === &#39;--write&#39;) {
+      writeGalleries();</code></pre></div></div></details><details data-component="disclosure" class="disclosure"><summary>Full patch: scripts/catalog.mjs</summary><div class="disclosure-content"><div data-component="code-panel" class="code-panel"><pre><code>@@ -0,0 +1,115 @@
++#!/usr/bin/env node
++/** Discover report helpers and keep human galleries synchronized with examples. */
++import { existsSync, readFileSync, readdirSync, writeFileSync } from &#39;node:fs&#39;;
++import { join, dirname, resolve } from &#39;node:path&#39;;
++import { fileURLToPath } from &#39;node:url&#39;;
++import { helpers, meta, resetFigureIds } from &#39;./kits/report.mjs&#39;;
++import { renderDiagramGallery } from &#39;./diagram-examples.mjs&#39;;
++
++const skillRoot = join(dirname(fileURLToPath(import.meta.url)), &#39;..&#39;);
++const assets = join(skillRoot, &#39;assets&#39;);
++const templates = join(skillRoot, &#39;scripts&#39;, &#39;templates&#39;);
++const registry = JSON.parse(readFileSync(join(assets, &#39;registry&#39;, &#39;registry.json&#39;), &#39;utf8&#39;));
++const preferred = { callout: &#39;callout&#39;, &#39;finding-list&#39;: &#39;findings&#39;, &#39;flow-diagram&#39;: &#39;flow&#39; };
++
++function example(name) {
++  const names = Object.keys(helpers);
++  const result = new Function(...names, `return (${meta[name].example});`)(...names.map((key) =&gt; helpers[key]));
++  return Array.isArray(result) ? result.map(String).join(&#39;&#39;) : String(result.body ?? result);
++}
++
++export function renderAtlas(source) {
++  source = renderDiagramGallery(source, { atlas: true });
++  resetFigureIds(1000);
++  const groups = new Map();
++  for (const [name, entry] of Object.entries(meta)) {
++    if (entry.component === &#39;page-shell&#39;) continue;
++    const list = groups.get(entry.component) ?? [];
++    list.push(name);
++    groups.set(entry.component, list);
++  }
++  for (const item of registry.items) {
++    const names = groups.get(item.name);
++    if (!names?.length) continue;
++    const name = preferred[item.name] ?? names[0];
++    const id = item.name;
++    let start = source.indexOf(`&lt;section id=&quot;${id}&quot;&gt;`);
++    if (start &lt; 0 &amp;&amp; [&#39;line-chart&#39;, &#39;stacked-chart&#39;].includes(id)) {
++      const next = source.indexOf(&#39;&lt;section id=&quot;sparkline&quot;&gt;&#39;);
++      if (next &lt; 0) throw new Error(&#39;atlas sparkline section is missing&#39;);
++      source = source.slice(0, next) + `&lt;section id=&quot;${id}&quot;&gt;&lt;h2&gt;${item.title}&lt;/h2&gt;&lt;p class=&quot;reading-column&quot;&gt;${item.when}&lt;/p&gt;&lt;/section&gt;\n  ` + source.slice(next);
++      start = source.indexOf(`&lt;section id=&quot;${id}&quot;&gt;`);
++    }
++    if (start &lt; 0) throw new Error(`atlas section ${id} is missing`);
++    const end = source.indexOf(&#39;&lt;/section&gt;&#39;, start) + &#39;&lt;/section&gt;&#39;.length;
++    if (end &lt; &#39;&lt;/section&gt;&#39;.length) throw new Error(`atlas section ${id} is not closed`);
++    const section = source.slice(start, end);
++    const introEnd = section.indexOf(&#39;&lt;/p&gt;&#39;) + &#39;&lt;/p&gt;&#39;.length;
++    if (introEnd &lt; &#39;&lt;/p&gt;&#39;.length) throw new Error(`atlas section ${id} needs its intro`);
++    const head = section.slice(0, introEnd);
++    source = source.slice(0, start) + `${head}\n    &lt;!-- GENERATED from report meta by catalog.mjs: ${name} --&gt;\n    ${example(name)}\n  &lt;/section&gt;` + source.slice(end);
++  }
++  return source;
++}
++
++function htmlFiles(dir) {
++  if (!existsSync(dir)) return [];
++  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) =&gt; {
++    const path = join(dir, entry.name);
++    return entry.isDirectory() ? htmlFiles(path) : entry.name.endsWith(&#39;.html&#39;) ? [path] : [];
++  });
++}
++
++export function themeCopies({ assetsDir = assets, howDir = join(skillRoot, &#39;..&#39;, &#39;how&#39;, &#39;assets&#39;) } = {}) {
++  const theme = readFileSync(join(assetsDir, &#39;theme.css&#39;), &#39;utf8&#39;).trim();
++  const roots = [assetsDir, howDir];
++  return roots.flatMap(htmlFiles).filter((file) =&gt; readFileSync(file, &#39;utf8&#39;).includes(&#39;GENERATED from DESIGN.md&#39;)).filter((file) =&gt; !readFileSync(file, &#39;utf8&#39;).includes(theme));
++}
++
++export function writeGalleries() {
++  const diagramFile = join(assets, &#39;diagrams.html&#39;);
++  const atlasFile = join(assets, &#39;atlas.html&#39;);
++  writeFileSync(diagramFile, freshGallery(&#39;diagrams&#39;));
++  writeFileSync(atlasFile, freshGallery(&#39;atlas&#39;));
++}
++
++function freshGallery(name, assetsDir = assets) {
++  const theme = readFileSync(join(assetsDir, &#39;theme.css&#39;), &#39;utf8&#39;).trim();
++  const template = readFileSync(join(templates, `${name}.template`), &#39;utf8&#39;);
++  if (!template.includes(&#39;__DOTS_THEME_CSS__&#39;)) throw new Error(`${name} template has no theme slot`);
++  const source = template.replace(&#39;__DOTS_THEME_CSS__&#39;, theme);
++  return name === &#39;atlas&#39; ? renderAtlas(source) : renderDiagramGallery(source);
++}
++
++export function checkGalleries({ assetsDir = assets, howDir = join(skillRoot, &#39;..&#39;, &#39;how&#39;, &#39;assets&#39;) } = {}) {
++  const diagramFile = join(assetsDir, &#39;diagrams.html&#39;);
++  const atlasFile = join(assetsDir, &#39;atlas.html&#39;);
++  const stale = [];
++  if (readFileSync(diagramFile, &#39;utf8&#39;) !== freshGallery(&#39;diagrams&#39;, assetsDir)) stale.push(diagramFile);
++  if (readFileSync(atlasFile, &#39;utf8&#39;) !== freshGallery(&#39;atlas&#39;, assetsDir)) stale.push(atlasFile);
++  stale.push(...themeCopies({ assetsDir, howDir }));
++  return stale;
++}
++
++const directly = process.argv[1] &amp;&amp; resolve(process.argv[1]) === fileURLToPath(import.meta.url);
++if (directly) {
++  try {
++    const args = process.argv.slice(2);
++    if (args.length === 1 &amp;&amp; args[0] === &#39;--list&#39;) {
++      for (const [name, entry] of Object.entries(meta)) console.log(`${name}: ${entry.params}`);
++    } else if (args.length === 2 &amp;&amp; args[0] === &#39;--help&#39;) {
++      const entry = meta[args[1]];
++      if (!entry) throw new Error(`unknown helper ${args[1]}`);
++      console.log(`${args[1]} — ${entry.summary}\nSignature: ${entry.params}\nRules: ${entry.rules ?? &#39;Pass required fields; strings are escaped, SafeHtml is preserved.&#39;}\nExample: ${entry.example}`);
++    } else if (args.length === 1 &amp;&amp; args[0] === &#39;--write&#39;) {
++      writeGalleries();
++    } else if (args.length === 1 &amp;&amp; args[0] === &#39;--check&#39;) {
++      const stale = checkGalleries();
++      if (stale.length) throw new Error(`stale gallery or theme copy:\n${stale.join(&#39;\n&#39;)}`);
++      console.log(&#39;catalog.mjs: galleries and theme copies are current&#39;);
++    } else throw new Error(&#39;usage: catalog.mjs --list | --help &lt;helper&gt; | --write | --check&#39;);
++  } catch (error) {
++    console.error(`catalog.mjs: ${error.message}`);
++    process.exitCode = 1;
++  }
++}
+</code></pre></div></div></details><details data-component="disclosure" class="disclosure"><summary>Proof that changed examples are detected</summary><div class="disclosure-content"><p>The catalog test changes a helper example, expects the gallery check to fail, writes fresh output, and expects the check to pass. It also detects a stale copied theme.</p><div data-component="code-panel" class="code-panel"><pre><code>@@ -0,0 +1,50 @@
++import test from &#39;node:test&#39;;
++import assert from &#39;node:assert/strict&#39;;
++import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from &#39;node:fs&#39;;
++import { tmpdir } from &#39;node:os&#39;;
++import { join } from &#39;node:path&#39;;
++import { execFileSync } from &#39;node:child_process&#39;;
++import { checkGalleries } from &#39;./catalog.mjs&#39;;
++
++const assets = new URL(&#39;../assets/&#39;, import.meta.url);
++const catalog = new URL(&#39;./catalog.mjs&#39;, import.meta.url);
++
++test(&#39;catalog list and help expose signatures, rules, and examples&#39;, () =&gt; {
++  const list = execFileSync(process.execPath, [catalog.pathname, &#39;--list&#39;], { encoding: &#39;utf8&#39; });
++  const help = execFileSync(process.execPath, [catalog.pathname, &#39;--help&#39;, &#39;finding&#39;], { encoding: &#39;utf8&#39; });
++  assert.match(list, /^flow: flow\(/m);
++  assert.match(help, /Signature: finding\.high/);
++  assert.match(help, /Rules: Severity must be high/);
++  assert.match(help, /Example: findings\(/);
++  assert.ok(help.split(&#39;\n&#39;).length &lt;= 30);
++});
++
++function withCatalogFiles(run) {
++  const dir = mkdtempSync(join(tmpdir(), &#39;dots-catalog-&#39;));
++  try {
++    for (const name of [&#39;atlas.html&#39;, &#39;diagrams.html&#39;, &#39;theme.css&#39;]) copyFileSync(new URL(name, assets), join(dir, name));
++    run(dir);
++  } finally { rmSync(dir, { recursive: true, force: true }); }
++}
++
++test(&#39;catalog check rejects an edited gallery example&#39;, () =&gt; withCatalogFiles((dir) =&gt; {
++  const options = { assetsDir: dir, howDir: join(dir, &#39;absent&#39;) };
++  assert.deepEqual(checkGalleries(options), []);
++  const atlas = join(dir, &#39;atlas.html&#39;);
++  writeFileSync(atlas, readFileSync(atlas, &#39;utf8&#39;).replace(&#39;GENERATED from report meta by catalog.mjs&#39;, &#39;hand edited&#39;));
++  assert.ok(checkGalleries(options).includes(atlas));
++}));
++
++test(&#39;catalog check rejects stale theme copies in HTML and How assets&#39;, () =&gt; withCatalogFiles((dir) =&gt; {
++  const atlas = join(dir, &#39;atlas.html&#39;);
++  const original = readFileSync(atlas, &#39;utf8&#39;);
++  writeFileSync(atlas, original.replace(&#39;--background: #fbfbfa&#39;, &#39;--background: #ffffff&#39;));
++  assert.ok(checkGalleries({ assetsDir: dir, howDir: join(dir, &#39;absent&#39;) }).includes(atlas));
++  writeFileSync(atlas, original);
++  const howDir = join(dir, &#39;how&#39;);
++  mkdirSync(howDir);
++  const howFile = join(howDir, &#39;reference.html&#39;);
++  const howSource = readFileSync(new URL(&#39;../../how/assets/reference.html&#39;, import.meta.url), &#39;utf8&#39;);
++  writeFileSync(howFile, howSource.replace(&#39;--background: #fbfbfa&#39;, &#39;--background: #ffffff&#39;));
++  assert.ok(checkGalleries({ assetsDir: dir, howDir }).includes(howFile));
++}));
+</code></pre></div></div></details><details class="review-notes"><summary>Comment or request a change</summary><label>Disposition<select data-review-field="discovery:disposition"><option value="">No disposition</option><option value="keep">Keep this part</option><option value="change">Change this part</option><option value="remove">Remove this part</option></select></label><label>Comment on Helper examples drive discovery and galleries<textarea data-review-field="discovery:comment" rows="3"></textarea></label></details></article><article data-component="plan-review" class="review-point" id="restoration" data-review-point="restoration" data-review-label="A finished page can carry its editable source"><h3>A finished page can carry its editable source</h3><p class="review-summary">Source embedding is opt-in. Extraction validates the destination and writes files; a later build imports and executes the module.</p><p>The build records the module text, declared text inputs, and kit version in an inert JSON script tag. Extraction rejects an existing destination, duplicate paths, and paths outside the target before creating the folder. The version record lets a later build reject an incompatible kit.</p><details data-component="disclosure" class="disclosure"><summary>How source is embedded and restored</summary><div class="disclosure-content"><p>Embedding escapes less-than characters so source containing a closing script tag cannot end the JSON tag early.</p><p><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/scripts/build.mjs#L118-L126">scripts/build.mjs · head lines 118–126</a>. Exact excerpt; surrounding source is available at the link.</p><div data-component="code-panel" class="code-panel"><pre><code>  if (embedSource) {
+    const files = Object.fromEntries(Object.entries(inputs).map(([name, value]) =&gt; {
+      const path = localPath(moduleDir, value, `inputs.${name}`, &quot;page module&quot;);
+      return [value, readFileSync(path, &quot;utf8&quot;)];
+    }));
+    const payload = { kitVersion: kit.version, module: { name: basename(file), source: readFileSync(file, &quot;utf8&quot;) }, inputs: files };
+    const json = JSON.stringify(payload).replace(/&lt;/g, &quot;\\u003c&quot;);
+    result = result.replace(&quot;&lt;/body&gt;&quot;, `&lt;script type=&quot;${SOURCE_TYPE}&quot;&gt;${json}&lt;/script&gt;\n&lt;/body&gt;`);
+  }</code></pre></div><p>The first loop validates all destination paths. The second loop writes the restored text files.</p><p><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/scripts/build.mjs#L137-L157">scripts/build.mjs · head lines 137–157</a>. Exact excerpt; surrounding source is available at the link.</p><div data-component="code-panel" class="code-panel"><pre><code>  if (!payload?.module?.name || typeof payload.module.source !== &quot;string&quot; || !payload.kitVersion || !payload.inputs || typeof payload.inputs !== &quot;object&quot; || Array.isArray(payload.inputs)) fail(&quot;embedded source is incomplete&quot;);
+  const target = resolve(targetDir);
+  if (existsSync(target)) fail(`refusing to overwrite ${target}`);
+  const files = [[payload.module.name, payload.module.source], ...Object.entries(payload.inputs)];
+  const destinations = new Set([join(target, SIDECAR)]);
+  for (const [name, content] of files) {
+    const path = localPath(target, name, `embedded file ${name}`, &quot;extract&quot;);
+    if (destinations.has(path)) fail(`duplicate embedded file ${name}`);
+    destinations.add(path);
+    if (typeof content !== &quot;string&quot;) fail(`embedded file ${name} is not text`);
+  }
+  mkdirSync(target, { recursive: true });
+  for (const [name, content] of files) {
+    const path = localPath(target, name, `embedded file ${name}`, &quot;extract&quot;);
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, content);
+  }
+  writeFileSync(join(target, SIDECAR), JSON.stringify({ kitVersion: payload.kitVersion }) + &quot;\n&quot;);
+  console.warn(&quot;build.mjs: extracted modules are untrusted code; inspect them before rebuilding&quot;);
+  return join(target, payload.module.name);
+}</code></pre></div><p>Building is the execution boundary: the module is imported after the initial major-version guard. That guard does not inspect whether the code is trustworthy.</p><p><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/scripts/build.mjs#L82-L96">scripts/build.mjs · head lines 82–96</a>. Exact excerpt; surrounding source is available at the link.</p><div data-component="code-panel" class="code-panel"><pre><code>  const sidecar = join(moduleDir, SIDECAR);
+  const expected = existsSync(sidecar) ? JSON.parse(readFileSync(sidecar, &quot;utf8&quot;)).kitVersion : null;
+  if (expected &amp;&amp; !Object.values(KITS).some((kit) =&gt; major(expected) === major(kit.version)))
+    fail(`page source uses kit ${expected}; installed kit major version differs. Rebuild with the matching major version.`);
+  // A fresh URL per build so edits to the module are never served from the ESM cache.
+  const url = `${pathToFileURL(file).href}?build=${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const mod = await import(url);
+
+  const kit = KITS[mod.kit];
+  if (!kit) fail(`page module must export kit = ${Object.keys(KITS).map((name) =&gt; `&quot;${name}&quot;`).join(&quot; | &quot;)}`);
+  if (expected) {
+    if (major(expected) !== major(kit.version)) fail(`page source uses ${mod.kit} kit ${expected}; installed kit is ${kit.version}. Rebuild with the matching major version.`);
+  }
+  if (typeof mod.default !== &quot;function&quot;) fail(&quot;page module must export a default function (helpers, data) =&gt; page(...)&quot;);
+  const inputs = mod.inputs ?? {};</code></pre></div></div></details><details data-component="disclosure" class="disclosure"><summary>Full patch: scripts/build.mjs</summary><div class="disclosure-content"><div data-component="code-panel" class="code-panel"><pre><code>@@ -9,8 +9,8 @@
+  * Usage: node scripts/build.mjs &lt;page.mjs&gt; --out &lt;page.html&gt;
+  */
+ 
+-import { readFileSync, writeFileSync } from &quot;node:fs&quot;;
+-import { dirname, extname, resolve } from &quot;node:path&quot;;
++import { existsSync, mkdirSync, readFileSync, writeFileSync } from &quot;node:fs&quot;;
++import { basename, dirname, extname, join, resolve } from &quot;node:path&quot;;
+ import { fileURLToPath, pathToFileURL } from &quot;node:url&quot;;
+ import { assemble, checkPage, localPath } from &quot;./assemble.mjs&quot;;
+ import * as report from &quot;./kits/report.mjs&quot;;
+@@ -71,15 +71,27 @@ function loadInput(moduleDir, name, value) {
+   return fail(`inputs.${name} must be .json, .csv, or .txt`);
+ }
+ 
+-export async function build(modulePath) {
++const SOURCE_TYPE = &quot;application/vnd.dots-source+json&quot;;
++const SIDECAR = &quot;.dots-source.json&quot;;
++
++function major(version) { return String(version).split(&quot;.&quot;)[0]; }
++
++export async function build(modulePath, { embedSource = false } = {}) {
+   const file = resolve(modulePath);
+   const moduleDir = dirname(file);
++  const sidecar = join(moduleDir, SIDECAR);
++  const expected = existsSync(sidecar) ? JSON.parse(readFileSync(sidecar, &quot;utf8&quot;)).kitVersion : null;
++  if (expected &amp;&amp; !Object.values(KITS).some((kit) =&gt; major(expected) === major(kit.version)))
++    fail(`page source uses kit ${expected}; installed kit major version differs. Rebuild with the matching major version.`);
+   // A fresh URL per build so edits to the module are never served from the ESM cache.
+   const url = `${pathToFileURL(file).href}?build=${Date.now()}-${Math.random().toString(36).slice(2)}`;
+   const mod = await import(url);
+ 
+   const kit = KITS[mod.kit];
+   if (!kit) fail(`page module must export kit = ${Object.keys(KITS).map((name) =&gt; `&quot;${name}&quot;`).join(&quot; | &quot;)}`);
++  if (expected) {
++    if (major(expected) !== major(kit.version)) fail(`page source uses ${mod.kit} kit ${expected}; installed kit is ${kit.version}. Rebuild with the matching major version.`);
++  }
+   if (typeof mod.default !== &quot;function&quot;) fail(&quot;page module must export a default function (helpers, data) =&gt; page(...)&quot;);
+   const inputs = mod.inputs ?? {};
+   if (typeof inputs !== &quot;object&quot; || Array.isArray(inputs)) fail(&quot;inputs must be an object of name → relative path&quot;);
+@@ -91,7 +103,7 @@ export async function build(modulePath) {
+   const violations = checkPage(spec.body.__html);
+   if (violations.length) fail(violations.join(&quot;; &quot;));
+ 
+-  return assemble({
++  let result = assemble({
+     title: spec.title,
+     context: spec.context,
+     dek: spec.dek,
+@@ -103,6 +115,45 @@ export async function build(modulePath) {
+     body: spec.body.__html,
+     assetRoot: moduleDir,
+   });
++  if (embedSource) {
++    const files = Object.fromEntries(Object.entries(inputs).map(([name, value]) =&gt; {
++      const path = localPath(moduleDir, value, `inputs.${name}`, &quot;page module&quot;);
++      return [value, readFileSync(path, &quot;utf8&quot;)];
++    }));
++    const payload = { kitVersion: kit.version, module: { name: basename(file), source: readFileSync(file, &quot;utf8&quot;) }, inputs: files };
++    const json = JSON.stringify(payload).replace(/&lt;/g, &quot;\\u003c&quot;);
++    result = result.replace(&quot;&lt;/body&gt;&quot;, `&lt;script type=&quot;${SOURCE_TYPE}&quot;&gt;${json}&lt;/script&gt;\n&lt;/body&gt;`);
++  }
++  return result;
++}
++
++export function extract(pagePath, targetDir) {
++  const page = readFileSync(resolve(pagePath), &quot;utf8&quot;);
++  const match = page.match(/&lt;script type=&quot;application\/vnd\.dots-source\+json&quot;&gt;([\s\S]*?)&lt;\/script&gt;/);
++  if (!match) fail(&quot;page has no embedded source&quot;);
++  let payload;
++  try { payload = JSON.parse(match[1]); }
++  catch { fail(&quot;embedded source is invalid JSON&quot;); }
++  if (!payload?.module?.name || typeof payload.module.source !== &quot;string&quot; || !payload.kitVersion || !payload.inputs || typeof payload.inputs !== &quot;object&quot; || Array.isArray(payload.inputs)) fail(&quot;embedded source is incomplete&quot;);
++  const target = resolve(targetDir);
++  if (existsSync(target)) fail(`refusing to overwrite ${target}`);
++  const files = [[payload.module.name, payload.module.source], ...Object.entries(payload.inputs)];
++  const destinations = new Set([join(target, SIDECAR)]);
++  for (const [name, content] of files) {
++    const path = localPath(target, name, `embedded file ${name}`, &quot;extract&quot;);
++    if (destinations.has(path)) fail(`duplicate embedded file ${name}`);
++    destinations.add(path);
++    if (typeof content !== &quot;string&quot;) fail(`embedded file ${name} is not text`);
++  }
++  mkdirSync(target, { recursive: true });
++  for (const [name, content] of files) {
++    const path = localPath(target, name, `embedded file ${name}`, &quot;extract&quot;);
++    mkdirSync(dirname(path), { recursive: true });
++    writeFileSync(path, content);
++  }
++  writeFileSync(join(target, SIDECAR), JSON.stringify({ kitVersion: payload.kitVersion }) + &quot;\n&quot;);
++  console.warn(&quot;build.mjs: extracted modules are untrusted code; inspect them before rebuilding&quot;);
++  return join(target, payload.module.name);
+ }
+ 
+ const invokedDirectly = process.argv[1] &amp;&amp; fileURLToPath(import.meta.url) === resolve(process.argv[1]);
+@@ -110,10 +161,17 @@ if (invokedDirectly) {
+   const args = process.argv.slice(2);
+   const outIndex = args.indexOf(&quot;--out&quot;);
+   const out = outIndex === -1 ? undefined : args[outIndex + 1];
+-  const modulePath = args.find((arg, index) =&gt; !arg.startsWith(&quot;--&quot;) &amp;&amp; index !== outIndex + 1);
+   try {
+-    if (!modulePath || !out || args.length !== 3) fail(&quot;usage: node scripts/build.mjs &lt;page.mjs&gt; --out &lt;page.html&gt;&quot;);
+-    writeFileSync(out, await build(modulePath));
++    if (args[0] === &quot;--extract&quot;) {
++      if (args.length !== 4 || args[2] !== &quot;--to&quot;) fail(&quot;usage: node scripts/build.mjs --extract &lt;page.html&gt; --to &lt;dir&gt;&quot;);
++      extract(args[1], args[3]);
++    } else {
++      const embedSource = args.includes(&quot;--embed-source&quot;);
++      const modulePath = args[0];
++      const valid = args.every((value, index) =&gt; index === 0 || index === outIndex || index === outIndex + 1 || value === &quot;--embed-source&quot;);
++      if (!modulePath || !out || outIndex &lt; 1 || args.length !== (embedSource ? 4 : 3) || !valid) fail(&quot;usage: node scripts/build.mjs &lt;page.mjs&gt; --out &lt;page.html&gt; [--embed-source]&quot;);
++      writeFileSync(out, await build(modulePath, { embedSource }));
++    }
+   } catch (error) {
+     console.error(error.message);
+     process.exit(1);
+</code></pre></div></div></details><details data-component="disclosure" class="disclosure"><summary>What the restoration tests establish</summary><div class="disclosure-content"><p>The tests build with embedded source, extract and rebuild it, preserve text containing a closing script tag, and reject a path that escapes the target folder. They also check that an incompatible major version fails before the extracted module executes.</p><div data-component="code-panel" class="code-panel"><pre><code>@@ -6,7 +6,7 @@ import { tmpdir } from &quot;node:os&quot;;
+ import { dirname, join } from &quot;node:path&quot;;
+ import { fileURLToPath } from &quot;node:url&quot;;
+ import { assemble, checkPage } from &quot;./assemble.mjs&quot;;
+-import { build, parseCsv } from &quot;./build.mjs&quot;;
++import { build, extract, parseCsv } from &quot;./build.mjs&quot;;
+ import { html, raw, SafeHtml, svg } from &quot;./lib/html.mjs&quot;;
+ import { ContractError, helpers, meta } from &quot;./kits/report.mjs&quot;;
+ 
+@@ -241,3 +241,36 @@ test(&#39;build rejects a page-wide contract violation&#39;, () =&gt; withTempDir(async (di
+   writeFileSync(file, &#39;export const kit=&quot;report&quot;; export default ({page,section,recommendation}) =&gt; page({title:&quot;Bad&quot;}, [section(&quot;one&quot;,&quot;One&quot;,[recommendation(&quot;First&quot;)]),section(&quot;two&quot;,&quot;Two&quot;,[recommendation(&quot;Second&quot;)])]);&#39;);
+   await assert.rejects(build(file), /at most one recommendation/);
+ }));
++
++test(&#39;embedded source extracts and rebuilds byte-identically&#39;, () =&gt; withTempDir(async (dir) =&gt; {
++  const module = join(dir, &#39;roundtrip.page.mjs&#39;);
++  const input = join(dir, &#39;facts.json&#39;);
++  const source = &#39;export const kit=&quot;report&quot;; export const inputs={facts:&quot;./facts.json&quot;}; export default ({page,section}, {facts}) =&gt; page({title:&quot;Roundtrip&quot;}, [section(&quot;facts&quot;,&quot;Facts&quot;,[facts.note])]);\n&#39;;
++  writeFileSync(module, source);
++  writeFileSync(input, &#39;{&quot;note&quot;:&quot;Cost &lt; $10&quot;}\n&#39;);
++  const first = await build(module, { embedSource: true });
++  assert.match(first, /application\/vnd\.dots-source\+json/);
++  assert.match(first, /\\u003c/);
++  const page = join(dir, &#39;page.html&#39;);
++  writeFileSync(page, first);
++  const target = join(dir, &#39;extracted&#39;);
++  const extractedModule = extract(page, target);
++  assert.equal(readFileSync(extractedModule, &#39;utf8&#39;), source);
++  assert.equal(await build(extractedModule, { embedSource: true }), first);
++  assert.throws(() =&gt; extract(page, target), /refusing to overwrite/);
++  writeFileSync(join(target, &#39;.dots-source.json&#39;), &#39;{&quot;kitVersion&quot;:&quot;2.0.0&quot;}\n&#39;);
++  writeFileSync(extractedModule, &#39;throw new Error(&quot;executed before version check&quot;)&#39;);
++  await assert.rejects(build(extractedModule), /matching major version/);
++}));
++
++test(&#39;extract rejects path traversal without running embedded code&#39;, () =&gt; withTempDir((dir) =&gt; {
++  const payload = { kitVersion: &#39;1.0.0&#39;, module: { name: &#39;../escape.page.mjs&#39;, source: &#39;throw new Error(&quot;executed&quot;)&#39; }, inputs: {} };
++  const page = join(dir, &#39;unsafe.html&#39;);
++  writeFileSync(page, `&lt;html&gt;&lt;body&gt;&lt;script type=&quot;application/vnd.dots-source+json&quot;&gt;${JSON.stringify(payload)}&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;`);
++  assert.throws(() =&gt; extract(page, join(dir, &#39;out&#39;)), /must stay inside/);
++  payload.module.name = &#39;safe.page.mjs&#39;;
++  payload.inputs = { &#39;./safe.page.mjs&#39;: &#39;collision&#39; };
++  writeFileSync(page, `&lt;html&gt;&lt;body&gt;&lt;script type=&quot;application/vnd.dots-source+json&quot;&gt;${JSON.stringify(payload)}&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;`);
++  assert.throws(() =&gt; extract(page, join(dir, &#39;out&#39;)), /duplicate embedded file/);
++  assert.throws(() =&gt; extract(join(dir, &#39;missing.html&#39;), join(dir, &#39;out&#39;)), /ENOENT/);
++}));
+</code></pre></div></div></details><details class="review-notes"><summary>Comment or request a change</summary><label>Disposition<select data-review-field="restoration:disposition"><option value="">No disposition</option><option value="keep">Keep this part</option><option value="change">Change this part</option><option value="remove">Remove this part</option></select></label><label>Comment on A finished page can carry its editable source<textarea data-review-field="restoration:comment" rows="3"></textarea></label></details></article><article data-component="plan-review" class="review-point" id="tile-layout" data-review-point="tile-layout" data-review-label="An odd final stat fills the mobile row"><h3>An odd final stat fills the mobile row</h3><p class="review-summary">The CSS gives the last tile two columns when the tile count is odd. Desktop columns match supported tile counts.</p><details data-component="disclosure" class="disclosure"><summary>The exact CSS change</summary><div class="disclosure-content"><div data-component="diff-block" class="diff-block"><div class="diff-head">stat-tiles.html · deletion: base line 26; additions: head lines 26–32</div><div class="diff-annotation"><pre class="diff-annotation-code"><div class="diff-line del"><span class="diff-line-number">26</span><span class="diff-gutter">-</span>  @media (max-width: 620px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }</div><div class="diff-line add"><span class="diff-line-number">26</span><span class="diff-gutter">+</span>  .kpi-grid:has(&gt; :last-child:nth-child(2)) { grid-template-columns: repeat(2, 1fr); }</div><div class="diff-line add"><span class="diff-line-number">27</span><span class="diff-gutter">+</span>  .kpi-grid:has(&gt; :last-child:nth-child(3)) { grid-template-columns: repeat(3, 1fr); }</div><div class="diff-line add"><span class="diff-line-number">28</span><span class="diff-gutter">+</span>  .kpi-grid:has(&gt; :last-child:nth-child(5)) { grid-template-columns: repeat(5, 1fr); }</div><div class="diff-line add"><span class="diff-line-number">29</span><span class="diff-gutter">+</span>  @media (max-width: 620px) {</div><div class="diff-line add"><span class="diff-line-number">30</span><span class="diff-gutter">+</span>    .kpi-grid:has(&gt; :last-child:nth-child(n)) { grid-template-columns: repeat(2, 1fr); }</div><div class="diff-line add"><span class="diff-line-number">31</span><span class="diff-gutter">+</span>    .kpi-grid:has(&gt; :last-child:nth-child(odd)) &gt; :last-child { grid-column: span 2; }</div><div class="diff-line add"><span class="diff-line-number">32</span><span class="diff-gutter">+</span>  }</div></pre><p class="diff-note">The final mobile tile spans both columns when the count is odd. The source links preserve the original line numbers.</p></div></div><p><a href="https://github.com/rishirsv/dots/blob/bc3d6cd11c9271fe01399096ae246044a01cb7ad/plugins/dots/skills/html/assets/registry/stat-tiles.html#L26">Base line 26</a> · <a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/assets/registry/stat-tiles.html#L26-L32">Head lines 26–32</a></p></div></details><details data-component="disclosure" class="disclosure"><summary>Full patch: assets/registry/stat-tiles.html</summary><div class="disclosure-content"><div data-component="code-panel" class="code-panel"><pre><code>@@ -23,7 +23,13 @@ gotchas: Values are figures, not sentences — keep them under ~8 characters and
+     overflow: hidden;
+     margin-bottom: var(--section);
+   }
+-  @media (max-width: 620px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
++  .kpi-grid:has(&gt; :last-child:nth-child(2)) { grid-template-columns: repeat(2, 1fr); }
++  .kpi-grid:has(&gt; :last-child:nth-child(3)) { grid-template-columns: repeat(3, 1fr); }
++  .kpi-grid:has(&gt; :last-child:nth-child(5)) { grid-template-columns: repeat(5, 1fr); }
++  @media (max-width: 620px) {
++    .kpi-grid:has(&gt; :last-child:nth-child(n)) { grid-template-columns: repeat(2, 1fr); }
++    .kpi-grid:has(&gt; :last-child:nth-child(odd)) &gt; :last-child { grid-column: span 2; }
++  }
+   .kpi-tile { padding: 18px 16px; background: var(--background); }
+   .kpi-value {
+     font-size: 22px; font-weight: 600; letter-spacing: -0.6px;
+</code></pre></div></div></details><details class="review-notes"><summary>Comment or request a change</summary><label>Disposition<select data-review-field="tile-layout:disposition"><option value="">No disposition</option><option value="keep">Keep this part</option><option value="change">Change this part</option><option value="remove">Remove this part</option></select></label><label>Comment on An odd final stat fills the mobile row<textarea data-review-field="tile-layout:comment" rows="3"></textarea></label></details></article></section><section id="coverage"><h2>Where all 13 files fit</h2><p>The main explanation covers discovery, restoration, and layout. These supporting files carry the instructions, proof, authored gallery layouts, and generated output. No file is omitted from the inventory.</p><div data-component="data-table" class="table-scroll table-stack"><table><thead><tr><th>File at the PR head</th><th>Role in this change</th></tr></thead><tbody><tr><td data-label="File at the PR head"><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/SKILL.md">SKILL.md</a></td><td data-label="Role in this change">Explains discovery and the portable editing workflow.</td></tr><tr><td data-label="File at the PR head"><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/assets/atlas.html">assets/atlas.html</a></td><td data-label="Role in this change">Generated gallery output reflects maintained helper examples.</td></tr><tr><td data-label="File at the PR head"><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/assets/outcomes/status-report.html">assets/outcomes/status-report.html</a></td><td data-label="Role in this change">Generated sample includes the revised stat-grid CSS.</td></tr><tr><td data-label="File at the PR head"><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/assets/registry/stat-tiles.html">assets/registry/stat-tiles.html</a></td><td data-label="Role in this change">Makes tile counts fit desktop widths and fills the last mobile row.</td></tr><tr><td data-label="File at the PR head"><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/references/authoring.md">references/authoring.md</a></td><td data-label="Role in this change">Documents discovery, source embedding, and extraction.</td></tr><tr><td data-label="File at the PR head"><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/scripts/build.mjs">scripts/build.mjs</a></td><td data-label="Role in this change">Embeds source on request, restores text files, and checks kit compatibility when building.</td></tr><tr><td data-label="File at the PR head"><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/scripts/build.test.mjs">scripts/build.test.mjs</a></td><td data-label="Role in this change">Tests a build/extract/rebuild round trip, text fidelity, and path escape rejection.</td></tr><tr><td data-label="File at the PR head"><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/scripts/catalog.mjs">scripts/catalog.mjs</a></td><td data-label="Role in this change">Lists helpers, explains signatures, and writes or checks galleries.</td></tr><tr><td data-label="File at the PR head"><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/scripts/catalog.test.mjs">scripts/catalog.test.mjs</a></td><td data-label="Role in this change">Tests helper discovery and detects a changed example or stale theme.</td></tr><tr><td data-label="File at the PR head"><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/scripts/kits/report.mjs">scripts/kits/report.mjs</a></td><td data-label="Role in this change">Clarifies helper signatures and rules; offsets diagram IDs to avoid gallery collisions.</td></tr><tr><td data-label="File at the PR head"><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/scripts/templates/atlas.template">scripts/templates/atlas.template</a></td><td data-label="Role in this change">Authored gallery layout consumed by the generator.</td></tr><tr><td data-label="File at the PR head"><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/plugins/dots/skills/html/scripts/templates/diagrams.template">scripts/templates/diagrams.template</a></td><td data-label="Role in this change">Authored diagram-gallery layout consumed by the generator.</td></tr><tr><td data-label="File at the PR head"><a href="https://github.com/rishirsv/dots/blob/f72893a7a21b72fd450c5685bc501ac3733859aa/scripts/verify.py">scripts/verify.py</a></td><td data-label="Role in this change">Adds the gallery freshness check to the repository gate.</td></tr></tbody></table></div><p><a href="https://github.com/rishirsv/dots/compare/bc3d6cd11c9271fe01399096ae246044a01cb7ad...f72893a7a21b72fd450c5685bc501ac3733859aa">Complete change at the inspected commits</a>. The API omitted the large atlas-template patch; the walkthrough inspection recovered it from this Git commit range. The two templates are authored source, even though their HTML output is generated.</p></section><section id="proof"><h2>What was checked</h2><div data-component="data-table" class="table-scroll table-stack"><table><thead><tr><th>Evidence</th><th>Result and limit</th></tr></thead><tbody><tr><td data-label="Evidence">PR author’s report</td><td data-label="Result and limit">59 HTML tests and the Python suites passed. This is the author’s report in the PR description.</td></tr><tr><td data-label="Evidence">Fresh check of the archived PR head</td><td data-label="Result and limit">Ran node --test plugins/dots/skills/html/scripts/*.test.mjs in an isolated export of the head commit. All 59 HTML tests passed. This includes source round trips, path rejection, discovery, and gallery freshness.</td></tr><tr><td data-label="Evidence">Visual explanation</td><td data-label="Result and limit">The stat-grid comparison above is a code-derived illustration. The historical gallery was not visually inspected in this walkthrough.</td></tr></tbody></table></div><p>Review the places where the result depends on a boundary: source remains optional, all extraction paths must validate before writes, and restored code needs inspection before a build. Comments below each behavior stay local until you export one response. Completing this walkthrough does not approve or submit a review of the PR.</p></section>
+    <dialog class="review-dialog" aria-label="Review response"><form method="dialog"><button class="review-close" aria-label="Close response">Close</button></form><h2>Your response</h2><p>Copy or download this response and send it back in chat. Nothing is sent from this page.</p><label>Response intent<select data-review-intent><option value="feedback">Feedback only</option><option value="changes">Changes suggested</option><option value="complete">Walkthrough complete</option></select></label><label>Response<textarea data-review-output readonly rows="14"></textarea></label><div class="review-actions"><button type="button" data-review-copy>Copy response</button><button type="button" data-review-download>Download response</button></div><p data-review-message role="status" aria-live="polite"></p></dialog>
+  </div>
+
+  <footer class="sources">Dots PR #65 (https://github.com/rishirsv/dots/pull/65), merged September 24, 2026. Historical snapshot: base bc3d6cd11c9271fe01399096ae246044a01cb7ad; head f72893a7a21b72fd450c5685bc501ac3733859aa. This walkthrough explains that change; it does not report the current branch&#39;s behavior.</footer>
+</div>
+
+
+<script data-component="document-tools">
+(function () {
+  'use strict';
+  function button(label, className, action) { const el = document.createElement('button'); el.type = 'button'; el.setAttribute('data-document-control',''); el.className = className; el.textContent = label; el.addEventListener('click', action); return el; }
+  document.querySelectorAll('.code-panel').forEach(panel => {
+    const code = panel.querySelector('pre code'); if (!code) return;
+    const icons = {
+      copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>',
+      done: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>'
+    };
+    const status = document.createElement('span'); status.className = 'doc-copy-status'; status.setAttribute('role','status'); status.setAttribute('data-document-control','');
+    const copy = button('', 'doc-copy', async () => {
+      try { await navigator.clipboard.writeText(code.textContent); copy.innerHTML = icons.done; copy.title = 'Copied'; status.textContent = 'Code copied.'; }
+      catch { const range = document.createRange(); range.selectNodeContents(code); const selection = getSelection(); selection.removeAllRanges(); selection.addRange(range); copy.title = 'Code selected — press Copy'; status.textContent = 'Code selected. Press Copy on your keyboard.'; }
+    });
+    copy.setAttribute('aria-label','Copy code'); copy.title = 'Copy code'; copy.innerHTML = icons.copy;
+    panel.prepend(copy, status);
+  });
+  const details = Array.from(document.querySelectorAll('details.disclosure, details.disclosure-plain'));
+  if (details.length > 1) {
+    const tools = document.createElement('div'); tools.className = 'doc-tools'; tools.setAttribute('data-document-control','');
+    tools.append(button('Expand technical detail', '', () => details.forEach(el => { el.open = true; })), button('Collapse technical detail', '', () => details.forEach(el => { el.open = false; })));
+    details[0].parentElement.insertBefore(tools, details[0]);
+  }
+  const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+  document.querySelectorAll('table[data-searchable], table[data-sortable]').forEach((table, index) => {
+    const tbody = table.tBodies[0]; if (!tbody) return;
+    const rows = Array.from(tbody.rows); const headers = Array.from(table.tHead?.rows[0]?.cells || []);
+    const tools = document.createElement('div'); tools.className = 'doc-tools'; tools.setAttribute('data-document-control','');
+    const output = document.createElement('output'); output.setAttribute('aria-live', 'polite');
+    const labelText = table.getAttribute('aria-label') || table.caption?.textContent || table.closest('section')?.querySelector('h2')?.textContent || 'Table ' + (index + 1);
+    const count = () => { output.textContent = rows.filter(row => !row.hidden).length + ' of ' + rows.length + ' rows'; };
+    if (table.hasAttribute('data-searchable')) {
+      const label = document.createElement('label'); label.textContent = 'Search ' + labelText;
+      const input = document.createElement('input'); input.type = 'search'; label.append(input);
+      input.addEventListener('input', () => { const words = input.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean); rows.forEach(row => { const haystack = row.textContent.toLocaleLowerCase(); row.hidden = !words.every(w => haystack.includes(w)); }); count(); });
+      tools.append(label);
+    }
+    tools.append(output); table.parentElement.before(tools); count();
+    if (table.hasAttribute('data-sortable')) {
+      const names = headers.map(header => header.textContent.trim());
+      const number = value => {
+        const match = value.replace(/,/g, '').match(/^[^\d.+-]*([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)\s*[^0-9]*$/i);
+        return match ? Number(match[1]) : NaN;
+      };
+      let activeColumn = -1, direction = 1;
+      function sort(column, order) {
+        activeColumn = column; direction = order;
+        const numeric = headers[column].classList.contains('col-num');
+        const value = row => row.cells[column]?.textContent.trim() || '';
+        rows.slice().sort((a,b) => {
+          const av = value(a), bv = value(b), an = number(av), bn = number(bv);
+          const compared = numeric && Number.isFinite(an) && Number.isFinite(bn) ? an - bn : collator.compare(av,bv);
+          return direction * compared || rows.indexOf(a) - rows.indexOf(b);
+        }).forEach(row => tbody.append(row));
+        headers.forEach((header,i) => {
+          if (i === column) header.setAttribute('aria-sort', direction === 1 ? 'ascending' : 'descending');
+          else header.removeAttribute('aria-sort');
+          const control = header.querySelector('.doc-sort');
+          if (control) control.textContent = i === column ? (direction === 1 ? '↑' : '↓') : '↕';
+        });
+        if (mobileSelect) { mobileSelect.value = String(column); mobileDirection.textContent = direction === 1 ? 'Ascending ↑' : 'Descending ↓'; }
+        output.textContent = rows.filter(row => !row.hidden).length + ' of ' + rows.length + ' rows · ' + names[column] + ' ' + (direction === 1 ? 'ascending' : 'descending');
+      }
+      let mobileSelect, mobileDirection;
+      const stacked = table.parentElement.classList.contains('table-stack');
+      if (stacked) {
+        const group = document.createElement('div'); group.className = 'doc-table-sort';
+        const label = document.createElement('label'); label.textContent = 'Sort ' + labelText;
+        mobileSelect = document.createElement('select');
+        const placeholder = document.createElement('option'); placeholder.value = ''; placeholder.textContent = 'Original order'; mobileSelect.append(placeholder);
+        names.forEach((name,i) => { const option = document.createElement('option'); option.value = String(i); option.textContent = name; mobileSelect.append(option); });
+        mobileSelect.addEventListener('change', () => {
+          if (mobileSelect.value === '') { rows.forEach(row => tbody.append(row)); activeColumn = -1; headers.forEach(h => h.removeAttribute('aria-sort')); headers.forEach(h => {const b=h.querySelector('.doc-sort'); if(b)b.textContent='↕';}); count(); }
+          else sort(Number(mobileSelect.value),1);
+        });
+        label.append(mobileSelect); group.append(label);
+        mobileDirection = button('Ascending ↑','', () => { if (mobileSelect.value !== '') sort(Number(mobileSelect.value),direction * -1); }); group.append(mobileDirection); tools.append(group);
+      }
+      headers.forEach((header,column) => {
+        const control = button('↕','doc-sort', () => sort(column, activeColumn === column ? direction * -1 : 1));
+        control.setAttribute('aria-label','Sort by ' + names[column]); header.append(control);
+      });
+    }
+  });
+})();
+</script>
+
+<script data-component="walkthrough">
+(function () {
+  document.querySelectorAll('.walkthrough[data-component="walkthrough"]').forEach(root => {
+    const nav = root.querySelector('.walkthrough-nav');
+    const buttons = Array.from(nav.querySelectorAll('button'));
+    const panels = Array.from(root.querySelectorAll(':scope > .walkthrough-body > .walkthrough-panel'));
+    const select = index => { panels.forEach((panel, i) => { panel.hidden = i !== index; }); buttons.forEach((button, i) => button.setAttribute('aria-pressed', String(i === index))); };
+    buttons.forEach((button, i) => button.addEventListener('click', () => select(i)));
+    select(0); nav.hidden = false;
+  });
+})();
+</script>
+
+<script data-component="plan-review">
+(function () {
+  'use strict';
+  const all = (root, selector) => Array.from(root.querySelectorAll(selector));
+  const text = (el) => (el?.textContent || '').trim();
+  const fence = (s) => '`'.repeat(Math.max(3, ...Array.from(s.matchAll(/`+/g), m => m[0].length + 1)));
+  const quote = (s) => s.split('\n').map(line => '> ' + line).join('\n');
+  function hash(s) { let n = 2166136261; for (let i = 0; i < s.length; i++) n = Math.imul(n ^ s.charCodeAt(i), 16777619); return (n >>> 0).toString(36); }
+  const snapshot = (document.querySelector('.page') || document.body).cloneNode(true);
+  all(snapshot, '[data-document-control],script,style').forEach(el => el.remove());
+  const documentVersion = hash(snapshot.innerHTML);
+  all(document, '[data-review-id]').forEach(root => {
+    const pullRequest = root.dataset.reviewKind === 'pull-request';
+    const fields = all(root, '[data-review-field]');
+    const decisions = all(root, '[data-review-decision]');
+    const codes = all(root, '[data-review-code]');
+    const original = new Map(codes.map(el => [el.dataset.reviewCode, el.querySelector('[data-review-field$=":code"]').value]));
+    const dialog = root.querySelector('dialog');
+    const output = root.querySelector('[data-review-output]');
+    const intent = root.querySelector('[data-review-intent]');
+    const message = root.querySelector('[data-review-message]');
+    const saveStatus = root.querySelector('.review-save');
+    const key = 'dots-review:' + location.pathname + ':' + root.dataset.reviewId + ':' + root.dataset.reviewRevision + ':' + hash(root.dataset.reviewTitle + ':' + documentVersion);
+    const checked = (d) => d.querySelector('input:checked');
+    let decisionCursor = -1;
+    const read = () => {
+      const values = {};
+      fields.forEach(el => { if (el.type !== 'radio' || el.checked) values[el.dataset.reviewField] = el.value; });
+      return { values, intent: intent.value };
+    };
+    function refresh() {
+      const remaining = decisions.filter(d => !checked(d)).length;
+      root.querySelector('.review-progress').textContent = decisions.length ? (decisions.length - remaining) + ' of ' + decisions.length + ' decisions answered' : (pullRequest ? 'Local review notes' : 'Comments and edits');
+      root.querySelector('[data-review-next]').hidden = !remaining;
+      const responseButton = root.querySelector('[data-review-response]');
+      const count = responseButton.querySelector('[data-review-count]');
+      if (count) { count.hidden = !decisions.length; count.textContent = (decisions.length - remaining) + '/' + decisions.length; }
+      responseButton.setAttribute('aria-label', 'Prepare response' + (decisions.length ? '; ' + root.querySelector('.review-progress').textContent : ''));
+      decisions.forEach(d => { d.querySelector('[data-review-clear]').hidden = !checked(d); d.querySelector('.decision-state').textContent = checked(d) ? 'Answered — ' + text(checked(d).closest('label').querySelector('strong')) : 'Unanswered — choose an option or leave a note'; });
+      codes.forEach(el => { el.querySelector('[data-review-revert]').hidden = el.querySelector('[data-review-field$=":code"]').value === original.get(el.dataset.reviewCode); });
+    }
+    function save() {
+      refresh();
+      try { localStorage.setItem(key, JSON.stringify(read())); saveStatus.textContent = 'Feedback saved in this browser. Export it to send it back.'; }
+      catch { saveStatus.textContent = 'Browser storage is unavailable. Keep this page open and export your response before leaving.'; }
+    }
+    try {
+      const stored = JSON.parse(localStorage.getItem(key) || 'null');
+      if (stored?.values && typeof stored.values === 'object') {
+        fields.forEach(el => { const v = stored.values[el.dataset.reviewField]; if (typeof v !== 'string') return; if (el.type === 'radio') el.checked = el.value === v; else el.value = v; });
+        if (Array.from(intent.options).some(option => option.value === stored.intent)) intent.value = stored.intent;
+        saveStatus.textContent = 'Restored feedback for this version. Nothing has been sent.';
+      } else saveStatus.textContent = 'Feedback stays in this browser. Nothing is sent from this page.';
+    } catch { saveStatus.textContent = 'Browser storage is unavailable. Export your response before leaving.'; }
+    function response() {
+      const values = read().values;
+      const lines = ['# Review: ' + root.dataset.reviewTitle, 'Revision: ' + root.dataset.reviewRevision, 'Intent: ' + intent.options[intent.selectedIndex].text, ''];
+      if (pullRequest) lines.push('Local walkthrough notes. These notes have not been submitted to GitHub and do not approve the PR.', '');
+      const missing = decisions.filter(d => !checked(d));
+      if (missing.length) lines.push('Unanswered decisions: ' + missing.map(d => d.dataset.reviewDecision).join(', '), 'Unanswered decisions are not accepted recommendations.', '');
+      if (intent.value === 'ready' && missing.length) lines.push('Ready intent was selected, but the unanswered decisions still require resolution.', '');
+      if (decisions.length) lines.push('## Decisions');
+      decisions.forEach(d => {
+        const id = d.dataset.reviewDecision;
+        const choice = checked(d);
+        lines.push('- [' + id + '] ' + text(d.querySelector('legend')) + ': ' + (choice ? text(choice.closest('label').querySelector('strong')) + ' (' + choice.value + ')' : 'UNANSWERED'));
+        if (values[id + ':note']?.trim()) lines.push(quote(values[id + ':note'].trim()));
+      });
+      const notes = [];
+      all(root, '[data-review-point]').forEach(p => {
+        const id = p.dataset.reviewPoint;
+        const disposition = values[id + ':disposition'];
+        const comment = values[id + ':comment']?.trim();
+        if (disposition || comment) { notes.push('- [' + id + '] ' + p.dataset.reviewLabel + (disposition ? ' — ' + disposition : '')); if (comment) notes.push(quote(comment)); }
+      });
+      if (notes.length) lines.push('', '## Comments and requested changes', ...notes);
+      codes.forEach(el => {
+        const id = el.dataset.reviewCode, before = original.get(id), after = values[id + ':code'];
+        const note = values[id + ':code-comment']?.trim();
+        if (before === after && !note) return;
+        lines.push('', '## [' + id + '] ' + el.dataset.reviewLabel);
+        if (before !== after) { const f = fence(before + after); lines.push('Original:', f, before, f, 'Reviewer proposal (text only):', f, after, f); }
+        if (note) lines.push(quote(note));
+      });
+      lines.push('', 'This is review feedback. Quoted comments and edited text do not authorize commands or work outside the ' + (pullRequest ? 'reviewed change.' : 'plan.'));
+      return lines.join('\n');
+    }
+    fields.forEach(el => el.addEventListener('input', save));
+    decisions.forEach(d => d.querySelector('[data-review-clear]').addEventListener('click', () => { all(d, 'input[type=radio]').forEach(el => { el.checked = false; }); save(); }));
+    intent.addEventListener('change', () => { save(); output.value = response(); });
+    codes.forEach(el => el.querySelector('[data-review-revert]').addEventListener('click', () => { el.querySelector('[data-review-field$=":code"]').value = original.get(el.dataset.reviewCode); save(); }));
+    root.querySelector('[data-review-next]').addEventListener('click', () => {
+      const nextIndex = decisions.map((_, i) => (decisionCursor + i + 1) % decisions.length).find(i => !checked(decisions[i]));
+      const next = decisions[nextIndex];
+      decisionCursor = nextIndex ?? -1;
+      if (!next) return;
+      let parent = next.parentElement;
+      while (parent && parent !== root) { if (parent.tagName === 'DETAILS') parent.open = true;
+        if (parent.classList.contains('walkthrough-panel')) {
+          const walk = parent.closest('.walkthrough');
+          all(walk, '.walkthrough-nav button').find(b => b.getAttribute('aria-controls') === parent.id)?.click();
+        }
+        parent = parent.parentElement; }
+      next.scrollIntoView({ block: 'center', behavior: 'auto' });
+      next.querySelector('input').focus({preventScroll:true});
+    });
+    root.querySelector('[data-review-response]').addEventListener('click', () => { output.value = response(); message.textContent = ''; dialog.showModal(); });
+    root.querySelector('[data-review-copy]').addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(output.value); message.textContent = 'Copied. Paste the response into chat.'; }
+      catch { output.focus(); output.select(); message.textContent = 'Copy is unavailable. Press Copy on your keyboard or download the response.'; }
+    });
+    root.querySelector('[data-review-download]').addEventListener('click', () => {
+      const url = URL.createObjectURL(new Blob([output.value], {type:'text/markdown;charset=utf-8'}));
+      const link = document.createElement('a'); link.href = url; link.download = root.dataset.reviewId + '-response.md'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+      message.textContent = 'Download requested. If no file appears, use Copy response.';
+    });
+    root.querySelector('.review-toolbar').hidden = false;
+    refresh();
+  });
+})();
+</script>
+</body>
+</html>

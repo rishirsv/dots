@@ -31,17 +31,25 @@ gotchas: Keep hunks short, ≤15 lines — if the real diff is longer, show the
   .diff-block pre {
     margin: 0;
     background: var(--code-surface);
-    overflow-x: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
   .diff-line {
-    display: flex;
+    display: block;
+    position: relative;
     font-family: var(--font-mono);
     font-size: 13px;
     line-height: 20px;
-    white-space: pre;
-    padding: 0 20px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    padding: 0 20px 0 44px;
   }
+  .diff-line:has(> .diff-line-number) { padding-left: 90px; }
+  .diff-line-number + .diff-gutter { left: 66px; }
   .diff-line-number {
+    position: absolute;
+    left: 20px;
+    top: 0;
     display: inline-block;
     width: 34px;
     flex: none;
@@ -51,6 +59,9 @@ gotchas: Keep hunks short, ≤15 lines — if the real diff is longer, show the
     user-select: none;
   }
   .diff-gutter {
+    position: absolute;
+    left: 20px;
+    top: 0;
     display: inline-block;
     width: 16px;
     flex: none;

@@ -8,6 +8,31 @@ import { assemble, checkPage } from './assemble.mjs';
 import { chromeCandidates, launchChrome } from './lib/chrome.mjs';
 
 const chrome = chromeCandidates.find(existsSync);
+
+test('wrapped source and diffs avoid scrolling and icon copying preserves exact text', {skip:!chrome && 'Chrome unavailable'}, async () => {
+  const dir=mkdtempSync(join(tmpdir(),'dots-wrap-copy-')),file=join(dir,'code.html');
+  const source='const veryLongIdentifier = "'+'a'.repeat(400)+'";\n\t// Preserve indentation, <tags>, and newlines.\n';
+  writeFileSync(file,assemble({title:'Source',body:String(h.code(source))+String(h.diff({lines:[['+',source,27],['-',source,26]]})),components:['document-tools']}));
+  const browser=await launchChrome(chrome);
+  try {
+    for(const width of [1280,320]) {
+      const page=await browser.openPage(file,width);
+      try {
+        if(width===1280) assert.equal(await page.evaluate(`document.querySelector('.page').getBoundingClientRect().width`),900);
+        assert.equal(await page.evaluate(`Array.from(document.querySelectorAll('pre')).every(p=>p.scrollWidth <= p.clientWidth + 1)`),true);
+        assert.equal(await page.evaluate(`document.querySelector('pre code').textContent`),source);
+        assert.equal(await page.evaluate(`document.querySelector('.doc-copy').textContent`),'');
+        assert.equal(await page.evaluate(`document.querySelector('.doc-copy').getAttribute('aria-label')`),'Copy code');
+        assert.equal(await page.evaluate(`document.querySelector('.doc-copy').getBoundingClientRect().width >= 44`),true);
+        await page.evaluate(`Object.defineProperty(navigator,'clipboard',{value:{writeText:text=>{window.testCopied=text;return Promise.resolve();}},configurable:true});document.querySelector('.doc-copy').click()`);
+        assert.equal(await page.evaluate(`window.testCopied`),source);
+        assert.equal(await page.evaluate(`document.querySelector('.doc-copy-status').textContent`),'Code copied.');
+        assert.deepEqual((await page.diagnose()).findings,[]);
+      } finally {await page.close();}
+    }
+  } finally {await browser.close();rmSync(dir,{recursive:true,force:true});}
+});
+
 function body(revision = '1', title = 'Send Later') {
   return h.review({id:'send-later',title,revision}, [h.section('behavior','Behavior',[
     h.reviewPoint({id:'cancel',title:'Cancel safely',summary:'Queued messages return to Drafts.'},[
@@ -100,7 +125,7 @@ test('document tools filter/sort data and walkthrough selection preserves conten
     // Force clipboard failure to exercise the selection fallback.
     await page.evaluate(`Object.defineProperty(navigator,'clipboard',{value:{writeText:()=>Promise.reject(new Error('denied'))},configurable:true}); document.querySelector('.doc-copy').click()`);
     assert.equal(await page.evaluate(`getSelection().toString()`),'send(message)');
-    assert.match(await page.evaluate(`document.querySelector('.doc-copy').textContent`),/Selected/);
+    assert.match(await page.evaluate(`document.querySelector('.doc-copy-status').textContent`),/selected/);
     await page.evaluate(`document.querySelector('[data-review-response]').click(); document.querySelector('[data-review-copy]').click()`);
     assert.match(await page.evaluate(`document.querySelector('[data-review-message]').textContent`),/unavailable/);
     // Exercise successful copy without changing the user's system clipboard.
@@ -109,7 +134,7 @@ test('document tools filter/sort data and walkthrough selection preserves conten
     assert.match(await page.evaluate(`document.querySelector('[data-review-message]').textContent`),/Copied/);
     await page.evaluate(`document.querySelector('dialog').close(); document.querySelector('.doc-copy').click()`);
     assert.equal(await page.evaluate(`window.testCopied`),'send(message)');
-    assert.equal(await page.evaluate(`document.querySelector('.doc-copy').textContent`),'Copied');
+    assert.equal(await page.evaluate(`document.querySelector('.doc-copy-status').textContent`),'Code copied.');
     await page.evaluate(`URL.createObjectURL = blob => { window.downloadType=blob.type; blob.text().then(text=>window.downloadText=text); return 'blob:review-test'; }; HTMLAnchorElement.prototype.click=function(){window.downloadName=this.download;}; document.querySelector('[data-review-response]').click(); document.querySelector('[data-review-download]').click()`);
     assert.equal(await page.evaluate(`window.downloadName`),'send-later-response.md');
     assert.equal(await page.evaluate(`window.downloadType`),'text/markdown;charset=utf-8');
@@ -163,4 +188,42 @@ test('stacked tables expose mobile sorting and compare negative numeric values w
     assert.deepEqual(await page.evaluate(`Array.from(document.querySelectorAll('tbody tr')).map(r=>r.cells[1].textContent)`),['10 ms','0 ms','-5 ms','-20 ms']);
     assert.deepEqual((await page.diagnose()).findings,[]);
   } finally {await page.close();await browser.close();rmSync(dir,{recursive:true,force:true});}
+});
+
+test('PR notes require explicit input, export the snapshot, and isolate a changed head', {skip:!chrome && 'Chrome unavailable'}, async () => {
+  const dir=mkdtempSync(join(tmpdir(),'dots-pr-notes-')),file=join(dir,'pr.html');
+  const render = revision => assemble({title:'Restore source',body:String(h.review({id:'pr',title:'PR #65',revision,kind:'pull-request'},[
+    h.walkthrough({id:'source-flow',label:'Source flow',steps:[{title:'Build',body:h.code('build(source)')},{title:'Extract',body:h.code('extract(html)')}]}),
+    h.reviewPoint({id:'extract',title:'Extract source',summary:'Restores text before execution.'},[h.disclosure('Exact patch',[h.code('+const source = "</script>";')])])
+  ]))});
+  writeFileSync(file,render('https://github.com/rishirsv/dots/pull/65; base abc; head def'));
+  const browser=await launchChrome(chrome);
+  let page;
+  try {
+    page=await browser.openPage(file,360);
+    assert.equal(await page.evaluate(`document.querySelector('.review-toolbar').getBoundingClientRect().height <= 48`),true);
+    assert.equal(await page.evaluate(`document.querySelector('.review-toolbar').getBoundingClientRect().width < 220`),true);
+    assert.equal(await page.evaluate(`innerHeight - document.querySelector('.review-toolbar').getBoundingClientRect().bottom <= 32`),true);
+    await page.evaluate(`document.querySelector('[data-walkthrough-step="1"]').click(); document.querySelector('[data-review-response]').click()`);
+    const untouched=await page.evaluate(`document.querySelector('[data-review-output]').value`);
+    assert.match(untouched,/Intent: Feedback only/);
+    assert.match(untouched,/base abc; head def/);
+    assert.match(untouched,/not been submitted to GitHub and do not approve/);
+    assert.doesNotMatch(untouched,/## Comments|Ready to implement/);
+    assert.deepEqual(await page.evaluate(`Array.from(document.querySelector('[data-review-intent]').options).map(o=>o.value)`),['feedback','changes','complete']);
+    await page.evaluate(`const intent=document.querySelector('[data-review-intent]'); intent.value='complete'; intent.dispatchEvent(new Event('change'));`);
+    assert.doesNotMatch(await page.evaluate(`document.querySelector('[data-review-output]').value`),/## Comments/);
+    await page.evaluate(`document.querySelector('dialog').close(); document.querySelector('.review-notes').open=true; const note=document.querySelector('[data-review-field="extract:comment"]'); note.value='Check head line 139.'; note.dispatchEvent(new Event('input'));`);
+    await page.close();page=await browser.openPage(file,360);
+    assert.equal(await page.evaluate(`document.querySelector('[data-review-field="extract:comment"]').value`),'Check head line 139.');
+    assert.equal(await page.evaluate(`document.querySelector('[data-review-intent]').value`),'complete');
+    await page.close();writeFileSync(file,render('https://github.com/rishirsv/dots/pull/65; base abc; head ghi'));
+    page=await browser.openPage(file,360);
+    assert.equal(await page.evaluate(`document.querySelector('[data-review-field="extract:comment"]').value`),'');
+    assert.equal(await page.evaluate(`document.querySelector('[data-review-intent]').value`),'feedback');
+    await page.close();page=await browser.openPage(file,360,{javascript:false});
+    assert.equal(await page.evaluate(`document.querySelectorAll('pre code').length`),3);
+    assert.equal(await page.evaluate(`document.querySelector('.disclosure code').textContent`),'+const source = "</script>";');
+    assert.deepEqual((await page.diagnose()).findings,[]);
+  } finally {if(page) await page.close();await browser.close();rmSync(dir,{recursive:true,force:true});}
 });

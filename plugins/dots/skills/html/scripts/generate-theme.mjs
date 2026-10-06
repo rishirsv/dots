@@ -256,7 +256,8 @@ code {
   padding: 1px 5px;
 }
 
-pre code { background: none; padding: 0; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; }
+pre code { background: none; padding: 0; white-space: inherit; overflow-wrap: inherit; }
 
 table {
   width: 100%;

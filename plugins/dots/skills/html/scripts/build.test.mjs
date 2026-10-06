@@ -238,7 +238,7 @@ test("helpers reject invalid arguments with the helper name", () => {
 // ---------- build.mjs ----------
 
 test("committed outcome page modules rebuild their committed pages exactly", async () => {
-  for (const name of ["status-report", "decision-comparison", "implementation-plan"]) {
+  for (const name of ["status-report", "decision-comparison", "implementation-plan", "pr-walkthrough"]) {
     const built = await build(join(root, "assets", "outcomes", `${name}.page.mjs`));
     assert.equal(built, readFileSync(join(root, "assets", "outcomes", `${name}.html`), "utf8"), `${name}.html is stale`);
   }

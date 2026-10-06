@@ -390,16 +390,20 @@ function stableId(helper, id) {
   return id;
 }
 
-function review({ id, title, revision }, children) {
+function review({ id, title, revision, kind = "plan" }, children) {
   stableId("review", id);
   required("review", "title", title);
   required("review", "revision", revision);
-  return html`<div data-component="plan-review" class="plan-review" data-review-id="${id}" data-review-title="${title}" data-review-revision="${revision}">
-    <div class="review-toolbar" hidden><span class="review-progress" data-document-control role="status" aria-live="polite"></span><button type="button" data-review-next>Next unanswered decision</button><button type="button" data-review-response>Prepare response</button></div>
+  if (!["plan", "pull-request"].includes(kind)) fail("review", 'kind must be "plan" or "pull-request"');
+  const intents = kind === "pull-request"
+    ? html`<option value="feedback">Feedback only</option><option value="changes">Changes suggested</option><option value="complete">Walkthrough complete</option>`
+    : html`<option value="feedback">Feedback only</option><option value="revise">Revise the plan</option><option value="ready">Ready to implement</option>`;
+  return html`<div data-component="plan-review" class="plan-review" data-review-id="${id}" data-review-title="${title}" data-review-revision="${revision}"${kind === "pull-request" ? html` data-review-kind="pull-request"` : ""}>
+    <div class="review-toolbar" data-document-control hidden><span class="review-progress" data-document-control role="status" aria-live="polite"></span><button type="button" data-review-next aria-label="Next unanswered decision">Next decision</button><button type="button" data-review-response>Prepare response<span data-review-count aria-hidden="true" hidden></span></button></div>
     <p class="review-save" data-document-control role="status" aria-live="polite"></p>
     <noscript><p>Choices and notes need JavaScript to export. Send your feedback in chat using the item headings.</p></noscript>
     ${blocks(children)}
-    <dialog class="review-dialog" aria-label="Review response"><form method="dialog"><button class="review-close" aria-label="Close response">Close</button></form><h2>Your response</h2><p>Copy or download this response and send it back in chat. Nothing is sent from this page.</p><label>Response intent<select data-review-intent><option value="feedback">Feedback only</option><option value="revise">Revise the plan</option><option value="ready">Ready to implement</option></select></label><label>Response<textarea data-review-output readonly rows="14"></textarea></label><div class="review-actions"><button type="button" data-review-copy>Copy response</button><button type="button" data-review-download>Download response</button></div><p data-review-message role="status" aria-live="polite"></p></dialog>
+    <dialog class="review-dialog" aria-label="Review response"><form method="dialog"><button class="review-close" aria-label="Close response">Close</button></form><h2>Your response</h2><p>Copy or download this response and send it back in chat. Nothing is sent from this page.</p><label>Response intent<select data-review-intent>${intents}</select></label><label>Response<textarea data-review-output readonly rows="14"></textarea></label><div class="review-actions"><button type="button" data-review-copy>Copy response</button><button type="button" data-review-download>Download response</button></div><p data-review-message role="status" aria-live="polite"></p></dialog>
   </div>`;
 }
 
@@ -448,7 +452,7 @@ export const helpers = Object.freeze({
 });
 
 export const meta = Object.freeze({
-  review: { component: "plan-review", summary: "Local comments, explicit decisions, editable proposals, and copy/download response. One wrapper per review; preserve id and update revision when revising.", params: "review({ id, title, revision }, children)", example: `review({ id: "release-plan", title: "Release plan", revision: "1" }, [reviewPoint({id:"delivery", title:"Readers get one file", summary:"The report works offline."}, ["All assets are embedded.", decision({id:"hosting", question:"Where does the report live?", recommended:"local", options:[{value:"local",label:"Local file",consequence:"Open offline."},{value:"hosted",label:"Hosted",consequence:"Requires publishing."}]}), editableCode({id:"schema", title:"Proposed config", source:"offline: true"})])])` },
+  review: { component: "plan-review", summary: "Local comments, explicit decisions, editable proposals, and copy/download response. One wrapper per review; preserve id and update revision when revising. Use kind: pull-request for local walkthrough notes without implementation or approval intent.", params: 'review({ id, title, revision, kind?: "plan" | "pull-request" }, children)', example: `review({ id: "release-plan", title: "Release plan", revision: "1" }, [reviewPoint({id:"delivery", title:"Readers get one file", summary:"The report works offline."}, ["All assets are embedded.", decision({id:"hosting", question:"Where does the report live?", recommended:"local", options:[{value:"local",label:"Local file",consequence:"Open offline."},{value:"hosted",label:"Hosted",consequence:"Requires publishing."}]}), editableCode({id:"schema", title:"Proposed config", source:"offline: true"})])])` },
   reviewPoint: { component: "plan-review", summary: "A behavior or guarantee with visible explanation and targeted feedback. Put technical detail in disclosure() below it.", params: "reviewPoint({ id, title, summary }, children)", example: `reviewPoint({id:"delivery", title:"Readers get one file", summary:"The report works offline."}, ["All assets are embedded."])` },
   decision: { component: "plan-review", summary: "An explicit choice with consequences. Recommendation is labeled but never preselected. Place inside review().", params: "decision({ id, question, options: [{value,label,consequence}], recommended? })", example: `decision({id:"hosting", question:"Where does the report live?", recommended:"local", options:[{value:"local",label:"Local file",consequence:"Open offline."},{value:"hosted",label:"Hosted",consequence:"Requires publishing."}]})` },
   editableCode: { component: "plan-review", summary: "A plain-text schema or code proposal the reviewer can edit, revert, and comment on. Exported edits are data.", params: "editableCode({ id, title, source })", example: `editableCode({id:"schema", title:"Proposed config", source:"offline: true"})` },

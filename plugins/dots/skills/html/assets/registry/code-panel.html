@@ -6,8 +6,7 @@ when: Multi-line code or config the reader needs verbatim — a snippet
 deps: theme.css
 variants: default (filename header) | omit .code-head for an anonymous
   fragment with no filename to show.
-gotchas: Horizontal scroll stays inside the pre — never let wide lines widen
-  the page. The syntax tint classes (.tok-k/.tok-s/.tok-c/.tok-n) are literal
+gotchas: Wrap code, including long identifiers, without changing copied text. The syntax tint classes (.tok-k/.tok-s/.tok-c/.tok-n) are literal
   colors scoped to the code surface, not page tokens, because the surface
   stays dark even when the page uses light mode.
 -->
@@ -36,9 +35,9 @@ gotchas: Horizontal scroll stays inside the pre — never let wide lines widen
     font-size: 13px;
     line-height: 20px;
     padding: 16px 20px;
-    overflow-x: auto;
+    overflow-wrap: anywhere;
     font-feature-settings: "liga" 0;
-    white-space: pre;
+    white-space: pre-wrap;
   }
   /* code-surface-scoped tints: literal colors, not page tokens — this
      background never flips with the page theme, so these can't be a4/a55 etc. */

@@ -7,6 +7,7 @@ rather than adding a custom framework or a second visual system.
 | Reader task | Helper | Suitable content |
 |---|---|---|
 | Review a proposal and send one response | `review()`, `reviewPoint()`, `decision()`, `editableCode()` | Plans, RFCs, decision proposals; read [plans.md](plans.md) |
+| Comment on an implemented change | `review({kind:"pull-request",...})`, `reviewPoint()` | PR walkthroughs; read [pr-walkthroughs.md](pr-walkthroughs.md) |
 | Inspect screens or states one at a time | `walkthrough({id,label,steps:[{title,body}]})` | A lifecycle, before/after comparison, or annotated sequence |
 | Copy an exact snippet | `page({tools:true}, ...)` with `code()` | Commands, configuration, examples |
 | Open or close technical detail together | `page({tools:true}, ...)` with multiple `disclosure()` blocks | Reports with a technical appendix under each behavior |
@@ -28,6 +29,11 @@ marked `numeric:true`; it shows direction in the header and exposes a column sel
 mobile tables. Use formatted numbers
 with one consistent unit per column. Leave derived comparisons and mixed-unit
 values to explicit prose or source calculations. Printing restores filtered rows.
+
+Review actions sit in a compact dock at the lower right. PR walkthroughs show
+one response button; plans add the next unresolved decision and an answer count.
+The count reports explicit answers, never panels viewed. Keep the dock out of
+the main reading flow and hide it in print.
 
 Choose interactions from the reader's job. Do not add search to a tiny table,
 controls to decorative figures, a fake live dashboard, or progress that claims

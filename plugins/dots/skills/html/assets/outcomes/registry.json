@@ -44,11 +44,16 @@
     {
       "name": "pr-walkthrough",
       "title": "PR walkthrough",
-      "file": "../../../how/assets/examples/pr-walkthrough.html",
-      "job": "Help a reviewer understand the actual work, why it was necessary, its scope, mechanism, and proof.",
-      "layout": "wide",
+      "file": "pr-walkthrough.html",
+      "job": "Understand an implemented change, inspect exact source, and export local review notes.",
+      "layout": "article",
       "treatment": "editorial",
-      "shape": ["explanation organized around the change", "realistic trace", "scope and consequence", "verification tied to source"],
+      "shape": [
+        "behavior walkthrough",
+        "pinned source evidence",
+        "complete file coverage",
+        "verification and local notes"
+      ],
       "boundary": "Ground every claim in the actual diff and repository context."
     },
     {

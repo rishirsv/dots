@@ -47,7 +47,8 @@ material supports one. Add more views when they answer different questions.
 Read [diagrams.md](diagrams.md) to choose forms and helpers.
 
 For a reviewable plan, read [plans.md](plans.md) and organize by observable
-behavior. For a procedure, show phases, dependencies, decision branches, or responsibilities
+behavior. For an implemented change, read [pr-walkthroughs.md](pr-walkthroughs.md).
+For a procedure, show phases, dependencies, decision branches, or responsibilities
 before the detailed steps. Follow the figure with the complete actions,
 owners, constraints, and verification that the source requires. A visual
 overview does not replace those details. If the user requires a fixed order

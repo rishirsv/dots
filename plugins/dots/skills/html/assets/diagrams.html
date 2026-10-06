@@ -35,7 +35,7 @@
   --font-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace;
   --font-display: -apple-system, Helvetica Neue, Arial, sans-serif;
   --display-tracking: 1;
-  --article: 720px;
+  --article: 900px;
   --wide: 1040px;
   --canvas: 1440px;
   --section: 48px;
@@ -260,7 +260,8 @@ code {
   padding: 1px 5px;
 }
 
-pre code { background: none; padding: 0; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; }
+pre code { background: none; padding: 0; white-space: inherit; overflow-wrap: inherit; }
 
 table {
   width: 100%;

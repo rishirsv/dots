@@ -31,6 +31,12 @@ gotchas: Never hide the document's main conclusion inside a disclosure — keep 
     font-size: 14px;
     line-height: 1.6;
   }
+  .review-point .disclosure, .disclosure .disclosure { border: 0; border-radius: 0; margin-bottom: 4px; }
+  .review-point .disclosure summary, .disclosure .disclosure summary { padding: 12px 0; }
+  .review-point .disclosure[open] summary, .disclosure .disclosure[open] summary { border-bottom: 0; }
+  .review-point .disclosure-content, .disclosure .disclosure-content { padding: 8px 0 16px; }
+  .disclosure summary::after { content: ""; display: inline-block; width: 7px; height: 7px; margin-left: 10px; border-right: 1.5px solid var(--text-muted); border-bottom: 1.5px solid var(--text-muted); transform: translateY(-2px) rotate(45deg); }
+  .disclosure[open] > summary::after { transform: translateY(2px) rotate(225deg); }
   @media (prefers-reduced-motion: no-preference) {
     .disclosure[open] .disclosure-content {
       animation: disclosure-in var(--dur-fast) var(--ease);
