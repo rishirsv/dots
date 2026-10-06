@@ -102,6 +102,10 @@ Use Plugin Creator's supported tools without ChatGPT web login:
    desktop plugin card to confirm the logo and composer icon render. Packaged
    image files alone do not prove that the listing uses them; report branding
    verification as pending if either surface shows a fallback icon.
+   If an archive update leaves the cloud image URLs empty, upload the same
+   committed ZIP through the existing plugin's **Upload new version** action.
+   Refresh the web page and the desktop plugin inventory before checking again.
+   Include explicit light and dark icon paths, even when both use the same artwork.
    Installing or publishing the
    skills does not start Tunnel or authorize folders.
 5. Refresh the desktop plugin inventory and verify a fresh loader uses the
