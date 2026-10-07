@@ -185,6 +185,22 @@ function steps(items) {
     html`<li class="${current ? "process-step is-current" : "process-step"}"><span class="process-marker">${index + 1}</span><div class="process-title">${required("steps", "title", title)}</div>${detail != null ? html`<p class="process-detail">${detail}</p>` : ""}</li>`)}</ol>`;
 }
 
+const STEP_LAYOUTS = ["list", "proof"];
+
+function implementationSteps({ title, layout = "list", steps: items, outOfScope, sources, open = false }) {
+  required("implementationSteps", "title", title);
+  if (!STEP_LAYOUTS.includes(layout)) fail("implementationSteps", "layout");
+  list("implementationSteps", "steps", items);
+  if (items.length < 2 || items.length > 10) fail("implementationSteps", "steps");
+  const proof = layout === "proof";
+  const rows = items.map(({ title: stepTitle, detail, guard, done }, index) => {
+    required("implementationSteps", "steps", stepTitle);
+    if (proof ? done == null || done === "" || guard != null : done != null) fail("implementationSteps", "layout");
+    return html`<li class="implementation-step"><span class="implementation-step-number">${index + 1}</span><div class="implementation-step-body"><div class="implementation-step-title">${stepTitle}</div>${detail != null ? html`<p class="implementation-step-detail">${detail}</p>` : ""}${guard != null ? html`<p class="implementation-step-guard"><strong>Guard:</strong> ${guard}</p>` : ""}</div>${proof ? html`<p class="implementation-step-done"><span><span class="implementation-step-done-label">Done when </span>${done}</span></p>` : ""}</li>`;
+  });
+  return html`<details data-component="implementation-steps" class="${proof ? "implementation-steps implementation-steps-proof" : "implementation-steps"}"${open ? raw(" open") : ""}><summary>${title} <span class="implementation-steps-count">${items.length} steps</span></summary>${proof ? html`<div class="implementation-steps-head" aria-hidden="true"><span></span><span>Do</span><span>Done when</span></div>` : ""}<ol class="implementation-steps-list">${rows}</ol>${outOfScope != null ? html`<p class="implementation-steps-scope"><strong>Out of scope:</strong> ${outOfScope}</p>` : ""}${sources != null ? html`<p class="implementation-steps-sources">Sources: ${sources}</p>` : ""}</details>`;
+}
+
 function timeline(items) {
   if (!Array.isArray(items)) return timelineFigure(items);
   list("timeline", "items", items);
@@ -445,7 +461,7 @@ export const helpers = Object.freeze({
   callout, calloutStack, recommendation, quote, disclosure,
   thread, exchange,
   stats, table, bars, sparkline, line, stacked,
-  steps, timeline, finding, findings, fileMap, comparison,
+  steps, implementationSteps, timeline, finding, findings, fileMap, comparison,
   code, diff,
   figure, gallery, flowDiagram, flow, state, sequence, mockup,
   review, reviewPoint, decision, editableCode, walkthrough,
@@ -475,6 +491,7 @@ export const meta = Object.freeze({
   stacked: { component: "stacked-chart", summary: "Sourced totals split into named segments.", params: "stacked([[label, ...values]], { title, series, source })", example: `stacked([["Search", 5, 2]], { title: "Work", series: ["Done", "Pending"], source: "Tracker" })` },
   sparkline: { component: "sparkline", summary: "An inline trend with visible value text.", params: "sparkline(numbers, { value, source })", example: `sparkline([96, 120, 180, 260, 312], { value: "312/wk", source: "APM, last 7 days" })` },
   steps: { component: "process-steps", summary: "A linear sequence of two to six stages.", params: "steps([{ title, detail?, current? }])", example: `steps([{ title: "Collect evidence", detail: "Record current behavior." }, { title: "Verify", detail: "Run focused checks.", current: true }])` },
+  implementationSteps: { component: "implementation-steps", summary: "The ordered work behind a plan, collapsed under a titled summary with a step count. Use layout: proof when every step has an observable Done-when check; otherwise list, with an optional guard on the step it limits.", params: 'implementationSteps({ title, layout?: "list" | "proof", steps: [{ title, detail?, guard?, done? }], outOfScope?, sources?, open? })', example: `[implementationSteps({ title: "How to ship the migration", open: true, steps: [{ title: "Add the new column", detail: "Write it alongside the old column.", guard: "never drop the old column in the same release." }, { title: "Switch reads", detail: "Move readers behind a flag." }] }), implementationSteps({ title: "How to ship and prove the migration", layout: "proof", open: true, steps: [{ title: "Backfill rows", detail: "Run in batches.", done: "Every row has a value." }, { title: "Switch reads", done: "Read errors stay at baseline for a day." }], outOfScope: "renaming the table." })]` },
   timeline: { component: "timeline", summary: "Milestones in order; pass {events,summary} for a computed diagram.", params: "timeline(items | { events, summary })", example: `timeline([{ title: "Detected", date: "14:02", detail: "Alert fired." }, { title: "Rollback", date: "14:24", state: "current" }, { title: "Postmortem", date: "pending", state: "pending" }])` },
   finding: { component: "finding-list", summary: "One evidence-backed finding: finding.high, finding.medium, finding.low. Place inside findings().", params: "finding.high({ title, evidence?, consequence?, action? })", example: `findings([finding.high({ title: "Candidates differ", evidence: "The upload rebuilds.", consequence: "A pass proves nothing shipped.", action: "Upload the verified path." })])` },
   findings: { component: "finding-list", summary: "The list that holds finding() items or finding field objects.", params: "findings([finding.high({...}) | { severity, title, ... }])", example: `findings([finding.medium({ title: "Receipt omits the stage", action: "Record the stage name." }), { severity: "low", title: "Log noise", action: "Drop debug lines." }])` },

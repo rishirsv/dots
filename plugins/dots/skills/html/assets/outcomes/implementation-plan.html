@@ -653,60 +653,85 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
     .flow-notes { grid-template-columns: 1fr; gap: 12px; }
   }
 
-.process-steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
-    gap: 24px;
-    list-style: none;
-    margin: 0 0 var(--section);
-    padding: 0;
-  }
-  .process-step { position: relative; min-width: 0; }
-  .process-step:not(:last-child)::after {
-    content: "\2192";
-    position: absolute;
-    top: 3px;
-    right: -17px;
-    color: var(--text-muted);
-    font-size: 14px;
-  }
-  .process-marker {
+.implementation-steps { margin: 0 0 var(--block); }
+  .implementation-steps > summary {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    margin-bottom: 10px;
-    border: 1px solid var(--a20);
-    border-radius: 50%;
-    color: var(--text-muted);
-    font-family: var(--font-mono);
-    font-size: 11px;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    padding: 10px 0;
+    font-size: 15px;
+    font-weight: 600;
+    list-style: none;
+    cursor: pointer;
+    border-radius: var(--r-inline);
   }
-  .process-step.is-current .process-marker {
-    border-color: var(--accent);
-    color: var(--accent-deep);
-    font-weight: 700;
+  .implementation-steps > summary::-webkit-details-marker { display: none; }
+  .implementation-steps > summary::before {
+    content: "";
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-right: 1.5px solid var(--text-muted);
+    border-bottom: 1.5px solid var(--text-muted);
+    transform: translateY(-2px) rotate(-45deg);
+    transition: transform var(--dur-fast) var(--ease);
   }
-  .process-title { font-size: 14px; font-weight: 600; line-height: 1.45; }
-  .process-detail { margin: 4px 0 0; color: var(--text-muted); font-size: 12px; line-height: 1.55; }
-  @media (max-width: 680px) {
-    .process-steps { grid-template-columns: 1fr; gap: 16px; }
-    .process-step {
+  .implementation-steps[open] > summary::before { transform: translateY(-3px) rotate(45deg); }
+  .implementation-steps > summary:focus { outline: none; }
+  .implementation-steps > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .implementation-steps-count { color: var(--text-muted); font-size: 13px; font-weight: 400; }
+  .implementation-steps-list { list-style: none; margin: 8px 0 0; padding: 0; }
+  .implementation-step {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    padding: 14px 0;
+    border-top: 1px solid var(--a12);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .implementation-step:last-child { border-bottom: 1px solid var(--a12); }
+  .implementation-step-number { padding-top: 2px; color: var(--text-muted); font-family: var(--font-mono); font-size: 12px; }
+  .implementation-step-title { font-size: 15px; font-weight: 600; }
+  .implementation-step-detail { margin: 3px 0 0; color: var(--text-muted); }
+  .implementation-step-guard { margin: 6px 0 0; color: var(--warning-ink); font-size: 13px; }
+  .implementation-step-guard strong, .implementation-steps-scope strong { font-weight: 600; }
+  .implementation-steps-head { display: none; }
+  .implementation-step-done { display: grid; grid-template-columns: 18px minmax(0, 1fr); margin-top: 8px; }
+  .implementation-step-done::before { content: "\2713"; padding-top: 1px; color: var(--accent); font-size: 12px; font-weight: 700; }
+  .implementation-step-done-label { font-weight: 600; }
+  .implementation-steps-scope { margin: 16px 0 0; color: var(--text-muted); font-size: 13px; }
+  .implementation-steps-scope strong { color: var(--foreground); }
+  .implementation-steps-sources { margin: 12px 0 0; color: var(--text-muted); font-size: 13px; }
+  @media (min-width: 681px) {
+    .implementation-steps-proof .implementation-steps-head,
+    .implementation-steps-proof .implementation-step {
+      grid-template-columns: 28px minmax(0, 1.15fr) minmax(0, 1fr);
+      column-gap: 20px;
+    }
+    .implementation-steps-proof .implementation-steps-head {
       display: grid;
-      grid-template-columns: 28px minmax(0, 1fr);
-      column-gap: 12px;
+      margin-top: 10px;
+      padding-bottom: 8px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
     }
-    .process-marker { grid-row: 1 / span 2; margin: 0; }
-    .process-step:not(:last-child)::after {
-      content: "";
-      top: 27px;
-      bottom: -17px;
-      left: 12px;
-      right: auto;
+    .implementation-steps-proof .implementation-steps-list { margin-top: 0; }
+    .implementation-steps-proof .implementation-step:first-child { border-top-color: var(--a20); }
+    .implementation-steps-proof .implementation-step-done { margin-top: 0; }
+    .implementation-steps-proof .implementation-step-done-label {
+      position: absolute;
       width: 1px;
-      background: var(--a20);
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
     }
+  }
+  @media (max-width: 680px) {
+    .implementation-step { grid-template-columns: 28px minmax(0, 1fr); }
+    .implementation-step-done { grid-column: 2; }
   }
 
 .callout {
@@ -803,7 +828,7 @@ create/reschedule/cancel/retry return authoritative state + version.
 Repeated client_request_id returns the recorded result.
 A stale version returns conflict + current state.
 Retry is allowed only when provider non-acceptance is known.
-Provider deduplication key stays stable across every delivery attempt.</textarea></label><button type="button" data-review-revert hidden>Revert edit</button><label>Comment on Proposed schedule contract (include a line number when relevant)<textarea data-review-field="schedule-contract:code-comment" rows="2"></textarea></label></div><ul><li>Write the schedule and durable wake-up together. A database due-record poller is the simplest candidate if the existing stack has no reliable job system. Do not rely on device timers or an in-memory timer.</li><li>Use a durable, atomic claim so two workers cannot start independent operations. If leases expire, a recovery worker resumes the same operation. A lease alone cannot prevent duplicates after a crash; provider deduplication must still apply.</li><li>Persist intent before contacting the provider. Retry the same provider idempotency key inside its supported lifetime, or reconcile by operation ID. Never mint a new key just because an HTTP request timed out.</li><li>Persist provider acceptance and finalize Sent through a durable reconciliation path. A crash after acceptance but before local recording must recover acceptance instead of sending again.</li><li>If the provider lacks sufficient deduplication and lookup, keep ambiguous results in Uncertain and require a confirmed operational resolution. Do not promise exactly-once delivery or enable automatic retries for ambiguous outcomes.</li><li>Classify permanent failures, temporary confirmed-unsent failures, and unknown outcomes. Use a proposed bounded retry policy of up to three attempts with increasing delay; tune only after provider constraints and overdue policy are approved. Stop automatic retries when their limit or the lateness window is reached.</li><li>Manual Retry now requests confirmation and preserves the send operation identity. Choosing another time requeues a confirmed-unsent message. If automatic recovery is waiting and no attempt is active, cancellation stops further attempts; an active attempt has the same ‘too late’ boundary.</li></ul></div></details><details class="review-notes"><summary>Comment or request a change</summary><label>Disposition<select data-review-field="duplicate-prevention:disposition"><option value="">No disposition</option><option value="keep">Keep this part</option><option value="change">Change this part</option><option value="remove">Remove this part</option></select></label><label>Comment on A retry continues the same send operation<textarea data-review-field="duplicate-prevention:comment" rows="3"></textarea></label></details></article><article data-component="plan-review" class="review-point" id="validation" data-review-point="validation" data-review-label="Prove what a person can trust"><h3>Prove what a person can trust</h3><p class="review-summary">Release depends on accurate time handling, a decisive cancellation result, and safe recovery after interruption.</p><p>Test the moments where trust can fail: a clock change, Cancel arriving as sending starts, two workers claiming one message, and a crash after the mail service accepts it. A duplicate acceptance or unresolved recovery defect blocks wider rollout.</p><details data-component="disclosure" class="disclosure"><summary>Acceptance checks for engineers</summary><div class="disclosure-content"><div data-component="data-table" class="table-scroll"><table><thead><tr><th>Scenario</th><th>Required result</th></tr></thead><tbody><tr><td>Schedule succeeds; app closes; another device opens</td><td>The same message and exact due moment appear; server dispatch still runs.</td></tr><tr><td>Schedule request repeats after a network timeout</td><td>One schedule exists; the caller receives the original result.</td></tr><tr><td>Travel, clock-change gaps and repeated hours</td><td>The chosen instant stays fixed; invalid local times reject; repeated times require an explicit occurrence.</td></tr><tr><td>Time change races with an old wake-up</td><td>If the change wins, no send starts at the old time. Otherwise return Sending and explain the conflict.</td></tr><tr><td>Cancel and claim execute concurrently</td><td>Exactly one transition wins. Successful cancellation produces no provider request and preserves the chosen cancellation result.</td></tr><tr><td>Two workers or duplicated jobs</td><td>One operation claims the message; provider receives the stable key.</td></tr><tr><td>Crash before request, after acceptance, or before Sent is saved</td><td>Recovery reconciles the same operation; no second accepted message is created.</td></tr><tr><td>Provider rejects, times out, or account access expires</td><td>Show the correct recovery action; ambiguous results never expose unsafe Retry.</td></tr><tr><td>Delayed service restarts</td><td>Apply the approved overdue policy and show a clear missed-time result when appropriate.</td></tr><tr><td>Normal Send and Drafts regression</td><td>Immediate Send, shortcuts, saves, editing and current provider outcomes match their existing behavior.</td></tr><tr><td>Keyboard and assistive technology</td><td>The picker, Scheduled actions, conflict errors and status updates remain operable and announced.</td></tr></tbody></table></div></div></details><details data-component="disclosure" class="disclosure"><summary>Implementation order and release controls</summary><div class="disclosure-content"><ol data-component="process-steps" class="process-steps"><li class="process-step"><span class="process-marker">1</span><div class="process-title">Confirm dependencies</div><p class="process-detail">Inspect the real code and mail provider. Resolve the three product choices. Verify server dispatch, durable storage and provider recovery capabilities.</p></li><li class="process-step"><span class="process-marker">2</span><div class="process-title">Build the durable path</div><p class="process-detail">Add storage and authenticated actions, then claim, send, reconciliation and focused concurrency/crash tests before exposing scheduling.</p></li><li class="process-step"><span class="process-marker">3</span><div class="process-title">Connect the experience</div><p class="process-detail">Add the picker and Scheduled list; test time handling, errors and unchanged Send/Drafts behavior end to end.</p></li><li class="process-step"><span class="process-marker">4</span><div class="process-title">Release gradually</div><p class="process-detail">Enable an internal cohort, then a limited cohort, then broader availability after the guarantees and observed reliability pass.</p></li></ol><p>Track due-to-dispatch delay, queue age, claim conflicts, provider acceptance, confirmed failures, uncertain outcomes, retries and duplicate reports. Correlate by schedule and operation ID; keep message bodies and recipients out of routine telemetry.</p><p>Set launch thresholds and alerting after establishing a baseline; no existing volume or performance measurements are available here. Exercise service interruption and restart before widening access. A duplicate acceptance or unresolved reconciliation defect blocks wider rollout.</p><p>Use separate controls for creating new schedules and dispatching existing ones. If the interface must be rolled back, stop new scheduling and continue servicing the existing queue with a management route. If dispatch itself is unsafe, pause claims, preserve records, show delays, and reconcile accepted sends before resuming. Never silently discard queued messages.</p><p>Validate storage migration and permissions before enabling the flag. Keep the additive data model readable during rollback. Scheduled attachments must retain their supported lifetime throughout rollout.</p></div></details><details class="review-notes"><summary>Comment or request a change</summary><label>Disposition<select data-review-field="validation:disposition"><option value="">No disposition</option><option value="keep">Keep this part</option><option value="change">Change this part</option><option value="remove">Remove this part</option></select></label><label>Comment on Prove what a person can trust<textarea data-review-field="validation:comment" rows="3"></textarea></label></details></article><div data-component="callout" class="callout"><p><strong>Ready after the choices and dependencies are confirmed.</strong> The recommended proposal is to return cancellations to Drafts, hold messages missed by more than 24 hours for confirmation, and retry brief confirmed-unsent temporary failures. These defaults are proposals; the decision controls begin unanswered. Comments and edited contracts remain local until you copy or download one response.</p></div></section>
+Provider deduplication key stays stable across every delivery attempt.</textarea></label><button type="button" data-review-revert hidden>Revert edit</button><label>Comment on Proposed schedule contract (include a line number when relevant)<textarea data-review-field="schedule-contract:code-comment" rows="2"></textarea></label></div><ul><li>Write the schedule and durable wake-up together. A database due-record poller is the simplest candidate if the existing stack has no reliable job system. Do not rely on device timers or an in-memory timer.</li><li>Use a durable, atomic claim so two workers cannot start independent operations. If leases expire, a recovery worker resumes the same operation. A lease alone cannot prevent duplicates after a crash; provider deduplication must still apply.</li><li>Persist intent before contacting the provider. Retry the same provider idempotency key inside its supported lifetime, or reconcile by operation ID. Never mint a new key just because an HTTP request timed out.</li><li>Persist provider acceptance and finalize Sent through a durable reconciliation path. A crash after acceptance but before local recording must recover acceptance instead of sending again.</li><li>If the provider lacks sufficient deduplication and lookup, keep ambiguous results in Uncertain and require a confirmed operational resolution. Do not promise exactly-once delivery or enable automatic retries for ambiguous outcomes.</li><li>Classify permanent failures, temporary confirmed-unsent failures, and unknown outcomes. Use a proposed bounded retry policy of up to three attempts with increasing delay; tune only after provider constraints and overdue policy are approved. Stop automatic retries when their limit or the lateness window is reached.</li><li>Manual Retry now requests confirmation and preserves the send operation identity. Choosing another time requeues a confirmed-unsent message. If automatic recovery is waiting and no attempt is active, cancellation stops further attempts; an active attempt has the same ‘too late’ boundary.</li></ul></div></details><details class="review-notes"><summary>Comment or request a change</summary><label>Disposition<select data-review-field="duplicate-prevention:disposition"><option value="">No disposition</option><option value="keep">Keep this part</option><option value="change">Change this part</option><option value="remove">Remove this part</option></select></label><label>Comment on A retry continues the same send operation<textarea data-review-field="duplicate-prevention:comment" rows="3"></textarea></label></details></article><article data-component="plan-review" class="review-point" id="validation" data-review-point="validation" data-review-label="Prove what a person can trust"><h3>Prove what a person can trust</h3><p class="review-summary">Release depends on accurate time handling, a decisive cancellation result, and safe recovery after interruption.</p><p>Test the moments where trust can fail: a clock change, Cancel arriving as sending starts, two workers claiming one message, and a crash after the mail service accepts it. A duplicate acceptance or unresolved recovery defect blocks wider rollout.</p><details data-component="disclosure" class="disclosure"><summary>Acceptance checks for engineers</summary><div class="disclosure-content"><div data-component="data-table" class="table-scroll"><table><thead><tr><th>Scenario</th><th>Required result</th></tr></thead><tbody><tr><td>Schedule succeeds; app closes; another device opens</td><td>The same message and exact due moment appear; server dispatch still runs.</td></tr><tr><td>Schedule request repeats after a network timeout</td><td>One schedule exists; the caller receives the original result.</td></tr><tr><td>Travel, clock-change gaps and repeated hours</td><td>The chosen instant stays fixed; invalid local times reject; repeated times require an explicit occurrence.</td></tr><tr><td>Time change races with an old wake-up</td><td>If the change wins, no send starts at the old time. Otherwise return Sending and explain the conflict.</td></tr><tr><td>Cancel and claim execute concurrently</td><td>Exactly one transition wins. Successful cancellation produces no provider request and preserves the chosen cancellation result.</td></tr><tr><td>Two workers or duplicated jobs</td><td>One operation claims the message; provider receives the stable key.</td></tr><tr><td>Crash before request, after acceptance, or before Sent is saved</td><td>Recovery reconciles the same operation; no second accepted message is created.</td></tr><tr><td>Provider rejects, times out, or account access expires</td><td>Show the correct recovery action; ambiguous results never expose unsafe Retry.</td></tr><tr><td>Delayed service restarts</td><td>Apply the approved overdue policy and show a clear missed-time result when appropriate.</td></tr><tr><td>Normal Send and Drafts regression</td><td>Immediate Send, shortcuts, saves, editing and current provider outcomes match their existing behavior.</td></tr><tr><td>Keyboard and assistive technology</td><td>The picker, Scheduled actions, conflict errors and status updates remain operable and announced.</td></tr></tbody></table></div></div></details><details data-component="implementation-steps" class="implementation-steps implementation-steps-proof"><summary>Implementation order <span class="implementation-steps-count">4 steps</span></summary><div class="implementation-steps-head" aria-hidden="true"><span></span><span>Do</span><span>Done when</span></div><ol class="implementation-steps-list"><li class="implementation-step"><span class="implementation-step-number">1</span><div class="implementation-step-body"><div class="implementation-step-title">Confirm dependencies</div><p class="implementation-step-detail">Inspect the real code and mail provider, and resolve the three product choices.</p></div><p class="implementation-step-done"><span><span class="implementation-step-done-label">Done when </span>Server dispatch, durable storage and provider recovery are verified.</span></p></li><li class="implementation-step"><span class="implementation-step-number">2</span><div class="implementation-step-body"><div class="implementation-step-title">Build the durable path</div><p class="implementation-step-detail">Add storage and authenticated actions, then claim, send and reconciliation.</p></div><p class="implementation-step-done"><span><span class="implementation-step-done-label">Done when </span>Focused concurrency and crash tests pass before scheduling is exposed.</span></p></li><li class="implementation-step"><span class="implementation-step-number">3</span><div class="implementation-step-body"><div class="implementation-step-title">Connect the experience</div><p class="implementation-step-detail">Add the picker and the Scheduled list.</p></div><p class="implementation-step-done"><span><span class="implementation-step-done-label">Done when </span>Time handling, errors and unchanged Send and Drafts behavior pass end to end.</span></p></li><li class="implementation-step"><span class="implementation-step-number">4</span><div class="implementation-step-body"><div class="implementation-step-title">Release gradually</div><p class="implementation-step-detail">Enable an internal cohort, then a limited cohort, then broader availability.</p></div><p class="implementation-step-done"><span><span class="implementation-step-done-label">Done when </span>The guarantees and observed reliability hold at each stage.</span></p></li></ol></details><details data-component="disclosure" class="disclosure"><summary>Release controls</summary><div class="disclosure-content"><p>Track due-to-dispatch delay, queue age, claim conflicts, provider acceptance, confirmed failures, uncertain outcomes, retries and duplicate reports. Correlate by schedule and operation ID; keep message bodies and recipients out of routine telemetry.</p><p>Set launch thresholds and alerting after establishing a baseline; no existing volume or performance measurements are available here. Exercise service interruption and restart before widening access. A duplicate acceptance or unresolved reconciliation defect blocks wider rollout.</p><p>Use separate controls for creating new schedules and dispatching existing ones. If the interface must be rolled back, stop new scheduling and continue servicing the existing queue with a management route. If dispatch itself is unsafe, pause claims, preserve records, show delays, and reconcile accepted sends before resuming. Never silently discard queued messages.</p><p>Validate storage migration and permissions before enabling the flag. Keep the additive data model readable during rollback. Scheduled attachments must retain their supported lifetime throughout rollout.</p></div></details><details class="review-notes"><summary>Comment or request a change</summary><label>Disposition<select data-review-field="validation:disposition"><option value="">No disposition</option><option value="keep">Keep this part</option><option value="change">Change this part</option><option value="remove">Remove this part</option></select></label><label>Comment on Prove what a person can trust<textarea data-review-field="validation:comment" rows="3"></textarea></label></details></article><div data-component="callout" class="callout"><p><strong>Ready after the choices and dependencies are confirmed.</strong> The recommended proposal is to return cancellations to Drafts, hold messages missed by more than 24 hours for confirmation, and retry brief confirmed-unsent temporary failures. These defaults are proposals; the decision controls begin unanswered. Comments and edited contracts remain local until you copy or download one response.</p></div></section>
     <dialog class="review-dialog" aria-label="Review response"><form method="dialog"><button class="review-close" aria-label="Close response">Close</button></form><h2>Your response</h2><p>Copy or download this response and send it back in chat. Nothing is sent from this page.</p><label>Response intent<select data-review-intent><option value="feedback">Feedback only</option><option value="revise">Revise the plan</option><option value="ready">Ready to implement</option></select></label><label>Response<textarea data-review-output readonly rows="14"></textarea></label><div class="review-actions"><button type="button" data-review-copy>Copy response</button><button type="button" data-review-download>Download response</button></div><p data-review-message role="status" aria-live="polite"></p></dialog>
   </div>
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "dots",
-  "version": "0.2.247",
+  "version": "0.2.248",
   "description": "Focused workflows for planning, building, reviewing, and shipping software.",
   "author": {
     "name": "Rishi"

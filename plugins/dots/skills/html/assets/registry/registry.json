@@ -11,6 +11,7 @@
     { "name": "callout", "title": "Callout", "type": "ui", "file": "callout.html", "deps": [], "when": "A fact the reader must not scroll past. Variants: note, warn, danger." },
     { "name": "data-table", "title": "Data table", "type": "ui", "file": "data-table.html", "deps": [], "when": "Structured rows: decisions, inventories, risk registers. Use the stacked variant for text-heavy mobile comparisons." },
     { "name": "process-steps", "title": "Process steps", "type": "ui", "file": "process-steps.html", "deps": [], "when": "A linear sequence of two to six stages that must remain fully visible at narrow widths." },
+    { "name": "implementation-steps", "title": "Implementation steps", "type": "ui", "file": "implementation-steps.html", "deps": [], "when": "The ordered work behind a plan: a collapsible numbered list, or steps paired with their Done-when checks." },
     { "name": "bar-chart", "title": "Bar chart", "type": "ui", "file": "bar-chart.html", "deps": [], "when": "Compare magnitudes across up to ~8 items. Horizontal bars, one emphasized; page-behavior optionally adds a one-time grow reveal." },
     { "name": "line-chart", "title": "Line chart", "type": "ui", "file": "line-chart.html", "deps": ["bar-chart"], "when": "Show a sourced trend across ordered observations." },
     { "name": "stacked-chart", "title": "Stacked chart", "type": "ui", "file": "stacked-chart.html", "deps": ["bar-chart"], "when": "Compare totals and their composition across categories." },

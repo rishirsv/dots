@@ -22,6 +22,7 @@ export const rules = Object.freeze({
   stacked: { source: 'source is required.', series: 'use at least two distinct series names; "label" is reserved.', values: 'each row needs one non-negative numeric value per series.' },
   sparkline: { source: 'source is required.', data: 'provide at least two finite numbers.', value: 'visible value text is required.' },
   steps: { count: 'use two to six stages, each with a title.' },
+  implementationSteps: { title: 'title is required.', steps: 'use two to ten steps, each with a short title and at most one sentence of detail.', layout: 'layout must be list or proof; proof needs done on every step and no guard; list takes no done.' },
   timeline: { count: 'use at most 12 ordered events; computed diagrams also require a text summary.' },
   finding: { severity: 'severity must be high, medium, or low; title is required.' },
   findings: { items: 'items must be finding() results or finding field objects.' },

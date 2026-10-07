@@ -1,0 +1,147 @@
+<!-- component: implementation-steps
+title: Implementation steps
+type: ui
+when: The ordered work behind a plan, collapsed under a titled summary with a
+  step count. Each step has a short title and at most one sentence of detail.
+deps: theme.css
+variants: list (default; numbered rows with an optional guard per step) |
+  proof (.implementation-steps-proof; each step paired with its "Done when" check).
+gotchas: Use proof when every step has an observable completion check; use list
+  otherwise. Put a constraint on the step it limits (list) or in the single
+  out-of-scope line. Keep sources to one line after the steps.
+-->
+<style>
+  .implementation-steps { margin: 0 0 var(--block); }
+  .implementation-steps > summary {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    padding: 10px 0;
+    font-size: 15px;
+    font-weight: 600;
+    list-style: none;
+    cursor: pointer;
+    border-radius: var(--r-inline);
+  }
+  .implementation-steps > summary::-webkit-details-marker { display: none; }
+  .implementation-steps > summary::before {
+    content: "";
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-right: 1.5px solid var(--text-muted);
+    border-bottom: 1.5px solid var(--text-muted);
+    transform: translateY(-2px) rotate(-45deg);
+    transition: transform var(--dur-fast) var(--ease);
+  }
+  .implementation-steps[open] > summary::before { transform: translateY(-3px) rotate(45deg); }
+  .implementation-steps > summary:focus { outline: none; }
+  .implementation-steps > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .implementation-steps-count { color: var(--text-muted); font-size: 13px; font-weight: 400; }
+  .implementation-steps-list { list-style: none; margin: 8px 0 0; padding: 0; }
+  .implementation-step {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    padding: 14px 0;
+    border-top: 1px solid var(--a12);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .implementation-step:last-child { border-bottom: 1px solid var(--a12); }
+  .implementation-step-number { padding-top: 2px; color: var(--text-muted); font-family: var(--font-mono); font-size: 12px; }
+  .implementation-step-title { font-size: 15px; font-weight: 600; }
+  .implementation-step-detail { margin: 3px 0 0; color: var(--text-muted); }
+  .implementation-step-guard { margin: 6px 0 0; color: var(--warning-ink); font-size: 13px; }
+  .implementation-step-guard strong, .implementation-steps-scope strong { font-weight: 600; }
+  .implementation-steps-head { display: none; }
+  .implementation-step-done { display: grid; grid-template-columns: 18px minmax(0, 1fr); margin-top: 8px; }
+  .implementation-step-done::before { content: "\2713"; padding-top: 1px; color: var(--accent); font-size: 12px; font-weight: 700; }
+  .implementation-step-done-label { font-weight: 600; }
+  .implementation-steps-scope { margin: 16px 0 0; color: var(--text-muted); font-size: 13px; }
+  .implementation-steps-scope strong { color: var(--foreground); }
+  .implementation-steps-sources { margin: 12px 0 0; color: var(--text-muted); font-size: 13px; }
+  @media (min-width: 681px) {
+    .implementation-steps-proof .implementation-steps-head,
+    .implementation-steps-proof .implementation-step {
+      grid-template-columns: 28px minmax(0, 1.15fr) minmax(0, 1fr);
+      column-gap: 20px;
+    }
+    .implementation-steps-proof .implementation-steps-head {
+      display: grid;
+      margin-top: 10px;
+      padding-bottom: 8px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .implementation-steps-proof .implementation-steps-list { margin-top: 0; }
+    .implementation-steps-proof .implementation-step:first-child { border-top-color: var(--a20); }
+    .implementation-steps-proof .implementation-step-done { margin-top: 0; }
+    .implementation-steps-proof .implementation-step-done-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+  }
+  @media (max-width: 680px) {
+    .implementation-step { grid-template-columns: 28px minmax(0, 1fr); }
+    .implementation-step-done { grid-column: 2; }
+  }
+</style>
+
+<details data-component="implementation-steps" class="implementation-steps" open>
+  <summary>How to ship the migration <span class="implementation-steps-count">3 steps</span></summary>
+  <ol class="implementation-steps-list">
+    <li class="implementation-step">
+      <span class="implementation-step-number">1</span>
+      <div class="implementation-step-body">
+        <div class="implementation-step-title">Add the new column</div>
+        <p class="implementation-step-detail">Write it alongside the old column so readers keep working.</p>
+        <p class="implementation-step-guard"><strong>Guard:</strong> never drop the old column in the same release.</p>
+      </div>
+    </li>
+    <li class="implementation-step">
+      <span class="implementation-step-number">2</span>
+      <div class="implementation-step-body">
+        <div class="implementation-step-title">Backfill existing rows</div>
+        <p class="implementation-step-detail">Run in batches during low traffic.</p>
+      </div>
+    </li>
+    <li class="implementation-step">
+      <span class="implementation-step-number">3</span>
+      <div class="implementation-step-body">
+        <div class="implementation-step-title">Switch reads</div>
+        <p class="implementation-step-detail">Move readers to the new column behind a flag.</p>
+      </div>
+    </li>
+  </ol>
+  <p class="implementation-steps-sources">Sources: <a href="#">Migration runbook</a></p>
+</details>
+
+<details data-component="implementation-steps" class="implementation-steps implementation-steps-proof" open>
+  <summary>How to ship and prove the migration <span class="implementation-steps-count">2 steps</span></summary>
+  <div class="implementation-steps-head" aria-hidden="true"><span></span><span>Do</span><span>Done when</span></div>
+  <ol class="implementation-steps-list">
+    <li class="implementation-step">
+      <span class="implementation-step-number">1</span>
+      <div class="implementation-step-body">
+        <div class="implementation-step-title">Backfill existing rows</div>
+        <p class="implementation-step-detail">Run in batches during low traffic.</p>
+      </div>
+      <p class="implementation-step-done"><span><span class="implementation-step-done-label">Done when </span>Every row has a value in the new column.</span></p>
+    </li>
+    <li class="implementation-step">
+      <span class="implementation-step-number">2</span>
+      <div class="implementation-step-body">
+        <div class="implementation-step-title">Switch reads</div>
+        <p class="implementation-step-detail">Move readers to the new column behind a flag.</p>
+      </div>
+      <p class="implementation-step-done"><span><span class="implementation-step-done-label">Done when </span>Read errors stay at baseline for a day.</span></p>
+    </li>
+  </ol>
+  <p class="implementation-steps-scope"><strong>Out of scope:</strong> renaming the table.</p>
+</details>

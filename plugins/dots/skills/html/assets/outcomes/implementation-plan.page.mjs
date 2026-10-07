@@ -2,7 +2,7 @@ export const kit = "report";
 
 export default function(h) {
   const {page,section,html,review,reviewPoint,decision,editableCode,disclosure,
-    steps,walkthrough,mockup,table,callout,sequence,code} = h;
+    implementationSteps,walkthrough,mockup,table,callout,sequence,code} = h;
   const p = text => html`<p>${text}</p>`;
   const list = items => html`<ul>${items.map(item=>html`<li>${item}</li>`)}</ul>`;
   const screen = (name, label, content) => mockup({
@@ -183,13 +183,13 @@ Provider deduplication key stays stable across every delivery attempt.`}),
           ["Keyboard and assistive technology","The picker, Scheduled actions, conflict errors and status updates remain operable and announced."]
         ]}),
         ]),
-        disclosure("Implementation order and release controls",[
-          steps([
-            {title:"Confirm dependencies",detail:"Inspect the real code and mail provider. Resolve the three product choices. Verify server dispatch, durable storage and provider recovery capabilities."},
-            {title:"Build the durable path",detail:"Add storage and authenticated actions, then claim, send, reconciliation and focused concurrency/crash tests before exposing scheduling."},
-            {title:"Connect the experience",detail:"Add the picker and Scheduled list; test time handling, errors and unchanged Send/Drafts behavior end to end."},
-            {title:"Release gradually",detail:"Enable an internal cohort, then a limited cohort, then broader availability after the guarantees and observed reliability pass."}
-          ]),
+        implementationSteps({title:"Implementation order",layout:"proof",steps:[
+          {title:"Confirm dependencies",detail:"Inspect the real code and mail provider, and resolve the three product choices.",done:"Server dispatch, durable storage and provider recovery are verified."},
+          {title:"Build the durable path",detail:"Add storage and authenticated actions, then claim, send and reconciliation.",done:"Focused concurrency and crash tests pass before scheduling is exposed."},
+          {title:"Connect the experience",detail:"Add the picker and the Scheduled list.",done:"Time handling, errors and unchanged Send and Drafts behavior pass end to end."},
+          {title:"Release gradually",detail:"Enable an internal cohort, then a limited cohort, then broader availability.",done:"The guarantees and observed reliability hold at each stage."}
+        ]}),
+        disclosure("Release controls",[
           p("Track due-to-dispatch delay, queue age, claim conflicts, provider acceptance, confirmed failures, uncertain outcomes, retries and duplicate reports. Correlate by schedule and operation ID; keep message bodies and recipients out of routine telemetry."),
           p("Set launch thresholds and alerting after establishing a baseline; no existing volume or performance measurements are available here. Exercise service interruption and restart before widening access. A duplicate acceptance or unresolved reconciliation defect blocks wider rollout."),
           p("Use separate controls for creating new schedules and dispatching existing ones. If the interface must be rolled back, stop new scheduling and continue servicing the existing queue with a management route. If dispatch itself is unsafe, pause claims, preserve records, show delays, and reconcile accepted sends before resuming. Never silently discard queued messages."),

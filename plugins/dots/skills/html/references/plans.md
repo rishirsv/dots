@@ -56,6 +56,18 @@ do not invent an owner, observed file, effort estimate, or product decision.
 Explain engineering risks first as user consequences, then show the mechanism.
 For example: “A message must not arrive twice” before provider deduplication.
 
+Present the ordered work with `implementationSteps()`, not a bulleted list in a
+disclosure. Give each step a short title and at most one sentence of detail;
+move long mechanics into a separate disclosure. Choose one layout:
+
+- `layout: "proof"` when every step has an observable completion check. Each
+  step pairs what to do with its `done` result. Put things to avoid in
+  `outOfScope`.
+- `layout: "list"` (default) otherwise. Attach a constraint to the step it
+  limits with `guard`.
+
+Pass supporting links as one `sources` line.
+
 ## Decisions and feedback
 
 Wrap the reviewable body in `review({id,title,revision}, children)`. Use stable IDs when

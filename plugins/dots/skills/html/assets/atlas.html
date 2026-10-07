@@ -809,6 +809,88 @@ gotchas: Start with the title; omit eyebrows. Put document metadata in the foote
   }
 
 
+  .implementation-steps { margin: 0 0 var(--block); }
+  .implementation-steps > summary {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    padding: 10px 0;
+    font-size: 15px;
+    font-weight: 600;
+    list-style: none;
+    cursor: pointer;
+    border-radius: var(--r-inline);
+  }
+  .implementation-steps > summary::-webkit-details-marker { display: none; }
+  .implementation-steps > summary::before {
+    content: "";
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-right: 1.5px solid var(--text-muted);
+    border-bottom: 1.5px solid var(--text-muted);
+    transform: translateY(-2px) rotate(-45deg);
+    transition: transform var(--dur-fast) var(--ease);
+  }
+  .implementation-steps[open] > summary::before { transform: translateY(-3px) rotate(45deg); }
+  .implementation-steps > summary:focus { outline: none; }
+  .implementation-steps > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .implementation-steps-count { color: var(--text-muted); font-size: 13px; font-weight: 400; }
+  .implementation-steps-list { list-style: none; margin: 8px 0 0; padding: 0; }
+  .implementation-step {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    padding: 14px 0;
+    border-top: 1px solid var(--a12);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .implementation-step:last-child { border-bottom: 1px solid var(--a12); }
+  .implementation-step-number { padding-top: 2px; color: var(--text-muted); font-family: var(--font-mono); font-size: 12px; }
+  .implementation-step-title { font-size: 15px; font-weight: 600; }
+  .implementation-step-detail { margin: 3px 0 0; color: var(--text-muted); }
+  .implementation-step-guard { margin: 6px 0 0; color: var(--warning-ink); font-size: 13px; }
+  .implementation-step-guard strong, .implementation-steps-scope strong { font-weight: 600; }
+  .implementation-steps-head { display: none; }
+  .implementation-step-done { display: grid; grid-template-columns: 18px minmax(0, 1fr); margin-top: 8px; }
+  .implementation-step-done::before { content: "\2713"; padding-top: 1px; color: var(--accent); font-size: 12px; font-weight: 700; }
+  .implementation-step-done-label { font-weight: 600; }
+  .implementation-steps-scope { margin: 16px 0 0; color: var(--text-muted); font-size: 13px; }
+  .implementation-steps-scope strong { color: var(--foreground); }
+  .implementation-steps-sources { margin: 12px 0 0; color: var(--text-muted); font-size: 13px; }
+  @media (min-width: 681px) {
+    .implementation-steps-proof .implementation-steps-head,
+    .implementation-steps-proof .implementation-step {
+      grid-template-columns: 28px minmax(0, 1.15fr) minmax(0, 1fr);
+      column-gap: 20px;
+    }
+    .implementation-steps-proof .implementation-steps-head {
+      display: grid;
+      margin-top: 10px;
+      padding-bottom: 8px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .implementation-steps-proof .implementation-steps-list { margin-top: 0; }
+    .implementation-steps-proof .implementation-step:first-child { border-top-color: var(--a20); }
+    .implementation-steps-proof .implementation-step-done { margin-top: 0; }
+    .implementation-steps-proof .implementation-step-done-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+  }
+  @media (max-width: 680px) {
+    .implementation-step { grid-template-columns: 28px minmax(0, 1fr); }
+    .implementation-step-done { grid-column: 2; }
+  }
+
+
   .chart-card {
     border: 1px solid var(--a12);
     border-radius: var(--r-card);
@@ -2038,6 +2120,9 @@ gotchas: Start with the title; omit eyebrows. Put document metadata in the foote
 </section>
 <section id="process-steps"><h2>Process steps</h2><p class="reading-column">A linear sequence of two to six stages that must remain fully visible at narrow widths.</p>
 <ol data-component="process-steps" class="process-steps"><li class="process-step"><span class="process-marker">1</span><div class="process-title">Collect evidence</div><p class="process-detail">Record current behavior.</p></li><li class="process-step is-current"><span class="process-marker">2</span><div class="process-title">Verify</div><p class="process-detail">Run focused checks.</p></li></ol>
+</section>
+<section id="implementation-steps"><h2>Implementation steps</h2><p class="reading-column">The ordered work behind a plan: a collapsible numbered list, or steps paired with their Done-when checks.</p>
+<details data-component="implementation-steps" class="implementation-steps" open><summary>How to ship the migration <span class="implementation-steps-count">2 steps</span></summary><ol class="implementation-steps-list"><li class="implementation-step"><span class="implementation-step-number">1</span><div class="implementation-step-body"><div class="implementation-step-title">Add the new column</div><p class="implementation-step-detail">Write it alongside the old column.</p><p class="implementation-step-guard"><strong>Guard:</strong> never drop the old column in the same release.</p></div></li><li class="implementation-step"><span class="implementation-step-number">2</span><div class="implementation-step-body"><div class="implementation-step-title">Switch reads</div><p class="implementation-step-detail">Move readers behind a flag.</p></div></li></ol></details><details data-component="implementation-steps" class="implementation-steps implementation-steps-proof" open><summary>How to ship and prove the migration <span class="implementation-steps-count">2 steps</span></summary><div class="implementation-steps-head" aria-hidden="true"><span></span><span>Do</span><span>Done when</span></div><ol class="implementation-steps-list"><li class="implementation-step"><span class="implementation-step-number">1</span><div class="implementation-step-body"><div class="implementation-step-title">Backfill rows</div><p class="implementation-step-detail">Run in batches.</p></div><p class="implementation-step-done"><span><span class="implementation-step-done-label">Done when </span>Every row has a value.</span></p></li><li class="implementation-step"><span class="implementation-step-number">2</span><div class="implementation-step-body"><div class="implementation-step-title">Switch reads</div></div><p class="implementation-step-done"><span><span class="implementation-step-done-label">Done when </span>Read errors stay at baseline for a day.</span></p></li></ol><p class="implementation-steps-scope"><strong>Out of scope:</strong> renaming the table.</p></details>
 </section>
 <section id="bar-chart"><h2>Bar chart</h2><p class="reading-column">Compare magnitudes across up to ~8 items. Horizontal bars, one emphasized; page-behavior optionally adds a one-time grow reveal.</p>
 <div data-component="bar-chart" data-source="APM, last 7 days" class="chart-card reveal">
