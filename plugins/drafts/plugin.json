@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "drafts",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Writing workflows for developing ideas, drafting, and revising prose while preserving your voice.",
   "author": {
     "name": "Rishi"
@@ -34,7 +34,8 @@
         "logo": "./assets/logo.png",
         "screenshots": [],
         "websiteURL": "https://github.com/rishirsv/dots/tree/main/plugins/drafts",
-        "logoDark": "./assets/logo-dark.png"
+        "logoDark": "./assets/logo-dark.png",
+        "composerIconDark": "./assets/logo-dark.png"
       }
     }
   }
