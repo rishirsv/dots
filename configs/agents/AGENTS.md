@@ -28,7 +28,11 @@ To view local HTML, prefer an existing HTTP preview. If none exists, serve the a
 
 ## Writing style
 
-Consult the [Dots writing-style guide](https://github.com/rishirsv/dots/blob/main/plugins/dots/references/writing-style.md) for substantial writing.
+Lead with the conclusion or task, organize around the reader's needs, and give each paragraph one main idea.
+Use familiar words, concrete verbs, active voice, and consistent terms; make actors, actions, conditions, and sequence explicit.
+Support claims with evidence, distinguish observations from inferences, and state uncertainty precisely.
+Preserve meaning, requirements, quotations, code, commands, and the writer's voice; keep details and caveats that affect understanding.
+Remove filler, inflated claims, stock chatbot phrasing, and decorative formatting; use headings, lists, and visuals when they clarify the content.
 
 ## Commits and pull requests
 
