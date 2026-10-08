@@ -10,7 +10,7 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--status] [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--claude|--vscode|--ghostty|--starship|--zsh ...]
+Usage: scripts/sync-configs.sh [--status] [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--claude|--fonts|--vscode|--ghostty|--starship|--zsh ...]
 
 Installs repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
@@ -27,7 +27,7 @@ EOF
 add_target() {
   local target="$1"
   if [[ "$target" == "all" ]]; then
-    TARGETS=(codex codex-personal claude vscode ghostty starship zsh)
+    TARGETS=(codex codex-personal claude fonts vscode ghostty starship zsh)
     return
   fi
   TARGETS+=("$target")
@@ -59,6 +59,9 @@ while (( $# )); do
       ;;
     --claude)
       add_target claude
+      ;;
+    --fonts)
+      add_target fonts
       ;;
     --vscode)
       add_target vscode
@@ -273,6 +276,13 @@ sync_claude() {
   install_file "$ROOT/configs/claude/keybindings.json" "$HOME/.claude/keybindings.json"
 }
 
+sync_fonts() {
+  local source
+  for source in "$ROOT"/configs/fonts/paper-mono/*.otf; do
+    install_file "$source" "$HOME/Library/Fonts/${source:t}"
+  done
+}
+
 sync_vscode() {
   local user_dir="$HOME/Library/Application Support/Code/User"
   install_file "$ROOT/configs/vscode/settings.json" "$user_dir/settings.json"
@@ -297,6 +307,7 @@ for target in "${TARGETS[@]}"; do
     codex) sync_codex ;;
     codex-personal) sync_codex_personal ;;
     claude) sync_claude ;;
+    fonts) sync_fonts ;;
     vscode) sync_vscode ;;
     ghostty) sync_ghostty ;;
     starship) sync_starship ;;

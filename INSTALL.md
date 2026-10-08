@@ -91,6 +91,10 @@ Plugin installation alone does not start a tunnel or authorize any folder.
 Choose the targets needed on this Mac. Run `scripts/sync-configs.sh --help` to
 see the authoritative target list.
 
+The `--fonts` target installs the repo-owned Paper Mono family into
+`~/Library/Fonts`. Codex uses it for code and other monospaced text in both
+light and dark themes.
+
 Preview the selected targets first, inspect every proposed replacement, and
 then apply the same target list. For example:
 

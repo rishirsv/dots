@@ -76,10 +76,10 @@ worktree-upstream-refresh-mode = "best-effort"
 preventSleepWhileRunning = true
 
 [desktop.appearanceLightChromeTheme.fonts]
-code = "SF Mono Terminal"
+code = '"Paper Mono", ui-monospace, "SFMono-Regular"'
 
 [desktop.appearanceDarkChromeTheme.fonts]
-code = '"Geist Mono", ui-monospace, "SFMono-Regular"'
+code = '"Paper Mono", ui-monospace, "SFMono-Regular"'
 
 # Local Computer Use skill copy in ~/.agents/skills/computer-use/ replaces the
 # bundled one (whose second half is OpenAI's confirmations policy).
