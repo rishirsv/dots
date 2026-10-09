@@ -16,6 +16,7 @@ class TinycastWorkflowTests(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
         (self.root / 'configs/tinycast').mkdir(parents=True)
+        (self.root / 'configs/tinycast/shortcuts.json').write_bytes((ROOT / 'configs/tinycast/shortcuts.json').read_bytes())
         self.config = json.loads((ROOT / 'configs/tinycast/workflows.json').read_text())
         (self.root / 'configs/tinycast/workflows.json').write_text(json.dumps(self.config))
         self.quick = self.root / 'quick-actions.json'
@@ -42,6 +43,16 @@ class TinycastWorkflowTests(unittest.TestCase):
         self.assertEqual(self.invoke(),0)
         self.assertEqual(before,(self.quick.read_bytes(),self.karabiner.read_bytes()))
         self.assertFalse((self.root / 'helper').exists())
+
+    def test_fresh_install_preview_without_history_or_karabiner(self):
+        self.live.pop('hotkey.command:clipboard-history')
+        self.karabiner.unlink()
+        self.assertEqual(self.invoke(), 0)
+        self.assertFalse(self.karabiner.exists())
+
+    def test_rejects_caps_lock_rule_collision(self):
+        self.karabiner.write_text(json.dumps({'profiles': [{'selected': True, 'complex_modifications': {'rules': [{'description': 'Local Caps Lock', 'manipulators': [{'from': {'key_code': 'caps_lock'}}]}]}}]}))
+        with self.assertRaisesRegex(RuntimeError, 'Existing Karabiner rule'): self.invoke()
 
     def test_rejects_owned_shortcut_collision(self):
         self.live['hotkey.app.synthetic'] = self.combo(34)

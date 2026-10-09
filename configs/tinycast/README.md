@@ -1,7 +1,9 @@
 # Tinycast workflows
 
-This profile adds selected-text tools and local OCR to Tinycast 0.11.3. It
-preserves the existing Prompt, model routing, and Wispr Flow settings.
+This profile adds selected-text tools, local OCR, and the Air's portable
+shortcuts to Tinycast. It preserves existing model routing, Wispr Flow settings,
+and an existing Prompt action. The workflow schema was originally checked
+against 0.11.3.
 
 | Hyper key | Action | Input and result |
 | --- | --- | --- |
@@ -34,10 +36,19 @@ supports one binding per command. The helper merges unrelated actions and rules,
 refuses known Tinycast shortcut conflicts, and preserves an existing Prompt
 verbatim. It enables the approved Quick Actions and the owned OCR custom command.
 
+The portable [shortcut profile](shortcuts.json) also binds Command+Space to
+the launcher, Hyper+B to Chrome, Hyper+C to VS Code, Hyper+T to Ghostty,
+Hyper+backtick to AI chat, Control+Shift+Space to emoji search, and Option+Left/Right
+to half-screen window placement. Caps Lock becomes Hyper when held and Escape
+when tapped, through a merged Karabiner rule. Hyper means Command+Control+Option+Shift.
+
 ## Apply on another Mac
 
-Install Tinycast and Karabiner from their official channels, configure the local
-model and permissions, and clone Dots. OCR compilation requires Apple's Swift
+Install Tinycast, Karabiner, and the shortcut target apps from their official
+channels, configure the local model and permissions, and clone Dots. Complete
+Karabiner's macOS permission prompts before testing Caps Lock. The helper can
+initialize a fresh shortcut/selected-profile configuration; it stops on
+conflicting existing shortcuts or unrelated Caps Lock rules. OCR compilation requires Apple's Swift
 compiler, supplied by Xcode or Command Line Tools. No third-party OCR package is
 installed by this profile.
 

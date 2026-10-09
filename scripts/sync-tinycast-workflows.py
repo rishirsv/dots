@@ -26,9 +26,18 @@ def main():
     parser.add_argument('--status', action='store_true')
     args = parser.parse_args()
     config = json.loads((ROOT / 'configs/tinycast/workflows.json').read_text())
+    portable = json.loads((ROOT / 'configs/tinycast/shortcuts.json').read_text())
     live = defaults()
     actions = json.loads(QUICK.read_text()) if QUICK.exists() else []
-    wanted = {}
+    wanted = dict(portable['defaults'])
+    for key, value in wanted.items():
+        if not key.startswith('hotkey.'): continue
+        combo = json.loads(value)['combo']['_0']
+        for name, current in live.items():
+            if not name.startswith('hotkey.') or name == key or not isinstance(current, str): continue
+            try: existing = json.loads(current)['combo']['_0']
+            except (ValueError, KeyError, TypeError): continue
+            if existing == combo: raise RuntimeError('Shortcut conflict: ' + name)
     for binding in config['bindings'].values():
         key = 'hotkey.quickAction.' + binding['id'].lower()
         wanted[key] = json.dumps({'combo': {'_0': {'carbonModifiers': 6912, 'carbonKeyCode': binding['carbonKeyCode']}}}, separators=(',', ':'))
@@ -56,9 +65,9 @@ def main():
     # Tinycast has one shortcut per command. Keep Option+V and alias Hyper+H.
     history_key = 'hotkey.command:clipboard-history'
     history_value = json.dumps({'combo': {'_0': {'carbonModifiers': 2048, 'carbonKeyCode': 9}}}, separators=(',', ':'))
-    if json.loads(live.get(history_key, '{}')) != json.loads(history_value):
+    if history_key in live and json.loads(live[history_key]) != json.loads(history_value):
         raise RuntimeError('History must already use Option+V; preserve the local binding')
-    karabiner = json.loads(KARABINER.read_text())
+    karabiner = json.loads(KARABINER.read_text()) if KARABINER.exists() else {'profiles': [{'name': 'Default', 'selected': True}]}
     profile = next(p for p in karabiner['profiles'] if p.get('selected'))
     rules = profile.setdefault('complex_modifications', {}).setdefault('rules', [])
     rule = {'description': DESCRIPTION, 'manipulators': [{'type': 'basic', 'from': {'key_code': 'h', 'modifiers': {'mandatory': ['command', 'control', 'option', 'shift']}}, 'to': [{'key_code': 'v', 'modifiers': ['left_option']}]}]}
@@ -77,10 +86,22 @@ def main():
     bound = list(live.get('boundQuickActionIDs', []))
     for value in config['bindings'].values():
         if value['id'].lower() not in [x.lower() for x in bound]: bound.append(value['id'].lower())
-    new_rules = [r for r in rules if r.get('description') != DESCRIPTION] + [rule]
+    owned_rules = portable['karabinerRules'] + [rule]
+    owned_descriptions = {r['description'] for r in owned_rules}
+    owned_keys = {m['from']['key_code'] for r in owned_rules for m in r['manipulators']}
+    for existing in rules:
+        if existing.get('description') in owned_descriptions: continue
+        if any(m.get('from', {}).get('key_code') in owned_keys for m in existing.get('manipulators', [])):
+            raise RuntimeError('Existing Karabiner rule requires review: ' + existing.get('description', 'unnamed'))
+    new_rules = [r for r in rules if r.get('description') not in owned_descriptions] + owned_rules
+    app_bound = list(live.get('boundAppBundleIDs', []))
+    for bundle in portable['boundAppBundleIDs']:
+        if bundle not in app_bound: app_bound.append(bundle)
     changed = actions != merged or rules != new_rules or live.get('boundQuickActionIDs') != bound
     changed |= any(live.get(k) != v for k, v in wanted.items())
     changed |= live.get('quickActionsEnabled') is not True
+    changed |= live.get('boundAppBundleIDs') != app_bound
+    changed |= not KARABINER.exists()
     custom = config.get('customCommands', [])
     live_custom = json.loads(live.get('customCommands', b'[]'))
     custom_ids = {command['id'].lower() for command in custom}
@@ -126,7 +147,10 @@ def main():
     QUICK.parent.mkdir(parents=True, exist_ok=True)
     QUICK.write_text(json.dumps(merged, indent=2) + '\n')
     for key, value in wanted.items():
-        subprocess.run(['defaults', 'write', 'com.tinycast.app', key, '-string', value], check=True)
+        kind = '-bool' if isinstance(value, bool) else '-string'
+        encoded = str(value).lower() if isinstance(value, bool) else value
+        subprocess.run(['defaults', 'write', 'com.tinycast.app', key, kind, encoded], check=True)
+    subprocess.run(['defaults', 'write', 'com.tinycast.app', 'boundAppBundleIDs', '-array', *app_bound], check=True)
     subprocess.run(['defaults', 'write', 'com.tinycast.app', 'boundQuickActionIDs', '-array', *bound], check=True)
     subprocess.run(['defaults', 'write', 'com.tinycast.app', 'quickActionsEnabled', '-bool', 'true'], check=True)
     if custom:
@@ -134,6 +158,7 @@ def main():
         subprocess.run(['defaults', 'write', 'com.tinycast.app', 'boundCustomCommandIDs', '-array', *custom_bound], check=True)
         subprocess.run(['defaults', 'write', 'com.tinycast.app', 'customCommandsEnabled', '-bool', 'true'], check=True)
     profile['complex_modifications']['rules'] = new_rules
+    KARABINER.parent.mkdir(parents=True, exist_ok=True)
     KARABINER.write_text(json.dumps(karabiner, indent=2) + '\n')
     if running: subprocess.run(['open', '-a', 'Tinycast'], check=True)
     print('Applied portable Tinycast workflows; backup: ' + str(backup))

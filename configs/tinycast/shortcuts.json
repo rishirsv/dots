@@ -1,0 +1,55 @@
+{
+  "defaults": {
+    "hyperKeyIncludesShift": true,
+    "hyperKeyPhysicalKey": "capsLock",
+    "hyperKeyQuickPress": "none",
+    "windowManagementEnabled": true,
+    "hotkey.togglePalette": "{\"combo\":{\"_0\":{\"carbonModifiers\":256,\"carbonKeyCode\":49}}}",
+    "hotkey.command:clipboard-history": "{\"combo\":{\"_0\":{\"carbonModifiers\":2048,\"carbonKeyCode\":9}}}",
+    "hotkey.command:ai-chat": "{\"combo\":{\"_0\":{\"carbonKeyCode\":50,\"carbonModifiers\":6912}}}",
+    "hotkey.command:search-emoji": "{\"combo\":{\"_0\":{\"carbonModifiers\":4352,\"carbonKeyCode\":49}}}",
+    "hotkey.windowCommand.left-half": "{\"combo\":{\"_0\":{\"carbonKeyCode\":123,\"carbonModifiers\":2048}}}",
+    "hotkey.windowCommand.right-half": "{\"combo\":{\"_0\":{\"carbonKeyCode\":124,\"carbonModifiers\":2048}}}",
+    "hotkey.app.com.google.Chrome": "{\"combo\":{\"_0\":{\"carbonModifiers\":6912,\"carbonKeyCode\":11}}}",
+    "hotkey.app.com.microsoft.VSCode": "{\"combo\":{\"_0\":{\"carbonModifiers\":6912,\"carbonKeyCode\":8}}}",
+    "hotkey.app.com.mitchellh.ghostty": "{\"combo\":{\"_0\":{\"carbonModifiers\":6912,\"carbonKeyCode\":17}}}"
+  },
+  "boundAppBundleIDs": [
+    "com.mitchellh.ghostty",
+    "com.microsoft.VSCode",
+    "com.google.Chrome"
+  ],
+  "karabinerRules": [
+    {
+      "description": "Caps Lock -> Hyper (command+control+option+shift), Escape when tapped alone",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "caps_lock",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "left_shift",
+              "modifiers": [
+                "left_command",
+                "left_control",
+                "left_option"
+              ]
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "escape"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
