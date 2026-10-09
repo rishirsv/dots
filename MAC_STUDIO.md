@@ -27,7 +27,13 @@ older T3 service's future startup is disabled.
 The owner restarted and unlocked akira; SSH, Tailscale and ChatGPT/Codex are
 available after login. Key-based SSH, scoped config status, matching shortcut
 files, Xcode/Simulator CLI, a synthetic Swift program and Git remote access
-passed acceptance checks. Screen Sharing accepts saved credentials and renders
+passed acceptance checks. GitHub CLI is authenticated persistently on akira
+using an owner-only credential file (mode `0600`) on the FileVault-encrypted
+disk, after explicit owner approval. Fresh SSH API access, private Git reads
+and a dry-run push passed. The Git credential helper uses GitHub CLI. Tinycast's
+native Caps Lock Hyper mapping is active with Shift included and no action on
+tap; optional Karabiner history/Escape behavior remains unavailable.
+Screen Sharing accepts saved credentials and renders
 the remote lock screen; automated remote unlock, High Performance mode and
 physical global shortcuts remain unverified. macOS remains 27.0; no update was installed. Karabiner
 driver approval remains blocked by a reproducible macOS Login Items crash, and

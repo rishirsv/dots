@@ -39,8 +39,13 @@ verbatim. It enables the approved Quick Actions and the owned OCR custom command
 The portable [shortcut profile](shortcuts.json) also binds Command+Space to
 the launcher, Hyper+B to Chrome, Hyper+C to VS Code, Hyper+T to Ghostty,
 Hyper+backtick to AI chat, Control+Shift+Space to emoji search, and Option+Left/Right
-to half-screen window placement. Caps Lock becomes Hyper when held and Escape
-when tapped, through a merged Karabiner rule. Hyper means Command+Control+Option+Shift.
+to half-screen window placement. Tinycast's native Caps Lock Hyper setting is
+enabled with Shift included and no action on a standalone tap. Hyper means
+Command+Control+Option+Shift. The profile also carries optional Karabiner rules
+for Escape on tap and the Hyper+H history alias; those require an enabled
+Karabiner driver and are not supplied by Tinycast's native mapping. On the
+current Air/akira setup, the native mapping is active and Option+V opens history;
+Karabiner's extra behavior remains unavailable on akira.
 
 ## Apply on another Mac
 
