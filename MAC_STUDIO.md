@@ -9,13 +9,17 @@ Keep source, Xcode, simulators, caches and job outputs on the Studio's local SSD
 **Status: setup in progress, 8 October 2026.** The Macs are named `air`
 and `akira`. Tailscale, key-based SSH, Codex desktop pairing, and remote desktop
 rendering are working. Tinycast's portable shortcut profile is applied; Codex,
-Ghostty, and VS Code keybinding files match the Air. Development tools and T3
+Ghostty, and VS Code keybinding files match the Air. Akira's 55 stored macOS
+symbolic shortcut entries also match the Air, including disabled Command–Space
+and Option–Command–Space Spotlight shortcuts. Neither Mac has custom app-menu
+or Services keyboard equivalents. Native UI verification of the macOS shortcut
+change remains pending while akira is locked. Development tools and T3
 Nightly are installed. Studio sleep is disabled and startup whenever power is
 reconnected is enabled. FileVault and SIP remain enabled.
 
 Ghostty terminal input, Tinycast launcher/app commands and clipboard-history
 search passed. Tinycast local Apple Intelligence inference passed earlier, but
-a later bounded attempt produced no completed answer.
+later bounded attempts, including a longer check, produced no completed answer.
 T3 Nightly on akira uses Performance background activity. Startup cleanup keeps
 ChatGPT, Tailscale and Tinycast in the Studio's Open at Login list. T3's GUI
 login agents were removed from both Macs, and automatic thread resumption is
