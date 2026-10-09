@@ -12,12 +12,14 @@ rendering are working. Tinycast's portable shortcut profile is applied; Codex,
 Ghostty, and VS Code keybinding files match the Air. Akira's 55 stored macOS
 symbolic shortcut entries also match the Air, including disabled Command–Space
 and Option–Command–Space Spotlight shortcuts. Neither Mac has custom app-menu
-or Services keyboard equivalents. Native UI verification of the macOS shortcut
-change remains pending while akira is locked. Development tools and T3
+or Services keyboard equivalents. Both Spotlight shortcuts are verified off in
+native System Settings. Development tools and T3
 Nightly are installed. Studio sleep is disabled and startup whenever power is
 reconnected is enabled. Idle screen locking is off (verified with sysadminctl),
-and the current-host screen saver idle timer is zero. The already-locked GUI
-session still needs one manual unlock. FileVault and SIP remain enabled; a
+and the current-host screen saver idle timer is zero. Screen Sharing unlock
+succeeded after reconnecting and clicking the login submit arrow. Native
+settings confirm Require password Never, screen saver Never and automatic
+logout Off. FileVault and SIP remain enabled; a
 restart still requires the initial unlock.
 
 Ghostty terminal input, Tinycast launcher/app commands and clipboard-history
@@ -41,7 +43,7 @@ and a dry-run push passed. The Git credential helper uses GitHub CLI. Tinycast's
 native Caps Lock Hyper mapping is active with Shift included and no action on
 tap; optional Karabiner history/Escape behavior remains unavailable.
 Screen Sharing accepts saved credentials and renders
-the remote lock screen; automated remote unlock, High Performance mode and
+the remote lock screen; High Performance mode and
 physical global shortcuts remain unverified. macOS remains 27.0; no update was installed. Karabiner
 driver approval remains blocked by a reproducible macOS Login Items crash, and
 Tinycast selected-text actions remain unverified. Physical headless operation,
