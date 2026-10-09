@@ -13,7 +13,9 @@ Ghostty, and VS Code keybinding files match the Air. Development tools and T3
 Nightly are installed. Studio sleep is disabled and startup whenever power is
 reconnected is enabled. FileVault and SIP remain enabled.
 
-Ghostty terminal input and Tinycast local Apple Intelligence inference passed.
+Ghostty terminal input, Tinycast launcher/app commands and clipboard-history
+search passed. Tinycast local Apple Intelligence inference passed earlier, but
+a later bounded attempt produced no completed answer.
 T3 Nightly on akira uses Performance background activity. Startup cleanup keeps
 ChatGPT, Tailscale and Tinycast in the Studio's Open at Login list. T3's GUI
 login agents were removed from both Macs, and automatic thread resumption is
@@ -23,7 +25,11 @@ and Wispr Flow as ordinary login apps, with Tailscale background startup; its
 older T3 service's future startup is disabled.
 
 The owner restarted and unlocked akira; SSH, Tailscale and ChatGPT/Codex are
-available after login. macOS remains 27.0; no update was installed. Karabiner
+available after login. Key-based SSH, scoped config status, matching shortcut
+files, Xcode/Simulator CLI, a synthetic Swift program and Git remote access
+passed acceptance checks. Screen Sharing accepts saved credentials and renders
+the remote lock screen; automated remote unlock, High Performance mode and
+physical global shortcuts remain unverified. macOS remains 27.0; no update was installed. Karabiner
 driver approval remains blocked by a reproducible macOS Login Items crash, and
 Tinycast selected-text actions remain unverified. Physical headless operation,
 wired/WAN performance, and unattended reboot recovery still need verification.
