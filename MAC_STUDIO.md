@@ -15,7 +15,10 @@ and Option–Command–Space Spotlight shortcuts. Neither Mac has custom app-men
 or Services keyboard equivalents. Native UI verification of the macOS shortcut
 change remains pending while akira is locked. Development tools and T3
 Nightly are installed. Studio sleep is disabled and startup whenever power is
-reconnected is enabled. FileVault and SIP remain enabled.
+reconnected is enabled. Idle screen locking is off (verified with sysadminctl),
+and the current-host screen saver idle timer is zero. The already-locked GUI
+session still needs one manual unlock. FileVault and SIP remain enabled; a
+restart still requires the initial unlock.
 
 Ghostty terminal input, Tinycast launcher/app commands and clipboard-history
 search passed. Tinycast local Apple Intelligence inference passed earlier, but
