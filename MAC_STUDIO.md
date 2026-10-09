@@ -14,17 +14,24 @@ Nightly are installed. Studio sleep is disabled and startup whenever power is
 reconnected is enabled. FileVault and SIP remain enabled.
 
 Ghostty terminal input and Tinycast local Apple Intelligence inference passed.
-T3 Nightly on akira uses Performance background activity and continues threads
-after restarts; login agents are installed on both Macs. Karabiner driver
-approval is blocked by a reproducible macOS Login Items crash, and Tinycast
-selected-text actions remain unverified. Physical headless operation, wired/WAN
-performance, and owner-present reboot recovery still need verification. The
-owner confirmed physical access to unlock akira after a restart; no restart or
-macOS update was performed in this pass. Local execution reports and rollback details are retained outside Git under each
-Mac's `Documents/Codex/remote-setup/`. The approval gates below describe the
+T3 Nightly on akira uses Performance background activity. Startup cleanup keeps
+ChatGPT, Tailscale and Tinycast in the Studio's Open at Login list. T3's GUI
+login agents were removed from both Macs, and automatic thread resumption is
+off on akira. Its Dock pins are ChatGPT, Chrome and Ghostty; recent apps are off
+and minimized windows use their app icons. The Air retains ChatGPT, Tinycast
+and Wispr Flow as ordinary login apps, with Tailscale background startup; its
+older T3 service's future startup is disabled.
+
+The owner restarted and unlocked akira; SSH, Tailscale and ChatGPT/Codex are
+available after login. macOS remains 27.0; no update was installed. Karabiner
+driver approval remains blocked by a reproducible macOS Login Items crash, and
+Tinycast selected-text actions remain unverified. Physical headless operation,
+wired/WAN performance, and unattended reboot recovery still need verification.
+Local execution reports and rollback details are retained outside Git under
+each Mac's `Documents/Codex/remote-setup/`. The approval gates below describe the
 original authoring workflow; later explicit user instructions authorize the
 current setup, with any tool-required action-time confirmations handled during
-execution. No simulator capacity or reboot recovery is certified yet.
+execution. No simulator capacity or unattended reboot recovery is certified.
 
 ## Before beginning
 
