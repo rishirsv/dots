@@ -6,11 +6,25 @@ and Apple's High Performance Screen Sharing. Keep SIP and FileVault enabled.
 Use the supported Codex desktop-host connection for tasks needing Studio apps.
 Keep source, Xcode, simulators, caches and job outputs on the Studio's local SSD.
 
-**Status: authored 3 October 2026; setup has not been performed.** The user's
-reauthorization covers completing these repository files. Actual installations,
-logins, app relaunches, services, grants and OS/network changes require the
-individual execution approvals below. No remote host has been contacted by
-these scripts. No simulator capacity or recovery behavior is certified yet.
+**Status: setup in progress, 8 October 2026.** The Macs are named `air`
+and `akira`. Tailscale, key-based SSH, Codex desktop pairing, and remote desktop
+rendering are working. Tinycast's portable shortcut profile is applied; Codex,
+Ghostty, and VS Code keybinding files match the Air. Development tools and T3
+Nightly are installed. Studio sleep is disabled and startup whenever power is
+reconnected is enabled. FileVault and SIP remain enabled.
+
+Ghostty terminal input and Tinycast local Apple Intelligence inference passed.
+T3 Nightly on akira uses Performance background activity and continues threads
+after restarts; login agents are installed on both Macs. Karabiner driver
+approval is blocked by a reproducible macOS Login Items crash, and Tinycast
+selected-text actions remain unverified. Physical headless operation, wired/WAN
+performance, and owner-present reboot recovery still need verification. The
+owner confirmed physical access to unlock akira after a restart; no restart or
+macOS update was performed in this pass. Local execution reports and rollback details are retained outside Git under each
+Mac's `Documents/Codex/remote-setup/`. The approval gates below describe the
+original authoring workflow; later explicit user instructions authorize the
+current setup, with any tool-required action-time confirmations handled during
+execution. No simulator capacity or reboot recovery is certified yet.
 
 ## Before beginning
 
