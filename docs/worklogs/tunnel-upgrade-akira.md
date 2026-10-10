@@ -73,3 +73,10 @@ Implementation and test entries will be appended as work completes. This log dis
 All five execution areas are implemented and deployed on akira. Tunnel Akira is connected in the existing ChatGPT account and remains ready under login supervision. Use `@Tunnel Akira` for remote work and `dots-tunnel folders` locally on akira for combined folder operations. Source is isolated on `codex/tunnel-upgrade-akira`; main, the original Mac endpoint, and local user sessions remain unchanged.
 
 Evidence: 55 passing Tunnel tests; passing isolated full Dots gate; exact installed-source/preflight verification; live connector file and native execution E2E with same-conversation executor recovery; independent byte/PID/no-replay checks; supervisor failure/restart/pause checks. Actual logout/login and a separate GPT-6 Pro Web turn were not performed.
+
+## Main merge and akira propagation — 2026-10-09
+
+- Owner authorized merging to main, propagation on akira, and refreshing connections while preserving the Mac Tunnel and local sessions.
+- Fetched origin: main remains clean at 5854576; upgrade branch contains the reviewed 0d5f755 commit. Akira doctor is ready with zero active operations. Original Mac connection is ready; recorded its unchanged runtime identity/session for comparison.
+- Prepared Dots 0.2.249 in all three manifests so akira plugin installations can distinguish this release. Release validation runs before merge and push.
+- Release checks passed: full Dots gate (86 HTML, 51 repository, 30 Dots tests and package/loader checks), all 55 Tunnel tests, and git diff --check.
