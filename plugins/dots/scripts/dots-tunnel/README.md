@@ -31,6 +31,8 @@ The [dots-tunnel skill](../../skills/dots-tunnel/SKILL.md) describes the workflo
 | `read_file` | Read text and obtain its content revision. |
 | `read_files` | Read up to eight files, with a result or error for each path. |
 | `apply_patch` | Create or update one file using Codex-style patch syntax. |
+| `manage_files` | Protected mkdir, full-text write, move, delete, and restore. |
+| `tunnel_manage` | Status, doctor, repository/branch discovery, folder transactions, native repair, and result recovery. |
 | `get_workflow` | Load the MCP-delivered skill, folder map, and execution availability. |
 | `exec_command` | Optional: run a command through Codex's native sandbox. |
 | `write_stdin` | Optional: poll a running command or send terminal input. |
@@ -70,7 +72,7 @@ The lifecycle helper starts and stops the tunnel. Record the connection once in
 ```json
 {"tunnel_id": "tunnel_...", "python": "/Users/you/.cache/dots-tunnel-venv/bin/python",
  "mounts": {"Code": "/Users/you/Code"}, "state": "/Users/you/.local/state/dots-tunnel",
- "exec": false}
+ "exec": false, "approved_parents": ["/Users/you/Code"], "alias": "dots-tunnel"}
 ```
 
 Put the restricted runtime credential in
@@ -106,14 +108,12 @@ connection and one credential.
 The helper runs concurrent requests one at a time and prints only a short status.
 
 The runtime stays in the background after a chat or terminal closes. Stop it
-explicitly when finished; logout, reboot, or failure may also stop it. No login
-startup or extra watchdog is installed. While the Mac is asleep or offline,
+explicitly when finished; logout, reboot, or failure may also stop it. Optional macOS login supervision is installed with `runtime.py startup`. An explicit stop writes a durable pause, respected until the next start. While the Mac is asleep or offline,
 ChatGPT cannot reach it. A Web skill cannot start a stopped local server: invoke
 the skill in Codex on the Mac first, then mention `@Tunnel` in ChatGPT.
 
 Lifecycle commands are local operator actions, not remotely exposed MCP tools.
-They do not authorize new folders. Stop the runtime before changing the
-authorized folders; never expose a home directory.
+The local `folders` command previews or applies a combined add/remove transaction. Remote folder additions stay within locally approved parent roots; never expose a home directory.
 
 ## Optional native execution
 
@@ -126,8 +126,7 @@ Run a reviewed, deployed copy of the complete Dots plugin outside every writable
 mount (for example the installed plugin cache), with Python dependencies and
 Codex installed outside those mounts too. The server rejects `--exec` when its
 entrypoint is inside a mount. Do not automatically reload remotely edited source
-into the trusted installation. Changing `config.json` takes effect after a local stop
-and start; stopping cancels active native jobs and loses their handles.
+into the trusted installation. Mount changes in `config.json` reload without restarting the MCP process. Collect or terminate active commands first. New work is blocked while a local config change awaits active-command completion; existing commands retain their original scope until then. State, deployment, and execution-policy changes require local deployment. MCP restart loses handles; native executor repair preserves recent results.
 
 The adapter uses [Codex app-server command execution](https://learn.chatgpt.com/docs/app-server)
 over private stdio. It starts one child process when needed and reuses it. There are no
@@ -161,7 +160,7 @@ Do not rerun a command after uncertain delivery without checking its effects.
 ## Boundaries and recovery
 
 - For the file helpers, only configured folders are available. Absolute paths,
-  traversal, hidden paths except `.agents`, symlinks, hard links, special files,
+  traversal, hidden paths except the explicit project-dotfile allowlist, symlinks, hard links, special files,
   and known credential names are rejected. The `.agents` directory still uses
   the same file and credential checks. Filename filtering does not detect
   secrets embedded in ordinary text: authorize only content you intend to
@@ -169,12 +168,11 @@ Do not rerun a command after uncertain delivery without checking its effects.
 - Text files are limited to 1 MiB. Reads return at most 200 lines or 16,000
   characters. Search is bounded; narrow the query when results are truncated.
 - Patches create or update one file with exact context. Delete, rename, binary
-  edits, new parent directories, CRLF updates, and updates to files without a
-  final newline are intentionally unsupported.
+  edits and CRLF/no-final-newline updates are unsupported by patches. Use `manage_files` for exact full-text writes, directories, moves, deletion, and verified restore.
 - Writes are serialized and replace complete prepared files atomically.
   Original content is saved as owner-only `original-<sha256>` files in the
   private state directory. Backups persist until the operator removes them;
-  stop writers before restoring one. Basic permissions are preserved, not
+  `manage_files restore` verifies the backup and target revision under the shared mutation lock. Basic permissions are preserved, not
   extended metadata.
 - This is not an OS sandbox against other processes running as the same user.
   Other editors must not change a file during the short revision-check/replace
@@ -219,3 +217,24 @@ the second succeeded after restarting the tunnel. No denials or rate-limit
 warnings appeared. This does not establish every model or permission policy.
 One local sample measured 371 ms startup-to-catalog and 0.56 ms median warm
 empty-directory listing over ten calls, excluding network and model time.
+
+
+## Folder and recovery commands
+
+One local command handles list, preview, combined additions/removals, parent approval, and discovery:
+
+```sh
+python3 plugins/dots/scripts/dots-tunnel/runtime.py folders \
+  --add Worktree=/absolute/worktree --remove OldWorktree --discover
+# Inspect the preview, then append --apply (optionally --expected-revision REV).
+python3 plugins/dots/scripts/dots-tunnel/runtime.py worktrees --query dots --branch main
+python3 plugins/dots/scripts/dots-tunnel/runtime.py startup
+```
+
+`--directory` selects a private per-host configuration. The remote `tunnel_manage folders` uses the same transaction but cannot approve parent roots and requires an expected revision to apply. Trusted source, virtualenv, credentials, executor state, and startup files must stay outside every mount. Each host needs an independent endpoint; never run two hosts against one tunnel ID.
+
+`tunnel_manage doctor` checks the native protocol reader as well as its process. `repair` replaces an idle or failed native executor in the same MCP process, retaining up to 64 operation results for ten minutes and never replaying commands. `result` reads retained bounded output by `operation_id`; interrupted command effects remain uncertain. A dead upstream transport requires local supervisor/operator recovery.
+
+The macOS LaunchAgent runs a foreground supervisor, while official tunnel-client owns its managed connection. It starts stopped connections, respects `paused`, and backs off on failures. A healthy connection is reused. It does not reset active user Codex sessions, broaden folder authority, or replace a live unhealthy network transport automatically.
+
+Upgrade acceptance tests include real stdio MCP file lifecycle, overlapping mounts, folder revisions/hot reload, Git worktree/branch discovery with a malicious fsmonitor configuration, an executor fault and repair in one MCP connection, retained results/no replay, and failed repair recovery. These tests do not establish actual Pro connector/catalog behavior; that requires a separate live ChatGPT run.

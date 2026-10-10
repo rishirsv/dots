@@ -15,11 +15,12 @@ from server import SKILL_PATH, SKILL_URI
 
 
 class Wire:
-    def __init__(self, mounts, state, execution=False):
+    def __init__(self, mounts, state, execution=False, config_directory=None):
         scope = [arg for name, path in mounts.items() for arg in ("--mount", f"{name}={path}")]
         self.process = subprocess.Popen(
             [sys.executable, str(Path(__file__).with_name("server.py")), *scope, "--state", str(state),
-             *(["--exec"] if execution else [])],
+             *(["--exec"] if execution else []),
+             *(["--config-directory", str(config_directory)] if config_directory else [])],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
         self.sequence = 0
 
@@ -87,13 +88,13 @@ class ProtocolTests(unittest.TestCase):
             self.assertEqual("sha256:" + hashlib.sha256(data).hexdigest(), resource["digest"])
         self.assertEqual(self.wire.send("skills/get", {"uri": "skill://other/SKILL.md"})["error"]["code"], -32602)
         tools = self.wire.send("tools/list")["result"]
-        self.assertEqual([t["name"] for t in tools["tools"]], ["apply_patch", "list_files", "read_file", "read_files", "search_files", "get_workflow"])
+        self.assertEqual([t["name"] for t in tools["tools"]], ["apply_patch", "list_files", "read_file", "read_files", "search_files", "get_workflow", "manage_files", "tunnel_manage"])
         workflow = self.tool("get_workflow", {})["structuredContent"]
         self.assertFalse(workflow["execution_enabled"])
         self.assertEqual(workflow["skill"], SKILL_PATH.read_text())
         self.assertGreater(tools["ttlMs"], 0)
         self.assertFalse(tools["tools"][0]["annotations"]["readOnlyHint"])
-        self.assertLess(len(json.dumps(tools)), 7000)
+        self.assertLess(len(json.dumps(tools)), 14000)
 
     def test_batched_reads_include_agents_guidance_and_isolate_errors(self):
         (self.root / ".agents").mkdir()
@@ -128,7 +129,7 @@ class ProtocolTests(unittest.TestCase):
         self.wire.process.stdin.write('{"jsonrpc":"2.0","method":"notifications/initialized"}\n')
         self.wire.process.stdin.flush()
         tools = self.wire.send("tools/list", modern=False)
-        self.assertEqual(len(tools["result"]["tools"]), 6)
+        self.assertEqual(len(tools["result"]["tools"]), 8)
 
     @unittest.skipUnless(shutil.which("codex"), "Native Codex required")
     def test_native_tools_over_stateless_mcp(self):

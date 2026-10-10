@@ -4,9 +4,10 @@ from pathlib import Path
 import shlex
 import subprocess
 import tempfile
+import sys
 import unittest
 
-from runtime import manage
+from runtime import manage, preflight
 
 TOOLS = {"jsonrpc": "2.0", "id": 2, "result": {"tools": [{"name": "read_file"}]}}
 
@@ -101,6 +102,23 @@ class LifecycleTests(unittest.TestCase):
             manage("start", self.root, fail)
         self.assertNotIn("sensitive", str(error.exception))
         self.assertEqual(len(self.calls), 1)
+
+    def test_supervisor_start_respects_pause_under_lifecycle_lock(self):
+        (self.root/'paused').touch()
+        result = manage('start', self.root, self.runner([{}]), respect_pause=True)
+        self.assertFalse(result['running'])
+        self.assertEqual(len(self.calls), 1)
+        self.assertTrue((self.root/'paused').exists())
+
+
+class LivePreflightTests(unittest.TestCase):
+    def test_stdio_handshake_keeps_input_open_until_catalog_reply(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)/'project'
+            root.mkdir()
+            server = Path(__file__).with_name('server.py')
+            for _ in range(5):
+                preflight([sys.executable, str(server), '--mount', 'P='+str(root), '--state', str(Path(temp)/'state')], False)
 
 
 if __name__ == "__main__":

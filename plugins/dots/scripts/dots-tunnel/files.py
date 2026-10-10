@@ -13,6 +13,9 @@ from pathlib import Path
 import secrets
 import stat
 import threading
+from functools import wraps
+
+DOTFILES = {".agents", ".github", ".claude", ".vscode", ".gitignore", ".gitattributes", ".editorconfig"}
 
 MAX_BYTES = 1_048_576
 MAX_TEXT = 16_000
@@ -31,7 +34,7 @@ def components(path: str, directory: bool = False) -> list[str]:
     parts = path.split("/")
     for p in parts:
         name = p.casefold()
-        if (not p or (name.startswith(".") and name != ".agents") or name in SKIP or
+        if (not p or (name.startswith(".") and name not in DOTFILES) or name in SKIP or
             name in {"credentials", "credentials.json", "auth.json", "secrets", "id_rsa", "id_ed25519"} or
             name.endswith((".pem", ".key", ".p12", ".pfx", ".sqlite", ".db"))):
             raise ValueError("Path is outside dots-tunnel's permitted file surface")
@@ -104,7 +107,7 @@ def patch_text(original: bytes | None, patch: str) -> tuple[str, bytes]:
 
 
 class Workspace:
-    def __init__(self, root: str, state: str):
+    def __init__(self, root: str, state: str, mutation_state=None, mutex=None):
         self.root = Path(root).resolve(strict=True)
         if self.root in {Path("/"), Path.home()} or not self.root.is_dir():
             raise ValueError("Choose a project directory, not the home or filesystem root")
@@ -116,17 +119,24 @@ class Workspace:
         state_stat = os.lstat(state_path)
         if stat.S_ISLNK(state_stat.st_mode) or state_stat.st_uid != os.getuid() or state_stat.st_mode & 0o077:
             raise ValueError("Recovery directory must be owner-only and not a symlink")
-        self.mutex = threading.Lock()
+        self.mutex = mutex or threading.RLock()
         # Every process for this root uses the same lock, even when MCP starts
         # another stdio worker. State selection is local operator authority.
-        lockname = "lock-" + revision(str(self.root).encode())
+        lockname = "mutation.lock" if mutation_state else "lock-" + revision(str(self.root).encode())
         opened = []
         try:
             self.root_fd = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
             opened.append(self.root_fd)
             self.state_fd = os.open(self.state, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
             opened.append(self.state_fd)
-            self.lock_fd = os.open(lockname, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600, dir_fd=self.state_fd)
+            if mutation_state:
+                lock_root = os.open(mutation_state, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+                try:
+                    self.lock_fd = os.open(lockname, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600, dir_fd=lock_root)
+                finally:
+                    os.close(lock_root)
+            else:
+                self.lock_fd = os.open(lockname, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600, dir_fd=self.state_fd)
         except BaseException:
             for fd in opened:
                 os.close(fd)
@@ -249,76 +259,137 @@ class Workspace:
                             return {"matches": matches, "truncated": True}
         return {"matches": matches, "truncated": bool(pending) or omitted}
 
-    def apply_patch(self, input: str, expected_revision: str) -> dict:
-        lines = input.splitlines()
-        if len(lines) < 2 or not lines[1].startswith(("*** Add File: ", "*** Update File: ")):
-            raise ValueError("Expected Add File or Update File patch")
-        parts = components(lines[1].split(": ", 1)[1])
+    @contextmanager
+    def mutation(self):
         with self.mutex:
             fcntl.flock(self.lock_fd, fcntl.LOCK_EX)
             try:
-                with self.directory(parts[:-1]) as fd:
-                    try:
-                        original, info = self._read(fd, parts[-1])
-                    except FileNotFoundError:
-                        original, info = None, None
-                    actual = "absent" if original is None else revision(original)
-                    if expected_revision != actual:
-                        raise ValueError("Revision conflict: read the file and reconcile before editing")
-                    path, updated = patch_text(original, input)
-                    if original == updated:
-                        raise ValueError("Patch makes no change")
-                    backup = None
-                    if original is not None:
-                        backup = "original-" + actual
-                        try:
-                            out = os.open(backup, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
-                                          0o600, dir_fd=self.state_fd)
-                        except FileExistsError:
-                            saved, _ = self._read(self.state_fd, backup)
-                            if saved != original:
-                                raise ValueError("Recovery copy failed integrity verification")
-                        else:
-                            with os.fdopen(out, "wb") as stream:
-                                stream.write(original)
-                                stream.flush()
-                                os.fsync(stream.fileno())
-                        os.fsync(self.state_fd)
-                    temp = ".dots-tunnel-" + secrets.token_hex(12)
-                    out = os.open(temp, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
-                                  0o600, dir_fd=fd)
-                    committed = False
-                    try:
-                        with os.fdopen(out, "wb") as stream:
-                            stream.write(updated)
-                            os.fchmod(stream.fileno(), (stat.S_IMODE(info.st_mode) & 0o777) if info else 0o600)
-                            stream.flush()
-                            os.fsync(stream.fileno())
-                        if original is None:
-                            # link is an atomic no-clobber create; unlike replace,
-                            # it cannot overwrite a file created after our check.
-                            os.link(temp, parts[-1], src_dir_fd=fd, dst_dir_fd=fd, follow_symlinks=False)
-                            os.unlink(temp, dir_fd=fd)
-                        else:
-                            latest, latest_info = self._read(fd, parts[-1])
-                            if latest != original or latest_info.st_ino != info.st_ino:
-                                raise ValueError("File changed before commit; no edit applied")
-                            os.replace(temp, parts[-1], src_dir_fd=fd, dst_dir_fd=fd)
-                        committed = True
-                        os.fsync(fd)
-                    except Exception as error:
-                        if committed:
-                            raise ValueError("Write committed but durability check failed; read before retrying") from error
-                        raise
-                    finally:
-                        try:
-                            os.unlink(temp, dir_fd=fd)
-                        except FileNotFoundError:
-                            pass
-                    return {"path": path, "revision": revision(updated), "previous_revision": actual,
-                            "recovery_copy": backup, "bytes": len(updated)}
+                yield
             finally:
                 fcntl.flock(self.lock_fd, fcntl.LOCK_UN)
+
+    def backup(self, data):
+        name = "original-" + revision(data)
+        try:
+            fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600, dir_fd=self.state_fd)
+        except FileExistsError:
+            saved, _ = self._read(self.state_fd, name)
+            if saved != data:
+                raise ValueError("Recovery copy failed integrity verification")
+        else:
+            with os.fdopen(fd, "wb") as stream:
+                stream.write(data)
+                stream.flush()
+                os.fsync(stream.fileno())
+        os.fsync(self.state_fd)
+        return name
+
+    def checked(self, fd, name, expected):
+        try:
+            data, info = self._read(fd, name)
+        except FileNotFoundError:
+            data, info = None, None
+        actual = "absent" if data is None else revision(data)
+        if actual != expected:
+            raise ValueError("Revision conflict: read the file and reconcile before editing")
+        return data, info, actual
+
+    def commit(self, fd, name, original, info, updated):
+        if len(updated) > MAX_BYTES or b"\x00" in updated:
+            raise ValueError("Only UTF-8 text up to 1 MiB is supported")
+        updated.decode("utf-8")
+        backup = self.backup(original) if original is not None else None
+        temp = ".dots-tunnel-" + secrets.token_hex(12)
+        out = os.open(temp, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600, dir_fd=fd)
+        committed = False
+        try:
+            with os.fdopen(out, "wb") as stream:
+                stream.write(updated)
+                os.fchmod(stream.fileno(), stat.S_IMODE(info.st_mode) & 0o777 if info else 0o600)
+                stream.flush()
+                os.fsync(stream.fileno())
+            if original is None:
+                os.link(temp, name, src_dir_fd=fd, dst_dir_fd=fd, follow_symlinks=False)
+                os.unlink(temp, dir_fd=fd)
+            else:
+                latest, latest_info = self._read(fd, name)
+                if latest != original or latest_info.st_ino != info.st_ino:
+                    raise ValueError("File changed before commit; no edit applied")
+                os.replace(temp, name, src_dir_fd=fd, dst_dir_fd=fd)
+            committed = True
+            os.fsync(fd)
+        except Exception as error:
+            if committed:
+                raise ValueError("Write committed but durability check failed; read before retrying") from error
+            raise
+        finally:
+            try:
+                os.unlink(temp, dir_fd=fd)
+            except FileNotFoundError:
+                pass
+        return backup
+
+    def write_file(self, path, content, expected_revision):
+        parts = components(path)
+        updated = content.encode("utf-8")
+        with self.mutation(), self.directory(parts[:-1]) as fd:
+            original, info, actual = self.checked(fd, parts[-1], expected_revision)
+            backup = self.commit(fd, parts[-1], original, info, updated)
+        return {"path": path, "revision": revision(updated), "previous_revision": actual,
+                "recovery_copy": backup, "bytes": len(updated)}
+
+    def apply_patch(self, input, expected_revision):
+        lines = input.splitlines()
+        if len(lines) < 2 or not lines[1].startswith(("*** Add File: ", "*** Update File: ")):
+            raise ValueError("Expected Add File or Update File patch")
+        path = lines[1].split(": ", 1)[1]
+        parts = components(path)
+        with self.mutation(), self.directory(parts[:-1]) as fd:
+            original, info, actual = self.checked(fd, parts[-1], expected_revision)
+            path, updated = patch_text(original, input)
+            if original == updated:
+                raise ValueError("Patch makes no change")
+            backup = self.commit(fd, parts[-1], original, info, updated)
+        return {"path": path, "revision": revision(updated), "previous_revision": actual,
+                "recovery_copy": backup, "bytes": len(updated)}
+
+    def mkdir(self, path):
+        parts = components(path)
+        with self.mutation():
+            for i, part in enumerate(parts):
+                with self.directory(parts[:i]) as fd:
+                    try:
+                        os.mkdir(part, 0o700, dir_fd=fd)
+                        os.fsync(fd)
+                    except FileExistsError:
+                        with self.directory(parts[:i+1]):
+                            pass
+        return {"path": path, "kind": "directory"}
+
+    def delete_file(self, path, expected_revision):
+        parts = components(path)
+        with self.mutation(), self.directory(parts[:-1]) as fd:
+            data, info, actual = self.checked(fd, parts[-1], expected_revision)
+            if data is None:
+                raise ValueError("Delete requires an existing file")
+            backup = self.backup(data)
+            latest, latest_info = self._read(fd, parts[-1])
+            if latest != data or latest_info.st_ino != info.st_ino:
+                raise ValueError("File changed before delete")
+            os.unlink(parts[-1], dir_fd=fd)
+            try:
+                os.fsync(fd)
+            except OSError as error:
+                raise ValueError("Delete committed but durability failed; inspect before retrying") from error
+        return {"path": path, "revision": "absent", "previous_revision": actual, "recovery_copy": backup}
+
+
+def mounted_operation(method):
+    @wraps(method)
+    def guarded(self, *args, **kwargs):
+        with self.mutex:
+            return method(self, *args, **kwargs)
+    return guarded
 
 
 class MountedWorkspace:
@@ -338,15 +409,17 @@ class MountedWorkspace:
         info = os.lstat(state)
         if stat.S_ISLNK(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
             raise ValueError("Recovery directory must be owner-only and not a symlink")
+        self.mutex = threading.RLock()
         self.workspaces = {}
         try:
             for name, root in resolved.items():
                 # Independent roots cannot race while creating identical backups.
-                self.workspaces[name] = Workspace(str(root), str(Path(state) / revision(str(root).encode())))
+                self.workspaces[name] = Workspace(str(root), str(Path(state) / revision(str(root).encode())), str(state), self.mutex)
         except BaseException:
             self.close()
             raise
 
+    @mounted_operation
     def close(self):
         for workspace in self.workspaces.values():
             workspace.close()
@@ -359,6 +432,7 @@ class MountedWorkspace:
             raise ValueError("Use an authorized mount followed by a relative file path")
         return name, self.workspaces[name], '/'.join(parts[1:]) or '.'
 
+    @mounted_operation
     def list_files(self, path='.', offset=0, limit=100):
         if path == '.':
             if not 0 <= offset <= 5000 or not 1 <= limit <= 200:
@@ -372,12 +446,14 @@ class MountedWorkspace:
             entry['path'] = name + '/' + entry['path']
         return result
 
+    @mounted_operation
     def read_file(self, path, start_line=1, limit=100):
         name, workspace, relative = self.route(path)
         result = workspace.read_file(relative, start_line, limit)
         result['path'] = name + '/' + result['path']
         return result
 
+    @mounted_operation
     def read_files(self, paths, start_line=1, limit=100):
         if not 1 <= len(paths) <= 8:
             raise ValueError("Supply 1..8 paths per batch")
@@ -389,6 +465,7 @@ class MountedWorkspace:
                 results.append({"path": path, "error": str(error)})
         return {"results": results}
 
+    @mounted_operation
     def search_files(self, query, path='.', limit=30):
         if path == '.':
             raise ValueError("List available mounts, then search one named directory")
@@ -398,6 +475,7 @@ class MountedWorkspace:
             match['path'] = name + '/' + match['path']
         return result
 
+    @mounted_operation
     def apply_patch(self, input, expected_revision):
         if len(input.encode('utf-8')) > MAX_BYTES:
             raise ValueError("Patch exceeds 1 MiB")
@@ -412,3 +490,71 @@ class MountedWorkspace:
         if result['recovery_copy']:
             result['recovery_copy'] = workspace.state.name + '/' + result['recovery_copy']
         return result
+
+    @mounted_operation
+    def file_operation(self, action, path, expected_revision="absent", content=None, destination=None, recovery_copy=None):
+        name, workspace, relative = self.route(path, directory=action == "mkdir")
+        if action == "mkdir":
+            if relative == ".":
+                raise ValueError("Cannot mutate a mount itself")
+            result = workspace.mkdir(relative)
+        elif action == "write":
+            if content is None:
+                raise ValueError("write requires content")
+            result = workspace.write_file(relative, content, expected_revision)
+        elif action == "delete":
+            result = workspace.delete_file(relative, expected_revision)
+        elif action == "restore":
+            if not recovery_copy or len(recovery_copy.split('/')) != 2:
+                raise ValueError("Use a returned recovery_copy")
+            state_name, backup = recovery_copy.split('/')
+            if state_name != workspace.state.name or not backup.startswith("original-") or len(backup) != 73:
+                raise ValueError("Recovery copy does not belong to this mount")
+            if any(c not in "0123456789abcdef" for c in backup[9:]):
+                raise ValueError("Invalid recovery copy")
+            data, _ = workspace._read(workspace.state_fd, backup)
+            if revision(data) != backup[9:]:
+                raise ValueError("Recovery copy failed integrity verification")
+            result = workspace.write_file(relative, data.decode('utf-8'), expected_revision)
+        elif action == "move":
+            other_name, other, target = self.route(destination)
+            src, dst = components(relative), components(target)
+            with workspace.mutation(), workspace.directory(src[:-1]) as sf, other.directory(dst[:-1]) as df:
+                data, info, actual = workspace.checked(sf, src[-1], expected_revision)
+                if data is None:
+                    raise ValueError("Move requires an existing file")
+                other.checked(df, dst[-1], "absent")
+                if os.fstat(sf).st_dev != os.fstat(df).st_dev:
+                    raise ValueError("Cross-filesystem moves are unsupported; no change applied")
+                backup = workspace.backup(data)
+                latest, latest_info = workspace._read(sf, src[-1])
+                if latest != data or latest_info.st_ino != info.st_ino:
+                    raise ValueError("File changed before move")
+                os.link(src[-1], dst[-1], src_dir_fd=sf, dst_dir_fd=df, follow_symlinks=False)
+                try:
+                    os.unlink(src[-1], dir_fd=sf)
+                except BaseException:
+                    os.unlink(dst[-1], dir_fd=df)
+                    raise
+                try:
+                    os.fsync(sf)
+                    os.fsync(df)
+                except OSError as error:
+                    raise ValueError("Move committed but durability failed; inspect both paths before retrying") from error
+            result = {"path": relative, "destination": destination, "revision": actual, "recovery_copy": backup}
+        else:
+            raise ValueError("Use mkdir, write, move, delete, or restore")
+        result['path'] = name + '/' + result['path']
+        if result.get('recovery_copy'):
+            result['recovery_copy'] = workspace.state.name + '/' + result['recovery_copy']
+        return result
+
+    @mounted_operation
+    def reload(self, roots, state):
+        fresh = MountedWorkspace(roots, state)
+        fresh.mutex = self.mutex
+        for workspace in fresh.workspaces.values():
+            workspace.mutex = self.mutex
+        self.close()
+        self.workspaces = fresh.workspaces
+        fresh.workspaces = {}

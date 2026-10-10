@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import secrets
+import signal
 import shutil
 import tempfile
 import time
@@ -17,6 +18,7 @@ class Session:
     future: asyncio.Future
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
     output: bytearray = field(default_factory=bytearray)
+    transcript: bytearray = field(default_factory=bytearray)
     dropped: int = 0
     completed: float | None = None
 
@@ -31,6 +33,7 @@ class Execution:
         self.process = None
         self.pending = {}
         self.sessions = {}
+        self.history = {}
         self.sequence = 0
         self.start_lock = asyncio.Lock()
         self.home = None
@@ -47,8 +50,8 @@ class Execution:
     async def start(self):
         async with self.start_lock:
             if self.process is not None:
-                if self.process.returncode is not None:
-                    raise RuntimeError("Native executor stopped; sessions are lost. Restart locally, do not retry commands blindly.")
+                if self.process.returncode is not None or (self.reader and self.reader.done()):
+                    raise RuntimeError("Native executor unavailable; call tunnel_manage doctor/repair. Do not replay uncertain commands.")
                 return
             # An isolated config cannot load credentials or the user's unrestricted
             # execution defaults. It is never inside a remotely writable mount.
@@ -72,7 +75,7 @@ class Execution:
             self.process = await asyncio.create_subprocess_exec(
                 self.codex, "app-server", "--stdio", cwd=self.home.name, env=env,
                 stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.DEVNULL, limit=2**20)
+                stderr=asyncio.subprocess.DEVNULL, limit=2**20, start_new_session=True)
             self.reader = asyncio.create_task(self.read_messages())
             try:
                 await asyncio.wait_for(self.request("initialize", {
@@ -114,8 +117,9 @@ class Execution:
                         data = base64.b64decode(params["deltaBase64"])
                         room = max(0, 65536 - len(session.output))
                         session.output.extend(data[:room])
+                        session.transcript.extend(data[:max(0, 65536 - len(session.transcript))])
                         session.dropped += max(0, len(data) - room)
-        except Exception as error:
+        except (Exception, asyncio.CancelledError) as error:
             failure = RuntimeError(f"Native executor transport failed: {type(error).__name__}; inspect results before retrying")
         else:
             failure = RuntimeError("Native executor disconnected; results may be incomplete")
@@ -138,6 +142,7 @@ class Execution:
                 except TimeoutError:
                     pass
                 except Exception:
+                    self.remember(session_id, session)
                     self.sessions.pop(session_id, None)
                     raise
             data = bytes(session.output)
@@ -148,9 +153,10 @@ class Execution:
             output = data[:cap].decode(errors="replace")
             if dropped:
                 output += f"\n[output truncated: {dropped} bytes omitted]"
-            result = {"output": output, "wall_time_seconds": round(time.monotonic() - started, 3)}
+            result = {"operation_id": session_id, "output": output, "wall_time_seconds": round(time.monotonic() - started, 3)}
             if session.future.done():
                 del self.sessions[session_id]
+                self.remember(session_id, session)
                 native = session.future.result()
                 result["exit_code"] = native["exitCode"]
             else:
@@ -173,6 +179,7 @@ class Execution:
         # have the same native hard timeout; there is no background daemon API.
         for key, session in list(self.sessions.items()):
             if session.completed is not None and not session.lock.locked() and time.monotonic() - session.completed > 600:
+                self.remember(key, session)
                 session.future.exception()
                 del self.sessions[key]
         if len(self.sessions) >= 8:
@@ -215,6 +222,82 @@ class Execution:
             await asyncio.wait_for(self.request("command/exec/terminate", {"processId": str(session_id)}), 10)
         return await self.collect(session_id, 1000, 10000)
 
+    def remember(self, session_id, session):
+        if not session.future.done():
+            return
+        error = session.future.exception()
+        self.history[session_id] = {'operation_id': session_id,
+                                    'state': 'uncertain' if error else 'completed',
+                                    'output': bytes(session.transcript).decode(errors='replace'),
+                                    'output_truncated': len(session.transcript) >= 65536,
+                                    'exit_code': None if error else session.future.result().get('exitCode'),
+                                    'error': str(error) if error else None, 'recorded_at': time.monotonic()}
+        while len(self.history) > 64:
+            del self.history[next(iter(self.history))]
+
+    def health(self):
+        failed = self.process is not None and (self.process.returncode is not None or (self.reader and self.reader.done()))
+        return {'state': 'unhealthy' if failed else ('ready' if self.process else 'idle'),
+                'reader_alive': bool(self.reader and not self.reader.done()),
+                'active_operations': [key for key, session in self.sessions.items() if not session.future.done()],
+                'retained_results': list(self.history), 'pending_requests': len(self.pending),
+                'recovery': 'tunnel_manage repair; never replay uncertain commands' if failed else None}
+
+    def result(self, operation_id, offset=0, limit=16000):
+        if not 0 <= offset <= 65536 or not 1 <= limit <= 16000:
+            raise ValueError('Result offset is 0..65536; limit is 1..16000')
+        session = self.sessions.get(operation_id)
+        if session:
+            if session.future.done():
+                self.remember(operation_id, session)
+            else:
+                text = bytes(session.transcript).decode(errors='replace')
+                return {'operation_id': operation_id, 'state': 'running', 'output': text[offset:offset+limit],
+                        'next_offset': offset+limit if offset+limit < len(text) else None}
+        result = self.history.get(operation_id)
+        if result is None or time.monotonic() - result['recorded_at'] > 600:
+            raise ValueError('Unknown or expired operation_id; never replay an uncertain command')
+        text = result['output']
+        return {**{key: value for key, value in result.items() if key != 'recorded_at'},
+                'output': text[offset:offset+limit], 'next_offset': offset+limit if offset+limit < len(text) else None}
+
+    async def repair(self, roots=None):
+        if self.health()['active_operations']:
+            raise ValueError('Collect or terminate active commands before repair or folder changes')
+        async with self.start_lock:
+            await self.stop_transport()
+            if roots is not None:
+                self.roots = [Path(root).resolve(strict=True) for root in roots]
+        await self.start()
+        return {**self.health(), 'replayed_commands': 0}
+
+    async def stop_transport(self):
+        if self.process is not None and self.process.returncode is None:
+            self.process.stdin.close()
+            os.killpg(self.process.pid, signal.SIGTERM)
+            try:
+                await asyncio.wait_for(self.process.wait(), 5)
+            except TimeoutError:
+                os.killpg(self.process.pid, signal.SIGKILL)
+                await self.process.wait()
+        if self.process:
+            # The private session includes startup/cache helpers, never user Codex sessions.
+            try:
+                os.killpg(self.process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+        if self.reader:
+            await self.reader
+        for key, session in list(self.sessions.items()):
+            if not session.future.done():
+                session.future.set_exception(RuntimeError('Executor stopped; command effects are uncertain'))
+            self.remember(key, session)
+        self.sessions.clear()
+        self.pending.clear()
+        if self.home:
+            self.home.cleanup()
+        self.process = self.reader = self.home = None
+
     async def close(self):
         if self.process is not None and self.process.returncode is None:
             for session_id in list(self.sessions):
@@ -226,13 +309,6 @@ class Execution:
             try:
                 await asyncio.wait_for(self.process.wait(), 5)
             except TimeoutError:
-                self.process.kill()
+                os.killpg(self.process.pid, signal.SIGKILL)
                 await self.process.wait()
-        if self.reader:
-            await self.reader
-        for session in self.sessions.values():
-            if session.future.done():
-                session.future.exception()
-        self.sessions.clear()
-        if self.home:
-            self.home.cleanup()
+        await self.stop_transport()
